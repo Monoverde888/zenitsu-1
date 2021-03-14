@@ -18,6 +18,9 @@ module.exports = async (client, message) => {
     message.guild.cachePrefix = prefix;
     const args = message.content.slice(prefix.length).trim().split(/ +/);
     const command = args.shift().toLowerCase()
+
+    if (message.author.bot) return;
+
     const afk = await message.author.fetchAfk()
     if (afk.status) {
         await message.author.deleteAfk()
@@ -41,7 +44,6 @@ module.exports = async (client, message) => {
         }
     }
 
-    if (message.author.bot) return;
     if (message.content.toLowerCase() == 'nezuko' || message.content.toLowerCase() == 'nezuko chan')
         return message.channel.send(`Nezuko chaaan!`);
 
