@@ -12,7 +12,7 @@ module.exports = async (client, reaction, user) => {
 
     const data = await model.findOne({ idGuild: reaction.message.guild?.id, idMessage: reaction.message.id });
 
-    if (reaction.message.partial) reaction.message = await reaction.message.fetch().catch(() => { });
+    if (reaction.message.partial) reaction.message.partial = await reaction.message.fetch().catch(() => { });
     if (!reaction.message) return;
     if (!data) return;
 
