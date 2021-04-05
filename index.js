@@ -83,7 +83,6 @@ const client = new Discord.Client(
 		cacheChannels: true,
 		disabledEvents: [
 			'messageUpdate',
-			'messageDelete',
 			'messageDeleteBulk',
 			'messageReactionRemove',
 			'messageReactionRemoveAll',
