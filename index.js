@@ -80,6 +80,7 @@ const client = new Discord.Client(
 		cacheRoles: true,
 		cacheEmojis: false,
 		cachePresences: false,
+		cacheChannels: true,
 		disabledEvents: [
 			'messageUpdate',
 			'messageDelete',
