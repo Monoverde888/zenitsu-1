@@ -3,7 +3,8 @@ const { ShardingManager } = require('discord.js');
 
 const sharder = new ShardingManager('./index.js', {
     token: process.env.BOT_TOKEN,
-    shards: "auto"
+    shards: "auto",
+    execArgv: ['--expose-gc', '--optimize_for_size', '--max_old_space_size=150']
 });
 
 sharder.spawn();
