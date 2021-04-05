@@ -1,4 +1,4 @@
-const Discord = require("discord.js");
+const Discord = require('discord.js-light');
 const ms = require('ms');
 const cooldowns = new Discord.Collection();
 //let cooldownniveles = new Set();

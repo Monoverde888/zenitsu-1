@@ -1,7 +1,7 @@
 const { Connect4, Connect4AI } = require('connect4-ai');
-const { MessageAttachment } = require('discord.js');
+const { MessageAttachment } = require('discord.js-light');
 // eslint-disable-next-line no-unused-vars
-const Discord = require('discord.js');
+const Discord = require('discord.js-light');
 const { sendEmbed, displayConnectFourBoard, awaitMessage } = require('../../Utils/Functions');
 const Command = require('../../Utils/Classes').Command;
 module.exports = class Comando extends Command {

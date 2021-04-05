@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-unused-vars
-const { MessageEmbed, Message, Client, MessageAttachment } = require("discord.js");
+const { MessageEmbed, Message, Client, MessageAttachment } = require('discord.js-light');
 const model = require('../../models/amongus')
 
 const Command = require('../../Utils/Classes').Command;

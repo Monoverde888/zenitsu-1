@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-unused-vars
-const Discord = require("discord.js");
+const Discord = require('discord.js-light');
 const { AmongUs } = require('../../Utils/Functions');
 const model = require('../../models/amongus');
 /**

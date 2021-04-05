@@ -1,6 +1,6 @@
 require('moment').locale('es')
-const Discord = require('discord.js'),
-	{ Collection } = require('discord.js');
+const Discord = require('discord.js-light'),
+	{ Collection } = require('discord.js-light');
 const mongoose = require('mongoose');
 require('dotenv').config();
 
@@ -74,7 +74,10 @@ const client = new Discord.Client(
 		allowedMentions: { parse: [] },
 		ws: {
 			intents: 1701
-		}
+		},
+		cacheOverwrites: false,
+		cacheEmojis: false,
+		cachePresences: false
 	}
 );
 

@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
 const { sendEmbed, mapaCanvas, awaitMessage } = require('../../Utils/Functions')
 const tresenraya = require('tresenraya');
-const { Message, MessageAttachment } = require('discord.js');
-const { Client } = require('discord.js');
+const { Message, MessageAttachment } = require('discord.js-light');
+const { Client } = require('discord.js-light');
 
 const Command = require('../../Utils/Classes').Command;
 module.exports = class Comando extends Command {

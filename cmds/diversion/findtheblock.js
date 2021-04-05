@@ -1,4 +1,4 @@
-const { Util, MessageEmbed } = require("discord.js")
+const { Util, MessageEmbed } = require('discord.js-light')
 
 const Command = require('../../Utils/Classes').Command;
 module.exports = class Comando extends Command {

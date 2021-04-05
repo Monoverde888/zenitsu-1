@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-unused-vars
-const { Message, MessageAttachment, MessageEmbed, Util, TextChannel } = require("discord.js")
+const { Message, MessageAttachment, MessageEmbed, Util, TextChannel } = require('discord.js-light')
 
 const Command = require('../../Utils/Classes').Command;
 module.exports = class Comando extends Command {

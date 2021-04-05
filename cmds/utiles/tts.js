@@ -1,4 +1,4 @@
-const Discord = require('discord.js');
+const Discord = require('discord.js-light');
 const { sendEmbed } = require('../../Utils/Functions')
 const Command = require('../../Utils/Classes').Command
 const { Readable } = require('stream')

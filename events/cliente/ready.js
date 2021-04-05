@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-unused-vars
-const { MessageEmbed, Client, Presence, Util } = require('discord.js'),
+const { MessageEmbed, Client, Presence, Util } = require('discord.js-light'),
 	model = require('../../models/temp')
 require('dotenv').config();
 const { loadImage } = require("canvas")

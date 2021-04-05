@@ -1,4 +1,4 @@
-const { MessageAttachment } = require('discord.js'),
+const { MessageAttachment } = require('discord.js-light'),
     Canvas = require('canvas'),
     Command = require('../../Utils/Classes').Command;
 const { sendEmbed } = require('../../Utils/Functions');

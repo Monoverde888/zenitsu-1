@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-unused-vars
-const { MessageEmbed, Message, Client } = require("discord.js");
+const { MessageEmbed, Message, Client } = require('discord.js-light');
 
 
 const Command = require('../../Utils/Classes').Command;

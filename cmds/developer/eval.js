@@ -9,7 +9,7 @@ module.exports = class Comando extends Command {
 	}
 	async run(obj) {
 
-		const Discord = require("discord.js")
+		const Discord = require('discord.js-light')
 		const { replace } = require('../../Utils/Functions.js');
 		// eslint-disable-next-line no-unused-vars
 		const { client, message, args, embedResponse, Hora } = obj;

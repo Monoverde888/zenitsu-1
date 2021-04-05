@@ -3,7 +3,7 @@ const Command = require('../../Utils/Classes').Command;
 const { loadImage, createCanvas } = require('canvas');
 const gifencoder = require('gifencoder')
 // eslint-disable-next-line no-unused-vars
-const { Message } = require('discord.js')
+const { Message } = require('discord.js-light')
 module.exports = class Comando extends Command {
     constructor() {
         super()
@@ -51,7 +51,7 @@ module.exports = class Comando extends Command {
             ctx.drawImage(background, 0, 0, canvas.width, canvas.height)
             ctx.drawImage(imagenes[i], 700, 300, 300, 350)
             encoder.addFrame(ctx);
-            await require('discord.js').Util.delayFor(2000)
+            await require('discord.js-light').Util.delayFor(2000)
             if (num >= 5) {
                 if (msg && !msg.deleted) {
                     try {
