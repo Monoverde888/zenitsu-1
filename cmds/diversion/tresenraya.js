@@ -65,7 +65,7 @@ module.exports = class Comando extends Command {
         }
         const { partida } = message.guild;
 
-        users.set(usuario.id, usuario.user.username)
+        users.set(usuario.id, usuario.username)
         users.set(message.author.id, message.author.username)
 
         partida.on('ganador', async (jugador, tablero, paso) => {
