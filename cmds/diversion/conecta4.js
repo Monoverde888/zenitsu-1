@@ -50,7 +50,7 @@ module.exports = class Comando extends Command {
 				description: `<:cancel:804368628861763664> | Menciona a un miembro para jugar.`,
 				footerText: 'Tambien puedes jugar con Zenitsu poniendo z!connect4 easy/medium/hard'
 			});
-
+		let turno = (id) => obtenerTurno({ guild: message.guild.id, member: id })
 		if (usuario.id != client.user.id) {
 
 
@@ -119,8 +119,6 @@ module.exports = class Comando extends Command {
 
 			let res = await displayConnectFourBoard(displayBoard(message.guild.game.ascii()), message.guild.game, client.imagenes);
 			let att = new MessageAttachment(res, '4enraya.gif')
-
-			let turno = (id) => obtenerTurno({ guild: message.guild.id, member: id })
 
 			sendEmbed({
 				attachFiles: att,
@@ -217,7 +215,7 @@ module.exports = class Comando extends Command {
 			const difficulty = ["hard", "medium", "easy"].includes(args[0]?.toLowerCase()) ? args[0]?.toLowerCase() : "medium";
 			message.guild.game = new Connect4AI();
 			message.guild.game.jugadores = [message.author.id, client.user.id]
-			if (message.author.TURNO) {
+			if (turno(message.author.id)) {
 				message.guild.game = undefined;
 				return sendEmbed({
 					channel: message.channel,
@@ -225,7 +223,10 @@ module.exports = class Comando extends Command {
 				});
 			}
 
-			message.author.TURNO = 1
+			let obj = new Map();
+			turnosPorId.set(message.guild.id, obj)
+			turnosPorId.get(message.guild.id).set(message.author.id, 1)
+
 			let res = await displayConnectFourBoard(displayBoard(message.guild.game.ascii()), message.guild.game, client.imagenes);
 			let att = new MessageAttachment(res, '4enraya.gif')
 			sendEmbed({
@@ -236,7 +237,7 @@ module.exports = class Comando extends Command {
 				footerText: difficulty
 			})
 
-			const colector = message.channel.createMessageCollector(msg => msg.author.id == message.author.id && msg.author.TURNO === msg.guild.game.gameStatus().currentPlayer && !isNaN(msg.content) && (Number(msg.content) >= 1 && Number(msg.content) <= 7) && message.guild.game.canPlay(parseInt(msg.content) - 1) && !message.guild.game.gameStatus().gameOver || (msg.guild.game.jugadores.includes(msg.author.id) && msg.content == 'surrender'), { idle: (3 * 60) * 1000, time: (30 * 60) * 1000 });
+			const colector = message.channel.createMessageCollector(msg => msg.author.id == message.author.id && turno(msg.author.id) === msg.guild.game.gameStatus().currentPlayer && !isNaN(msg.content) && (Number(msg.content) >= 1 && Number(msg.content) <= 7) && message.guild.game.canPlay(parseInt(msg.content) - 1) && !message.guild.game.gameStatus().gameOver || (msg.guild.game.jugadores.includes(msg.author.id) && msg.content == 'surrender'), { idle: (3 * 60) * 1000, time: (30 * 60) * 1000 });
 
 			colector.on('collect', async (msg) => {
 
@@ -255,8 +256,7 @@ module.exports = class Comando extends Command {
 						footerText: difficulty
 					})
 					await client.updateData({ id: message.author.id, difficulty }, { $inc: { ganadas: 1 }, $set: { cacheName: message.author.username } }, 'c4top');
-					message.author.TURNO = undefined;
-					usuario.TURNO = undefined
+					turnosPorId.delete(message.guild.id);
 					msg.guild.game = undefined;
 					return colector.stop();
 				}
@@ -272,8 +272,7 @@ module.exports = class Comando extends Command {
 						footerText: difficulty
 					})
 					await client.updateData({ id: message.author.id, difficulty }, { $inc: { empates: 1 }, $set: { cacheName: message.author.username } }, 'c4top');
-					message.author.TURNO = undefined;
-					usuario.TURNO = undefined
+					turnosPorId.delete(message.guild.id);
 					msg.guild.game = undefined;
 					return colector.stop();
 				}
@@ -291,8 +290,7 @@ module.exports = class Comando extends Command {
 						footerText: difficulty
 					})
 					await client.updateData({ id: message.author.id, difficulty }, { $inc: { perdidas: 1 }, $set: { cacheName: message.author.username } }, 'c4top');
-					message.author.TURNO = undefined;
-					usuario.TURNO = undefined
+					turnosPorId.delete(message.guild.id);
 					msg.guild.game = undefined;
 					return colector.stop();
 				}
@@ -308,8 +306,7 @@ module.exports = class Comando extends Command {
 						footerText: difficulty
 					})
 					await client.updateData({ id: message.author.id, difficulty }, { $inc: { empates: 1 }, $set: { cacheName: message.author.username } }, 'c4top');
-					message.author.TURNO = undefined;
-					usuario.TURNO = undefined
+					turnosPorId.delete(message.guild.id);
 					msg.guild.game = undefined;
 					return colector.stop();
 				}
@@ -336,8 +333,7 @@ module.exports = class Comando extends Command {
 						footerText: difficulty
 					})
 					await client.updateData({ id: message.author.id, difficulty }, { $inc: { perdidas: 1 }, $set: { cacheName: message.author.username } }, 'c4top');
-					message.author.TURNO = undefined;
-					usuario.TURNO = undefined
+					turnosPorId.delete(message.guild.id);
 					return message.guild.game = undefined;
 				}
 
@@ -350,8 +346,7 @@ module.exports = class Comando extends Command {
 						footerText: difficulty
 					})
 					await client.updateData({ id: message.author.id, difficulty }, { $inc: { perdidas: 1 }, $set: { cacheName: message.author.username } }, 'c4top');
-					message.author.TURNO = undefined;
-					usuario.TURNO = undefined
+					turnosPorId.delete(message.guild.id);
 					return message.guild.game = undefined;
 				}
 
@@ -364,8 +359,7 @@ module.exports = class Comando extends Command {
 						footerText: difficulty
 					})
 					await client.updateData({ id: message.author.id, difficulty }, { $inc: { perdidas: 1 }, $set: { cacheName: message.author.username } }, 'c4top');
-					message.author.TURNO = undefined;
-					usuario.TURNO = undefined
+					turnosPorId.delete(message.guild.id);
 					return message.guild.game = undefined;
 				}
 			})

@@ -27,7 +27,7 @@ module.exports = async (client, message) => {
         return message.reply('<:sesonroja:804750422828515339> | ¡Bienvenido de vuelta!')
     }
 
-    for (let user of message.mentions.users.array()) {
+    for (let user of message.mentions.users.array().filter(e => !e.bot)) {
         if (!user.cacheAfk) {
             await user.fetchAfk();
         }
@@ -48,12 +48,6 @@ module.exports = async (client, message) => {
         return message.channel.send(`Nezuko chaaan!`);
 
     if (!message.content?.startsWith(prefix)) return;
-    let emojiFinded = message.guild.emojis.cache.find(a => a.name === message.content.slice(2)) || client.emojis.cache.find(a => a.name === message.content.slice(2));
-    //console.log(emojiFinded)
-    if (message.content.slice(0, 2) === ': ' && emojiFinded) {
-        if (message.deletable) message.delete();
-        return message.channel.send(emojiFinded.toString())
-    }
 
     /*if (!message.member.hasPermission('ADMINISTRATOR') && settings.borrarInv && message.content.match(/(https?:\/\/)?(www\.)?(discord\.(gg|io|me|li)|discordapp\.com\/invite)\/.+[a-z]/g)) {
 
