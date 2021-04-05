@@ -34,8 +34,10 @@ module.exports = class Comando extends Command {
 	*/
 
 	async run(obj) {
-		client.turnos = turnosPorId;
+
 		const { message, client, args } = obj;
+
+		client.turnos = turnosPorId;
 
 		if (message.guild.game)
 			return sendEmbed({ channel: message.channel, description: '<:cancel:804368628861763664> | Hay una partida en curso en este servidor.' })
