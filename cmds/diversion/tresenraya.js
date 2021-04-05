@@ -69,48 +69,48 @@ module.exports = class Comando extends Command {
         users.set(message.author.id, message.author.username)
 
         partida.on('ganador', async (jugador, tablero, paso) => {
-            users.delete(message.author.id)
-            users.delete(usuario.id)
             message.guild.partida = undefined;
-            return sendEmbed({
+            sendEmbed({
                 channel: message.channel,
                 description: `<:zsUHHHHHH:649036589195853836> | ¡Ha ganado ${users.get(jugador)}!\n\n${tablero.string}`,
                 attachFiles: new MessageAttachment(await mapaCanvas(tablero.array, client.imagenes, true), 'tictactoe.gif'),
                 imageURL: 'attachment://tictactoe.gif'
             });
+            users.delete(message.author.id)
+            users.delete(usuario.id)
         });
 
         partida.on('empate', async (jugadores, tablero, paso) => {
             message.guild.partida = undefined;
-            users.delete(message.author.id)
-            users.delete(usuario.id)
-            return sendEmbed({
+            sendEmbed({
                 channel: message.channel,
                 description: `<:wtfDuddd:797933539454091305> | Un empate entre ${jugadores.map(user => users.get(user)).join(' y ')}!\n\n${tablero.string}`,
                 attachFiles: new MessageAttachment(await mapaCanvas(tablero.array, client.imagenes), 'tictactoe.gif'),
                 imageURL: 'attachment://tictactoe.gif'
             });
-
+            users.delete(message.author.id)
+            users.delete(usuario.id)
         });
 
         partida.on('finalizado', async (jugadores, tablero, paso) => {
-            users.delete(message.author.id)
-            users.delete(usuario.id)
             message.guild.partida = undefined;
-            return sendEmbed({
+            sendEmbed({
                 channel: message.channel,
                 description: `<:wtfDuddd:797933539454091305> | Tiempo excedido!\n\n${tablero.string}`,
                 attachFiles: new MessageAttachment(await mapaCanvas(tablero.array, client.imagenes), 'tictactoe.gif'),
                 imageURL: 'attachment://tictactoe.gif'
             });
+            users.delete(message.author.id)
+            users.delete(usuario.id)
         });
 
-        await sendEmbed({
-            description: `🤔 | Empieza ${users.get(partida.turno.jugador)}, elige un número del 1 al 9 [\`${partida.turno.ficha}\`]\n\n${partida.tablero.string}`,
-            channel: message.channel,
-            attachFiles: new MessageAttachment(await mapaCanvas(partida.tablero.array, client.imagenes), 'tictactoe.gif'),
-            imageURL: 'attachment://tictactoe.gif'
-        });
+        if (partida.turno.jugador != client.user.id)
+            await sendEmbed({
+                description: `🤔 | Empieza ${users.get(partida.turno.jugador)}, elige un número del 1 al 9 [\`${partida.turno.ficha}\`]\n\n${partida.tablero.string}`,
+                channel: message.channel,
+                attachFiles: new MessageAttachment(await mapaCanvas(partida.tablero.array, client.imagenes), 'tictactoe.gif'),
+                imageURL: 'attachment://tictactoe.gif'
+            });
 
         if (partida.turno.jugador == client.user.id) {
             let disponibles = [1, 2, 3, 4, 5, 6, 7, 8, 9].filter(a => partida.disponible(a));
