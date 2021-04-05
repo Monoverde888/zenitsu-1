@@ -75,9 +75,48 @@ const client = new Discord.Client(
 		ws: {
 			intents: 1701
 		},
+		cacheGuilds: true,
 		cacheOverwrites: false,
+		cacheRoles: true,
 		cacheEmojis: false,
-		cachePresences: false
+		cachePresences: false,
+		disabledEvents: [
+			'messageUpdate',
+			'messageDelete',
+			'messageDeleteBulk',
+			'messageReactionRemove',
+			'messageReactionRemoveAll',
+			'messageReactionRemoveEmoji',
+			'channelCreate',
+			'channelUpdate',
+			'channelDelete',
+			'channelPinsUpdate',
+			'roleCreate',
+			'roleUpdate',
+			'roleDelete',
+			'inviteCreate',
+			'inviteDelete',
+			'emojiCreate',
+			'emojiUpdate',
+			'emojiDelete',
+			'guildEmojisUpdate',
+			'guildBanAdd',
+			'guildBanRemove',
+			'guildCreate',
+			'guildUpdate',
+			'guildDelete',
+			'guildUnavailable',
+			'guildMemberAdd',
+			'guildMemberUpdate',
+			'guildMemberRemove',
+			'guildIntegrationsUpdate',
+			'presenceUpdate',
+			'typingStart',
+			'userUpdate',
+			'voiceStateUpdate',
+			'webhookUpdate',
+			'rest'
+		]
 	}
 );
 
