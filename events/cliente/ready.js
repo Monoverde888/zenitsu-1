@@ -47,15 +47,7 @@ module.exports = async (client) => {
 	client.color = '#E09E36';
 
 	setInterval(async () => {
-		dbl.postStats(client.guilds.cache.size);
-		presence(client);
-		let canal = client.channels.cache.get('786997292040847401');
-		let mensaje = canal.messages.cache.get('786997341998678056') || await canal.messages.fetch('786997341998678056')
-		let embed = new MessageEmbed()
-			.setColor(client.color)
-			.addField('Servidores', client.guilds.cache.size, true)
-			.addField('Usuarios en cache', client.users.cache.filter(a => !a.bot).size, true)
-		mensaje.edit({ embed: embed })
+		await dbl.postStats(client.guilds.cache.size);
 	}, 1800000);//30m
 
 };

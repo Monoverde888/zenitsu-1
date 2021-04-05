@@ -1,7 +1,22 @@
 const { Connect4, Connect4AI } = require('connect4-ai');
 const { MessageAttachment } = require('discord.js-light');
-// eslint-disable-next-line no-unused-vars
-const Discord = require('discord.js-light');
+
+/**@type {Map<string, Map<string, (0|1)>>} */
+const turnosPorId = new Map();
+
+/**
+ * 
+ * @param {object} obj
+ * @param {string} obj.guild
+ * @param {string} obj.member
+ * @returns 
+ */
+function obtenerTurno(obj) {
+
+	return turnosPorId.get(obj.guild) ? turnosPorId.get(obj.guild).get(obj.member) : null
+
+}
+
 const { sendEmbed, displayConnectFourBoard, awaitMessage } = require('../../Utils/Functions');
 const Command = require('../../Utils/Classes').Command;
 module.exports = class Comando extends Command {
@@ -12,14 +27,14 @@ module.exports = class Comando extends Command {
 		this.category = 'diversion'
 	}
 	/**
-	* @param { Object } obj
-	* @param { Discord.Message } obj.message
-	* @param {Discord.Client} obj.client
+	* @param {object} obj
+	* @param { import('discord.js-light').Message } obj.message
+	* @param {import('discord.js-light').Client} obj.client
 	* @param {Array<String>} obj.args
 	*/
 
 	async run(obj) {
-
+		client.turnos = turnosPorId;
 		const { message, client, args } = obj;
 
 		if (message.guild.game)
@@ -36,14 +51,15 @@ module.exports = class Comando extends Command {
 
 		if (usuario.id != client.user.id) {
 
-			if (usuario.TURNO) {
+
+			if (obtenerTurno({ guild: message.guild.id, member: usuario })) {
 				return sendEmbed({
 					channel: message.channel,
 					description: `${usuario.tag} está activo en otra partida.`
 				});
 			}
 
-			if (message.author.TURNO) {
+			if (obtenerTurno({ guild: message.guild.id, member: message.author.id })) {
 				return sendEmbed({
 					channel: message.channel,
 					description: `${message.author.tag} estas activo en otra partida.`
@@ -51,7 +67,9 @@ module.exports = class Comando extends Command {
 			}
 
 			message.guild.game = new Connect4();
-			message.guild.game.jugadores = [message.author.id, usuario.id]
+			message.guild.game.jugadores = [message.author.id, usuario.id];
+			let obj = new Map();
+			turnosPorId.set(message.guild.id, obj)
 			await sendEmbed({
 				channel: message.channel,
 				description: `<a:waiting:804396292793040987> | ${usuario} tienes 1 minuto para responder...\n¿Quieres jugar?: ~~responde "s"~~\n¿No quieres?: ~~responde "n"~~`
@@ -60,9 +78,8 @@ module.exports = class Comando extends Command {
 			let respuesta = await awaitMessage({ channel: message.channel, filter: (m) => m.author.id == usuario.id && ['s', 'n'].some(item => item == m.content), time: (1 * 60) * 1000, max: 1 }).catch(() => { })
 
 			if (!respuesta) {
-				message.author.TURNO = undefined;
-				usuario.TURNO = undefined
 				message.guild.game = undefined;
+				turnosPorId.delete(message.guild.id)
 				return sendEmbed({
 					channel: message.channel,
 					description: `😔 | ${usuario} no respondió...`
@@ -70,16 +87,15 @@ module.exports = class Comando extends Command {
 			}
 
 			if (respuesta.first().content == 'n') {
-				message.author.TURNO = undefined;
-				usuario.TURNO = undefined
 				message.guild.game = undefined;
+				turnosPorId.delete(message.guild.id)
 				return sendEmbed({
 					channel: message.channel,
 					description: '😔 | Rechazó la invitación...'
 				})
 			}
 
-			if (usuario.TURNO) {
+			if (obtenerTurno({ guild: message.guild.id, member: usuario.id })) {
 				message.guild.game = undefined;
 				return sendEmbed({
 					channel: message.channel,
@@ -87,26 +103,31 @@ module.exports = class Comando extends Command {
 				});
 			}
 
-			if (message.author.TURNO) {
+			if (obtenerTurno({ guild: message.guild.id, member: message.author.id })) {
 				message.guild.game = undefined;
 				return sendEmbed({
 					channel: message.channel,
 					description: `${message.author.tag} estas activo en otra partida.`
 				});
 			}
-			usuario.TURNO = Math.floor(Math.random() * 2) + 1;
-			message.author.TURNO = usuario.TURNO == 2 ? 1 : 2;
+
+			let temp = turnosPorId.get(message.guild.id);
+			temp.set(usuario.id, Math.floor(Math.random() * 2) + 1);
+			temp.set(message.author.id, temp.get(usuario.id) == 2 ? 1 : 2);
+
 			let res = await displayConnectFourBoard(displayBoard(message.guild.game.ascii()), message.guild.game, client.imagenes);
 			let att = new MessageAttachment(res, '4enraya.gif')
+
+			let turno = (id) => obtenerTurno({ guild: message.guild.id, member: id })
 
 			sendEmbed({
 				attachFiles: att,
 				channel: message.channel,
 				imageURL: 'attachment://4enraya.gif',
-				description: `🤔 | Empieza ${message.author.TURNO == 1 ? message.author.tag : usuario.tag}, elige un numero del 1 al 7. [\`🔴\`]`
+				description: `🤔 | Empieza ${(turno(message.author.id)) == 1 ? message.author.tag : usuario.tag}, elige un numero del 1 al 7. [\`🔴\`]`
 			})
 
-			const colector = message.channel.createMessageCollector(msg => msg.guild.game.jugadores.includes(msg.author.id) && msg.author.TURNO === msg.guild.game.gameStatus().currentPlayer && !isNaN(msg.content) && (Number(msg.content) >= 1 && Number(msg.content) <= 7) && message.guild.game.canPlay(parseInt(msg.content) - 1) && !message.guild.game.gameStatus().gameOver || (msg.guild.game.jugadores.includes(msg.author.id) && msg.content == 'surrender'), { idle: (3 * 60) * 1000, time: (30 * 60) * 1000 });
+			const colector = message.channel.createMessageCollector(msg => msg.guild.game.jugadores.includes(msg.author.id) && turno(msg.author.id) === msg.guild.game.gameStatus().currentPlayer && !isNaN(msg.content) && (Number(msg.content) >= 1 && Number(msg.content) <= 7) && message.guild.game.canPlay(parseInt(msg.content) - 1) && !message.guild.game.gameStatus().gameOver || (msg.guild.game.jugadores.includes(msg.author.id) && msg.content == 'surrender'), { idle: (3 * 60) * 1000, time: (30 * 60) * 1000 });
 
 			colector.on('collect', async (msg) => {
 
@@ -123,8 +144,7 @@ module.exports = class Comando extends Command {
 						attachFiles: att,
 						imageURL: 'attachment://4enraya.gif'
 					})
-					message.author.TURNO = undefined;
-					usuario.TURNO = undefined
+					turnosPorId.delete(message.guild.id)
 					msg.guild.game = undefined;
 					return colector.stop();
 				}
@@ -138,8 +158,7 @@ module.exports = class Comando extends Command {
 						attachFiles: att,
 						imageURL: 'attachment://4enraya.gif'
 					})
-					message.author.TURNO = undefined;
-					usuario.TURNO = undefined
+					turnosPorId.delete(message.guild.id)
 					msg.guild.game = undefined;
 					return colector.stop();
 				}
@@ -150,7 +169,7 @@ module.exports = class Comando extends Command {
 				await sendEmbed({
 					channel: msg.channel,
 					attachFiles: att,
-					description: `😆 | Turno de ${message.author.TURNO == msg.author.TURNO ? usuario.tag : message.author.tag} [${msg.author.TURNO == 2 ? "`🔴`" : "`🟡`"}]`,
+					description: `😆 | Turno de ${turno(message.author.id) == turno(msg.author.id) ? usuario.tag : message.author.tag} [${turno(msg.author.id) == 2 ? "`🔴`" : "`🟡`"}]`,
 					imageURL: 'attachment://4enraya.gif'
 				})
 			})
@@ -163,8 +182,7 @@ module.exports = class Comando extends Command {
 						attachFiles: new MessageAttachment(await displayConnectFourBoard(displayBoard(message.guild.game.ascii()), message.guild.game, client.imagenes), '4enraya.gif'),
 						imageURL: 'attachment://4enraya.gif'
 					})
-					message.author.TURNO = undefined;
-					usuario.TURNO = undefined
+					turnosPorId.delete(message.guild.id)
 					return message.guild.game = undefined;
 				}
 
@@ -175,8 +193,7 @@ module.exports = class Comando extends Command {
 						attachFiles: new MessageAttachment(await displayConnectFourBoard(displayBoard(message.guild.game.ascii()), message.guild.game, client.imagenes), '4enraya.gif'),
 						imageURL: 'attachment://4enraya.gif'
 					})
-					message.author.TURNO = undefined;
-					usuario.TURNO = undefined
+					turnosPorId.delete(message.guild.id)
 					return message.guild.game = undefined;
 				}
 
@@ -187,8 +204,7 @@ module.exports = class Comando extends Command {
 						attachFiles: new MessageAttachment(await displayConnectFourBoard(displayBoard(message.guild.game.ascii()), message.guild.game, client.imagenes), '4enraya.gif'),
 						imageURL: 'attachment://4enraya.gif'
 					})
-					message.author.TURNO = undefined;
-					usuario.TURNO = undefined
+					turnosPorId.delete(message.guild.id)
 					return message.guild.game = undefined;
 				}
 			})
