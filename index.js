@@ -76,7 +76,7 @@ const client = new Discord.Client(
 			intents: 1701
 		},
 		cacheGuilds: true,
-		cacheOverwrites: false,
+		cacheOverwrites: true,
 		cacheRoles: true,
 		cacheEmojis: false,
 		cachePresences: false,
