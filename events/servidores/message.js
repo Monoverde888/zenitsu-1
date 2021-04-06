@@ -98,7 +98,7 @@ module.exports = async (client, message) => {
         let check = [];
         if (commandfile.botPermissions.channel?.length) {
 
-            let permisos = message.channel.permissionsFor(message.client.user);
+            let permisos = message.channel.permissionsFor(message.guild.me);
             let permisosN = commandfile.botPermissions.channel;
             for await (let i of permisosN) {
                 if (!permisos.has(i)) {
