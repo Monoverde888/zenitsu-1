@@ -43,7 +43,7 @@
         "node-svg2img": "^1.1.0",
         "node-zip": "^1.1.1",
         "npm": "^7.6.0",
-        "opusscript": "0.0.7",
+        "opusscript": "0.0.8",
         "puppeteer": "^8.0.0",
         "save-pixels": "^2.3.4",
         "sharp": "^0.27.2",
