@@ -135,7 +135,8 @@ client.kaomojis = ['(* ^ ω ^)', '(o^▽^o)', 'ヽ(・∀・)ﾉ', '(o･ω･o)
 client.devseval = [
 	'507367752391196682', // Lil MARCROCK22
 	'577000793094488085', // AndreMor
-	'366779196975874049' // Socram09
+	'366779196975874049', // Socram09
+	'390726024536653865' // zPablo 鯉
 ];
 // eslint-disable-next-line no-unused-vars
 const Classes = require('./Utils/Classes.js');

@@ -10,7 +10,8 @@ const { loadImage } = require("canvas")
 
 module.exports = async (client) => {
 
-	await client.guilds.cache.get(`764529869739655198`).emojis.fetch();
+	const guild = await client.guilds.fetch(`764529869739655198`);
+	await guild.emojis.fetch();
 
 	client.user.setPresence({
 		status: "dnd",
