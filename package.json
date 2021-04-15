@@ -44,6 +44,7 @@
         "node-zip": "^1.1.1",
         "npm": "^7.6.0",
         "opusscript": "0.0.8",
+        "ora": "^5.4.0",
         "puppeteer": "^8.0.0",
         "save-pixels": "^2.3.4",
         "sharp": "^0.28.1",
