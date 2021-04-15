@@ -81,7 +81,7 @@ const client = new Discord.Client(
 		cacheEmojis: false,
 		cachePresences: false,
 		cacheChannels: true,
-		disabledEvents: [
+		/*disabledEvents: [
 			'RESUMED',
 			'GUILD_CREATE',
 			'GUILD_DELETE',
@@ -114,7 +114,7 @@ const client = new Discord.Client(
 			'VOICE_STATE_UPDATE',
 			'VOICE_SERVER_UPDATE',
 			'WEBHOOKS_UPDATE',
-		]
+		]*/
 	}
 );
 
