@@ -81,11 +81,8 @@ const client = new Discord.Client(
 		cacheEmojis: false,
 		cachePresences: false,
 		cacheChannels: true,
-		/*disabledEvents: [
+		disabledEvents: [
 			'RESUMED',
-			'GUILD_CREATE',
-			'GUILD_DELETE',
-			'GUILD_UPDATE',
 			'INVITE_CREATE',
 			'INVITE_DELETE',
 			'GUILD_MEMBER_ADD',
@@ -93,15 +90,9 @@ const client = new Discord.Client(
 			'GUILD_MEMBER_UPDATE',
 			'GUILD_MEMBERS_CHUNK',
 			'GUILD_INTEGRATIONS_UPDATE',
-			'GUILD_ROLE_CREATE',
-			'GUILD_ROLE_DELETE',
-			'GUILD_ROLE_UPDATE',
 			'GUILD_BAN_ADD',
 			'GUILD_BAN_REMOVE',
 			'GUILD_EMOJIS_UPDATE',
-			'CHANNEL_CREATE',
-			'CHANNEL_DELETE',
-			'CHANNEL_UPDATE',
 			'CHANNEL_PINS_UPDATE',
 			'MESSAGE_UPDATE',
 			'MESSAGE_DELETE_BULK',
@@ -114,7 +105,7 @@ const client = new Discord.Client(
 			'VOICE_STATE_UPDATE',
 			'VOICE_SERVER_UPDATE',
 			'WEBHOOKS_UPDATE',
-		]*/
+		]
 	}
 );
 
