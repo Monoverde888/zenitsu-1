@@ -2,7 +2,7 @@
 const { MessageEmbed, Client, Presence, Util } = require('discord.js-light'),
 	model = require('../../models/temp')
 require('dotenv').config();
-const { loadImage } = require("canvas")
+const { loadImage } = require("canvas");
 /**
  * 
  * @param {Client} client 
