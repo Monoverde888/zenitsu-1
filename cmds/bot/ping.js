@@ -1,4 +1,4 @@
-
+const mongoose = require('mongoose')
 const Command = require('../../Utils/Classes').Command;
 module.exports = class Comando extends Command {
     constructor() {
@@ -13,7 +13,7 @@ module.exports = class Comando extends Command {
 
         let date = Date.now();
         let ping_db = await new Promise((r, j) => {
-            require('mongoose').connection.db.admin().ping((err, result) => (err || !result) ? j(err || result) : r(Date.now() - date))
+            mongoose.connection.db.admin().ping((err, result) => (err || !result) ? j(err || result) : r(Date.now() - date))
         });
 
         date = Date.now();
