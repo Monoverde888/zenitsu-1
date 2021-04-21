@@ -1,7 +1,7 @@
 import { config } from 'dotenv'
 config();
 import { ShardingManager } from 'discord.js-light';
-const sharder = new ShardingManager(__dirname + '/index.ts', {
+const sharder = new ShardingManager(__filename.endsWith('js') ? __dirname + '/index.js' : __dirname + '/index.ts', {
     token: process.env.DISCORD_TOKEN,
     totalShards: "auto",
     execArgv: ['--expose-gc', '--optimize_for_size', '--max_old_space_size=200', 'node_modules/ts-node/dist/bin.js']
