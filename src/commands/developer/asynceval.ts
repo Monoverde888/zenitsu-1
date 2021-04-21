@@ -9,6 +9,7 @@ class Comando extends Command {
         super();
         this.name = 'asynceval';
         this.category = 'developer';
+        this.alias = ['ae'];
     };
 
     async run({ client, message, embedResponse, args, Hora }: commandinterface) {
