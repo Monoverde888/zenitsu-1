@@ -2,6 +2,7 @@ import Command from '../../Utils/Classes/command';
 import commandinterface from '../../Utils/Interfaces/run'
 import { inspect } from 'util'
 import { Util, MessageEmbed } from 'discord.js-light'
+import replace from '../../Utils/Functions/replace'
 
 class Comando extends Command {
 
@@ -15,9 +16,8 @@ class Comando extends Command {
 
     async run({ client, message, embedResponse, args, Hora }: commandinterface) {
 
-        const replace = (t: string, a: any) => t//require('../../Utils/Functions.js');
-
         try {
+
             let code = args.join(" ");
             let evalued = await eval(`(async () => { ${code} })()`);
             let TYPE = typeof (evalued)
