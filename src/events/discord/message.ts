@@ -62,8 +62,7 @@ async function event(client: Cliente, message: Message): Promise<any> {
     const args = message.content.slice(prefix.length).trim().split(/ +/);
     const command = args.shift().toLowerCase();
     const filter = (e: Comando) => {
-        if (message.guild.id != '645463565813284865' && e.category == 'servidor') return false;
-        else if (e.dev && (!(client.devs.includes(message.author.id)))) return false;
+        if (e.dev && !(client.devs.includes(message.author.id))) return false;
         return true;
     };
 
