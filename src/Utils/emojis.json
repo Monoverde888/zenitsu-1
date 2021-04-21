@@ -1,0 +1,9 @@
+{
+    "musica": {
+        "stop": "⏹️",
+        "pause_resume": "⏯️",
+        "loop": "🔁",
+        "skip": "⏭️",
+        "autoplay": "♾️"
+    }
+}
