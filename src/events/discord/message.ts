@@ -5,12 +5,6 @@ import Cliente from '../../Utils/Classes/client';
 const cooldowns: Collection<string, Collection<string, number>> = new Collection();
 import * as langjson from '../../Utils/lang.json';
 import { default as ms } from '@fabricio-191/ms';
-//Only 1 command at a time.
-const internalCooldown = new Set();
-
-setInterval(() => {
-    internalCooldown.clear();
-}, 90000)
 
 async function event(client: Cliente, message: Message): Promise<any> {
 
@@ -64,7 +58,6 @@ async function event(client: Cliente, message: Message): Promise<any> {
     const requestPrefix = await client.prefix.cacheOrFetch(message.guild.id);
     const prefix = requestPrefix.prefix;
     if (!message.content.startsWith(prefix)) return;
-    if (internalCooldown.has(message.author.id)) return;
 
     const args = message.content.slice(prefix.length).trim().split(/ +/);
     const command = args.shift().toLowerCase();
@@ -176,17 +169,12 @@ async function event(client: Cliente, message: Message): Promise<any> {
         }
 
         try {
-            internalCooldown.add(message.author.id);
             await comando.run({ message, args, embedResponse, Hora, client, lang, langjson })
         }
 
         catch (e) {
             console.log(e);
             return message.channel.send(langjson.messages[lang + '_error'].replace('{ERROR}', (e.message || e?.toString() || e)));
-        }
-
-        finally {
-            internalCooldown.delete(message.guild.id);
         }
 
     }
