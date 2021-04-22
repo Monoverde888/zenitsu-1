@@ -59,6 +59,7 @@ async function event(client: Cliente) {
         'OpenSansEmoji.ttf': `📰`,
         'README.md': `👉`,
         'package.json': `🗃️`,
+        'tsconfig.json': `🗃️`
     };
 
     for (let file of preRes) {
