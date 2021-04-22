@@ -71,7 +71,7 @@ export default class Comando extends Command {
 
             await client.sendEmbed({
                 channel: message.channel,
-                description: langjson.commands.connect4[lang + '_wait_user'].replace('{USER}', usuario.id)
+                description: langjson.commands.connect4[lang + '_wait_user'].replace('{USER}', usuario.tag)
             });
 
             let respuesta = await awaitMessage({ channel: message.channel, filter: (m: Message) => m.author.id == usuario.id && ['s', 'n'].some(item => item == m.content), time: (1 * 60) * 1000, max: 1 }).catch(() => { })

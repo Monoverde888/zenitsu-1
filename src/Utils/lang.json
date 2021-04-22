@@ -110,7 +110,7 @@
             "es_start": "Empieza {USER}, elige un numero del 1 al 7. [`🔴`]",
             "en_start": "Begin {USER}, Choose a number from 1 to 7. [`🔴`]",
             "es_win": "<:uh:829390140832874506> | {USER} ha ganado la partida!",
-            "en_win": "<:uh:829390140832874506> | {USER} win the game!",
+            "en_win": "<:uh:829390140832874506> | {USER} won the game!",
             "es_draw": "<:wtdDud:829390621894508544> | Un empate entre {USER_CONNECT4_AI_FIRST_USER_PLAYER} y {USER_CONNECT4_AI_SECOND_USER_PLAYER}.",
             "en_draw": "<:wtdDud:829390621894508544> | A draw between {USER_CONNECT4_AI_FIRST_USER_PLAYER} and {USER_CONNECT4_AI_SECOND_USER_PLAYER}.",
             "es_turn": "Turno de {USER} [`GAME_USER_CONNECT4_AI_PLAYER_TURNS`]",
