@@ -18,10 +18,10 @@ class Comando extends Command {
         if (!user)
             return embedResponse('menciona xd')
 
-        if (!args[0])
+        if (!args[1])
             return embedResponse('y la insignia pa cuando po\'')
 
-        let data = await model.findOneAndUpdate({ id: user.id }, { $addToSet: { insignias: args[0] } }, { new: true });
+        let data = await model.findOneAndUpdate({ id: user.id }, { $addToSet: { insignias: args[1] } }, { new: true });
 
         return embedResponse(`Insignia añadida a ${user.tag}\n\nActuales: ${data.insignias.join(', ')}`);
 

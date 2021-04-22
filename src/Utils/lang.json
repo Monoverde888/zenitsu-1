@@ -9,7 +9,11 @@
         "es_permisos_user_guild": "<:cancel:804368628861763664> | Ups, te faltan algun/algunos permiso(s) en el servidor: {PERMISOS}",
         "en_permisos_user_guild": "<:cancel:804368628861763664> | Oops, You are missing some permissions on the guild: {PERMISOS}",
         "es_permisos_user_channel": "<:cancel:804368628861763664> | Ups, te faltan algun/algunos permiso(s) en el canal: {PERMISOS}",
-        "en_permisos_user_channel": "<:cancel:804368628861763664> | Oops, You are missing some permissions on the channel: {PERMISOS}"
+        "en_permisos_user_channel": "<:cancel:804368628861763664> | Oops, You are missing some permissions on the channel: {PERMISOS}",
+        "es_error": "Algo pasó, aquí un mensaje: {ERROR}",
+        "en_error": "Something happened, here's a debug: {ERROR}",
+        "es_cooldown": "Por favor espera {TIME} antes de usar `{COMMAND}`",
+        "en_cooldown": "Please wait {TIME} before use `{COMMAND}`"
     },
     "music": {
         "es_music_request": "Unete a un canal de voz y pide una canción.",
@@ -110,7 +114,7 @@
             "es_start": "Empieza {USER}, elige un numero del 1 al 7. [`🔴`]",
             "en_start": "Begin {USER}, Choose a number from 1 to 7. [`🔴`]",
             "es_win": "<:uh:829390140832874506> | {USER} ha ganado la partida!",
-            "en_win": "<:uh:829390140832874506> | {USER} win the game!",
+            "en_win": "<:uh:829390140832874506> | {USER} won the game!",
             "es_draw": "<:wtdDud:829390621894508544> | Un empate entre {USER_CONNECT4_AI_FIRST_USER_PLAYER} y {USER_CONNECT4_AI_SECOND_USER_PLAYER}.",
             "en_draw": "<:wtdDud:829390621894508544> | A draw between {USER_CONNECT4_AI_FIRST_USER_PLAYER} and {USER_CONNECT4_AI_SECOND_USER_PLAYER}.",
             "es_turn": "Turno de {USER} [`GAME_USER_CONNECT4_AI_PLAYER_TURNS`]",
@@ -181,6 +185,28 @@
             "en_start": "{FICHA} | Begin {USER}, Choose a number from 1 to 9.",
             "es_game_over": "<:wtdDud:829390621894508544> | Juego terminado...",
             "en_game_over": "<:wtdDud:829390621894508544> | Game over..."
+        },
+        "help": {
+            "es_categories": [
+                "Utiles",
+                "Diversión",
+                "Moderación",
+                "Bot",
+                "Administración"
+            ],
+            "en_categories": [
+                "Utils",
+                "Fun",
+                "Mod",
+                "Bot",
+                "Admin"
+            ]
+        },
+        "djs": {
+            "es_what": "<a:CatLoad:804368444526297109> | ¿Que quieres buscar en la documentación de discord.js?",
+            "en_what": "<a:CatLoad:804368444526297109> | What do you want to look for in the Discord.js documentation?",
+            "es_no_result": "<:cancel:804368628861763664> | Sin resultados.",
+            "en_no_result": "<:cancel:804368628861763664> | No results."
         }
     }
 }

@@ -11,7 +11,7 @@ export default class Comando extends Command {
         super()
         this.name = "tictactoe"
         this.alias = ['ttt', 'tresenraya']
-        this.category = 'diversion'
+        this.category = 'fun'
     }
     async run({ message, client, lang, langjson }: run) {
 

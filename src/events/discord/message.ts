@@ -1,4 +1,4 @@
-import { Collection, Message, MessageEmbed, TextChannel, NewsChannel, DMChannel, ChannelResolvable } from 'discord.js-light';
+import { WebhookClient, Collection, Message, MessageEmbed, TextChannel, NewsChannel, DMChannel, ChannelResolvable } from 'discord.js-light';
 import model from '../../models/music'
 import Comando from '../../Utils/Classes/command';
 import Cliente from '../../Utils/Classes/client';
@@ -13,12 +13,12 @@ async function event(client: Cliente, message: Message): Promise<any> {
     if (!(message.channel instanceof TextChannel) && !(message.channel instanceof NewsChannel))
         return;
 
-    const data = await model.findOne({ guild: message.guild.id });
+    //const data = await model.findOne({ guild: message.guild.id });
 
-    if (!((message.channel as TextChannel).permissionsFor(message.guild.me).has('SEND_MESSAGES')) && !((message.channel as TextChannel).permissionsFor(message.guild.me).has('EMBED_LINKS')))
+    if (!((message.channel as TextChannel).permissionsFor(message.guild.me).has('SEND_MESSAGES')) || !((message.channel as TextChannel).permissionsFor(message.guild.me).has('EMBED_LINKS')))
         return;
 
-    if (data && (data.channel == message.channel.id) && (message.guild.me.voice.channel ? message.member.voice.channelID == message.guild.me.voice.channelID : message.member.voice.channelID)) {
+    /*if (data && (data.channel == message.channel.id) && (message.guild.me.voice.channel ? message.member.voice.channelID == message.guild.me.voice.channelID : message.member.voice.channelID)) {
         client.music.play(message, message.content).catch(() => {
 
         })
@@ -26,7 +26,7 @@ async function event(client: Cliente, message: Message): Promise<any> {
                 message.delete().catch(() => { })
             })
         return;
-    }
+    }*/
 
     const requestLang = await client.lang.cacheOrFetch(message.guild.id);
     const lang: 'es' | 'en' = requestLang.lang
@@ -82,8 +82,8 @@ async function event(client: Cliente, message: Message): Promise<any> {
             if (timestamps.has(message.author.id)) {
                 const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
                 if (now < expirationTime) {
-                    const timeLeft = (expirationTime - now) / 1000;
-                    return message.reply(`Por favor espera ${timeLeft.toFixed(1)} segundo(s) antes de usar \`${command}\`.`);
+                    const timeLeft = (expirationTime - now);
+                    return message.reply(langjson.messages[lang + '_cooldown'].replace('{TIME}', ms(timeLeft, { long: true, language: lang })).replace('{COMMAND}', command));
                 }
             }
 
@@ -168,7 +168,22 @@ async function event(client: Cliente, message: Message): Promise<any> {
 
         }
 
-        return comando.run({ message, args, embedResponse, Hora, client, lang, langjson })
+        try {
+            await comando.run({ message, args, embedResponse, Hora, client, lang, langjson })
+        }
+
+        catch (e) {
+            console.log(e);
+            new WebhookClient(process.env.WEBHOOKID, process.env.WEBHOOKTOKEN).send(
+                new MessageEmbed()
+                    .setColor(client.color)
+                    .setTimestamp()
+                    .setDescription((e.stack || e.message || e)?.slice(0, 2048) || e)
+                    .addField('Comando usado', command)
+                    .setAuthor(message.content.slice(0, 1000))
+            )
+            return message.channel.send(langjson.messages[lang + '_error'].replace('{ERROR}', (e.message || e?.toString() || e)));
+        }
 
     }
 
@@ -210,7 +225,7 @@ function Hora(date = Date.now(), dia = false) {
             mes = new Date(date - ms('4h')).getMonth() + 1,
             año = new Date(date - ms('4h')).getFullYear()
 
-        return `${horaS}:${minutosS}:${segundosS} - ${dia}/${mes}/${año}`
+        return `${horaS}: ${minutosS}: ${segundosS} - ${dia} /${mes}/${año} `
 
     }
 
