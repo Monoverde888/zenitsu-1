@@ -140,13 +140,13 @@ export default class Comando extends Command {
 
             if (usuario.id != client.user.id) {
 
-                return games.get(msg.guild.id).jugadores.includes(msg.author.id)
+                return games.get(msg.guild.id).jugadores?.includes(msg.author.id)
                     && turno(msg.author.id) === games.get(msg.guild.id).gameStatus().currentPlayer
                     && !isNaN(Number(msg.content))
                     && (Number(msg.content) >= 1
                         && Number(msg.content) <= 7)
                     && games.get(msg.guild.id).canPlay(parseInt(msg.content) - 1)
-                    && !games.get(msg.guild.id).gameStatus().gameOver || games.get(msg.guild.id).jugadores.includes(msg.author.id)
+                    && !games.get(msg.guild.id).gameStatus().gameOver || games.get(msg.guild.id)?.jugadores.includes(msg.author.id)
                     && msg.content == 'surrender'
 
             }
@@ -158,7 +158,7 @@ export default class Comando extends Command {
                     && Number(msg.content) <= 7)
                 && games.get(message.guild.id).canPlay(parseInt(msg.content) - 1)
                 && !games.get(message.guild.id).gameStatus().gameOver
-                || (games.get(message.guild.id).jugadores.includes(msg.author.id) && msg.content == 'surrender')
+                || (games.get(message.guild.id)?.jugadores.includes(msg.author.id) && msg.content == 'surrender')
 
         }, {
             idle: ((3 * 60) * 1000), time: ((30 * 60) * 1000)
@@ -242,7 +242,7 @@ export default class Comando extends Command {
                 await client.sendEmbed({
                     channel: msg.channel,
                     attachFiles: att,
-                    description: langjson.commands.connect4[lang + '_turn'].replace('{USER}', message.author.tag).replace('GAME_USER_CONNECT4_AI_PLAYER_TURNS', '🔴'),
+                    description: langjson.commands.connect4[lang + '_turn'].replace('{USER}', message.author.tag).replace('{GAME_USER_CONNECT4_AI_PLAYER_TURNS}', '🔴'),
                     imageURL: 'attachment://4enraya.gif',
                     footerText: args[0]
                 })
