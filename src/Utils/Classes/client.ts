@@ -30,6 +30,7 @@ class Cliente extends Client {
     constructor(args: ClientOptions) {
         super(args);
         this.login();
+        this.dbl = new dbla(process.env.DBLTOKEN, this);
         this.loadEvents('discord');
         this.loadEvents('distube');
         this.loadCommands();
