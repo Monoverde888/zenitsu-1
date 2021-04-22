@@ -18,7 +18,7 @@ class Comando extends Command {
         let embedHelp = new MessageEmbed()
             .setColor(client.color)
             .setTimestamp()
-            //.addField(categories[0], client.commands.filter(a => a.category === 'utiles').map(a => `\`${a.name}\``).join(', '))
+            .addField(categories[0], client.commands.filter(a => a.category === 'utils').map(a => `\`${a.name}\``).join(', '))
             .addField(categories[1], client.commands.filter(a => a.category === 'fun').map(a => `\`${a.name}\``).join(', '))
             //.addField(categories[2], client.commands.filter(a => a.category === 'mod').map(a => `\`${a.name}\``).join(', '))
             .addField(categories[3], client.commands.filter(a => a.category === 'bot').map(a => `\`${a.name}\``).join(', '))

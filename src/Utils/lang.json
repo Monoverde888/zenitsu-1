@@ -201,6 +201,12 @@
                 "Bot",
                 "Admin"
             ]
+        },
+        "djs": {
+            "es_what": "<a:CatLoad:804368444526297109> | ¿Que quieres buscar en la documentación de discord.js?",
+            "en_what": "<a:CatLoad:804368444526297109> | What do you want to look for in the Discord.js documentation?",
+            "es_no_result": "<:cancel:804368628861763664> | Sin resultados.",
+            "en_no_result": "<:cancel:804368628861763664> | No results."
         }
     }
 }
