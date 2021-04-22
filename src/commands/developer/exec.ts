@@ -1,6 +1,7 @@
 const { promisify } = require('util');
 import Command from '../../Utils/Classes/command';
 import commandinterface from '../../Utils/Interfaces/run'
+import child from 'child_process'
 
 class Comando extends Command {
 
@@ -19,7 +20,7 @@ class Comando extends Command {
 
         try {
 
-            const res = await promisify(require('child_process').exec)(args.join(' '));
+            const res = await promisify(child.exec)(args.join(' '));
 
             if (res.stderr.length) {
                 message.channel.send('STDERR:\n' + res.stderr, { split: { char: '', maxLength: 1950 }, code: '' });
