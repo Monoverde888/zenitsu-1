@@ -5,6 +5,12 @@ import Cliente from '../../Utils/Classes/client';
 const cooldowns: Collection<string, Collection<string, number>> = new Collection();
 import * as langjson from '../../Utils/lang.json';
 import { default as ms } from '@fabricio-191/ms';
+//Only 1 command at a time.
+const internalCooldown = new Set();
+
+setInterval(() => {
+    internalCooldown.clear();
+}, 90000)
 
 async function event(client: Cliente, message: Message): Promise<any> {
 
@@ -13,12 +19,12 @@ async function event(client: Cliente, message: Message): Promise<any> {
     if (!(message.channel instanceof TextChannel) && !(message.channel instanceof NewsChannel))
         return;
 
-    const data = await model.findOne({ guild: message.guild.id });
+    //const data = await model.findOne({ guild: message.guild.id });
 
     if (!((message.channel as TextChannel).permissionsFor(message.guild.me).has('SEND_MESSAGES')) || !((message.channel as TextChannel).permissionsFor(message.guild.me).has('EMBED_LINKS')))
         return;
 
-    if (data && (data.channel == message.channel.id) && (message.guild.me.voice.channel ? message.member.voice.channelID == message.guild.me.voice.channelID : message.member.voice.channelID)) {
+    /*if (data && (data.channel == message.channel.id) && (message.guild.me.voice.channel ? message.member.voice.channelID == message.guild.me.voice.channelID : message.member.voice.channelID)) {
         client.music.play(message, message.content).catch(() => {
 
         })
@@ -26,7 +32,7 @@ async function event(client: Cliente, message: Message): Promise<any> {
                 message.delete().catch(() => { })
             })
         return;
-    }
+    }*/
 
     const requestLang = await client.lang.cacheOrFetch(message.guild.id);
     const lang: 'es' | 'en' = requestLang.lang
@@ -58,6 +64,7 @@ async function event(client: Cliente, message: Message): Promise<any> {
     const requestPrefix = await client.prefix.cacheOrFetch(message.guild.id);
     const prefix = requestPrefix.prefix;
     if (!message.content.startsWith(prefix)) return;
+    if (internalCooldown.has(message.author.id)) return;
 
     const args = message.content.slice(prefix.length).trim().split(/ +/);
     const command = args.shift().toLowerCase();
@@ -82,8 +89,8 @@ async function event(client: Cliente, message: Message): Promise<any> {
             if (timestamps.has(message.author.id)) {
                 const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
                 if (now < expirationTime) {
-                    const timeLeft = (expirationTime - now) / 1000;
-                    return message.reply(`Por favor espera ${timeLeft.toFixed(1)} segundo(s) antes de usar \`${command}\`.`);
+                    const timeLeft = (expirationTime - now);
+                    return message.reply(langjson.messages[lang + '_cooldown'].replace('{TIME}', ms(timeLeft, { long: true, language: lang })).replace('{COMMAND}', command));
                 }
             }
 
@@ -168,7 +175,19 @@ async function event(client: Cliente, message: Message): Promise<any> {
 
         }
 
-        return comando.run({ message, args, embedResponse, Hora, client, lang, langjson })
+        try {
+            internalCooldown.add(message.author.id);
+            await comando.run({ message, args, embedResponse, Hora, client, lang, langjson })
+        }
+
+        catch (e) {
+            console.log(e);
+            return message.channel.send(langjson.messages[lang + '_error'].replace('{ERROR}', (e.message || e?.toString() || e)));
+        }
+
+        finally {
+            internalCooldown.delete(message.guild.id);
+        }
 
     }
 
@@ -210,7 +229,7 @@ function Hora(date = Date.now(), dia = false) {
             mes = new Date(date - ms('4h')).getMonth() + 1,
             año = new Date(date - ms('4h')).getFullYear()
 
-        return `${horaS}:${minutosS}:${segundosS} - ${dia}/${mes}/${año}`
+        return `${horaS}: ${minutosS}: ${segundosS} - ${dia} /${mes}/${año} `
 
     }
 

@@ -9,7 +9,11 @@
         "es_permisos_user_guild": "<:cancel:804368628861763664> | Ups, te faltan algun/algunos permiso(s) en el servidor: {PERMISOS}",
         "en_permisos_user_guild": "<:cancel:804368628861763664> | Oops, You are missing some permissions on the guild: {PERMISOS}",
         "es_permisos_user_channel": "<:cancel:804368628861763664> | Ups, te faltan algun/algunos permiso(s) en el canal: {PERMISOS}",
-        "en_permisos_user_channel": "<:cancel:804368628861763664> | Oops, You are missing some permissions on the channel: {PERMISOS}"
+        "en_permisos_user_channel": "<:cancel:804368628861763664> | Oops, You are missing some permissions on the channel: {PERMISOS}",
+        "es_error": "Algo pasó, aquí un mensaje: {ERROR}",
+        "en_error": "Something happened, here's a debug: {ERROR}",
+        "es_cooldown": "Por favor espera {TIME} antes de usar `{COMMAND}`",
+        "en_cooldown": "Please wait {TIME} before use `{COMMAND}`"
     },
     "music": {
         "es_music_request": "Unete a un canal de voz y pide una canción.",
