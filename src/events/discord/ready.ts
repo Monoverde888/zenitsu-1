@@ -5,7 +5,6 @@ import { writeFile } from 'fs/promises'
 import { join } from 'path'
 import axios from 'axios'
 import { TextChannel } from 'discord.js-light'
-import snipe from '../../models/snipe';
 async function get() {
 
     let fetch: string = await axios(`https://github.com/marcrock22/zenitsu`).then(res => res.data);
@@ -24,21 +23,9 @@ async function event(client: Cliente) {
     setInterval(async () => {
         client.setPresence();
 
-        //Delete snipes
-        const find = await snipe.find();
-        for (let data of find) {
-            if (!data.date || (data.date + 432000000 < Date.now())) //5 días.
-                await snipe.deleteOne({
-                    id: data.id,
-                    mensaje: data.mensaje,
-                    avatarURL: data.avatarURL,
-                    nombre: data.nombre,
-                    date: data.date
-                });
+        //Post stats to top.gg
+        await client.dbl.postStats(client.guilds.cache.size);
 
-            //Post stats to top.gg
-            await client.dbl.postStats(client.guilds.cache.size);
-        }
 
     }, ((60 * 30) * 1000));//30m
 
