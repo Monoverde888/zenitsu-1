@@ -181,6 +181,22 @@
             "en_start": "{FICHA} | Begin {USER}, Choose a number from 1 to 9.",
             "es_game_over": "<:wtdDud:829390621894508544> | Juego terminado...",
             "en_game_over": "<:wtdDud:829390621894508544> | Game over..."
+        },
+        "help": {
+            "es_categories": [
+                "Utiles",
+                "Diversión",
+                "Moderación",
+                "Bot",
+                "Administración"
+            ],
+            "en_categories": [
+                "Utils",
+                "Fun",
+                "Mod",
+                "Bot",
+                "Admin"
+            ]
         }
     }
 }

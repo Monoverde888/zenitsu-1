@@ -8,7 +8,7 @@ export default class Comando extends Command {
         super()
         this.name = "nicememe"
         this.alias = []
-        this.category = 'diversion'
+        this.category = 'fun'
     }
     async run({ message, client, embedResponse, args }: run) {
 

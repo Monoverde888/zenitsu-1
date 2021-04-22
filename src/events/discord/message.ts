@@ -15,7 +15,7 @@ async function event(client: Cliente, message: Message): Promise<any> {
 
     const data = await model.findOne({ guild: message.guild.id });
 
-    if (!((message.channel as TextChannel).permissionsFor(message.guild.me).has('SEND_MESSAGES')) && !((message.channel as TextChannel).permissionsFor(message.guild.me).has('EMBED_LINKS')))
+    if (!((message.channel as TextChannel).permissionsFor(message.guild.me).has('SEND_MESSAGES')) || !((message.channel as TextChannel).permissionsFor(message.guild.me).has('EMBED_LINKS')))
         return;
 
     if (data && (data.channel == message.channel.id) && (message.guild.me.voice.channel ? message.member.voice.channelID == message.guild.me.voice.channelID : message.member.voice.channelID)) {

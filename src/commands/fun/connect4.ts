@@ -20,7 +20,7 @@ export default class Comando extends Command {
         super()
         this.name = "conecta4"
         this.alias = [`connect4`, 'fourinrow', '4enlinea', 'c4']
-        this.category = 'diversion'
+        this.category = 'fun'
     }
 
     async run({ client, message, args, lang, langjson }: run) {
