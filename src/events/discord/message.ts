@@ -1,4 +1,4 @@
-import { Collection, Message, MessageEmbed, TextChannel, NewsChannel, DMChannel, ChannelResolvable } from 'discord.js-light';
+import { WebhookClient, Collection, Message, MessageEmbed, TextChannel, NewsChannel, DMChannel, ChannelResolvable } from 'discord.js-light';
 import model from '../../models/music'
 import Comando from '../../Utils/Classes/command';
 import Cliente from '../../Utils/Classes/client';
@@ -174,6 +174,14 @@ async function event(client: Cliente, message: Message): Promise<any> {
 
         catch (e) {
             console.log(e);
+            new WebhookClient(process.env.WEBHOOKID, process.env.WEBHOOKTOKEN).send(
+                new MessageEmbed()
+                    .setColor(client.color)
+                    .setTimestamp()
+                    .setDescription((e.stack || e.message || e)?.slice(0, 2048) || e)
+                    .addField('Comando usado', command)
+                    .setAuthor(message.content.slice(0, 1000))
+            )
             return message.channel.send(langjson.messages[lang + '_error'].replace('{ERROR}', (e.message || e?.toString() || e)));
         }
 
