@@ -8,8 +8,8 @@
     "start": "npx tsc && node dist/server.js",
     "dev": "rm -rf ./dist && git pull && npx tsc && pm2 restart Zenitsu"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "MARCROCK22",
+  "license": "Apache-2.0",
   "dependencies": {
     "@discordjs/opus": "^0.5.0",
     "@fabricio-191/ms": "^1.0.4-1",
