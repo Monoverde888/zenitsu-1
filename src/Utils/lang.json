@@ -166,7 +166,7 @@
         },
         "tictactoe": {
             "es_game": "<:cancel:804368628861763664> | Menciona a un miembro del servidor para jugar.",
-            "en_game": "<:cancel: 804368628861763664> | Mention a server member to play.",
+            "en_game": "<:cancel:804368628861763664> | Mention a server member to play.",
             "es_curso": "<:cancel:804368628861763664> | Hay una partida en curso en este servidor.",
             "en_curso": "<:cancel:804368628861763664> | There is an ongoing game on this server.",
             "es_wait_user": "<a:waiting:804396292793040987> | {USER}, tienes un minuto para responder...\n¿Quieres jugar?: responde `s`\n¿No quieres jugar?: responde `n`",
