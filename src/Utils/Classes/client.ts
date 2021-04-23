@@ -15,14 +15,7 @@ import modelLang from '../../models/lang';
 import imagenesC from "../Interfaces/imagenes";
 import axios from 'axios';
 
-interface Snipes {
-    mensaje: string;
-    avatarURL: string;
-    nombre: string;
-}
-
-
-class Cliente extends Client {
+class Zenitsu extends Client {
     commands: Collection<string, Command>;
     dbl: dbla;
     imagenes: imagenesC | undefined;
@@ -33,7 +26,6 @@ class Cliente extends Client {
     lang: LangManager
     afk: AfkManager;
     music: Distube;
-    snipes: Collection<string, Snipes>
 
     constructor(args: ClientOptions) {
         super(args);
@@ -46,7 +38,6 @@ class Cliente extends Client {
         this.music = new Distube(this, {
             leaveOnFinish: true
         });
-        this.snipes = new Collection();
         this.lang = new LangManager(this);
         this.prefix = new PrefixManager(this);
         this.afk = new AfkManager(this);
@@ -342,7 +333,7 @@ class Cliente extends Client {
 
 };
 
-export default Cliente;
+export default Zenitsu;
 
 function palaqueue(array: string[], max: number = 2000) {
 

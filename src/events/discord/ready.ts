@@ -1,4 +1,4 @@
-import Cliente from "../../Utils/Classes/client";
+import Zenitsu from "../../Utils/Classes/client";
 import svg from 'node-svg2img'
 import { promisify } from 'util'
 import { writeFile } from 'fs/promises'
@@ -12,7 +12,7 @@ async function get() {
     return arr[arr.length - 1].match(/title=\"(([A-Z])|\.){1,99}\".data\-/gmi).map(item => item.slice(7).slice(0, -7)).slice(0)
 
 }
-async function event(client: Cliente) {
+async function event(client: Zenitsu) {
 
     const buffer = await promisify(svg)(`https://top.gg/api/widget/721080193678311554.svg`)
     const path = join(__dirname, '..', '..', '..', 'Images', 'topgg.png');

@@ -207,6 +207,10 @@
             "en_what": "<a:CatLoad:804368444526297109> | What do you want to look for in the Discord.js documentation?",
             "es_no_result": "<:cancel:804368628861763664> | Sin resultados.",
             "en_no_result": "<:cancel:804368628861763664> | No results."
+        },
+        "afk": {
+            "es_reason": "<:cancel:804368628861763664> | La razón debe tener menos de 250 caracteres.",
+            "en_reason": "<:cancel:804368628861763664> | The reason must have less than 250 characters."
         }
     }
 }

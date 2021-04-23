@@ -1,5 +1,5 @@
 import { Collection } from "discord.js-light";
-import Cliente from "./client";
+import Zenitsu from "./client";
 import afkModel from '../../models/afk'
 
 interface obj {
@@ -13,9 +13,9 @@ interface obj {
 class AfkManager {
 
     collection: Collection<string, obj>
-    client: Cliente;
+    client: Zenitsu;
 
-    constructor(client: Cliente) {
+    constructor(client: Zenitsu) {
         this.client = client;
         this.collection = new Collection();
     }

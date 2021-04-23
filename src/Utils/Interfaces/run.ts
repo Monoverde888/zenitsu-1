@@ -1,9 +1,9 @@
-import Cliente from '../Classes/client';
+import Zenitsu from '../Classes/client';
 import { Message, TextChannel } from 'discord.js-light';
 import json from '../lang.json'
 
 interface run {
-    client?: Cliente;
+    client?: Zenitsu;
     message?: Message;
     args?: string[];
     embedResponse?(descriptionhere: string, channel?: TextChannel): Promise<Message>;

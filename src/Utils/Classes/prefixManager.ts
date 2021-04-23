@@ -1,6 +1,6 @@
 import { Collection } from "discord.js-light";
 import prefixM from "../../models/prefix";
-import Cliente from "./client";
+import Zenitsu from "./client";
 
 interface obj {
     prefix: string;
@@ -11,9 +11,9 @@ interface obj {
 class PrefixManager {
 
     collection: Collection<string, obj>
-    client: Cliente;
+    client: Zenitsu;
 
-    constructor(client: Cliente) {
+    constructor(client: Zenitsu) {
         this.client = client;
         this.collection = new Collection();
     }

@@ -1,12 +1,12 @@
 import { WebhookClient, Collection, Message, MessageEmbed, TextChannel, NewsChannel, DMChannel, ChannelResolvable } from 'discord.js-light';
 import model from '../../models/music'
 import Comando from '../../Utils/Classes/command';
-import Cliente from '../../Utils/Classes/client';
+import Zenitsu from '../../Utils/Classes/client';
 const cooldowns: Collection<string, Collection<string, number>> = new Collection();
 import * as langjson from '../../Utils/lang.json';
 import { default as ms } from '@fabricio-191/ms';
 
-async function event(client: Cliente, message: Message): Promise<any> {
+async function event(client: Zenitsu, message: Message): Promise<any> {
 
     if (!message.guild || !message.author || !message.member || message.author.bot) return;
 
