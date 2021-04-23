@@ -5,7 +5,7 @@ export default class Comando extends Command {
     constructor() {
         super()
         this.name = "afk"
-        this.category = 'utiles'
+        this.category = 'utils'
     }
     async run({ client, message, args, lang, langjson }: run) {
 
