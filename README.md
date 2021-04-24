@@ -29,7 +29,7 @@
 </div>
 
 # Zenitsu
-## Un bot de Discord en español y ingles para entretener y moderar.
+## Un bot de Discord en español e inglés para entretener y moderar.
 
 - **Bot:** [Click aquí](https://top.gg/bot/721080193678311554)
 - **Soporte:** [Click aquí](https://discord.gg/hbSahh8)

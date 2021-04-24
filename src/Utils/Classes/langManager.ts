@@ -8,7 +8,7 @@ interface obj {
 }
 
 
-class PrefixManager {
+class LangManager {
 
     collection: Collection<string, obj>
     client: Zenitsu;
@@ -55,4 +55,4 @@ class PrefixManager {
 
 }
 
-export default PrefixManager;
+export default LangManager;
