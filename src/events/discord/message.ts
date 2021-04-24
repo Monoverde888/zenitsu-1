@@ -93,7 +93,7 @@ async function event(client: Zenitsu, message: Message): Promise<any> {
             }
         }
 
-        let check = comando.botPermissions.channel.filter(perm => !((message.channel as TextChannel).permissionsFor(message.guild.me).has(perm)))
+        let check = comando.botPermissions.channel.filter(perm => !((message.channel as TextChannel | NewsChannel).permissionsFor(message.guild.me).has(perm)))
 
         if (check.length) {
 
@@ -108,7 +108,7 @@ async function event(client: Zenitsu, message: Message): Promise<any> {
             return message.channel.send({ embed: embed })
         }
 
-        check = comando.memberPermissions.channel.filter(perm => !((message.channel as TextChannel).permissionsFor(message.member).has(perm)))
+        check = comando.memberPermissions.channel.filter(perm => !((message.channel as TextChannel | NewsChannel).permissionsFor(message.member).has(perm)))
 
         if (check.length) {
 
