@@ -21,6 +21,7 @@ export default class Comando extends Command {
         this.name = "conecta4"
         this.alias = [`connect4`, 'fourinrow', '4enlinea', 'c4']
         this.category = 'fun'
+        this.botPermissions.channel = ['ATTACH_FILES']
     }
 
     async run({ client, message, args, lang, langjson }: run) {

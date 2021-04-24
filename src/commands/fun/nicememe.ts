@@ -9,6 +9,7 @@ export default class Comando extends Command {
         this.name = "nicememe"
         this.alias = []
         this.category = 'fun'
+        this.botPermissions.channel = ['ATTACH_FILES']
     }
     async run({ message, client, embedResponse, args }: run) {
 

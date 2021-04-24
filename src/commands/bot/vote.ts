@@ -11,6 +11,7 @@ class Comando extends Command {
         this.name = "vote"
         this.category = 'bot'
         this.alias = ['topgg']
+        this.botPermissions.channel = ['ATTACH_FILES']
     };
 
     async run({ client, message }: commandinterface) {

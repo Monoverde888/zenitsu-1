@@ -12,6 +12,7 @@ export default class Comando extends Command {
         this.name = "tictactoe"
         this.alias = ['ttt', 'tresenraya']
         this.category = 'fun'
+        this.botPermissions.channel = ['ATTACH_FILES']
     }
     async run({ message, client, lang, langjson }: run) {
 
