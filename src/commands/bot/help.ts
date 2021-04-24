@@ -9,6 +9,7 @@ class Comando extends Command {
         this.name = "help"
         this.alias = ['h']
         this.category = 'bot'
+        this.botPermissions.channel = ['ATTACH_FILES'];
 
     }
     run({ client, message, langjson, lang }: commandinterface) {
