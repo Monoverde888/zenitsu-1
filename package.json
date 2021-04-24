@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npx tsc && node dist/server.js",
-    "dev": "rm -rf ./dist && git pull && npx tsc && pm2 restart Zenitsu"
+    "dev": "rm -rf ./dist && git pull && npx tsc && pm2 restart Zenitsu",
+    "runBot": "npx ts-node ./src/index.ts"
   },
   "author": "MARCROCK22",
   "license": "Apache-2.0",

@@ -93,9 +93,7 @@ async function event(client: Zenitsu, message: Message): Promise<any> {
             }
         }
 
-        let check = [];
-
-        check = comando.botPermissions.channel.filter(perm => !((message.channel as TextChannel).permissionsFor(message.guild.me).has(perm)))
+        let check = comando.botPermissions.channel.filter(perm => !((message.channel as TextChannel).permissionsFor(message.guild.me).has(perm)))
 
         if (check.length) {
 
