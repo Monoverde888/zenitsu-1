@@ -1,6 +1,6 @@
 import canvas from 'canvas';
 const { createCanvas } = canvas;
-import imagenesC from '../Interfaces/imagenes';
+import imagenesC from '../Interfaces/imagenes.js';
 import c4 from 'connect4-ai';
 import buffer from './toBuffer.js';
 import GIFEncoder from 'gifencoder'

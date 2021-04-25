@@ -1,4 +1,4 @@
-import Zenitsu from "../../Utils/Classes/client";
+import Zenitsu from "../../Utils/Classes/client.js";
 import svg from 'node-svg2img'
 import util from 'util';
 const { promisify } = util;

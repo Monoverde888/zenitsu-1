@@ -1,7 +1,7 @@
 import canvas from 'canvas';
 const { createCanvas } = canvas;
-import imagenesC from "../Interfaces/imagenes";
-import buffer from './toBuffer';
+import imagenesC from "../Interfaces/imagenes.js";
+import buffer from './toBuffer.js';
 import GIFEncoder from 'gifencoder'
 import util from 'util'
 const promisified = util.promisify(buffer)

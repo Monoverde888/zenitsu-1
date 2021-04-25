@@ -1,4 +1,4 @@
-import inte from '../Interfaces/run';
+import inte from '../Interfaces/run.js';
 import light from 'discord.js-light'
 
 class Command {

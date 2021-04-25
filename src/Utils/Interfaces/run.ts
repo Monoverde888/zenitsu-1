@@ -1,4 +1,4 @@
-import Zenitsu from '../Classes/client';
+import Zenitsu from '../../Utils/Classes/client.js';
 import pkg from 'discord.js-light'
 import langjson from '../lang.js'
 

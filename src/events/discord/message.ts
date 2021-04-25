@@ -1,7 +1,7 @@
 import ms from '@fabricio-191/ms';
 import light from 'discord.js-light';
 const { WebhookClient, Collection, MessageEmbed, TextChannel, NewsChannel } = light;
-import model from '../../models/music.js'
+//import model from '../../models/music.js'
 import Comando from '../../Utils/Classes/command.js';
 import Zenitsu from '../../Utils/Classes/client.js';
 const cooldowns: light.Collection<string, light.Collection<string, number>> = new Collection();

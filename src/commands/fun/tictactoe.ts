@@ -1,5 +1,5 @@
-import mapaCanvas from '../../Utils/Functions/mapaCanvas';
-import awaitMessage from '../../Utils/Functions/awaitMessage';
+import mapaCanvas from '../../Utils/Functions/mapaCanvas.js';
+import awaitMessage from '../../Utils/Functions/awaitMessage.js';
 import tresenraya from 'tresenraya';
 import light from 'discord.js-light';
 const { MessageAttachment } = light;

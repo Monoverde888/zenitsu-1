@@ -1,4 +1,4 @@
-import run from "../../Utils/Interfaces/run";
+import run from "../../Utils/Interfaces/run.js";
 import Command from '../../Utils/Classes/command.js';
 import c4top from '../../models/c4top.js'
 

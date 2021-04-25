@@ -1,4 +1,4 @@
-import run from "../../Utils/Interfaces/run";
+import run from "../../Utils/Interfaces/run.js";
 import light from 'discord.js-light';
 const { MessageEmbed } = light;
 import Command from '../../Utils/Classes/command.js';

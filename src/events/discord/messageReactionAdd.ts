@@ -1,4 +1,4 @@
-import Zenitsu from "../../Utils/Classes/client";
+import Zenitsu from "../../Utils/Classes/client.js";
 import model from '../../models/music.js'
 import emojis from '../../Utils/emojis.js'
 import light from 'discord.js-light';
