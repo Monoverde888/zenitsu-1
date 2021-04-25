@@ -2,7 +2,7 @@ import run from "../../Utils/Interfaces/run";
 import light from 'discord.js-light';
 const { MessageEmbed } = light;
 import Command from '../../Utils/Classes/command.js';
-import c4top from '../../models/c4top'
+import c4top from '../../models/c4top.js'
 
 export default class Comando extends Command {
     constructor() {
