@@ -1,6 +1,7 @@
-import Command from '../../Utils/Classes/command'
-import run from '../../Utils/Interfaces/run';
-import { MessageEmbed } from 'discord.js-light'
+import Command from '../../Utils/Classes/command.js'
+import run from '../../Utils/Interfaces/run.js';
+import light from 'discord.js-light';
+const { MessageEmbed } = light;
 export default class Comando extends Command {
     constructor() {
         super()

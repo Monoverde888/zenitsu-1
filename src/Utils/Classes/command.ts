@@ -1,5 +1,5 @@
 import inte from '../Interfaces/run';
-import { PermissionResolvable } from 'discord.js-light'
+import light from 'discord.js-light'
 
 class Command {
 
@@ -8,13 +8,13 @@ class Command {
     name: string
     category: string
     botPermissions: {
-        guild: PermissionResolvable[]
-        channel: PermissionResolvable[]
+        guild: light.PermissionResolvable[]
+        channel: light.PermissionResolvable[]
     }
     cooldown: number
     memberPermissions: {
-        guild: PermissionResolvable[]
-        channel: PermissionResolvable[]
+        guild: light.PermissionResolvable[]
+        channel: light.PermissionResolvable[]
     }
 
     constructor() {

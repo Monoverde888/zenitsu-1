@@ -1,4 +1,5 @@
-import { Schema, model, Document } from 'mongoose'
+import mongoose from 'mongoose';
+const { Schema, model } = mongoose;
 
 const Guild = new Schema({
     message: String,
@@ -6,7 +7,7 @@ const Guild = new Schema({
     channel: String
 })
 
-interface Music extends Document {
+interface Music extends mongoose.Document {
     message: string
     guild: string
     channel: string

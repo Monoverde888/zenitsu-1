@@ -1,6 +1,8 @@
-import { MessageEmbed } from 'discord.js-light';
-import Command from '../../Utils/Classes/command';
-import commandinterface from '../../Utils/Interfaces/run'
+import light from 'discord.js-light';
+const { MessageEmbed } = light;
+import Command from '../../Utils/Classes/command.js';
+import commandinterface from '../../Utils/Interfaces/run.js'
+import mongoose from 'mongoose'
 
 class Comando extends Command {
 
@@ -14,7 +16,7 @@ class Comando extends Command {
 
         let date = Date.now();
         let ping_db = await new Promise((r, j) => {
-            require('mongoose').connection.db.admin().ping((err, result) => (err || !result) ? j(err || result) : r(Date.now() - date))
+            mongoose.connection.db.admin().ping((err, result) => (err || !result) ? j(err || result) : r(Date.now() - date))
         });
 
         date = Date.now();

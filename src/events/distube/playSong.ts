@@ -1,7 +1,7 @@
-import { Message } from 'discord.js-light';
+import light from 'discord.js-light';
 import Zenitsu from '../../Utils/Classes/client';
 
-async function event(client: Zenitsu, message: Message, queue: any, song: any): Promise<any> {
+async function event(client: Zenitsu, message: light.Message, queue: any, song: any): Promise<any> {
 
     return client.updateMusic(message.guild.id);
 

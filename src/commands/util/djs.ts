@@ -1,6 +1,6 @@
-import Command from '../../Utils/Classes/command'
+import Command from '../../Utils/Classes/command.js'
 import fetch from 'axios'
-import run from '../../Utils/Interfaces/run';
+import run from '../../Utils/Interfaces/run.js';
 export default class Comando extends Command {
     constructor() {
         super()

@@ -1,10 +1,16 @@
 import Zenitsu from "../../Utils/Classes/client";
 import svg from 'node-svg2img'
-import { promisify } from 'util'
-import { writeFile } from 'fs/promises'
-import { join } from 'path'
+import util from 'util';
+const { promisify } = util;
+import fs from 'fs/promises';
+const { writeFile } = fs;
+import path from 'path';
+const { join } = path;
 import axios from 'axios'
-import { TextChannel } from 'discord.js-light'
+import light from 'discord.js-light';
+import common from '../../Utils/Functions/commons.js';
+const res = common(import.meta.url);
+const __dirname: string = res.__dirname;
 async function get() {
 
     let fetch: string = await axios(`https://github.com/marcrock22/zenitsu`).then(res => res.data);
@@ -29,7 +35,7 @@ async function event(client: Zenitsu) {
 
     }, ((60 * 30) * 1000));//30m
 
-    const webhook = await (client.channels.cache.get(`832735151309848596`) as TextChannel).fetchWebhooks().then(we => we.first())
+    const webhook = await (client.channels.cache.get(`832735151309848596`) as light.TextChannel).fetchWebhooks().then(we => we.first())
 
     const preRes = await get();
     const res = [];

@@ -1,6 +1,6 @@
-import Command from '../../Utils/Classes/command';
-import commandinterface from '../../Utils/Interfaces/run'
-import model from '../../models/profile'
+import Command from '../../Utils/Classes/command.js';
+import commandinterface from '../../Utils/Interfaces/run.js'
+import model from '../../models/profile.js'
 
 class Comando extends Command {
 

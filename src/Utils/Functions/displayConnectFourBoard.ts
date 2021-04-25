@@ -1,11 +1,14 @@
-import { createCanvas } from 'canvas'
+import canvas from 'canvas';
+const { createCanvas } = canvas;
 import imagenesC from '../Interfaces/imagenes';
-import { Connect4 } from 'connect4-ai'
-import buffer from './toBuffer';
+import c4 from 'connect4-ai';
+import buffer from './toBuffer.js';
+import GIFEncoder from 'gifencoder'
+import util from 'util';
+const { promisify } = util
 
-async function displayConnectFourBoard(mapa: string[][], game: Connect4, imagenes: imagenesC) {
-    const GIFEncoder = require('gifencoder');
-    const toBuffer = require('util').promisify(buffer);
+async function displayConnectFourBoard(mapa: string[][], game: c4.Connect4AI, imagenes: imagenesC): Promise<Buffer> {
+    const toBuffer = promisify(buffer);
     const encoder = new GIFEncoder(700, 600);
     const stream = encoder.createReadStream()
     encoder.start();
@@ -76,7 +79,8 @@ async function displayConnectFourBoard(mapa: string[][], game: Connect4, imagene
         encoder.addFrame(ctx);
     }
     encoder.finish();
-    return await toBuffer(stream);
+    //@ts-ignore
+    return toBuffer(stream);
 
 }
 

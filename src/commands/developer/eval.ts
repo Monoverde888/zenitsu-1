@@ -1,8 +1,11 @@
-import Command from '../../Utils/Classes/command';
-import commandinterface from '../../Utils/Interfaces/run'
-import { Util, MessageEmbed } from 'discord.js-light'
-import replace from '../../Utils/Functions/replace'
-import { inspect } from 'util'
+import Command from '../../Utils/Classes/command.js';
+import commandinterface from '../../Utils/Interfaces/run.js'
+import light from 'discord.js-light';
+const { Util, MessageEmbed } = light;
+import replace from '../../Utils/Functions/replace.js'
+import util from 'util';
+const { inspect } = util;
+
 
 class Comando extends Command {
 
@@ -21,7 +24,7 @@ class Comando extends Command {
             let evalued = await eval(code);
             let TYPE = typeof (evalued)
             evalued = inspect(evalued, { depth: 0 });
-            evalued = replace(evalued, [process.env.PASSWORD, client.token, process.env.PASSWORDDBL, process.env.MONGODB, process.env.WEBHOOKID, process.env.WEBHOOKTOKEN, process.env.DBLTOKEN, require('mongoose').connection.pass, require('mongoose').connection.user, require('mongoose').connection.host])
+            evalued = replace(evalued, client.private)
             const res = Util.splitMessage(evalued, { char: '', maxLength: 2000 });
 
             for (let minires of res) {

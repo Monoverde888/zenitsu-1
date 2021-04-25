@@ -1,6 +1,6 @@
-import { Collection } from "discord.js-light";
+import light from 'discord.js-light';
 import Zenitsu from "./client";
-import afkModel from '../../models/afk'
+import afkModel from '../../models/afk.js'
 
 interface obj {
     reason: string;
@@ -12,12 +12,12 @@ interface obj {
 
 class AfkManager {
 
-    collection: Collection<string, obj>
+    collection: light.Collection<string, obj>
     client: Zenitsu;
 
     constructor(client: Zenitsu) {
         this.client = client;
-        this.collection = new Collection();
+        this.collection = new light.Collection();
     }
 
     async fetch(user: string): Promise<obj> {

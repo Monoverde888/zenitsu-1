@@ -1,6 +1,10 @@
-import { createCanvas } from "canvas";
+import canvas from 'canvas';
+const { createCanvas } = canvas;
 import imagenesC from "../Interfaces/imagenes";
-import buffer from './toBuffer'
+import buffer from './toBuffer';
+import GIFEncoder from 'gifencoder'
+import util from 'util'
+const promisified = util.promisify(buffer)
 
 async function mapaCanvas(mapatest: string[], imagenes: imagenesC, win = false) {
 
@@ -11,7 +15,7 @@ async function mapaCanvas(mapatest: string[], imagenes: imagenesC, win = false) 
     ]
 
     let soniguales = mapatest.every((_, i) => _ == numeros[i]);
-    const GIFEncoder = require('gifencoder');
+
     const encoder = new GIFEncoder(300, 300);
 
     const canvas = createCanvas(300, 300);
@@ -394,7 +398,7 @@ async function mapaCanvas(mapatest: string[], imagenes: imagenesC, win = false) 
     const attachment = canvas.toBuffer()
     let final;
     if (win && stream) {
-        final = await require('util').promisify(buffer)(stream)
+        final = await promisified(stream)
     }
     else {
         final = attachment

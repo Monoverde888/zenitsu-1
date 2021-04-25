@@ -1,4 +1,4 @@
-{
+const obj = {
     "messages": {
         "es_afk_volver": "<:sesonroja:804750422828515339> | ¡Bienvenido de vuelta!",
         "en_afk_volver": "<:sesonroja:804750422828515339> | Welcome back!",
@@ -214,3 +214,5 @@
         }
     }
 }
+
+export default obj;

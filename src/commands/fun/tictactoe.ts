@@ -1,10 +1,11 @@
 import mapaCanvas from '../../Utils/Functions/mapaCanvas';
 import awaitMessage from '../../Utils/Functions/awaitMessage';
 import tresenraya from 'tresenraya';
-import { MessageAttachment, Message, Collection } from 'discord.js-light'
+import light from 'discord.js-light';
+const { MessageAttachment } = light;
 const users: Map<string, string> = new Map();
-import Command from '../../Utils/Classes/command'
-import run from '../../Utils/Interfaces/run';
+import Command from '../../Utils/Classes/command.js'
+import run from '../../Utils/Interfaces/run.js';
 const partidas: Set<string> = new Set();
 export default class Comando extends Command {
     constructor() {
@@ -41,7 +42,7 @@ export default class Comando extends Command {
         const partida = new tresenraya.partida({ jugadores: [message.author.id, usuario.id] });
         partidas.add(message.guild.id)
 
-        let respuesta: Collection<string, Message> | void;
+        let respuesta: light.Collection<string, light.Message> | void;
 
         if (client.user.id != usuario.id) {
             respuesta = await awaitMessage({ channel: message.channel, filter: (m) => m.author.id == usuario.id && ['s', 'n'].some(item => item == m.content), time: (1 * 60) * 1000, max: 1 }).catch(() => { })

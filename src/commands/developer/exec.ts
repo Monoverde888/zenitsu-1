@@ -1,8 +1,10 @@
-const { promisify } = require('util');
-import Command from '../../Utils/Classes/command';
-import commandinterface from '../../Utils/Interfaces/run'
-import { exec } from 'child_process'
-
+import util from 'util'
+const { promisify } = util;
+import Command from '../../Utils/Classes/command.js';
+import commandinterface from '../../Utils/Interfaces/run.js'
+import child_process from 'child_process';
+const { exec: execC } = child_process;
+const exec = promisify(execC)
 class Comando extends Command {
 
     constructor() {
@@ -20,7 +22,7 @@ class Comando extends Command {
 
         try {
 
-            const res = await promisify(exec)(args.join(' '));
+            const res = await exec(args.join(' '));
 
             if (res.stderr.length) {
                 message.channel.send('STDERR:\n' + res.stderr, { split: { char: '', maxLength: 1950 }, code: '' });

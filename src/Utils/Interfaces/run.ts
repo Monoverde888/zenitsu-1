@@ -1,15 +1,15 @@
 import Zenitsu from '../Classes/client';
-import { Message, TextChannel } from 'discord.js-light';
-import json from '../lang.json'
+import pkg from 'discord.js-light'
+import langjson from '../lang.js'
 
 interface run {
     client?: Zenitsu;
-    message?: Message;
+    message?: pkg.Message;
     args?: string[];
-    embedResponse?(descriptionhere: string, channel?: TextChannel): Promise<Message>;
+    embedResponse?(descriptionhere: string, channel?: pkg.TextChannel): Promise<pkg.Message>;
     Hora?(date: number | Date, dia: boolean): string;
     lang?: 'es' | 'en';
-    langjson?: typeof json
+    langjson?: typeof langjson
 }
 
 export default run;

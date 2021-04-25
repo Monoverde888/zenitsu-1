@@ -1,23 +1,23 @@
-import { Image } from 'canvas'
+import canvas from 'canvas';
 
 interface imagenesC {
     porquelloras: {
-        chica: Image;
-        chico: Image;
+        chica: canvas.Image;
+        chico: canvas.Image;
     };
     nicememe: {
-        background: Image;
+        background: canvas.Image;
     };
     tictactoe: {
-        background: Image;
-        equis: Image;
-        circulo: Image;
+        background: canvas.Image;
+        equis: canvas.Image;
+        circulo: canvas.Image;
     };
     connect4: {
-        background: Image;
-        win: Image;
-        verde: Image;
-        amarillo: Image;
+        background: canvas.Image;
+        win: canvas.Image;
+        verde: canvas.Image;
+        amarillo: canvas.Image;
     }
 }
 

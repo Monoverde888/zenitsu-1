@@ -1,4 +1,4 @@
-{
+const obj = {
     "musica": {
         "stop": "⏹️",
         "pause_resume": "⏯️",
@@ -7,3 +7,5 @@
         "autoplay": "♾️"
     }
 }
+
+export default obj;

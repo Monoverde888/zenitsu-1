@@ -1,5 +1,5 @@
-import Command from '../../Utils/Classes/command';
-import commandinterface from '../../Utils/Interfaces/run'
+import Command from '../../Utils/Classes/command.js';
+import commandinterface from '../../Utils/Interfaces/run.js'
 
 class Comando extends Command {
 

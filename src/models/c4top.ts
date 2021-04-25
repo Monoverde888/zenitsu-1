@@ -1,6 +1,7 @@
-import { Schema, model, Document } from 'mongoose';
+import mongoose from 'mongoose';
+const { Schema, model } = mongoose;
 
-interface Connect4 extends Document {
+interface Connect4 extends mongoose.Document {
     id: string;
     difficulty: string;
     perdidas: number;

@@ -1,6 +1,6 @@
-import Command from '../../Utils/Classes/command';
-import { TextChannel } from 'discord.js-light'
-import run from '../../Utils/Interfaces/run';
+import Command from '../../Utils/Classes/command.js';
+import light from 'discord.js-light';
+import run from '../../Utils/Interfaces/run.js';
 
 class Comando extends Command {
 
@@ -17,7 +17,7 @@ class Comando extends Command {
 
         if (await messageS(args[0]) === false) return embedResponse('No he encontrado ese mensaje!')
         else {
-            (client.channels.cache.get('727948582556270682') as TextChannel).messages.fetch(args[0]).then(a => {
+            (client.channels.cache.get('727948582556270682') as light.TextChannel).messages.fetch(args[0]).then(a => {
                 a.edit(a.embeds[0]
                     .addField('Denegado!', args.slice(1).join(' '))
                     .setColor('RED'))
@@ -30,7 +30,7 @@ class Comando extends Command {
 
         function messageS(id) {
             return new Promise((resolve) => {
-                (client.channels.cache.get('727948582556270682') as TextChannel).messages.fetch(id)
+                (client.channels.cache.get('727948582556270682') as light.TextChannel).messages.fetch(id)
                     .then(() => {
                         return resolve(true);
                     })

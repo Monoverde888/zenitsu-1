@@ -1,8 +1,10 @@
-import Command from '../../Utils/Classes/command';
-import commandinterface from '../../Utils/Interfaces/run'
-import { inspect } from 'util'
-import { Util, MessageEmbed } from 'discord.js-light'
-import replace from '../../Utils/Functions/replace'
+import Command from '../../Utils/Classes/command.js';
+import commandinterface from '../../Utils/Interfaces/run.js'
+import util from 'util'
+const { inspect } = util;
+import light from 'discord.js-light';
+const { Util, MessageEmbed } = light
+import replace from '../../Utils/Functions/replace.js'
 
 class Comando extends Command {
 

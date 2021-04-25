@@ -1,6 +1,6 @@
 import run from "../../Utils/Interfaces/run";
-import Command from '../../Utils/Classes/command';
-import c4top from '../../models/c4top'
+import Command from '../../Utils/Classes/command.js';
+import c4top from '../../models/c4top.js'
 
 export default class Comando extends Command {
     constructor() {

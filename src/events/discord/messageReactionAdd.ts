@@ -1,9 +1,9 @@
 import Zenitsu from "../../Utils/Classes/client";
-import model from '../../models/music'
-import emojis from '../../Utils/emojis.json'
-import { MessageReaction, User } from 'discord.js-light'
+import model from '../../models/music.js'
+import emojis from '../../Utils/emojis.js'
+import light from 'discord.js-light';
 
-async function event(client: Zenitsu, reaction: MessageReaction, user: User): Promise<void> {
+async function event(client: Zenitsu, reaction: light.MessageReaction, user: light.User): Promise<void> {
     /*
         if (!reaction.message.guild) return;
     

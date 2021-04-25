@@ -1,8 +1,11 @@
-import Client from './Utils/Classes/client'
-import { config } from 'dotenv';
+import Client from './Utils/Classes/client.js'
+import dotenv from 'dotenv';
+const { config } = dotenv
 config();
-import { WebhookClient, MessageEmbed } from 'discord.js-light'
-import { set, connect } from 'mongoose';
+import light from 'discord.js-light'
+const { WebhookClient, MessageEmbed } = light
+import mongoose from 'mongoose'
+const { set, connect } = mongoose;
 
 new Client({
     partials: ['MESSAGE', 'REACTION'],

@@ -1,6 +1,7 @@
-import { TextChannel, MessageEmbed } from 'discord.js-light';
-import Command from '../../Utils/Classes/command';
-import commandinterface from '../../Utils/Interfaces/run'
+import light from 'discord.js-light';
+const { MessageEmbed } = light;
+import Command from '../../Utils/Classes/command.js';
+import commandinterface from '../../Utils/Interfaces/run.js'
 
 class Comando extends Command {
 
@@ -20,7 +21,7 @@ class Comando extends Command {
             .setAuthor(`${message.author.tag}(${message.author.id})`)
             .setFooter('Enviado desde ' + message.guild.name, message.guild.iconURL({ dynamic: true, size: 2048 }))
             .setThumbnail(message.author.displayAvatarURL({ dynamic: true, size: 2048 }))
-        return (client.channels.cache.get('725053091522805787') as TextChannel).send({ embed: embed }).then(() => {
+        return (client.channels.cache.get('725053091522805787') as light.TextChannel).send({ embed: embed }).then(() => {
             return embedResponse(langjson.commands.reportbug[lang + '_send']);
         })
 

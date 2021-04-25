@@ -1,6 +1,7 @@
-import { Schema, model, Document } from 'mongoose';
+import mongoose from 'mongoose';
+const { Schema, model } = mongoose;
 
-interface Afk extends Document {
+interface Afk extends mongoose.Document {
     id: string;
     reason: 'AFK' | string;
     date: number;

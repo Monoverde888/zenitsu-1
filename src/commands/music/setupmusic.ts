@@ -1,7 +1,7 @@
-import Command from '../../Utils/Classes/command';
-import commandinterface from '../../Utils/Interfaces/run';
-import model from '../../models/music';
-import emojis from '../../Utils/emojis.json';
+import Command from '../../Utils/Classes/command.js';
+import commandinterface from '../../Utils/Interfaces/run.js';
+import model from '../../models/music.js';
+import emojis from '../../Utils/emojis.js';
 
 class Comando extends Command {
 

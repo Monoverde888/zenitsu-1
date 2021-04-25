@@ -1,6 +1,6 @@
-import { Collection } from "discord.js-light";
-import prefixM from "../../models/prefix";
-import Zenitsu from "./client";
+import light from "discord.js-light";
+import prefixM from "../../models/prefix.js";
+import Zenitsu from "./client.js";
 
 interface obj {
     prefix: string;
@@ -10,12 +10,12 @@ interface obj {
 
 class PrefixManager {
 
-    collection: Collection<string, obj>
+    collection: light.Collection<string, obj>
     client: Zenitsu;
 
     constructor(client: Zenitsu) {
         this.client = client;
-        this.collection = new Collection();
+        this.collection = new light.Collection();
     }
 
     async set(id: string, prefix: string) {

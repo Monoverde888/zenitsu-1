@@ -1,4 +1,5 @@
-import { Schema, model, Document } from 'mongoose'
+import mongoose from 'mongoose';
+const { Schema, model } = mongoose;
 
 const Guild = new Schema({
     id: String,
@@ -8,7 +9,7 @@ const Guild = new Schema({
     }
 })
 
-interface Lang extends Document {
+interface Lang extends mongoose.Document {
     id: string;
     lang: 'es' | 'en'
 }

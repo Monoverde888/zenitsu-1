@@ -1,4 +1,5 @@
-import { Schema, model, Document } from 'mongoose'
+import mongoose from 'mongoose';
+const { Schema, model } = mongoose;
 
 const Guild = new Schema({
     id: String,
@@ -15,7 +16,7 @@ interface logs {
     type: 'messages' | 'members';
 }
 
-interface Logs extends Document {
+interface Logs extends mongoose.Document {
     id: string;
     logs: logs[]
 }

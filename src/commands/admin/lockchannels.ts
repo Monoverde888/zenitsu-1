@@ -1,6 +1,7 @@
-import Command from '../../Utils/Classes/command';
-import commandinterface from '../../Utils/Interfaces/run'
-import { TextChannel, MessageEmbed, NewsChannel } from 'discord.js-light';
+import Command from '../../Utils/Classes/command.js';
+import commandinterface from '../../Utils/Interfaces/run.js'
+import light from 'discord.js-light';
+const { TextChannel, MessageEmbed, NewsChannel } = light;
 
 class Comando extends Command {
 
@@ -15,7 +16,7 @@ class Comando extends Command {
 
     run({ client, message, embedResponse, args, Hora, langjson, lang }: commandinterface) {
 
-        const canal = (message.channel as (TextChannel | NewsChannel)),
+        const canal = (message.channel as (light.TextChannel | light.NewsChannel)),
             permisos = canal.permissionOverwrites.get(message.guild.id);
 
         if (!permisos || !(permisos.deny.toArray().includes('SEND_MESSAGES'))) {

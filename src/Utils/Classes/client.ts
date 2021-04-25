@@ -1,22 +1,30 @@
-import { Client, APIMessage, Message, Collection, MessageEmbed, TextChannel, FileOptions, MessageAttachment, ClientOptions, DMChannel, NewsChannel } from "discord.js-light";
-import Command from './command'
-import musicmodel from '../../models/music';
+import light from 'discord.js-light';
+const { Client, Collection, MessageEmbed } = light;
+import Command from './command.js'
+import musicmodel from '../../models/music.js';
 import dbla from 'dblapi.js'
-import { readdir } from 'fs/promises';
-import { join } from 'path';
-import { loadImage } from 'canvas'
-import { connection } from 'mongoose';
-import * as lenguaje from '../lang.json'
-import AfkManager from "./afkManager";
-import PrefixManager from './prefixManager';
-import LangManager from './langManager';
+import fs from 'fs/promises';
+const { readdir } = fs;
+import path from 'path';
+const { join } = path;
+import canvas from 'canvas';
+const { loadImage } = canvas;
+import mongoose from 'mongoose';
+const { connection } = mongoose;
+import lenguaje from '../lang.js'
+import AfkManager from "./afkManager.js";
+import PrefixManager from './prefixManager.js';
+import LangManager from './langManager.js';
 import Distube from 'distube';
-import modelLang from '../../models/lang';
-import imagenesC from "../Interfaces/imagenes";
+import modelLang from '../../models/lang.js';
+import imagenesC from "../Interfaces/imagenes.js";
 import axios from 'axios';
+import common from '../Functions/commons.js';
+const res = common(import.meta.url);
+const __dirname: string = res.__dirname;
 
 class Zenitsu extends Client {
-    commands: Collection<string, Command>;
+    commands: light.Collection<string, Command>;
     dbl: dbla;
     imagenes: imagenesC | undefined;
     kaomojis: string[];
@@ -27,7 +35,7 @@ class Zenitsu extends Client {
     afk: AfkManager;
     music: Distube;
 
-    constructor(args: ClientOptions) {
+    constructor(args: light.ClientOptions) {
         super(args);
         this.login();
         this.dbl = new dbla(process.env.DBLTOKEN, this);
@@ -85,7 +93,7 @@ class Zenitsu extends Client {
             throw new Error('Invalid channel.');
         }
 
-        const mensaje = (canal as TextChannel).messages.cache.get(message) || await (canal as TextChannel).messages.fetch(message).catch(() => { }).then(e => e);
+        const mensaje = (canal as light.TextChannel).messages.cache.get(message) || await (canal as light.TextChannel).messages.fetch(message).catch(() => { }).then(e => e);
 
         if (!mensaje) {
             await model.deleteOne({ guild, channel, message });
@@ -162,15 +170,15 @@ class Zenitsu extends Client {
         footerLink?: string;
         footerText?: string
         color?: string | number
-        channel: TextChannel | DMChannel | NewsChannel
+        channel: light.TextChannel | light.DMChannel | light.NewsChannel
         title?: string
         thumbnailURL?: string;
         authorURL?: string;
         authorText?: string;
         authorLink?: string;
         titleURL?: string;
-        attachFiles?: FileOptions[] | string[] | MessageAttachment[] | FileOptions | string | MessageAttachment
-    }, options: { timestamp: boolean } = { timestamp: true }): Promise<Message> | undefined {
+        attachFiles?: light.FileOptions[] | string[] | light.MessageAttachment[] | light.FileOptions | string | light.MessageAttachment
+    }, options: { timestamp: boolean } = { timestamp: true }): Promise<light.Message> | undefined {
 
         let embed = new MessageEmbed()
 
@@ -212,9 +220,8 @@ class Zenitsu extends Client {
             });
             for (let file of commands) {
                 try {
-                    let archivo = require(ruta('commands', dirs, file)).default;
+                    let { default: archivo } = await import(`file:///` + ruta('commands', dirs, file));
                     let instance = new archivo();
-
                     if (this.commands.has(instance.name)) {
 
                         console.warn(`${instance.name} ya existe.`)
@@ -224,7 +231,8 @@ class Zenitsu extends Client {
 
                     this.commands.set(instance.name, instance);
                 } catch (e) {
-                    console.log(e, file)
+                    console.log(e, file);
+                    break;
                 }
             }
         };
@@ -246,7 +254,7 @@ class Zenitsu extends Client {
         let ruta = (...str: string[]) => join(__dirname, '..', '..', ...str)
         const load = async (event) => {
 
-            const { default: a } = require(ruta('events', typee, event))
+            const { default: a } = await import(`file:///` + ruta('events', typee, event))
 
             try {
 

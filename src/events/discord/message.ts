@@ -1,12 +1,13 @@
-import { WebhookClient, Collection, Message, MessageEmbed, TextChannel, NewsChannel, DMChannel, ChannelResolvable } from 'discord.js-light';
-import model from '../../models/music'
-import Comando from '../../Utils/Classes/command';
-import Zenitsu from '../../Utils/Classes/client';
-const cooldowns: Collection<string, Collection<string, number>> = new Collection();
-import * as langjson from '../../Utils/lang.json';
-import { default as ms } from '@fabricio-191/ms';
+import ms from '@fabricio-191/ms';
+import light from 'discord.js-light';
+const { WebhookClient, Collection, MessageEmbed, TextChannel, NewsChannel } = light;
+import model from '../../models/music.js'
+import Comando from '../../Utils/Classes/command.js';
+import Zenitsu from '../../Utils/Classes/client.js';
+const cooldowns: light.Collection<string, light.Collection<string, number>> = new Collection();
+import langjson from '../../Utils/lang.js';
 
-async function event(client: Zenitsu, message: Message): Promise<any> {
+async function event(client: Zenitsu, message: light.Message): Promise<any> {
 
     if (!message.guild || !message.author || !message.member || message.author.bot) return;
 
@@ -15,7 +16,7 @@ async function event(client: Zenitsu, message: Message): Promise<any> {
 
     //const data = await model.findOne({ guild: message.guild.id });
 
-    if (!((message.channel as TextChannel).permissionsFor(message.guild.me).has('SEND_MESSAGES')) || !((message.channel as TextChannel).permissionsFor(message.guild.me).has('EMBED_LINKS')))
+    if (!((message.channel as light.TextChannel).permissionsFor(message.guild.me).has('SEND_MESSAGES')) || !((message.channel as light.TextChannel).permissionsFor(message.guild.me).has('EMBED_LINKS')))
         return;
 
     /*if (data && (data.channel == message.channel.id) && (message.guild.me.voice.channel ? message.member.voice.channelID == message.guild.me.voice.channelID : message.member.voice.channelID)) {
@@ -93,7 +94,7 @@ async function event(client: Zenitsu, message: Message): Promise<any> {
             }
         }
 
-        let check = comando.botPermissions.channel.filter(perm => !((message.channel as TextChannel | NewsChannel).permissionsFor(message.guild.me).has(perm)))
+        let check = comando.botPermissions.channel.filter(perm => !((message.channel as light.TextChannel | light.NewsChannel).permissionsFor(message.guild.me).has(perm)))
 
         if (check.length) {
 
@@ -108,7 +109,7 @@ async function event(client: Zenitsu, message: Message): Promise<any> {
             return message.channel.send({ embed: embed })
         }
 
-        check = comando.memberPermissions.channel.filter(perm => !((message.channel as TextChannel | NewsChannel).permissionsFor(message.member).has(perm)))
+        check = comando.memberPermissions.channel.filter(perm => !((message.channel as light.TextChannel | light.NewsChannel).permissionsFor(message.member).has(perm)))
 
         if (check.length) {
 
@@ -153,14 +154,14 @@ async function event(client: Zenitsu, message: Message): Promise<any> {
             return message.channel.send({ embed: embed })
         }
 
-        async function embedResponse(descriptionHere: string, option: ChannelResolvable) {
+        async function embedResponse(descriptionHere: string, option: light.ChannelResolvable) {
 
             let embed = new MessageEmbed()
                 .setDescription(descriptionHere)
                 .setTimestamp()
                 .setColor(client.color);
 
-            let canal: TextChannel | NewsChannel | DMChannel = (client.channels.resolve(option) as TextChannel) || message.channel;
+            let canal: light.TextChannel | light.NewsChannel | light.DMChannel = (client.channels.resolve(option) as light.TextChannel) || message.channel;
 
             return canal.send({ embed: embed })
 

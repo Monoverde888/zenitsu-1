@@ -1,12 +1,14 @@
-import { Connect4AI } from 'connect4-ai'
-import { MessageAttachment, Message } from 'discord.js-light'
+import c4 from 'connect4-ai';
+const { Connect4AI } = c4
+import light from 'discord.js-light';
+const { MessageAttachment, Message } = light;
 const turnosPorId: Map<string, Map<string, (0 | 1 | 2)>> = new Map();
-import run from '../../Utils/Interfaces/run';
-import displayConnectFourBoard from '../../Utils/Functions/displayConnectFourBoard'
-import awaitMessage from '../../Utils/Functions/awaitMessage';
-import Command from '../../Utils/Classes/command';
-const games: Map<string, Connect4AI> = new Map();
-import model from '../../models/c4top';
+import run from '../../Utils/Interfaces/run.js';
+import displayConnectFourBoard from '../../Utils/Functions/displayConnectFourBoard.js'
+import awaitMessage from '../../Utils/Functions/awaitMessage.js';
+import Command from '../../Utils/Classes/command.js';
+const games: Map<string, c4.Connect4AI> = new Map();
+import model from '../../models/c4top.js';
 
 function obtenerTurno(obj: { member: string, guild: string }) {
 
@@ -75,7 +77,7 @@ export default class Comando extends Command {
                 description: langjson.commands.connect4[lang + '_wait_user'].replace('{USER}', usuario.tag)
             });
 
-            let respuesta = await awaitMessage({ channel: message.channel, filter: (m: Message) => m.author.id == usuario.id && ['s', 'n'].some(item => item == m.content), time: (1 * 60) * 1000, max: 1 }).catch(() => { })
+            let respuesta = await awaitMessage({ channel: message.channel, filter: (m: light.Message) => m.author.id == usuario.id && ['s', 'n'].some(item => item == m.content), time: (1 * 60) * 1000, max: 1 }).catch(() => { })
 
             if (!respuesta) {
                 games.delete(message.guild.id)
@@ -137,7 +139,7 @@ export default class Comando extends Command {
             description: langjson.commands.connect4[lang + '_start'].replace('{USER}', (turno(message.author.id)) == 1 ? message.author.tag : usuario.tag)
         })
 
-        const colector = message.channel.createMessageCollector(function (msg: Message) {
+        const colector = message.channel.createMessageCollector(function (msg: light.Message) {
 
             if (usuario.id != client.user.id) {
 
@@ -165,7 +167,7 @@ export default class Comando extends Command {
             idle: ((3 * 60) * 1000), time: ((30 * 60) * 1000)
         });
 
-        colector.on('collect', async (msg: Message) => {
+        colector.on('collect', async (msg: light.Message) => {
 
             if (msg.content === 'surrender') {
                 return colector.stop('SURRENDER');
