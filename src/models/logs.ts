@@ -13,7 +13,7 @@ const Guild = new Schema({
 interface logs {
     idWeb: string;
     tokenWeb: string;
-    type: 'messages' | 'members';
+    type: string;
 }
 
 interface Logs extends mongoose.Document {

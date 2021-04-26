@@ -1,5 +1,5 @@
 import light from 'discord.js-light';
-import Zenitsu from "./client";
+import Zenitsu from "./client.js";
 import afkModel from '../../models/afk.js'
 
 interface obj {

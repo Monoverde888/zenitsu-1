@@ -14,6 +14,7 @@ const { connection } = mongoose;
 import lenguaje from '../lang.js'
 import AfkManager from "./afkManager.js";
 import PrefixManager from './prefixManager.js';
+import LogsManager from './logsManager.js';
 import LangManager from './langManager.js';
 import Distube from 'distube';
 import modelLang from '../../models/lang.js';
@@ -22,6 +23,7 @@ import axios from 'axios';
 import common from '../Functions/commons.js';
 const res = common(import.meta.url);
 const __dirname: string = res.__dirname;
+import nekos from 'nekos.life';
 
 class Zenitsu extends Client {
     commands: light.Collection<string, Command>;
@@ -34,13 +36,15 @@ class Zenitsu extends Client {
     lang: LangManager
     afk: AfkManager;
     music: Distube;
+    nekos: nekos;
+    logs: LogsManager
 
     constructor(args: light.ClientOptions) {
         super(args);
         this.login();
         this.dbl = new dbla(process.env.DBLTOKEN, this);
         this.loadEvents('discord');
-        this.loadEvents('distube');
+        //this.loadEvents('distube');
         this.loadCommands();
         this.loadImages().catch((e) => console.log(e.message));
         this.music = new Distube(this, {
@@ -49,15 +53,14 @@ class Zenitsu extends Client {
         this.lang = new LangManager(this);
         this.prefix = new PrefixManager(this);
         this.afk = new AfkManager(this);
+        this.logs = new LogsManager(this);
         this.color = '#E09E36';
         this.commands = new Collection();
-        this.kaomojis = ['(* ^ ω ^)', '(o^▽^o)', 'ヽ(・∀・)ﾉ', '(o･ω･o)', '( ´ ω ` )', '╰(▔∀▔)╯', '(✯◡✯)', '(⌒‿⌒)', 'ヽ(>∀<☆)ノ', '＼(￣▽￣)／', '(╯✧▽✧)╯', '(⁀ᗢ⁀)', '(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧', 'ヽ(*⌒▽⌒*)ﾉ', '☆*:.｡.o(≧▽≦)o.｡.:*☆', '(๑˃ᴗ˂)ﻭ', '(b ᵔ▽ᵔ)b', '(⌒ω⌒)', '(´ ∀ ` *)', '(─‿‿─)'];
+        this.nekos = new nekos();
         this.devs = [
             '507367752391196682', // Lil MARCROCK22
             '577000793094488085', // AndreMor
-            '366779196975874049', // Socram09
             '390726024536653865', // zPablo 鯉
-            '538421122920742942' // el wapo de Vyrek
         ];
 
     };
