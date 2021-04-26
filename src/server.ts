@@ -6,7 +6,7 @@ const { ShardingManager } = light
 const sharder = new ShardingManager('./dist/index.js', {
     token: process.env.DISCORD_TOKEN,
     totalShards: "auto",
-    execArgv: ['--expose-gc', '--optimize_for_size', '--max_old_space_size=200', 'node_modules/ts-node/dist/bin.js']
+    execArgv: ['--expose-gc', '--optimize_for_size', '--max_old_space_size=150']
 });
 
 sharder
