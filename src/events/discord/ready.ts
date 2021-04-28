@@ -19,8 +19,7 @@ async function get() {
 
 }
 async function event(client: Zenitsu) {
-
-    const buffer = await promisify(svg)(`https://top.gg/api/widget/721080193678311554.svg`)
+    const buffer = (await promisify(svg)(`https://top.gg/api/widget/721080193678311554.svg`)) as Buffer
     const path = join(__dirname, '..', '..', '..', 'Images', 'topgg.png');
     await writeFile(path, buffer);
     await client.setPresence();
@@ -39,7 +38,7 @@ async function event(client: Zenitsu) {
 
     const preRes = await get();
     const res = [];
-    const emojis = {
+    const emojis: any = {
         Images: `📁`,
         src: `😋`,
         handler: `⛏`,
@@ -57,7 +56,7 @@ async function event(client: Zenitsu) {
 
     for (let file of preRes) {
 
-        const papush = emojis[file] ? `${emojis[file]} ${file}` : file;
+        const papush = (emojis[file]) ? `${emojis[file]} ${file}` : file;
 
         res.push(papush);
 

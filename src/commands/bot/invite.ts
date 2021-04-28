@@ -19,7 +19,7 @@ class Comando extends Command {
         let invitacionLink = 'https://discord.gg/hbSahh8';
         let embed = new MessageEmbed()
             .setThumbnail(client.user.displayAvatarURL({ format: 'png', size: 2048 }))
-            .setDescription(langjson.commands.invite[lang].replace('{LINK}', link).replace('{SUPPORT_LINK}', invitacionLink))
+            .setDescription(langjson.commands.invite.message(link, invitacionLink))
             .setColor(client.color)
             .setTimestamp()
         return message.channel.send({ embed: embed })

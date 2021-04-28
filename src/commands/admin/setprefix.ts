@@ -18,7 +18,7 @@ class Comando extends Command {
 
         let embedErr = new MessageEmbed()
             .setColor(client.color)
-            .setDescription(langjson.commands.setprefix[lang + '_no_prefix'])
+            .setDescription(langjson.commands.setprefix.no_prefix)
             .setTimestamp()
 
         if (!args[0])
@@ -26,7 +26,7 @@ class Comando extends Command {
 
         let embedE = new MessageEmbed()
             .setColor(client.color)
-            .setDescription(langjson.commands.setprefix[lang + '_prefix_length'])
+            .setDescription(langjson.commands.setprefix.prefix_length)
             .setTimestamp()
 
         if (args[0].length >= 4)
@@ -36,7 +36,7 @@ class Comando extends Command {
 
             let embed = new MessageEmbed()
                 .setColor(client.color)
-                .setDescription(langjson.commands.setprefix[lang + '_prefix_nice'].replace('{THE_MOD}', message.author.tag) + data.prefix)
+                .setDescription(langjson.commands.setprefix.prefix_nice(message.author.tag, data.prefix))
                 .setTimestamp()
             return message.channel.send({ embed: embed })
 
@@ -44,7 +44,7 @@ class Comando extends Command {
 
             let embed = new MessageEmbed()
                 .setColor(client.color)
-                .setDescription(langjson.commands.setprefix[lang + '_prefix_error'])
+                .setDescription(langjson.commands.setprefix.prefix_error)
                 .setTimestamp()
                 .setFooter(err.message || err)
 

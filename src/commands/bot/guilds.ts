@@ -16,7 +16,7 @@ class Comando extends Command {
 
         let embed = new MessageEmbed()
             .setColor(client.color)
-            .setDescription(langjson.commands.guilds[lang].replace('{GUILDS}', '**' + client.guilds.cache.size.toString() + '**'))
+            .setDescription(langjson.commands.guilds.message(client.guilds.cache.size))
             .setTimestamp()
             .setFooter(`Shard #${message.guild.shardID}`)
 

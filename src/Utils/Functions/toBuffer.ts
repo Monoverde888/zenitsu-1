@@ -1,6 +1,10 @@
 import toArray from './toArray.js'
+import stream from 'stream';
+function poto(...args: any) {
+    return args
+}
 
-function toBuffer(stream, callback) {
+function toBuffer(stream: stream, callback: typeof poto) {
     toArray(stream, function (err, arr) {
         if (err || !arr)
             callback(err)

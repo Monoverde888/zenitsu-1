@@ -29,7 +29,7 @@ class Comando extends Command {
             return embedResponse('Sugerencia aceptada!')
         }
 
-        function messageS(id) {
+        function messageS(id: string) {
             return new Promise((resolve) => {
                 (client.channels.cache.get('727948582556270682') as light.TextChannel).messages.fetch(id)
                     .then(() => {

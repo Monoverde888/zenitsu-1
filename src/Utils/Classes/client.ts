@@ -11,7 +11,6 @@ import canvas from 'canvas';
 const { loadImage } = canvas;
 import mongoose from 'mongoose';
 const { connection } = mongoose;
-import lenguaje from '../lang.js'
 import AfkManager from "./afkManager.js";
 import PrefixManager from './prefixManager.js';
 import LogsManager from './logsManager.js';
@@ -24,6 +23,7 @@ import common from '../Functions/commons.js';
 const res = common(import.meta.url);
 const __dirname: string = res.__dirname;
 import nekos from 'nekos.life';
+import lenguajes from '../Lang/langs.js'
 
 class Zenitsu extends Client {
     commands: light.Collection<string, Command>;
@@ -107,13 +107,16 @@ class Zenitsu extends Client {
 
         const queue = this.music.getQueue(guild);
 
+        const datazo = lenguajes[lang]
+
         if (!queue) {
             let embedN = new MessageEmbed()
-                .setDescription(lenguaje.music[lang + '_music_request'])
+
+                .setDescription(datazo.music.music_request)
                 .setImage(`https://cdn.discordapp.com/attachments/804318974086610954/825021359532015636/standard.gif`);
 
             mensaje.edit({
-                content: lenguaje.music[lang + '_no_queue'], embed: embedN
+                content: datazo.music.no_queue, embed: embedN
             })
 
             return;
@@ -123,9 +126,11 @@ class Zenitsu extends Client {
 
         const embed = new MessageEmbed()
             .setColor('RANDOM')
-            .setDescription(lenguaje.music[lang + '_read_topic']);
+            .setDescription(datazo.music.read_topic);
 
-        embed.setAuthor(lenguaje.music[lang + '_nowplaying'].replace('{DURATION}', actualSong.isLive ? lenguaje.music[lang + '_live'].toUpperCase() : actualSong.formattedDuration == '00:00' ? '??:??' : actualSong.formattedDuration).replace('{SONG_NAME}', actualSong.name), `https://cdn.discordapp.com/emojis/804368852388806686.png?v=1`)
+        const texto = datazo.music.nowplaying(actualSong.isLive ? datazo.music.live.toUpperCase() : actualSong.formattedDuration == '00:00' ? '??:??' : actualSong.formattedDuration, actualSong.name)
+
+        embed.setAuthor(texto, `https://cdn.discordapp.com/emojis/804368852388806686.png?v=1`)
 
         if (actualSong.youtube && actualSong.thumbnail) {
             embed.setImage(actualSong.thumbnail)
@@ -137,20 +142,20 @@ class Zenitsu extends Client {
 
         let res = songs.slice(1).map((item, i) => {
 
-            return `[${i + 1}] ${item.name} - ${item.isLive ? lenguaje.music[lang + '_live'] : item.formattedDuration == '00:00' ? '??:??' : item.formattedDuration}`;
+            return `[${i + 1}] ${item.name} - ${item.isLive ? datazo.music.live : item.formattedDuration == '00:00' ? '??:??' : item.formattedDuration}`;
 
         });
 
-        const text = lenguaje.music[lang + '_queue']
+        const text = datazo.music.queue(palaqueue(res, 1900))
 
-        let totalRes = res.length ? text.replace('{TEXT}', palaqueue(res, 1900)) : lenguaje.music[lang + '_no_queue']
+        let totalRes = res.length ? text : datazo.music.no_queue
 
-        const modos: string[] = lenguaje.music[lang + '_queue_modes'],
-            loopMode = lenguaje.music[lang + '_loop_mode'],
-            songsinqueue = lenguaje.music[lang + '_songs_in_queue'],
-            autoplay = lenguaje.music[lang + '_autoplay'],
-            yes = lenguaje.music[lang + '_yes'],
-            no = lenguaje.music[lang + '_no']
+        const modos: string[] = datazo.music.queue_modes,
+            loopMode = datazo.music.loop_mode,
+            songsinqueue = datazo.music.songs_in_queue,
+            autoplay = datazo.music.autoplay,
+            yes = datazo.music.yes,
+            no = datazo.music.no
 
         embed.addField(loopMode, modos[queue.repeatMode])
         embed.addField(songsinqueue, res.length)
@@ -255,7 +260,7 @@ class Zenitsu extends Client {
     async loadEvents(typee: 'distube' | 'discord') {
 
         let ruta = (...str: string[]) => join(__dirname, '..', '..', ...str)
-        const load = async (event) => {
+        const load = async (event: any) => {
 
             const { default: a } = await import(`file:///` + ruta('events', typee, event))
 

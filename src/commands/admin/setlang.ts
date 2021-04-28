@@ -42,7 +42,7 @@ class Comando extends Command {
                 return message.channel.send(
                     new MessageEmbed()
                         .setColor(client.color)
-                        .setDescription(langjson.commands.setlang[lang + "_invalid"])
+                        .setDescription(langjson.commands.setlang.invalid)
                         .setAuthor(`${client.prefix.cache.get(message.guild.id).prefix}setlang (es|en)`)
                 );
 

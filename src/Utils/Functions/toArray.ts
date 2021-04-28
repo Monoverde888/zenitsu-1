@@ -1,6 +1,9 @@
-
-function toArray(stream, callback) {
-    let arr = []
+import stream from 'stream'
+function a(...args: any) {
+    return args
+}
+function toArray(stream: stream, callback: typeof a) {
+    let arr: any[] = []
 
     stream.on('data', onData)
     stream.once('end', onEnd)
@@ -8,7 +11,7 @@ function toArray(stream, callback) {
     stream.once('error', cleanup)
     stream.once('close', cleanup)
 
-    function onData(doc) {
+    function onData(doc: any) {
         arr.push(doc)
     }
 

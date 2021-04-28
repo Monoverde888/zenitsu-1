@@ -21,7 +21,7 @@ export default class Comando extends Command {
 
         if (!miembro || miembro.id == message.author.id || (miembro.user.bot && miembro.id != client.user.id)) return client.sendEmbed({
             channel: message.channel,
-            description: langjson.commands.tictactoe[lang + '_game']
+            description: langjson.commands.tictactoe.game
         });
 
         const usuario = miembro.user;
@@ -29,13 +29,13 @@ export default class Comando extends Command {
         if (partidas.has(message.guild.id))
             return client.sendEmbed({
                 channel: message.channel,
-                description: langjson.commands.tictactoe[lang + '_curso']
+                description: langjson.commands.tictactoe.curso
             })
 
         if (client.user.id != usuario.id) {
             client.sendEmbed({
                 channel: message.channel,
-                description: langjson.commands.tictactoe[lang + '_wait_user'].replace('{USER}', usuario.username)
+                description: langjson.commands.tictactoe.wait_user(usuario.username)
             });
         }
 
@@ -50,7 +50,7 @@ export default class Comando extends Command {
             if (!respuesta) {
                 client.sendEmbed({
                     channel: message.channel,
-                    description: langjson.commands.tictactoe[lang + '_dont_answer'].replace('{USER}', usuario.username)
+                    description: langjson.commands.tictactoe.dont_answer(usuario.username)
                 })
                 return partidas.delete(message.guild.id)
             }
@@ -58,7 +58,7 @@ export default class Comando extends Command {
             if (respuesta.first().content == 'n') {
                 client.sendEmbed({
                     channel: message.channel,
-                    description: langjson.commands.tictactoe[lang + '_deny'].replace('{USER}', usuario.username)
+                    description: langjson.commands.tictactoe.deny(usuario.username)
                 })
                 return partidas.delete(message.guild.id)
             }
@@ -71,7 +71,7 @@ export default class Comando extends Command {
             partidas.delete(message.guild.id)
             client.sendEmbed({
                 channel: message.channel,
-                description: langjson.commands.tictactoe[lang + '_win'].replace('{USER}', users.get(jugador)) + `\n\n${tablero.string}`,
+                description: langjson.commands.tictactoe.win(users.get(jugador)) + `\n\n${tablero.string}`,
                 attachFiles: new MessageAttachment(await mapaCanvas(tablero.array, client.imagenes, true), 'tictactoe.gif'),
                 imageURL: 'attachment://tictactoe.gif'
             });
@@ -83,7 +83,7 @@ export default class Comando extends Command {
             partidas.delete(message.guild.id)
             client.sendEmbed({
                 channel: message.channel,
-                description: langjson.commands.tictactoe[lang + '_draw'].replace(`{USER_TICTACTOE_AI_FIRST_USER_PLAYER}`, users.get(jugadores[0])).replace(`{USER_TICTACTOE_AI_SECOND_USER_PLAYER}`, users.get(jugadores[1])),
+                description: langjson.commands.tictactoe.draw(users.get(jugadores[0]), users.get(jugadores[1])),
                 attachFiles: new MessageAttachment(await mapaCanvas(tablero.array, client.imagenes), 'tictactoe.gif'),
                 imageURL: 'attachment://tictactoe.gif'
             });
@@ -95,7 +95,7 @@ export default class Comando extends Command {
             partidas.delete(message.guild.id)
             client.sendEmbed({
                 channel: message.channel,
-                description: langjson.commands.tictactoe[lang + '_game_over'] + `\n\n${tablero.string}`,
+                description: langjson.commands.tictactoe.game_over + `\n\n${tablero.string}`,
                 attachFiles: new MessageAttachment(await mapaCanvas(tablero.array, client.imagenes), 'tictactoe.gif'),
                 imageURL: 'attachment://tictactoe.gif'
             });
@@ -105,7 +105,7 @@ export default class Comando extends Command {
 
         if (partida.turno.jugador != client.user.id)
             await client.sendEmbed({
-                description: langjson.commands.tictactoe[lang + '_start'].replace('{FICHA}', partida.turno.ficha).replace(`{USER}`, users.get(partida.turno.jugador)) + `\n\n${partida.tablero.string}`,
+                description: langjson.commands.tictactoe.start(partida.turno.ficha, users.get(partida.turno.jugador)) + `\n\n${partida.tablero.string}`,
                 channel: message.channel,
                 attachFiles: new MessageAttachment(await mapaCanvas(partida.tablero.array, client.imagenes), 'tictactoe.gif'),
                 imageURL: 'attachment://tictactoe.gif'
@@ -117,7 +117,7 @@ export default class Comando extends Command {
             partida.elegir(jugada)
             await client.sendEmbed({
                 channel: message.channel,
-                description: langjson.commands.tictactoe[lang + '_turn'].replace('{USER}', users.get(partida.turno.jugador)) + ` [\`${partida.turno.ficha}\`]\n\n${partida.tablero.string}`,
+                description: langjson.commands.tictactoe.turn(users.get(partida.turno.jugador) + ` [\`${partida.turno.ficha}\`]\n\n${partida.tablero.string}`),
                 attachFiles: new MessageAttachment(await mapaCanvas(partida.tablero.array, client.imagenes), 'tictactoe.gif'),
                 imageURL: 'attachment://tictactoe.gif'
             })
@@ -135,7 +135,7 @@ export default class Comando extends Command {
             if (partida.turno.jugador != client.user.id)
                 await client.sendEmbed({
                     channel: msg.channel,
-                    description: langjson.commands.tictactoe[lang + '_turn'].replace('{USER}', users.get(partida.turno.jugador)) + ` [\`${partida.turno.ficha}\`]\n\n${partida.tablero.string}`,
+                    description: langjson.commands.tictactoe.turn(users.get(partida.turno.jugador)) + ` [\`${partida.turno.ficha}\`]\n\n${partida.tablero.string}`,
                     attachFiles: new MessageAttachment(await mapaCanvas(partida.tablero.array, client.imagenes), 'tictactoe.gif'),
                     imageURL: 'attachment://tictactoe.gif'
                 })
@@ -147,7 +147,7 @@ export default class Comando extends Command {
                 if (!partida.finalizado) {
                     await client.sendEmbed({
                         channel: msg.channel,
-                        description: langjson.commands.tictactoe[lang + '_turn'].replace('{USER}', users.get(partida.turno.jugador)) + ` [\`${partida.turno.ficha}\`]\n\n${partida.tablero.string}`,
+                        description: langjson.commands.tictactoe.turn(users.get(partida.turno.jugador)) + ` [\`${partida.turno.ficha}\`]\n\n${partida.tablero.string}`,
                         attachFiles: new MessageAttachment(await mapaCanvas(partida.tablero.array, client.imagenes), 'tictactoe.gif'),
                         imageURL: 'attachment://tictactoe.gif'
                     })

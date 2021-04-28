@@ -31,18 +31,18 @@ export default class Comando extends Command {
         if (games.has(message.guild.id))
             return client.sendEmbed({
                 channel: message.channel,
-                description: langjson.commands.connect4[lang + '_curso']
+                description: langjson.commands.connect4.curso
             })
 
         args[0] = args[0]?.toLowerCase();
 
-        let usuario = ['easy', 'medium', 'hard'].includes(args[0]) ? client.user : message.mentions.members.first()?.user;
+        let usuario = ['easy', 'medium', 'hard'].includes(args[0]) ? client.user : message.mentions.members.filter(member => !member.user.bot).first()?.user;
 
         if (!usuario || usuario.id == message.author.id || (usuario.bot && usuario.id != client.user.id))
             return client.sendEmbed({
                 channel: message.channel,
-                description: langjson.commands.connect4[lang + '_mention'],
-                footerText: langjson.commands.connect4[lang + '_footer']
+                description: langjson.commands.connect4.mention,
+                footerText: langjson.commands.connect4.footer
             });
 
         let turno = (id: string) => obtenerTurno({ guild: message.guild.id, member: id })
@@ -51,14 +51,14 @@ export default class Comando extends Command {
             if (obtenerTurno({ guild: message.guild.id, member: usuario.id })) {
                 return client.sendEmbed({
                     channel: message.channel,
-                    description: langjson.commands.connect4[lang + '_user_active'].replace('{USER}', usuario.tag)
+                    description: langjson.commands.connect4.user_active(usuario.tag)
                 });
             }
 
         if (obtenerTurno({ guild: message.guild.id, member: message.author.id })) {
             return client.sendEmbed({
                 channel: message.channel,
-                description: langjson.commands.connect4[lang + '_author_active']
+                description: langjson.commands.connect4.author_active
             });
         }
 
@@ -74,7 +74,7 @@ export default class Comando extends Command {
 
             await client.sendEmbed({
                 channel: message.channel,
-                description: langjson.commands.connect4[lang + '_wait_user'].replace('{USER}', usuario.tag)
+                description: langjson.commands.connect4.wait_user(usuario.tag)
             });
 
             let respuesta = await awaitMessage({ channel: message.channel, filter: (m: light.Message) => m.author.id == usuario.id && ['s', 'n'].some(item => item == m.content), time: (1 * 60) * 1000, max: 1 }).catch(() => { })
@@ -84,7 +84,7 @@ export default class Comando extends Command {
                 turnosPorId.delete(message.guild.id)
                 return client.sendEmbed({
                     channel: message.channel,
-                    description: langjson.commands.connect4[lang + '_dont_answer']
+                    description: langjson.commands.connect4.dont_answer(usuario.tag)
                 })
             }
 
@@ -93,7 +93,7 @@ export default class Comando extends Command {
                 turnosPorId.delete(message.guild.id)
                 return client.sendEmbed({
                     channel: message.channel,
-                    description: langjson.commands.connect4[lang + '_deny'].replace('{USER}', usuario.tag)
+                    description: langjson.commands.connect4.deny(usuario.tag)
                 })
             }
 
@@ -101,7 +101,7 @@ export default class Comando extends Command {
                 games.delete(message.guild.id)
                 return client.sendEmbed({
                     channel: message.channel,
-                    description: langjson.commands.connect4[lang + '_user_active'].replace('{USER}', usuario.tag)
+                    description: langjson.commands.connect4.user_active(usuario.tag)
                 });
             }
 
@@ -109,7 +109,7 @@ export default class Comando extends Command {
                 games.delete(message.guild.id)
                 return client.sendEmbed({
                     channel: message.channel,
-                    description: langjson.commands.connect4[lang + '_author_active']
+                    description: langjson.commands.connect4.author_active
                 });
             }
 
@@ -136,7 +136,7 @@ export default class Comando extends Command {
             attachFiles: att,
             channel: message.channel,
             imageURL: 'attachment://4enraya.gif',
-            description: langjson.commands.connect4[lang + '_start'].replace('{USER}', (turno(message.author.id)) == 1 ? message.author.tag : usuario.tag)
+            description: langjson.commands.connect4.start(turno(message.author.id) == 1 ? message.author.tag : usuario.tag)
         })
 
         const colector = message.channel.createMessageCollector(function (msg: light.Message) {
@@ -179,7 +179,7 @@ export default class Comando extends Command {
                 let res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(msg.guild.id), client.imagenes);
                 let att = new MessageAttachment(res, '4enraya.gif')
                 client.sendEmbed({
-                    description: langjson.commands.connect4[lang + '_win'].replace('{USER}', msg.author.tag),
+                    description: langjson.commands.connect4.win(msg.author.tag),
                     channel: msg.channel,
                     attachFiles: att,
                     imageURL: 'attachment://4enraya.gif'
@@ -195,7 +195,7 @@ export default class Comando extends Command {
                 let att = new MessageAttachment(res, '4enraya.gif')
                 client.sendEmbed({
                     channel: msg.channel,
-                    description: langjson.commands.connect4[lang + '_draw'].replace('{USER_CONNECT4_AI_FIRST_USER_PLAYER}', usuario.tag).replace('{USER_CONNECT4_AI_SECOND_USER_PLAYER}', message.author.tag),
+                    description: langjson.commands.connect4.draw(usuario.tag, message.author.tag),
                     attachFiles: att,
                     imageURL: 'attachment://4enraya.gif'
                 })
@@ -211,7 +211,7 @@ export default class Comando extends Command {
                     let res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes);
                     let att = new MessageAttachment(res, '4enraya.gif')
                     client.sendEmbed({
-                        description: langjson.commands.connect4[lang + '_win'].replace('{USER}', client.user.tag),
+                        description: langjson.commands.connect4.win(usuario.tag),
                         channel: msg.channel,
                         attachFiles: att,
                         imageURL: 'attachment://4enraya.gif',
@@ -228,7 +228,7 @@ export default class Comando extends Command {
                     let att = new MessageAttachment(res, '4enraya.gif')
                     client.sendEmbed({
                         channel: msg.channel,
-                        description: langjson.commands.connect4[lang + '_draw'].replace('{USER_CONNECT4_AI_FIRST_USER_PLAYER}', usuario.tag).replace('{USER_CONNECT4_AI_SECOND_USER_PLAYER}', message.author.tag),
+                        description: langjson.commands.connect4.draw(usuario.tag, message.author.tag),
                         attachFiles: att,
                         imageURL: 'attachment://4enraya.gif',
                         footerText: args[0]
@@ -245,7 +245,7 @@ export default class Comando extends Command {
                 await client.sendEmbed({
                     channel: msg.channel,
                     attachFiles: att,
-                    description: langjson.commands.connect4[lang + '_turn'].replace('{USER}', message.author.tag).replace('{GAME_USER_CONNECT4_AI_PLAYER_TURNS}', '🔴'),
+                    description: langjson.commands.connect4.turn(message.author.tag, '🔴'),
                     imageURL: 'attachment://4enraya.gif',
                     footerText: args[0]
                 })
@@ -259,9 +259,10 @@ export default class Comando extends Command {
                 await client.sendEmbed({
                     channel: msg.channel,
                     attachFiles: att,
-                    description: langjson.commands.connect4[lang + '_turn']
-                        .replace('{USER}', turno(message.author.id) == turno(msg.author.id) ? usuario.tag : message.author.tag)
-                        .replace('{GAME_USER_CONNECT4_AI_PLAYER_TURNS}', turno(msg.author.id) == 2 ? `🔴` : `🟡`),
+                    description: langjson.commands.connect4.turn(
+                        turno(message.author.id) == turno(msg.author.id) ? usuario.tag : message.author.tag,
+                        turno(msg.author.id) == 2 ? `🔴` : `🟡`
+                    ),
                     imageURL: 'attachment://4enraya.gif'
                 })
         })
@@ -272,7 +273,7 @@ export default class Comando extends Command {
                 if (usuario.id == client.user.id) await model.findOneAndUpdate({ id: message.author.id, difficulty: args[0] }, { $inc: { perdidas: 1 }, $set: { cacheName: message.author.username } }, { upsert: true });
                 client.sendEmbed({
                     channel: message.channel,
-                    description: langjson.commands.connect4[lang + '_game_over'],
+                    description: langjson.commands.connect4.game_over,
                     attachFiles: new MessageAttachment(await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes), '4enraya.gif'),
                     imageURL: 'attachment://4enraya.gif'
                 })
@@ -284,7 +285,7 @@ export default class Comando extends Command {
                 if (usuario.id == client.user.id) await model.findOneAndUpdate({ id: message.author.id, difficulty: args[0] }, { $inc: { perdidas: 1 }, $set: { cacheName: message.author.username } }, { upsert: true });
                 client.sendEmbed({
                     channel: message.channel,
-                    description: langjson.commands.connect4[lang + '_time_over'],
+                    description: langjson.commands.connect4.time_over,
                     attachFiles: new MessageAttachment(await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes), '4enraya.gif'),
                     imageURL: 'attachment://4enraya.gif'
                 })
@@ -296,7 +297,7 @@ export default class Comando extends Command {
                 if (usuario.id == client.user.id) await model.findOneAndUpdate({ id: message.author.id, difficulty: args[0] }, { $inc: { perdidas: 1 }, $set: { cacheName: message.author.username } }, { upsert: true });
                 client.sendEmbed({
                     channel: message.channel,
-                    description: langjson.commands.connect4[lang + '_game_over2'],
+                    description: langjson.commands.connect4.game_over2,
                     attachFiles: new MessageAttachment(await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes), '4enraya.gif'),
                     imageURL: 'attachment://4enraya.gif'
                 })

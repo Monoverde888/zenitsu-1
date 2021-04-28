@@ -5,7 +5,7 @@ const { WebhookClient, Collection, MessageEmbed, TextChannel, NewsChannel } = li
 import Comando from '../../Utils/Classes/command.js';
 import Zenitsu from '../../Utils/Classes/client.js';
 const cooldowns: light.Collection<string, light.Collection<string, number>> = new Collection();
-import langjson from '../../Utils/lang.js';
+import lenguajes from '../../Utils/Lang/langs.js'
 
 async function event(client: Zenitsu, message: light.Message): Promise<any> {
 
@@ -31,11 +31,11 @@ async function event(client: Zenitsu, message: light.Message): Promise<any> {
 
     const requestLang = await client.lang.cacheOrFetch(message.guild.id);
     const lang: 'es' | 'en' = requestLang.lang
-
+    const langjson = lenguajes[lang]
     const afk = await client.afk.cacheOrFetch(message.author.id)
     if (afk.status) {
         await client.afk.delete(message.author.id);
-        let texto = langjson.messages[`${lang}_afk_volver`];
+        let texto = langjson.messages.afk_volver;
         return message.reply(texto)
     }
 
@@ -84,7 +84,7 @@ async function event(client: Zenitsu, message: light.Message): Promise<any> {
                 const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
                 if (now < expirationTime) {
                     const timeLeft = (expirationTime - now);
-                    return message.reply(langjson.messages[lang + '_cooldown'].replace('{TIME}', ms(timeLeft, { long: true, language: lang })).replace('{COMMAND}', command));
+                    return message.reply(langjson.messages.cooldown(ms(timeLeft, { long: true, language: lang }), command));
                 }
             }
 
@@ -98,11 +98,9 @@ async function event(client: Zenitsu, message: light.Message): Promise<any> {
 
         if (check.length) {
 
-            const texto: string = langjson.messages[lang + '_permisos_bot_channel'];
-
             let embed = new MessageEmbed()
                 .setColor(client.color)
-                .setDescription(texto.replace('{PERMISOS}', `\`${check.join(',')}\``))
+                .setDescription(langjson.messages.permisos_bot_channel(`\`${check.join(',')}\``))
                 .setTimestamp()
                 .setFooter('\u200b', 'https://media1.tenor.com/images/41334cbe64331dad2e2dc6272334b47f/tenor.gif');
 
@@ -113,11 +111,9 @@ async function event(client: Zenitsu, message: light.Message): Promise<any> {
 
         if (check.length) {
 
-            const texto: string = langjson.messages[lang + '_permisos_user_channel'];
-
             let embed = new MessageEmbed()
                 .setColor(client.color)
-                .setDescription(texto.replace('{PERMISOS}', `\`${check.join(',')}\``))
+                .setDescription(langjson.messages.permisos_user_channel(`\`${check.join(',')}\``))
                 .setTimestamp()
                 .setFooter('\u200b', 'https://media1.tenor.com/images/41334cbe64331dad2e2dc6272334b47f/tenor.gif');
 
@@ -128,11 +124,9 @@ async function event(client: Zenitsu, message: light.Message): Promise<any> {
 
         if (check.length) {
 
-            const texto: string = langjson.messages[lang + '_permisos_bot_guild'];
-
             let embed = new MessageEmbed()
                 .setColor(client.color)
-                .setDescription(texto.replace('{PERMISOS}', `\`${check.join(',')}\``))
+                .setDescription(langjson.messages.permisos_bot_guild(`\`${check.join(',')}\``))
                 .setTimestamp()
                 .setFooter('\u200b', 'https://media1.tenor.com/images/41334cbe64331dad2e2dc6272334b47f/tenor.gif');
 
@@ -143,11 +137,9 @@ async function event(client: Zenitsu, message: light.Message): Promise<any> {
 
         if (check.length) {
 
-            const texto: string = langjson.messages[lang + '_permisos_user_guild'];
-
             let embed = new MessageEmbed()
                 .setColor(client.color)
-                .setDescription(texto.replace('{PERMISOS}', `\`${check.join(',')}\``))
+                .setDescription(langjson.messages.permisos_user_guild(`\`${check.join(',')}\``))
                 .setTimestamp()
                 .setFooter('\u200b', 'https://media1.tenor.com/images/41334cbe64331dad2e2dc6272334b47f/tenor.gif');
 
@@ -181,7 +173,7 @@ async function event(client: Zenitsu, message: light.Message): Promise<any> {
                     .addField('Comando usado', command)
                     .setAuthor(message.content.slice(0, 1000))
             )
-            return message.channel.send(langjson.messages[lang + '_error'].replace('{ERROR}', (e.message || e?.toString() || e)));
+            return message.channel.send(langjson.messages.error((e.message || e?.toString() || e)));
         }
 
     }

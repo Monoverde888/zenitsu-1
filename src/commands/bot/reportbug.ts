@@ -13,8 +13,8 @@ class Comando extends Command {
     };
 
     async run({ client, message, embedResponse, args, langjson, lang }: commandinterface) {
-        if (!args[0]) return embedResponse(langjson.commands.reportbug[lang + '_need'])
-        let embed = new MessageEmbed()
+        if (!args[0]) return embedResponse(langjson.commands.reportbug.need)
+        const embed = new MessageEmbed()
             .setColor(client.color)
             .setDescription(`[📢] | ${args.join(' ')}`)
             .setTimestamp()
@@ -22,7 +22,7 @@ class Comando extends Command {
             .setFooter('Enviado desde ' + message.guild.name, message.guild.iconURL({ dynamic: true, size: 2048 }))
             .setThumbnail(message.author.displayAvatarURL({ dynamic: true, size: 2048 }))
         return (client.channels.cache.get('725053091522805787') as light.TextChannel).send({ embed: embed }).then(() => {
-            return embedResponse(langjson.commands.reportbug[lang + '_send']);
+            return embedResponse(langjson.commands.reportbug.send);
         })
 
     }

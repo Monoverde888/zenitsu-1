@@ -14,7 +14,7 @@ export default class Comando extends Command {
             return message.channel.send({
                 embed: new MessageEmbed()
                     .setColor(client.color)
-                    .setDescription(langjson.commands.afk[lang + '_reason'])
+                    .setDescription(langjson.commands.afk.reason)
                     .setTimestamp()
             })
 

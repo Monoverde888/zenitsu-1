@@ -5,7 +5,9 @@ import buffer from './toBuffer.js';
 import GIFEncoder from 'gifencoder'
 import util from 'util'
 const promisified = util.promisify(buffer)
-
+interface potoImage {
+    [x: string]: canvas.Image
+}
 async function mapaCanvas(mapatest: string[], imagenes: imagenesC, win = false) {
 
     let numeros = [
@@ -25,7 +27,7 @@ async function mapaCanvas(mapatest: string[], imagenes: imagenesC, win = false) 
     let bck = imagenes.tictactoe.background;
     ctx.drawImage(bck, 0, 0, canvas.width, canvas.height)
 
-    const img = {
+    const img: potoImage = {
         '❌': imagenes.tictactoe.equis,
         '⭕': imagenes.tictactoe.circulo
     }
@@ -403,7 +405,7 @@ async function mapaCanvas(mapatest: string[], imagenes: imagenesC, win = false) 
     else {
         final = attachment
     }
-    return final;
+    return (final as Promise<Buffer>);
 }
 
 

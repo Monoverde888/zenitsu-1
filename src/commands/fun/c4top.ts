@@ -19,11 +19,11 @@ export default class Comando extends Command {
 
         if (!data.length)
             return client.sendEmbed({
-                description: langjson.commands.connect4top[lang + '_no_data'].replace('{DIF}', difficulty),
+                description: langjson.commands.connect4top.no_data(difficulty),
                 channel: message.channel
             });
 
-        const states: string[] = langjson.commands.connect4top[lang + '_states']
+        const states: string[] = langjson.commands.connect4top.states
 
         const description = data.map(item => {
 

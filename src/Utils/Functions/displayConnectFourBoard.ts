@@ -6,7 +6,12 @@ import buffer from './toBuffer.js';
 import GIFEncoder from 'gifencoder'
 import util from 'util';
 const { promisify } = util
-
+interface potonum {
+    [x: string]: number
+}
+interface potoImage {
+    [x: string]: canvas.Image
+}
 async function displayConnectFourBoard(mapa: string[][], game: c4.Connect4AI, imagenes: imagenesC): Promise<Buffer> {
     const toBuffer = promisify(buffer);
     const encoder = new GIFEncoder(700, 600);
@@ -18,14 +23,14 @@ async function displayConnectFourBoard(mapa: string[][], game: c4.Connect4AI, im
     mapa = mapa.map(a => a.map(e => e.replace('⬛', '⚪')))
     const win = imagenes.connect4.win
     const bck = imagenes.connect4.background;
-    const imgs = {
+    const imgs: potoImage = {
         "🟢": imagenes.connect4.verde,
         "🟡": imagenes.connect4.amarillo
     }
     const canvas = createCanvas(700, 600)
     const ctx = canvas.getContext('2d')
     ctx.drawImage(bck, 0, 0, 700, 600)
-    const columna = {
+    const columna: potonum = {
         "0": 10,
         "1": 110,
         "2": 210,
@@ -34,7 +39,7 @@ async function displayConnectFourBoard(mapa: string[][], game: c4.Connect4AI, im
         "5": 510,
         "6": 610,
     },
-        fila = {
+        fila: potonum = {
             "0": 10,
             "1": 110,
             "2": 210,
@@ -42,7 +47,7 @@ async function displayConnectFourBoard(mapa: string[][], game: c4.Connect4AI, im
             "4": 410,
             "5": 510
         },
-        filaR = {
+        filaR: potonum = {
             "0": 510,
             "1": 410,
             "2": 310,

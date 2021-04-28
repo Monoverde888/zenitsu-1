@@ -25,13 +25,13 @@ class Comando extends Command {
             }).then(() => {
                 let embed = new MessageEmbed()
                     .setColor(client.color)
-                    .setDescription(langjson.commands.lockchannel[lang + '_on_block'].replace('{MOD}', message.author.tag))
+                    .setDescription(langjson.commands.lockchannel.on_block(message.author.tag))
                     .setTimestamp()
                 return canal.send({ embed: embed })
             }).catch(err => {
                 let embed = new MessageEmbed()
                     .setColor(client.color)
-                    .setDescription(langjson.commands.lockchannel[lang + '_on_block_error'])
+                    .setDescription(langjson.commands.lockchannel.on_block_error)
                     .setTimestamp()
                     .setFooter(err.message || err)
                 return canal.send({ embed: embed })
@@ -43,13 +43,13 @@ class Comando extends Command {
             }).then(() => {
                 let embed = new MessageEmbed()
                     .setColor(client.color)
-                    .setDescription(langjson.commands.lockchannel[lang + '_on_unblock'].replace('{MOD}', message.author.tag))
+                    .setDescription(langjson.commands.lockchannel.on_unblock(message.author.tag))
                     .setTimestamp()
                 return canal.send({ embed: embed })
             }).catch(err => {
                 let embed = new MessageEmbed()
                     .setColor(client.color)
-                    .setDescription(langjson.commands.lockchannel[lang + '_on_unblock_error'])
+                    .setDescription(langjson.commands.lockchannel.on_unblock)
                     .setTimestamp()
                     .setFooter(err.message || err)
                 return canal.send({ embed: embed })

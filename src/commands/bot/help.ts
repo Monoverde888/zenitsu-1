@@ -15,7 +15,7 @@ class Comando extends Command {
     }
     run({ client, message, langjson, lang }: commandinterface) {
 
-        const categories: string[] = langjson.commands.help[lang + '_categories']
+        const categories: string[] = langjson.commands.help.categories;
 
         let embedHelp = new MessageEmbed()
             .setColor(client.color)

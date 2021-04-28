@@ -13,7 +13,7 @@ class Comando extends Command {
     };
 
     async run({ client, message, embedResponse, args, langjson, lang }: commandinterface) {
-        if (!args[0]) return embedResponse(langjson.commands.suggest[lang + '_need'])
+        if (!args[0]) return embedResponse(langjson.commands.suggest.need)
         let embed = new MessageEmbed()
             .setColor(client.color)
             .setDescription(`[<:reason2:804368699887845376>] | ${args.join(' ')}`)
@@ -22,7 +22,7 @@ class Comando extends Command {
             .setFooter('Enviado desde ' + message.guild.name, message.guild.iconURL({ dynamic: true, size: 2048 }))
             .setThumbnail(message.author.displayAvatarURL({ dynamic: true, size: 2048 }))
         return (client.channels.cache.get('727948582556270682') as light.TextChannel).send({ embed: embed }).then(() => {
-            return embedResponse(langjson.commands.suggest[lang + '_send']);
+            return embedResponse(langjson.commands.suggest.send);
         })
 
     }

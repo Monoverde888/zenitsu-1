@@ -20,7 +20,7 @@ export default class Comando extends Command {
         if (!data || !data.length)
             return client.sendEmbed({
                 channel: message.channel,
-                description: langjson.commands.connect4stats[lang + '_no_data'].replace('{USER}', member.user.toString())
+                description: langjson.commands.connect4stats.no_data(member.user.toString())
             });
 
         const easy = data.find(item => item.difficulty == 'easy'),
@@ -28,8 +28,8 @@ export default class Comando extends Command {
             hard = data.find(item => item.difficulty == 'hard')
 
         const json = langjson.commands.connect4stats,
-            difi: string[] = json[lang + '_difficulties'],
-            states: string[] = json[lang + '_states']
+            difi: string[] = json.difficulties,
+            states: string[] = json.states
 
         let embed = new MessageEmbed()
             .setColor(client.color)

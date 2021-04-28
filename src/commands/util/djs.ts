@@ -7,12 +7,12 @@ export default class Comando extends Command {
         this.name = "djs"
         this.category = 'utils'
     }
-    async run({ message, args, embedResponse, lang, langjson }: run) {
+    async run({ message, args, embedResponse, langjson }: run) {
 
-        if (!args[0]) return embedResponse(langjson.commands.djs[lang + '_what']);
+        if (!args[0]) return embedResponse(langjson.commands.djs.what);
         const response = await fetch(`https://djsdocs.sorta.moe/v2/embed?src=stable&q=${encodeURIComponent(args.join(' '))}`).catch(() => undefined);
         const megadb = response?.data;
-        if (!megadb) return embedResponse(langjson.commands.djs[lang + '_no_result'])
+        if (!megadb) return embedResponse(langjson.commands.djs.no_result)
         return message.channel.send({ embed: megadb }).catch(() => { });
     }
 };
