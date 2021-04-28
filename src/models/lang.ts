@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 const { Schema, model } = mongoose;
 
 const Guild = new Schema({
-    id: String,
+    id: { type: String, unique: true },
     lang: {
         default: 'es',
         type: String

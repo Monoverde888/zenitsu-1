@@ -189,7 +189,10 @@ const obj = {
         },
         "afk": {
             "reason": "<:cancel:804368628861763664> | La razón debe tener menos de 250 caracteres.",
-
+        },
+        "setlogs": {
+            invalid: `Uso incorrecto, por favor ingresa una webhook valida y tipo.`,
+            correct: (webhook: string, type: string) => `Ahora la webhook **${webhook}** está registrando el evento **${type}**.`
         }
     }
 }

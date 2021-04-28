@@ -2,18 +2,18 @@ import mongoose from 'mongoose';
 const { Schema, model } = mongoose;
 
 const Guild = new Schema({
-    id: String,
+    id: { type: String, unique: true },
     logs: [{
         idWeb: String,
         tokenWeb: String,
-        type: String
+        TYPE: String
     }]
 })
 
 interface logs {
     idWeb: string;
     tokenWeb: string;
-    type: string;
+    TYPE: string;
 }
 
 interface Logs extends mongoose.Document {

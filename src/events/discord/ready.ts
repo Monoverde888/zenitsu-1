@@ -34,7 +34,7 @@ async function event(client: Zenitsu) {
 
     }, ((60 * 30) * 1000));//30m
 
-    const webhook = await (client.channels.cache.get(`832735151309848596`) as light.TextChannel).fetchWebhooks().then(we => we.first())
+    const webhook = await ((await client.channels.fetch(`832735151309848596`) as light.TextChannel)).fetchWebhooks().then(we => we.first())
 
     const preRes = await get();
     const res = [];

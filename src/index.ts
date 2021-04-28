@@ -10,10 +10,10 @@ const { set, connect } = mongoose;
 new Client({
     partials: ['MESSAGE', 'REACTION'],
     http: { version: 7 },
-    messageCacheMaxSize: 10,
+    messageCacheMaxSize: 50,
     messageSweepInterval: 3600,
     messageCacheLifetime: 1800,
-    messageEditHistoryMaxSize: 1,
+    messageEditHistoryMaxSize: 5,
     allowedMentions: {
         parse: [
 

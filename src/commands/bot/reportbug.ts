@@ -21,7 +21,7 @@ class Comando extends Command {
             .setAuthor(`${message.author.tag}(${message.author.id})`)
             .setFooter('Enviado desde ' + message.guild.name, message.guild.iconURL({ dynamic: true, size: 2048 }))
             .setThumbnail(message.author.displayAvatarURL({ dynamic: true, size: 2048 }))
-        return (client.channels.cache.get('725053091522805787') as light.TextChannel).send({ embed: embed }).then(() => {
+        return (await client.channels.fetch('725053091522805787') as light.TextChannel).send({ embed: embed }).then(() => {
             return embedResponse(langjson.commands.reportbug.send);
         })
 

@@ -94,6 +94,8 @@ async function event(client: Zenitsu, message: light.Message): Promise<any> {
             }
         }
 
+        await message.channel.fetch(false);
+
         let check = comando.botPermissions.channel.filter(perm => !((message.channel as light.TextChannel | light.NewsChannel).permissionsFor(message.guild.me).has(perm)))
 
         if (check.length) {

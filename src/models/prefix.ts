@@ -7,7 +7,7 @@ interface Prefix extends mongoose.Document {
 }
 
 const Prefix = new Schema({
-    id: String,
+    id: { type: String, unique: true },
     prefix: {
         default: 'z!',
         type: String

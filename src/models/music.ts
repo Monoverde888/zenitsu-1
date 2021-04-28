@@ -3,7 +3,7 @@ const { Schema, model } = mongoose;
 
 const Guild = new Schema({
     message: String,
-    guild: String,
+    guild: { type: String, unique: true },
     channel: String
 })
 

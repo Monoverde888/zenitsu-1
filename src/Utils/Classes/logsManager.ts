@@ -5,7 +5,7 @@ import Model from '../../models/logs.js'
 interface logs {
     idWeb: string;
     tokenWeb: string;
-    type: string;
+    TYPE: string;
 }
 
 interface Logs {
@@ -28,29 +28,59 @@ class LogsManager {
         return Model.deleteOne({ id });
     }
 
-    async update(updateXD: 'pull' | 'add', datazo: {
+    async update(datazo: {
         id: string;
         webhook: {
             token: string;
             id: string
         };
-        type: string;
+        TYPE: string;
     }) {
 
-        const data = await Model.findOneAndUpdate({ id: datazo.id },
-            {
-                [updateXD == 'add' ? '$addToSet' : '$pull']: {
-                    logs: {
-                        type: datazo.type,
-                        tokenWeb: datazo.webhook.token,
-                        idWeb: datazo.webhook.id
+        const fetch = await this.cacheOrFetch(datazo.id),
+            check = (fetch.logs.find(item => (item.TYPE == datazo.TYPE)))
+        console.log(check)
+
+        if (!check) {
+
+            const data = await Model.findOneAndUpdate({ id: datazo.id },
+                {
+                    ['$addToSet']: {
+                        logs: {
+                            TYPE: datazo.TYPE,
+                            tokenWeb: datazo.webhook.token,
+                            idWeb: datazo.webhook.id
+                        },
                     },
+                }, { new: true, upsert: true });
+
+
+            this.cache.set(datazo.id, data);
+            return data;
+        }
+
+        else {
+            await Model.findOneAndUpdate({ id: datazo.id }, {
+                $pull: {
+                    logs: check
                 }
-            }, { new: true, upsert: true });
+            }, { new: true })
 
-        this.cache.set(datazo.id, data);
+            const data = await Model.findOneAndUpdate({ id: datazo.id },
+                {
+                    $addToSet: {
+                        logs: {
+                            TYPE: datazo.TYPE,
+                            tokenWeb: datazo.webhook.token,
+                            idWeb: datazo.webhook.id
+                        },
+                    },
+                }, { new: true, upsert: true });
 
-        return data;
+            this.cache.set(datazo.id, data);
+
+            return data;
+        }
 
     }
 

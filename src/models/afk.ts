@@ -10,7 +10,7 @@ interface Afk extends mongoose.Document {
 
 const modelo = new Schema({
 
-    id: String,
+    id: { type: String, unique: true },
     reason: { type: String, default: 'AFK' },
     date: { type: Number, default: 0 },
     status: { type: Boolean, default: false }
