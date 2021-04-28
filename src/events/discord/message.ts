@@ -86,11 +86,11 @@ async function event(client: Zenitsu, message: light.Message): Promise<any> {
                     const timeLeft = (expirationTime - now);
                     return message.reply(langjson.messages.cooldown(ms(timeLeft, { long: true, language: lang }), command));
                 }
+                else timestamps.set(message.author.id, now);
             }
 
             else {
                 timestamps.set(message.author.id, now);
-                setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
             }
         }
 
