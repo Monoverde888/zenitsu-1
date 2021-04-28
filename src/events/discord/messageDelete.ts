@@ -4,6 +4,8 @@ import model from '../../models/logs.js'
 
 async function event(client: Zenitsu, message: light.Message): Promise<any> {
 
+    if (!message) return;
+
     if (!message.guild
         || !message.guild.id
         || !message.author
@@ -14,9 +16,6 @@ async function event(client: Zenitsu, message: light.Message): Promise<any> {
         || !message.channel
     ) return;
 
-    if (!message.member) {
-        await message.member.fetch();
-    }
     const data = await client.logs.cacheOrFetch(message.guild.id),
         find = data.logs.find(item => item.TYPE == 'messageDelete')
 
