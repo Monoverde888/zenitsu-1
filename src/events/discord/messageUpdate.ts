@@ -4,6 +4,8 @@ import Zenitsu from '../../Utils/Classes/client.js';
 
 async function event(client: Zenitsu, oldMessage: light.Message, newMessage: light.Message): Promise<any> {
 
+    if (!oldMessage || !newMessage) return;
+
     if (!oldMessage.guild
         || !oldMessage.guild.id
         || !oldMessage.author
