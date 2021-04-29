@@ -47,7 +47,7 @@ export default class Comando extends Command {
         if (client.user.id != usuario.id) {
             respuesta = await awaitMessage({ channel: message.channel, filter: (m) => m.author.id == usuario.id && ['s', 'n'].some(item => item == m.content), time: (1 * 60) * 1000, max: 1 }).catch(() => { })
 
-            if (!respuesta) {
+            if (!respuesta || !respuesta?.first()) {
                 client.sendEmbed({
                     channel: message.channel,
                     description: langjson.commands.tictactoe.dont_answer(usuario.username)
