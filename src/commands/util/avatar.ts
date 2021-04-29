@@ -11,7 +11,8 @@ export default class Comando extends Command {
         const user = message.mentions.users.first() || message.author,
             avatar = user.displayAvatarURL({
                 dynamic: true,
-                size: 2048
+                size: 2048,
+                format: 'png'
             });
 
         return message.channel.send(`> ${avatar}`)
