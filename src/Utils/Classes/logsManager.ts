@@ -39,7 +39,6 @@ class LogsManager {
 
         const fetch = await this.cacheOrFetch(datazo.id),
             check = (fetch.logs.find(item => (item.TYPE == datazo.TYPE)))
-        console.log(check)
 
         if (!check) {
 
