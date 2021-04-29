@@ -26,9 +26,8 @@ async function event(client: Zenitsu, oldMessage: light.Message, newMessage: lig
         || !newMessage.channel
     ) return;
 
-    if (!newMessage.member) {
-        await newMessage.member.fetch();
-    }
+    if (oldMessage.content == newMessage.content) return;
+
     const data = await client.logs.cacheOrFetch(newMessage.guild.id),
         find = data.logs.find(item => item.TYPE == 'messageUpdate')
 
