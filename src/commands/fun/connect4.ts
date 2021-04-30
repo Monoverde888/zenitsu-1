@@ -1,7 +1,7 @@
 import c4 from 'connect4-ai';
 const { Connect4AI } = c4
 import light from 'discord.js-light';
-const { MessageAttachment, Message } = light;
+const { MessageAttachment } = light;
 const turnosPorId: Map<string, Map<string, (0 | 1 | 2)>> = new Map();
 import run from '../../Utils/Interfaces/run.js';
 import displayConnectFourBoard from '../../Utils/Functions/displayConnectFourBoard.js'
@@ -207,6 +207,7 @@ export default class Comando extends Command {
 
             if (usuario.id == client.user.id) {
                 games.get(message.guild.id).playAI(args[0]);
+
                 if (games.get(message.guild.id).gameStatus().gameOver && games.get(message.guild.id).gameStatus().solution) {
                     let res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes);
                     let att = new MessageAttachment(res, '4enraya.gif')
@@ -252,10 +253,9 @@ export default class Comando extends Command {
 
             }
 
-            let res = await displayConnectFourBoard(displayBoard(games.get(msg.guild.id).ascii()), games.get(msg.guild.id), client.imagenes);
-            let att = new MessageAttachment(res, '4enraya.gif')
-
-            if (usuario.id != client.user.id)
+            if ((usuario.id != client.user.id) && (games.get(message.guild.id))) {
+                let res = await displayConnectFourBoard(displayBoard(games.get(msg.guild.id).ascii()), games.get(msg.guild.id), client.imagenes);
+                let att = new MessageAttachment(res, '4enraya.gif')
                 await client.sendEmbed({
                     channel: msg.channel,
                     attachFiles: att,
@@ -265,6 +265,7 @@ export default class Comando extends Command {
                     ),
                     imageURL: 'attachment://4enraya.gif'
                 })
+            }
         })
 
         colector.on('end', async (_, r) => {
