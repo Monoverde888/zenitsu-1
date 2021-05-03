@@ -72,7 +72,7 @@ const obj = {
             "message": (guilds: number) => "I am currently on " + guilds + " servers."
         },
         "invite": {
-            "message": (bot: string, support: string) => "Bot invitation link: [Link]({LINK} \"Invite the bot\")🤖\nSupport link: [Link]({SUPPORT_LINK} \"You will receive help\")<:zStaffZenitsu:766436216966217729>"
+            "message": (bot: string, support: string) => "Bot invitation link: [Link](" + bot + " \"Invite the bot\")🤖\nSupport link: [Link](" + support + " \"You will receive help\")<:zStaffZenitsu:766436216966217729>"
         },
         "reportbug": {
 
@@ -173,6 +173,18 @@ const obj = {
         "setlogs": {
             invalid: `Incorrect use, please provide a valid webhook and type.`,
             correct: (webhook: string, type: string) => `Now the webhook **${webhook}** is active in the **${type}** event.`
+        },
+        "ban": {
+            mention: `<:cancel:804368628861763664> | Mention a member.`,
+            cannt_ban: (user: string) => `<:cancel:804368628861763664> | **I can't** ban ${user}`,
+            user_cannt_ban: (user: string) => `<:cancel:804368628861763664> | **You can't** ban ${user}`,
+            ban: (user: string, reason: string) => `<:ban:804368686130397215> | **${user}** was banned${reason ? `, with the reason: ${reason}` : `.`}`
+        },
+        "kick": {
+            mention: `<:cancel:804368628861763664> | Mention a member.`,
+            cannt_kick: (user: string) => `<:cancel:804368628861763664> | **I can't** kick ${user}`,
+            user_cannt_kick: (user: string) => `<:cancel:804368628861763664> | **You can't** kick ${user}`,
+            kick: (user: string, reason: string) => `<:ban:804368686130397215> | **${user}** was kicked${reason ? `, with the reason: ${reason}` : `.`}`
         }
     }
 }

@@ -74,7 +74,7 @@ const obj = {
             "message": (guilds: number) => "Actualmente estoy en " + guilds + " servidores.",
         },
         "invite": {
-            "message": (bot: string, support: string) => "Link de invitación del bot: [Link]({LINK} \"Invitaras al bot\")🤖\nLink de invitación al servidor de soporte: [Link]({SUPPORT_LINK} \"Recibirás ayuda\")<:zStaffZenitsu:766436216966217729>",
+            "message": (bot: string, support: string) => "Link de invitación del bot: [Link](" + bot + " \"Invitaras al bot\")🤖\nLink de invitación al servidor de soporte: [Link](" + support + " \"Recibirás ayuda\")<:zStaffZenitsu:766436216966217729>",
         },
         "reportbug": {
             "need": "<:cancel:804368628861763664> | Necesitas especificar el error.",
@@ -107,7 +107,7 @@ const obj = {
 
             "start": (user: string) => "Empieza " + user + ", elige un numero del 1 al 7. [`🔴`]",
 
-            "win": (winner: string) => "<:uh:829390140832874506> | {USER} ha ganado la partida!",
+            "win": (winner: string) => "<:uh:829390140832874506> | " + winner + " ha ganado la partida!",
 
             "draw": (p1: string, p2: string) => "<:wtdDud:829390621894508544> | Un empate entre " + p1 + " y " + p2 + ".",
 
@@ -193,6 +193,18 @@ const obj = {
         "setlogs": {
             invalid: `Uso incorrecto, por favor ingresa una webhook valida y tipo.`,
             correct: (webhook: string, type: string) => `Ahora la webhook **${webhook}** está registrando el evento **${type}**.`
+        },
+        "ban": {
+            mention: `<:cancel:804368628861763664> | Menciona a un miembro.`,
+            cannt_ban: (user: string) => `<:cancel:804368628861763664> | **No puedo** vetar a ${user}`,
+            user_cannt_ban: (user: string) => `<:cancel:804368628861763664> | **No puedes** vetar a ${user}`,
+            ban: (user: string, reason: string) => `<:ban:804368686130397215> | **${user}** ha sido vetado${reason ? `, con la razón: ${reason}` : `.`}`
+        },
+        "kick": {
+            mention: `<:cancel:804368628861763664> | Menciona a un miembro.`,
+            cannt_kick: (user: string) => `<:cancel:804368628861763664> | **No puedo** expulsar a ${user}`,
+            user_cannt_kick: (user: string) => `<:cancel:804368628861763664> | **No puedes** expulsar a ${user}`,
+            kick: (user: string, reason: string) => `<:ban:804368686130397215> | **${user}** ha sido expulsado${reason ? `, con la razón: ${reason}` : `.`}`
         }
     }
 }
