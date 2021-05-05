@@ -72,11 +72,6 @@ class Zenitsu extends Client {
     }
 
     async init(): Promise<boolean> {
-        await this.login();
-        await this.loadEvents('discord');
-        await this.loadEvents('distube');
-        await this.loadCommands();
-        await this.loadImages().catch((e) => console.log(e.message));
         this.dbl = new dbla(process.env.DBLTOKEN, this);
         this.music = new Distube(this, {
             leaveOnFinish: true,
@@ -96,6 +91,11 @@ class Zenitsu extends Client {
             '577000793094488085', // AndreMor
             '390726024536653865', // zPablo 鯉
         ];
+        await this.login();
+        await this.loadEvents('discord');
+        await this.loadEvents('distube');
+        await this.loadCommands();
+        await this.loadImages().catch((e) => console.log(e.message));
 
         return true;
 
