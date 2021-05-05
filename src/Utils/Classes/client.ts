@@ -76,6 +76,7 @@ class Zenitsu extends Client {
         this.music = new Distube(this, {
             leaveOnFinish: true,
             leaveOnStop: true,
+            leaveOnEmpty: false,
             youtubeCookie: process.env.YOUTUBE_COOKIE,
             plugins: [new spotify({ parallel: true })]
         });
