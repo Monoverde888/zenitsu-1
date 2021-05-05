@@ -13,11 +13,11 @@ class Comando extends Command {
         this.botPermissions.channel = ['ATTACH_FILES'];
 
     }
-    run({ client, message, langjson, lang }: commandinterface) {
+    run({ client, message, langjson }: commandinterface): Promise<light.Message> {
 
         const categories: string[] = langjson.commands.help.categories;
 
-        let embedHelp = new MessageEmbed()
+        const embedHelp = new MessageEmbed()
             .setColor(client.color)
             .setTimestamp()
             .addField(categories[0], client.commands.filter(a => a.category === 'utils').map(a => `\`${a.name}\``).join(', '))

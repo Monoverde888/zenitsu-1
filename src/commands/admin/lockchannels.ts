@@ -1,7 +1,7 @@
 import Command from '../../Utils/Classes/command.js';
 import commandinterface from '../../Utils/Interfaces/run.js'
 import light from 'discord.js-light';
-const { TextChannel, MessageEmbed, NewsChannel } = light;
+const { MessageEmbed } = light;
 
 class Comando extends Command {
 
@@ -12,9 +12,9 @@ class Comando extends Command {
         this.category = 'admin'
         this.botPermissions = { guild: [], channel: ['MANAGE_CHANNELS', 'EMBED_LINKS'] }
         this.memberPermissions = { guild: [], channel: ['MANAGE_CHANNELS'] }
-    };
+    }
 
-    run({ client, message, embedResponse, args, Hora, langjson, lang }: commandinterface) {
+    run({ client, message, langjson }: commandinterface): Promise<light.Message> {
 
         const canal = (message.channel as (light.TextChannel | light.NewsChannel)),
             permisos = canal.permissionOverwrites.get(message.guild.id);
@@ -23,13 +23,13 @@ class Comando extends Command {
             return canal.updateOverwrite(message.guild.id, {
                 SEND_MESSAGES: false
             }).then(() => {
-                let embed = new MessageEmbed()
+                const embed = new MessageEmbed()
                     .setColor(client.color)
                     .setDescription(langjson.commands.lockchannel.on_block(message.author.tag))
                     .setTimestamp()
                 return canal.send({ embed: embed })
             }).catch(err => {
-                let embed = new MessageEmbed()
+                const embed = new MessageEmbed()
                     .setColor(client.color)
                     .setDescription(langjson.commands.lockchannel.on_block_error)
                     .setTimestamp()
@@ -41,13 +41,13 @@ class Comando extends Command {
             return canal.updateOverwrite(message.guild.id, {
                 SEND_MESSAGES: null
             }).then(() => {
-                let embed = new MessageEmbed()
+                const embed = new MessageEmbed()
                     .setColor(client.color)
                     .setDescription(langjson.commands.lockchannel.on_unblock(message.author.tag))
                     .setTimestamp()
                 return canal.send({ embed: embed })
             }).catch(err => {
-                let embed = new MessageEmbed()
+                const embed = new MessageEmbed()
                     .setColor(client.color)
                     .setDescription(langjson.commands.lockchannel.on_unblock)
                     .setTimestamp()

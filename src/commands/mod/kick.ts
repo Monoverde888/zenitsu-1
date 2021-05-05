@@ -13,7 +13,7 @@ export default class Comando extends Command {
         this.memberPermissions.guild = ['KICK_MEMBERS'];
     }
 
-    run({ args, message, langjson, client, embedResponse }: run) {
+    run({ args, message, langjson, client, embedResponse }: run): Promise<light.Message> {
 
 
         const member = message.mentions.members.filter(member => member.id != message.author.id).first();

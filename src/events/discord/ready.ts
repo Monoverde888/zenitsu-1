@@ -13,20 +13,21 @@ const res = common(import.meta.url);
 const __dirname: string = res.__dirname;
 async function get() {
 
-    let fetch: string = await axios(`https://github.com/marcrock22/zenitsu`).then(res => res.data);
-    let arr = fetch.split('js-details-container Details')
-    return arr[arr.length - 1].match(/title=\"(([A-Z])|\.){1,99}\".data\-/gmi).map(item => item.slice(7).slice(0, -7)).slice(0)
+    const fetch: string = await axios(`https://github.com/marcrock22/zenitsu`).then(res => res.data);
+    const arr = fetch.split('js-details-container Details')
+    return arr[arr.length - 1].match(/title="(([A-Z])|\.){1,99}".data-/gmi).map(item => item.slice(7).slice(0, -7)).slice(0)
 
 }
-async function event(client: Zenitsu) {
-    const buffer = (await promisify(svg)(`https://top.gg/api/widget/721080193678311554.svg`)) as Buffer
+async function event(client: Zenitsu): Promise<void> {
+
+    const buffer = (await promisify(svg)(`https://top.gg/api/widget/721080193678311554.svg`, {})) as Buffer
     const path = join(__dirname, '..', '..', '..', 'Images', 'topgg.png');
     await writeFile(path, buffer);
-    await client.setPresence();
+    await client.setPresence('poto', 'WATCHING');
     console.log(`${client.user.tag} está listo :):):):):).`)
 
     setInterval(async () => {
-        client.setPresence();
+        client.setPresence('poto', 'PLAYING');
 
         //Post stats to top.gg
         await client.dbl.postStats(client.guilds.cache.size);
@@ -38,7 +39,9 @@ async function event(client: Zenitsu) {
 
     const preRes = await get();
     const res = [];
-    const emojis: any = {
+    const emojis: {
+        [x: string]: string
+    } = {
         Images: `📁`,
         src: `😋`,
         handler: `⛏`,
@@ -54,7 +57,7 @@ async function event(client: Zenitsu) {
         'tsconfig.json': `🗃️`
     };
 
-    for (let file of preRes) {
+    for (const file of preRes) {
 
         const papush = (emojis[file]) ? `${emojis[file]} ${file}` : file;
 
@@ -71,7 +74,7 @@ async function event(client: Zenitsu) {
                 description: `Source code: https://github.com/marcrock22/zenitsu`
             }]
         }
-    });
+    })
 
 }
 

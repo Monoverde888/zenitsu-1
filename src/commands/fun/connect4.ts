@@ -26,7 +26,7 @@ export default class Comando extends Command {
         this.botPermissions.channel = ['ATTACH_FILES']
     }
 
-    async run({ client, message, args, lang, langjson }: run) {
+    async run({ client, message, args, langjson }: run): Promise<light.Message> {
 
         if (games.has(message.guild.id))
             return client.sendEmbed({
@@ -36,7 +36,7 @@ export default class Comando extends Command {
 
         args[0] = args[0]?.toLowerCase();
 
-        let usuario = ['easy', 'medium', 'hard'].includes(args[0]) ? client.user : message.mentions.members.filter(member => !member.user.bot).first()?.user;
+        const usuario = ['easy', 'medium', 'hard'].includes(args[0]) ? client.user : message.mentions.members.filter(member => !member.user.bot).first()?.user;
 
         if (!usuario || usuario.id == message.author.id || (usuario.bot && usuario.id != client.user.id))
             return client.sendEmbed({
@@ -45,7 +45,7 @@ export default class Comando extends Command {
                 footerText: langjson.commands.connect4.footer
             });
 
-        let turno = (id: string) => obtenerTurno({ guild: message.guild.id, member: id })
+        const turno = (id: string) => obtenerTurno({ guild: message.guild.id, member: id })
 
         if (usuario.id != client.user.id)
             if (obtenerTurno({ guild: message.guild.id, member: usuario.id })) {
@@ -67,7 +67,7 @@ export default class Comando extends Command {
 
         games.set(message.guild.id, poto)
 
-        let obj = new Map();
+        const obj = new Map();
         turnosPorId.set(message.guild.id, obj)
 
         if (usuario.id != client.user.id) {
@@ -77,7 +77,7 @@ export default class Comando extends Command {
                 description: langjson.commands.connect4.wait_user(usuario.tag)
             });
 
-            let respuesta = await awaitMessage({ channel: message.channel, filter: (m: light.Message) => m.author.id == usuario.id && ['s', 'n'].some(item => item == m.content), time: (1 * 60) * 1000, max: 1 }).catch(() => { })
+            const respuesta = await awaitMessage({ channel: message.channel, filter: (m: light.Message) => m.author.id == usuario.id && ['s', 'n'].some(item => item == m.content), time: (1 * 60) * 1000, max: 1 }).catch(() => undefined)
 
             if (!respuesta) {
                 games.delete(message.guild.id)
@@ -117,20 +117,20 @@ export default class Comando extends Command {
 
         if (usuario.id != client.user.id) {
 
-            let temp = turnosPorId.get(message.guild.id);
+            const temp = turnosPorId.get(message.guild.id);
             temp.set(usuario.id, Math.floor(Math.random() * 2) + 1 == 2 ? 2 : 1);
             temp.set(message.author.id, temp.get(usuario.id) == 2 ? 1 : 2);
 
         }
 
         else {
-            let temp = turnosPorId.get(message.guild.id);
+            const temp = turnosPorId.get(message.guild.id);
             temp.set(usuario.id, 2);
             temp.set(message.author.id, 1);
         }
 
-        let res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes);
-        let att = new MessageAttachment(res, '4enraya.gif')
+        const res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes);
+        const att = new MessageAttachment(res, '4enraya.gif')
 
         client.sendEmbed({
             attachFiles: att,
@@ -176,8 +176,8 @@ export default class Comando extends Command {
             games.get(message.guild.id).play(parseInt(msg.content) - 1)
 
             if (games.get(msg.guild.id).gameStatus().gameOver && games.get(msg.guild.id).gameStatus().solution) {
-                let res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(msg.guild.id), client.imagenes);
-                let att = new MessageAttachment(res, '4enraya.gif')
+                const res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(msg.guild.id), client.imagenes);
+                const att = new MessageAttachment(res, '4enraya.gif')
                 client.sendEmbed({
                     description: langjson.commands.connect4.win(msg.author.tag),
                     channel: msg.channel,
@@ -191,8 +191,8 @@ export default class Comando extends Command {
             }
 
             else if (games.get(msg.guild.id).gameStatus().gameOver) {
-                let res = await displayConnectFourBoard(displayBoard(games.get(msg.guild.id).ascii()), games.get(msg.guild.id), client.imagenes);
-                let att = new MessageAttachment(res, '4enraya.gif')
+                const res = await displayConnectFourBoard(displayBoard(games.get(msg.guild.id).ascii()), games.get(msg.guild.id), client.imagenes);
+                const att = new MessageAttachment(res, '4enraya.gif')
                 client.sendEmbed({
                     channel: msg.channel,
                     description: langjson.commands.connect4.draw(usuario.tag, message.author.tag),
@@ -209,8 +209,8 @@ export default class Comando extends Command {
                 games.get(message.guild.id).playAI(args[0]);
 
                 if (games.get(message.guild.id).gameStatus().gameOver && games.get(message.guild.id).gameStatus().solution) {
-                    let res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes);
-                    let att = new MessageAttachment(res, '4enraya.gif')
+                    const res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes);
+                    const att = new MessageAttachment(res, '4enraya.gif')
                     client.sendEmbed({
                         description: langjson.commands.connect4.win(usuario.tag),
                         channel: msg.channel,
@@ -225,8 +225,8 @@ export default class Comando extends Command {
                 }
 
                 else if ((games.get(message.guild.id)).gameStatus().gameOver) {
-                    let res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes);
-                    let att = new MessageAttachment(res, '4enraya.gif')
+                    const res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes);
+                    const att = new MessageAttachment(res, '4enraya.gif')
                     client.sendEmbed({
                         channel: msg.channel,
                         description: langjson.commands.connect4.draw(usuario.tag, message.author.tag),
@@ -240,8 +240,8 @@ export default class Comando extends Command {
                     return colector.stop();
                 }
 
-                let res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes);
-                let att = new MessageAttachment(res, '4enraya.gif')
+                const res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes);
+                const att = new MessageAttachment(res, '4enraya.gif')
 
                 await client.sendEmbed({
                     channel: msg.channel,
@@ -254,8 +254,8 @@ export default class Comando extends Command {
             }
 
             if ((usuario.id != client.user.id) && (games.get(message.guild.id))) {
-                let res = await displayConnectFourBoard(displayBoard(games.get(msg.guild.id).ascii()), games.get(msg.guild.id), client.imagenes);
-                let att = new MessageAttachment(res, '4enraya.gif')
+                const res = await displayConnectFourBoard(displayBoard(games.get(msg.guild.id).ascii()), games.get(msg.guild.id), client.imagenes);
+                const att = new MessageAttachment(res, '4enraya.gif')
                 await client.sendEmbed({
                     channel: msg.channel,
                     attachFiles: att,
@@ -313,8 +313,8 @@ function displayBoard(board: string) {
     /*
         RegEx: https://portalmybot.com/code/D519u4BFb0
     */
-    let regex = /(?:[\u2700-\u27bf]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff]|[\u0023-\u0039]\ufe0f?\u20e3|\u3299|\u3297|\u303d|\u3030|\u24c2|\ud83c[\udd70-\udd71]|\ud83c[\udd7e-\udd7f]|\ud83c\udd8e|\ud83c[\udd91-\udd9a]|\ud83c[\udde6-\uddff]|\ud83c[\ude01-\ude02]|\ud83c\ude1a|\ud83c\ude2f|\ud83c[\ude32-\ude3a]|\ud83c[\ude50-\ude51]|\u203c|\u2049|[\u25aa-\u25ab]|\u25b6|\u25c0|[\u25fb-\u25fe]|\u00a9|\u00ae|\u2122|\u2139|\ud83c\udc04|[\u2600-\u26FF]|\u2b05|\u2b06|\u2b07|\u2b1b|\u2b1c|\u2b50|\u2b55|\u231a|\u231b|\u2328|\u23cf|[\u23e9-\u23f3]|[\u23f8-\u23fa]|\ud83c\udccf|\u2934|\u2935|[\u2190-\u21ff])/g;
-    let res = board
+    const regex = /(?:[\u2700-\u27bf]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff]|[\u0023-\u0039]\ufe0f?\u20e3|\u3299|\u3297|\u303d|\u3030|\u24c2|\ud83c[\udd70-\udd71]|\ud83c[\udd7e-\udd7f]|\ud83c\udd8e|\ud83c[\udd91-\udd9a]|\ud83c[\udde6-\uddff]|\ud83c[\ude01-\ude02]|\ud83c\ude1a|\ud83c\ude2f|\ud83c[\ude32-\ude3a]|\ud83c[\ude50-\ude51]|\u203c|\u2049|[\u25aa-\u25ab]|\u25b6|\u25c0|[\u25fb-\u25fe]|\u00a9|\u00ae|\u2122|\u2139|\ud83c\udc04|[\u2600-\u26FF]|\u2b05|\u2b06|\u2b07|\u2b1b|\u2b1c|\u2b50|\u2b55|\u231a|\u231b|\u2328|\u23cf|[\u23e9-\u23f3]|[\u23f8-\u23fa]|\ud83c\udccf|\u2934|\u2935|[\u2190-\u21ff])/g;
+    const res = board
         .split('1').join('🟢')
         .split('2').join('🟡')
         .split(' - ').join('⬛')

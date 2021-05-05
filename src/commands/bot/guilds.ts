@@ -10,11 +10,11 @@ class Comando extends Command {
         this.category = 'bot'
         this.botPermissions = { guild: [], channel: ['EMBED_LINKS'] }
         this.memberPermissions = { guild: [], channel: [] }
-    };
+    }
 
-    async run({ client, message, langjson, lang }: commandinterface) {
+    async run({ client, message, langjson }: commandinterface): Promise<light.Message> {
 
-        let embed = new MessageEmbed()
+        const embed = new MessageEmbed()
             .setColor(client.color)
             .setDescription(langjson.commands.guilds.message(client.guilds.cache.size))
             .setTimestamp()

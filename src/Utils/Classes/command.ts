@@ -33,8 +33,8 @@ class Command {
             channel: []
         }
     }
-    run({ client, message, args, embedResponse, Hora }: inte): any {
-
+    run(runthis: inte): unknown {
+        return runthis;
     }
 
 }

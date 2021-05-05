@@ -7,7 +7,7 @@ import Zenitsu from '../../Utils/Classes/client.js';
 const cooldowns: light.Collection<string, light.Collection<string, number>> = new Collection();
 import lenguajes from '../../Utils/Lang/langs.js'
 
-async function event(client: Zenitsu, message: light.Message): Promise<any> {
+async function event(client: Zenitsu, message: light.Message): Promise<void | light.Message> {
 
     if (!message.guild || !message.author || !message.member || message.author.bot) return;
 
@@ -35,22 +35,22 @@ async function event(client: Zenitsu, message: light.Message): Promise<any> {
     const afk = await client.afk.cacheOrFetch(message.author.id)
     if (afk.status) {
         await client.afk.delete(message.author.id);
-        let texto = langjson.messages.afk_volver;
-        return message.reply(texto)
+        const texto = langjson.messages.afk_volver;
+        return message.channel.send(message.author.toString() + ', ' + texto)
     }
 
-    for (let user of message.mentions.members.array().filter(user => !user.user.bot)) {
+    for (const user of message.mentions.members.array().filter(user => !user.user.bot)) {
 
-        let cacheAfk = await client.afk.cacheOrFetch(user.id);
+        const cacheAfk = await client.afk.cacheOrFetch(user.id);
         if (cacheAfk && cacheAfk.status) {
 
-            let embed = new MessageEmbed()
+            const embed = new MessageEmbed()
                 .setColor(client.color)
                 .setAuthor(user.user.tag, user.user.displayAvatarURL({ dynamic: true, size: 2048 }))
                 .setDescription(cacheAfk.reason)
                 .setFooter('AFK | ' + ms(Date.now() - cacheAfk.date, { language: lang, long: true }))
 
-            message.channel.send({ embed }).catch(() => { })
+            message.channel.send({ embed }).catch(() => undefined)
             break;
         }
     }
@@ -84,7 +84,7 @@ async function event(client: Zenitsu, message: light.Message): Promise<any> {
                 const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
                 if (now < expirationTime) {
                     const timeLeft = (expirationTime - now);
-                    return message.reply(langjson.messages.cooldown(ms(timeLeft, { long: true, language: lang }), command));
+                    return message.channel.send(message.author.toString() + ' ,' + langjson.messages.cooldown(ms(timeLeft, { long: true, language: lang }), command));
                 }
                 else timestamps.set(message.author.id, now);
             }
@@ -100,7 +100,7 @@ async function event(client: Zenitsu, message: light.Message): Promise<any> {
 
         if (check.length) {
 
-            let embed = new MessageEmbed()
+            const embed = new MessageEmbed()
                 .setColor(client.color)
                 .setDescription(langjson.messages.permisos_bot_channel(`\`${check.join(',')}\``))
                 .setTimestamp()
@@ -113,7 +113,7 @@ async function event(client: Zenitsu, message: light.Message): Promise<any> {
 
         if (check.length) {
 
-            let embed = new MessageEmbed()
+            const embed = new MessageEmbed()
                 .setColor(client.color)
                 .setDescription(langjson.messages.permisos_user_channel(`\`${check.join(',')}\``))
                 .setTimestamp()
@@ -122,11 +122,11 @@ async function event(client: Zenitsu, message: light.Message): Promise<any> {
             return message.channel.send({ embed: embed })
         }
 
-        check = comando.botPermissions.guild.filter(perm => !(message.guild.me.hasPermission(perm)));
+        check = comando.botPermissions.guild.filter(perm => !(message.guild.me.permissions.has(perm)));
 
         if (check.length) {
 
-            let embed = new MessageEmbed()
+            const embed = new MessageEmbed()
                 .setColor(client.color)
                 .setDescription(langjson.messages.permisos_bot_guild(`\`${check.join(',')}\``))
                 .setTimestamp()
@@ -135,11 +135,11 @@ async function event(client: Zenitsu, message: light.Message): Promise<any> {
             return message.channel.send({ embed: embed })
         }
 
-        check = comando.memberPermissions.guild.filter(perm => !(message.member.hasPermission(perm)));
+        check = comando.memberPermissions.guild.filter(perm => !(message.member.permissions.has(perm)));
 
         if (check.length) {
 
-            let embed = new MessageEmbed()
+            const embed = new MessageEmbed()
                 .setColor(client.color)
                 .setDescription(langjson.messages.permisos_user_guild(`\`${check.join(',')}\``))
                 .setTimestamp()
@@ -148,14 +148,14 @@ async function event(client: Zenitsu, message: light.Message): Promise<any> {
             return message.channel.send({ embed: embed })
         }
 
-        async function embedResponse(descriptionHere: string, option: light.ChannelResolvable) {
+        const embedResponse = (descriptionHere: string, option: light.ChannelResolvable): Promise<light.Message> => {
 
-            let embed = new MessageEmbed()
+            const embed = new MessageEmbed()
                 .setDescription(descriptionHere)
                 .setTimestamp()
                 .setColor(client.color);
 
-            let canal: light.TextChannel | light.NewsChannel | light.DMChannel = (client.channels.resolve(option) as light.TextChannel) || message.channel;
+            const canal: light.TextChannel | light.NewsChannel | light.DMChannel = (client.channels.resolve(option) as light.TextChannel) || message.channel;
 
             return canal.send({ embed: embed })
 
@@ -187,13 +187,13 @@ export default event;
 
 function Hora(date = Date.now(), dia = false) {
 
-    let fecha = new Date(date - ms('4h'))
+    const fecha = new Date(date - ms('4h'))
 
-    let hora = fecha.getHours();
+    const hora = fecha.getHours();
 
-    let minutos = fecha.getMinutes();
+    const minutos = fecha.getMinutes();
 
-    let segundos = fecha.getSeconds();
+    const segundos = fecha.getSeconds();
 
     let horaS: string,
         minutosS: string,
@@ -214,7 +214,7 @@ function Hora(date = Date.now(), dia = false) {
 
     else {
 
-        let dia = new Date(date - ms('4h')).getDay() + 1,
+        const dia = new Date(date - ms('4h')).getDay() + 1,
             mes = new Date(date - ms('4h')).getMonth() + 1,
             año = new Date(date - ms('4h')).getFullYear()
 

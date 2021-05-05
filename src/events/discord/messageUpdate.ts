@@ -2,7 +2,7 @@ import light from 'discord.js-light';
 import model from '../../models/logs.js'
 import Zenitsu from '../../Utils/Classes/client.js';
 
-async function event(client: Zenitsu, oldMessage: light.Message, newMessage: light.Message): Promise<any> {
+async function event(client: Zenitsu, oldMessage: light.Message, newMessage: light.Message): Promise<light.APIMessage> {
 
     if (!oldMessage || !newMessage) return;
 
@@ -40,26 +40,28 @@ async function event(client: Zenitsu, oldMessage: light.Message, newMessage: lig
                 size: 2048,
                 format: 'png',
                 dynamic: true
-            }))
+            }), oldMessage.url)
             .setDescription(oldMessage.content)
-            .setFooter(`#${(oldMessage.channel as light.TextChannel).name}`)
-        ,
+            .setFooter(`messageUpdate - #${(oldMessage.channel as light.TextChannel).name}`),
+
         new light.MessageEmbed()
             .setColor('GREEN')
             .setAuthor(newMessage.author.tag, newMessage.author.displayAvatarURL({
                 size: 2048,
                 format: 'png',
                 dynamic: true
-            }))
+            }), newMessage.url)
             .setDescription(newMessage.content)
-            .setFooter(`#${(newMessage.channel as light.TextChannel).name}`)
+            .setFooter(`messageUpdate - #${(newMessage.channel as light.TextChannel).name}`)
     ]
 
 
     const wh = new light.WebhookClient(find.idWeb, find.tokenWeb);
 
-    wh.send({ embeds })
-        .catch(async () => {
+    return wh.send({ embeds })
+        .catch(async (e) => {
+
+            console.log(`[WEBHOOK-MESSAGE_UPDATE]: `, e)
 
             const dataa = await model.findOneAndUpdate({ id: data.id }, {
                 $pull: {
@@ -72,6 +74,8 @@ async function event(client: Zenitsu, oldMessage: light.Message, newMessage: lig
             }, { new: true })
 
             client.logs.cache.set(data.id, dataa)
+
+            return undefined;
 
         });
 

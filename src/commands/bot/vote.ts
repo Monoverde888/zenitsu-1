@@ -11,11 +11,11 @@ class Comando extends Command {
         this.category = 'bot'
         this.alias = ['topgg']
         this.botPermissions.channel = ['ATTACH_FILES']
-    };
+    }
 
-    async run({ client, message }: commandinterface) {
+    async run({ client, message }: commandinterface): Promise<light.Message> {
 
-        let embed = new MessageEmbed()
+        const embed = new MessageEmbed()
             .setThumbnail(client.user.displayAvatarURL({ format: 'png', size: 2048 }))
             .setDescription(`https://top.gg/bot/721080193678311554`)
             .attachFiles([client.rutaImagen('topgg.png')])

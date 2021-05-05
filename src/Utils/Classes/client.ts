@@ -1,7 +1,7 @@
 import light from 'discord.js-light';
 const { Client, Collection, MessageEmbed } = light;
 import Command from './command.js'
-import musicmodel from '../../models/music.js';
+//import musicmodel from '../../models/music.js';
 import dbla from 'dblapi.js'
 import fs from 'fs/promises';
 const { readdir } = fs;
@@ -23,7 +23,21 @@ import common from '../Functions/commons.js';
 const res = common(import.meta.url);
 const __dirname: string = res.__dirname;
 import nekos from 'nekos.life';
-import lenguajes from '../Lang/langs.js'
+import spotify from '@distube/spotify'
+//import lenguajes from '../Lang/langs.js'
+interface potasio {
+    id: string,
+    type: number,
+    content: string,
+    channel_id: string,
+    pinned: boolean,
+    mention_everyone: boolean,
+    tts: boolean,
+    timestamp: string,
+    edited_timestamp: string,
+    flags: number,
+    webhook_id: string
+}
 
 class Zenitsu extends Client {
     commands: light.Collection<string, Command>;
@@ -41,19 +55,39 @@ class Zenitsu extends Client {
 
     constructor(args: light.ClientOptions) {
         super(args);
-        this.login();
+        this.init()
+    }
+
+    editWebhookMessage({ token, id, data, messageID }: {
+        token: string, id: string, data: {
+            content: string,
+            embeds: { description: string }[]
+        }, messageID: string
+    }): Promise<potasio> {
+        return axios({
+            method: 'patch',
+            url: `https://discord.com/api/v8/webhooks/${id}/${token}/messages/${messageID}`,
+            data
+        }).then(({ data }) => data)
+    }
+
+    async init(): Promise<boolean> {
+        await this.login();
+        await this.loadEvents('discord');
+        await this.loadEvents('distube');
+        await this.loadCommands();
+        await this.loadImages().catch((e) => console.log(e.message));
         this.dbl = new dbla(process.env.DBLTOKEN, this);
-        this.loadEvents('discord');
-        //this.loadEvents('distube');
-        this.loadCommands();
-        this.loadImages().catch((e) => console.log(e.message));
         this.music = new Distube(this, {
-            leaveOnFinish: true
+            leaveOnFinish: true,
+            leaveOnStop: true,
+            youtubeCookie: process.env.YOUTUBE_COOKIE,
+            plugins: [new spotify({ parallel: true })]
         });
-        this.lang = new LangManager(this);
-        this.prefix = new PrefixManager(this);
-        this.afk = new AfkManager(this);
-        this.logs = new LogsManager(this);
+        this.lang = new LangManager();
+        this.prefix = new PrefixManager();
+        this.afk = new AfkManager();
+        this.logs = new LogsManager();
         this.color = '#E09E36';
         this.commands = new Collection();
         this.nekos = new nekos();
@@ -63,17 +97,11 @@ class Zenitsu extends Client {
             '390726024536653865', // zPablo 鯉
         ];
 
-    };
+        return true;
 
-    editWebhookMessage({ token, id, data, messageID }: { token: string, id: string, data: any, messageID: string }) {
-        return axios({
-            method: 'patch',
-            url: `https://discord.com/api/v8/webhooks/${id}/${token}/messages/${messageID}`,
-            data
-        }).then(({ data }) => data)
     }
 
-    async updateMusic(guildID: string) {
+    /*async updateMusic(guildID: string): Promise<void> {
 
         const model = musicmodel;
 
@@ -96,7 +124,7 @@ class Zenitsu extends Client {
             throw new Error('Invalid channel.');
         }
 
-        const mensaje = (canal as light.TextChannel).messages.cache.get(message) || await (canal as light.TextChannel).messages.fetch(message).catch(() => { }).then(e => e);
+        const mensaje = (canal as light.TextChannel).messages.cache.get(message) || await (canal as light.TextChannel).messages.fetch(message).catch(() => undefined).then(e => e);
 
         if (!mensaje) {
             await model.deleteOne({ guild, channel, message });
@@ -110,7 +138,7 @@ class Zenitsu extends Client {
         const datazo = lenguajes[lang]
 
         if (!queue) {
-            let embedN = new MessageEmbed()
+            const embedN = new MessageEmbed()
 
                 .setDescription(datazo.music.music_request)
                 .setImage(`https://cdn.discordapp.com/attachments/804318974086610954/825021359532015636/standard.gif`);
@@ -132,15 +160,15 @@ class Zenitsu extends Client {
 
         embed.setAuthor(texto, `https://cdn.discordapp.com/emojis/804368852388806686.png?v=1`)
 
-        if (actualSong.youtube && actualSong.thumbnail) {
+        if (actualSong.thumbnail) {
             embed.setImage(actualSong.thumbnail)
         }
 
         embed.setFooter(actualSong.user.tag, actualSong.user.displayAvatarURL({ dynamic: true, size: 2048 }))
 
-        let { songs } = queue;
+        const { songs } = queue;
 
-        let res = songs.slice(1).map((item, i) => {
+        const res = songs.slice(1).map((item, i) => {
 
             return `[${i + 1}] ${item.name} - ${item.isLive ? datazo.music.live : item.formattedDuration == '00:00' ? '??:??' : item.formattedDuration}`;
 
@@ -148,7 +176,7 @@ class Zenitsu extends Client {
 
         const text = datazo.music.queue(palaqueue(res, 1900))
 
-        let totalRes = res.length ? text : datazo.music.no_queue
+        const totalRes = res.length ? text : datazo.music.no_queue
 
         const modos: string[] = datazo.music.queue_modes,
             loopMode = datazo.music.loop_mode,
@@ -162,16 +190,16 @@ class Zenitsu extends Client {
         embed.addField(autoplay, queue.autoplay ? yes : no)
 
         mensaje.edit({ content: totalRes, embed })
-    }
+    }*/
 
-    async getLang(id: string) {
+    async getLang(id: string): Promise<"es" | "en"> {
 
         const res = await modelLang.findOne({ id });
         return res?.lang || 'es';
 
     }
 
-    sendEmbed(object: {
+    async sendEmbed(object: {
         fields?: string[][];
         description?: string;
         imageURL?: string;
@@ -186,11 +214,11 @@ class Zenitsu extends Client {
         authorLink?: string;
         titleURL?: string;
         attachFiles?: light.FileOptions[] | string[] | light.MessageAttachment[] | light.FileOptions | string | light.MessageAttachment
-    }, options: { timestamp: boolean } = { timestamp: true }): Promise<light.Message> | undefined {
+    }, options: { timestamp: boolean } = { timestamp: true }): Promise<light.Message> {
 
-        let embed = new MessageEmbed()
+        const embed = new MessageEmbed()
 
-        let { titleURL, attachFiles, fields, description, imageURL, footerLink, footerText, color, channel, title, thumbnailURL, authorURL, authorText, authorLink } = object;
+        const { titleURL, attachFiles, fields, description, imageURL, footerLink, footerText, color, channel, title, thumbnailURL, authorURL, authorText, authorLink } = object;
 
         fields && fields.length ? fields.map(a => embed.addField(a[0], a[1], a[2] ? true : false)) : false
         if (description) embed.setDescription(description)
@@ -217,19 +245,19 @@ class Zenitsu extends Client {
 
         return texto.split('*').join(`\\*`).split('`').join("\\`").split('~').join(`\\~`).split('_').join(`\\_`).split('|').join(`\\|`);
 
-    };
+    }
 
-    async loadCommands() {
+    async loadCommands(): Promise<Zenitsu> {
 
-        let ruta = (...str: string[]) => join(__dirname, '..', '..', ...str)
+        const ruta = (...str: string[]) => join(__dirname, '..', '..', ...str)
         const load = async (dirs: string) => {
             const commands = (await readdir(ruta('commands', dirs))).filter(d => {
                 return d.endsWith('.ts') || d.endsWith('.js');
             });
-            for (let file of commands) {
+            for (const file of commands) {
                 try {
-                    let { default: archivo } = await import(`file:///` + ruta('commands', dirs, file));
-                    let instance = new archivo();
+                    const { default: archivo } = await import(`file:///` + ruta('commands', dirs, file));
+                    const instance = new archivo();
                     if (this.commands.has(instance.name)) {
 
                         console.warn(`${instance.name} ya existe.`)
@@ -247,7 +275,7 @@ class Zenitsu extends Client {
 
         const categorys = await readdir(ruta('commands'))
 
-        for (let i of categorys) {
+        for (const i of categorys) {
 
             await load(i);
 
@@ -257,17 +285,17 @@ class Zenitsu extends Client {
 
     }
 
-    async loadEvents(typee: 'distube' | 'discord') {
+    async loadEvents(typee: 'distube' | 'discord'): Promise<Zenitsu> {
 
-        let ruta = (...str: string[]) => join(__dirname, '..', '..', ...str)
-        const load = async (event: any) => {
+        const ruta = (...str: string[]) => join(__dirname, '..', '..', ...str)
+        const load = async (event: string) => {
 
             const { default: a } = await import(`file:///` + ruta('events', typee, event))
 
             try {
 
                 if (typee == 'distube') {
-                    this.music.on(event.split('.')[0], a.bind(null, this));
+                    this.music.on((event.split('.')[0] as 'playSong'), a.bind(null, this));//pnche ts xdxd
                 }
 
                 else this.on(event.split('.')[0], a.bind(null, this));
@@ -281,7 +309,7 @@ class Zenitsu extends Client {
 
         const eventos = await readdir(ruta('events', typee))
 
-        for (let i of eventos) {
+        for (const i of eventos) {
 
             await load(i);
 
@@ -291,7 +319,7 @@ class Zenitsu extends Client {
 
     }
 
-    async loadImages() {
+    async loadImages(): Promise<imagenesC> {
         this.imagenes = {
             porquelloras: {
                 chica: await loadImage(this.rutaImagen(`chica.png`)),
@@ -320,17 +348,18 @@ class Zenitsu extends Client {
         return join(__dirname, '..', '..', '..', 'Images', str)
     }
 
-    setPresence() {
+    setPresence(text: string, type: light.ActivityType): light.Presence {
         return this.user.setPresence({
             status: "idle",
-            activity: {
-                name: "z!suggest | " + this.guilds.cache.size + " servidores",
-                type: "WATCHING"
-            }
+            activities: [{
+                name: text,
+                type: type
+            }],
+            shardID: this.shard.ids
         });
     }
 
-    get private() {
+    get private(): string[] {
 
         return [
             this.token,
@@ -343,22 +372,20 @@ class Zenitsu extends Client {
             connection.pass,
             connection.user,
             connection.host
-        ];
+        ].filter(item => item);
 
     }
 
-};
+}
 
 export default Zenitsu;
 
-function palaqueue(array: string[], max: number = 2000) {
-
-    array = array;
+/*function palaqueue(array: string[], max = 2000) {
 
     let str = '',
         ministr = '',
         res = '';
-    for (let i of array) {
+    for (const i of array) {
 
         ministr = `${ministr ? ministr + '\n' : ''}${i}`
         if (ministr.length >= max) {
@@ -370,4 +397,4 @@ function palaqueue(array: string[], max: number = 2000) {
     }
     return res.split('\n').reverse().join('\n')
 
-}
+}*/

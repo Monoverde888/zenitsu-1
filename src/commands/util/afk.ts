@@ -8,7 +8,7 @@ export default class Comando extends Command {
         this.name = "afk"
         this.category = 'utils'
     }
-    async run({ client, message, args, lang, langjson }: run) {
+    async run({ client, message, args, langjson }: run): Promise<light.Message> {
 
         if (args.join(' ').length >= 250)
             return message.channel.send({
@@ -27,6 +27,6 @@ export default class Comando extends Command {
                 .setDescription(args.join(' '))
                 .setTimestamp()
                 .setFooter(message.author.tag, message.author.displayAvatarURL({ dynamic: true, size: 2048 }))
-        }).catch(() => { });
+        }).catch(() => undefined);
     }
-};
+}

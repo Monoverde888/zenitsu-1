@@ -1,8 +1,8 @@
-function replace(string: string, array: string[]) {
+function replace(string: string, array: string[]): string {
 
     let res = string;
 
-    for (let i of array) {
+    for (const i of array) {
         res = res.split(i).join('[PRIVATE]')
     }
 

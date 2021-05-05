@@ -12,11 +12,11 @@ class Comando extends Command {
         this.category = 'admin'
         this.botPermissions = { guild: [], channel: ['EMBED_LINKS'] }
         this.memberPermissions = { guild: ['MANAGE_GUILD'], channel: [] }
-    };
+    }
 
-    run({ client, message, args, langjson, lang }: commandinterface) {
+    run({ client, message, args, langjson }: commandinterface): Promise<light.Message> {
 
-        let embedErr = new MessageEmbed()
+        const embedErr = new MessageEmbed()
             .setColor(client.color)
             .setDescription(langjson.commands.setprefix.no_prefix)
             .setTimestamp()
@@ -24,7 +24,7 @@ class Comando extends Command {
         if (!args[0])
             return message.channel.send({ embed: embedErr })
 
-        let embedE = new MessageEmbed()
+        const embedE = new MessageEmbed()
             .setColor(client.color)
             .setDescription(langjson.commands.setprefix.prefix_length)
             .setTimestamp()
@@ -34,7 +34,7 @@ class Comando extends Command {
 
         return client.prefix.set(message.guild.id, args[0]).then(data => {
 
-            let embed = new MessageEmbed()
+            const embed = new MessageEmbed()
                 .setColor(client.color)
                 .setDescription(langjson.commands.setprefix.prefix_nice(message.author.tag, data.prefix))
                 .setTimestamp()
@@ -42,7 +42,7 @@ class Comando extends Command {
 
         }).catch(err => {
 
-            let embed = new MessageEmbed()
+            const embed = new MessageEmbed()
                 .setColor(client.color)
                 .setDescription(langjson.commands.setprefix.prefix_error)
                 .setTimestamp()

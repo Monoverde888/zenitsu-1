@@ -8,15 +8,15 @@ const promisified = util.promisify(buffer)
 interface potoImage {
     [x: string]: canvas.Image
 }
-async function mapaCanvas(mapatest: string[], imagenes: imagenesC, win = false) {
+async function mapaCanvas(mapatest: string[], imagenes: imagenesC, win = false): Promise<Buffer> {
 
-    let numeros = [
+    const numeros = [
         '1️⃣', '2️⃣', '3️⃣',
         '4️⃣', '5️⃣', '6️⃣',
         '7️⃣', '8️⃣', '9️⃣'
     ]
 
-    let soniguales = mapatest.every((_, i) => _ == numeros[i]);
+    const soniguales = mapatest.every((_, i) => _ == numeros[i]);
 
     const encoder = new GIFEncoder(300, 300);
 
@@ -24,7 +24,7 @@ async function mapaCanvas(mapatest: string[], imagenes: imagenesC, win = false) 
 
     const ctx = canvas.getContext('2d');
 
-    let bck = imagenes.tictactoe.background;
+    const bck = imagenes.tictactoe.background;
     ctx.drawImage(bck, 0, 0, canvas.width, canvas.height)
 
     const img: potoImage = {
@@ -33,8 +33,8 @@ async function mapaCanvas(mapatest: string[], imagenes: imagenesC, win = false) 
     }
 
     if (!soniguales) {
-        for (let i in mapatest) {
-            let IMAGEN = img[mapatest[i]]
+        for (const i in mapatest) {
+            const IMAGEN = img[mapatest[i]]
             if (!IMAGEN) continue;
             if (i == `0`) {
                 ctx.drawImage(IMAGEN, 5, 5, 90, 90)
@@ -85,7 +85,7 @@ async function mapaCanvas(mapatest: string[], imagenes: imagenesC, win = false) 
     /**
      * @returns {String}
      */
-    let whowin = () => {
+    const whowin = () => {
 
         return pos.find(p => p.every(x => mapatest[x] == '❌')) ? '#D60A0A' : pos.find(p => p.every(x => mapatest[x] == '⭕')) ? '#257f9e' : '#000000';
 
@@ -356,11 +356,11 @@ async function mapaCanvas(mapatest: string[], imagenes: imagenesC, win = false) 
                 encoder.setDelay(1);  // frame delay in ms
                 encoder.setQuality(10); // image quality. 10 is default.
 
-                let values = [25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275]
+                const values = [25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275]
 
-                let ultravalues = [275, 250, 225, 200, 175, 150, 125, 100, 75, 50, 25];
+                const ultravalues = [275, 250, 225, 200, 175, 150, 125, 100, 75, 50, 25];
 
-                for (let i in values) {
+                for (const i in values) {
                     ctx.lineWidth = 10;
                     ctx.beginPath();
                     ctx.moveTo(values[i], ultravalues[i]);
@@ -398,14 +398,14 @@ async function mapaCanvas(mapatest: string[], imagenes: imagenesC, win = false) 
     }
 
     const attachment = canvas.toBuffer()
-    let final;
+    let final: Buffer;
     if (win && stream) {
         final = await promisified(stream)
     }
     else {
         final = attachment
     }
-    return (final as Promise<Buffer>);
+    return (final as Buffer);
 }
 
 

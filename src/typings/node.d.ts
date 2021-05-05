@@ -10,6 +10,7 @@ declare global {
             WEBHOOKTOKEN: string
             DBLTOKEN: string
             PASSWORDDBL: string
+            YOUTUBE_COOKIE: string
         }
 
     }

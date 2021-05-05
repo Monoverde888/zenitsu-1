@@ -1,5 +1,4 @@
 import light from 'discord.js-light';
-import Zenitsu from "./client.js";
 import Model from '../../models/logs.js'
 
 interface logs {
@@ -16,16 +15,14 @@ interface Logs {
 class LogsManager {
 
     collection: light.Collection<string, Logs>
-    client: Zenitsu;
 
-    constructor(client: Zenitsu) {
-        this.client = client;
+    constructor() {
         this.collection = new light.Collection();
     }
 
-    delete(id: string) {
-        this.cache.delete(id);
-        return Model.deleteOne({ id });
+    async delete(id: string): Promise<boolean> {
+        await Model.deleteOne({ id });
+        return this.cache.delete(id);
     }
 
     async update(datazo: {
@@ -35,7 +32,7 @@ class LogsManager {
             id: string
         };
         TYPE: string;
-    }) {
+    }): Promise<Logs> {
 
         const fetch = await this.cacheOrFetch(datazo.id),
             check = (fetch.logs.find(item => (item.TYPE == datazo.TYPE)))
@@ -83,7 +80,7 @@ class LogsManager {
 
     }
 
-    async fetch(id: string) {
+    async fetch(id: string): Promise<Logs> {
 
         const data = await Model.findOne({ id }) || await Model.create({
             id: id,
@@ -96,11 +93,11 @@ class LogsManager {
 
     }
 
-    cacheOrFetch(id: string) {
+    cacheOrFetch(id: string): Promise<Logs> | Logs {
         return this.cache.get(id) || this.fetch(id);
     }
 
-    get cache() {
+    get cache(): light.Collection<string, Logs> {
         return this.collection;
     }
 

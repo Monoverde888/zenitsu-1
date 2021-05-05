@@ -5,6 +5,7 @@ import commandinterface from '../../Utils/Interfaces/run.js'
 import child_process from 'child_process';
 const { exec: execC } = child_process;
 const exec = promisify(execC)
+import light from 'discord.js-light'
 class Comando extends Command {
 
     constructor() {
@@ -15,7 +16,7 @@ class Comando extends Command {
         this.dev = true;
     }
 
-    async run({ message, args }: commandinterface) {
+    async run({ message, args }: commandinterface): Promise<light.Message | light.Message[]> {
 
         if (!args[0])
             return message.channel.send('eres o te haces?');
@@ -38,6 +39,6 @@ class Comando extends Command {
 
         }
     }
-};
+}
 
 export default Comando;

@@ -15,7 +15,7 @@ export default class Comando extends Command {
         this.category = 'fun'
         this.botPermissions.channel = ['ATTACH_FILES']
     }
-    async run({ message, client, lang, langjson }: run) {
+    async run({ message, client, langjson }: run): Promise<light.Message | boolean> {
 
         const miembro = message.mentions.members.first()
 
@@ -45,7 +45,7 @@ export default class Comando extends Command {
         let respuesta: light.Collection<string, light.Message> | void;
 
         if (client.user.id != usuario.id) {
-            respuesta = await awaitMessage({ channel: message.channel, filter: (m) => m.author.id == usuario.id && ['s', 'n'].some(item => item == m.content), time: (1 * 60) * 1000, max: 1 }).catch(() => { })
+            respuesta = await awaitMessage({ channel: message.channel, filter: (m: light.Message) => m.author.id == usuario.id && ['s', 'n'].some(item => item == m.content), time: (1 * 60) * 1000, max: 1 }).catch(() => undefined)
 
             if (!respuesta || !respuesta?.first()) {
                 client.sendEmbed({
@@ -67,11 +67,11 @@ export default class Comando extends Command {
         users.set(usuario.id, usuario.username)
         users.set(message.author.id, message.author.username)
 
-        partida.on('ganador', async (jugador, tablero, paso) => {
+        partida.on('ganador', async (jugador, tablero) => {
             partidas.delete(message.guild.id)
             client.sendEmbed({
                 channel: message.channel,
-                description: langjson.commands.tictactoe.win(users.get(jugador)) + `\n\n${tablero.string}`,
+                description: langjson.commands.tictactoe.win(users.get(jugador as string)) + `\n\n${tablero.string}`,
                 attachFiles: new MessageAttachment(await mapaCanvas(tablero.array, client.imagenes, true), 'tictactoe.gif'),
                 imageURL: 'attachment://tictactoe.gif'
             });
@@ -79,7 +79,7 @@ export default class Comando extends Command {
             users.delete(usuario.id)
         });
 
-        partida.on('empate', async (jugadores, tablero, paso) => {
+        partida.on('empate', async (jugadores, tablero) => {
             partidas.delete(message.guild.id)
             client.sendEmbed({
                 channel: message.channel,
@@ -91,7 +91,7 @@ export default class Comando extends Command {
             users.delete(usuario.id)
         });
 
-        partida.on('finalizado', async (jugadores, tablero, paso) => {
+        partida.on('finalizado', async (_jugadores, tablero) => {
             partidas.delete(message.guild.id)
             client.sendEmbed({
                 channel: message.channel,
@@ -112,8 +112,8 @@ export default class Comando extends Command {
             });
 
         if (partida.turno.jugador == client.user.id) {
-            let disponibles = [1, 2, 3, 4, 5, 6, 7, 8, 9].filter(a => partida.disponible(a));
-            let jugada = disponibles[Math.floor(Math.random() * disponibles.length)];
+            const disponibles = [1, 2, 3, 4, 5, 6, 7, 8, 9].filter(a => partida.disponible(a));
+            const jugada = disponibles[Math.floor(Math.random() * disponibles.length)];
             partida.elegir(jugada)
             await client.sendEmbed({
                 channel: message.channel,
@@ -123,7 +123,7 @@ export default class Comando extends Command {
             })
         }
 
-        const colector = message.channel.createMessageCollector(msg => msg.author.id === partida.turno.jugador && !isNaN(msg.content) && (Number(msg.content) >= 1 && Number(msg.content) <= 9) && partida.disponible(msg.content) && !partida.finalizado, { time: (10 * 60) * 1000 });
+        const colector = message.channel.createMessageCollector((msg: light.Message) => msg.author.id === partida.turno.jugador && parseInt(msg.content) && (Number(msg.content) >= 1 && Number(msg.content) <= 9) && partida.disponible(parseInt(msg.content)) && !partida.finalizado, { time: (10 * 60) * 1000 });
 
         colector.on('collect', async (msg) => {
             partida.elegir(msg.content);
@@ -141,8 +141,8 @@ export default class Comando extends Command {
                 })
 
             if (!partida.finalizado && partida.turno.jugador == client.user.id) {
-                let disponibles = [1, 2, 3, 4, 5, 6, 7, 8, 9].filter(a => partida.disponible(a));
-                let jugada = disponibles[Math.floor(Math.random() * disponibles.length)]
+                const disponibles = [1, 2, 3, 4, 5, 6, 7, 8, 9].filter(a => partida.disponible(a));
+                const jugada = disponibles[Math.floor(Math.random() * disponibles.length)]
                 partida.elegir(jugada)
                 if (!partida.finalizado) {
                     await client.sendEmbed({

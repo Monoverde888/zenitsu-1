@@ -12,11 +12,11 @@ class Comando extends Command {
         this.category = 'admin'
         this.botPermissions = { guild: [], channel: ['EMBED_LINKS'] }
         this.memberPermissions = { guild: ['MANAGE_GUILD'], channel: [] }
-    };
+    }
 
-    async run({ client, message, args, langjson, lang }: commandinterface) {
+    async run({ client, message, args, langjson }: commandinterface): Promise<light.Message> {
 
-        let selectLang = args[0] ? args[0].toLowerCase() : null;
+        const selectLang = args[0] ? args[0].toLowerCase() : null;
 
         switch (selectLang) {
 

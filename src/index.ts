@@ -4,7 +4,7 @@ const { config } = dotenv
 config();
 import light from 'discord.js-light'
 const { WebhookClient, MessageEmbed } = light
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 const { set, connect } = mongoose;
 
 new Client({
@@ -13,15 +13,12 @@ new Client({
     messageCacheMaxSize: 50,
     messageSweepInterval: 3600,
     messageCacheLifetime: 1800,
-    messageEditHistoryMaxSize: 5,
     allowedMentions: {
         parse: [
 
         ]
     },
-    ws: {
-        intents: 1701
-    },
+    intents: 1701,
     cacheGuilds: true,
     cacheOverwrites: true,
     cacheRoles: true,
@@ -69,5 +66,5 @@ process.on("unhandledRejection", (e: { stack: string, message: string } | string
             .setTitle('Error')
             .setDescription(`\`\`\`${typeof e == 'string' ? e : (e.stack || e.toString().slice(0, 200))}\`\`\``.slice(0, 2048))
             .setTimestamp()
-    ).catch(() => { })
+    ).catch(() => undefined)
 });

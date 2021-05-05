@@ -11,11 +11,11 @@ export default class Comando extends Command {
         this.alias = [`connect4stats`, 'fourinrowstats', '4enlineastats', 'c4stats']
         this.category = 'fun'
     }
-    async run({ message, args, client, lang, langjson }: run) {
+    async run({ message, args, client, langjson }: run): Promise<light.Message> {
 
-        let member = message.guild.members.cache.find(a => a.user.username === args.join(' ')) || message.guild.members.cache.find(a => a.user.tag === args.join(' ')) || message.guild.members.cache.find(a => a.displayName === args.join(' ')) || message.guild.members.cache.get(args[0]) || message.mentions.members.first() || message.member
+        const member = message.guild.members.cache.find(a => a.user.username === args.join(' ')) || message.guild.members.cache.find(a => a.user.tag === args.join(' ')) || message.guild.members.cache.find(a => a.displayName === args.join(' ')) || message.guild.members.cache.get(args[0]) || message.mentions.members.first() || message.member
 
-        let data = await c4top.find({ id: member.user.id });
+        const data = await c4top.find({ id: member.user.id });
 
         if (!data || !data.length)
             return client.sendEmbed({
@@ -31,7 +31,7 @@ export default class Comando extends Command {
             difi: string[] = json.difficulties,
             states: string[] = json.states
 
-        let embed = new MessageEmbed()
+        const embed = new MessageEmbed()
             .setColor(client.color)
             .setAuthor(member.user.tag, member.user.displayAvatarURL({ size: 2048, dynamic: true }))
         if (easy) embed.addField(difi[0], `${states[0]}: ${easy.ganadas} ${states[1]}: ${easy.perdidas} ${states[2]}: ${easy.empates}`)

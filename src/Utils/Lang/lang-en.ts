@@ -3,17 +3,17 @@ const obj = {
 
         "afk_volver": "<:sesonroja:804750422828515339> | Welcome back!",
 
-        "permisos_bot_guild": (p: string) => "<:cancel:804368628861763664> | Oops, I am missing some permissions on the guild: " + p,
+        "permisos_bot_guild": (p: string): string => "<:cancel:804368628861763664> | Oops, I am missing some permissions on the guild: " + p,
 
-        "permisos_bot_channel": (p: string) => "<:cancel:804368628861763664> | Oops, I am missing some permissions on the channel: " + p,
+        "permisos_bot_channel": (p: string): string => "<:cancel:804368628861763664> | Oops, I am missing some permissions on the channel: " + p,
 
-        "permisos_user_guild": (p: string) => "<:cancel:804368628861763664> | Oops, You are missing some permissions on the guild: " + p,
+        "permisos_user_guild": (p: string): string => "<:cancel:804368628861763664> | Oops, You are missing some permissions on the guild: " + p,
 
-        "permisos_user_channel": (p: string) => "<:cancel:804368628861763664> | Oops, You are missing some permissions on the channel: " + p,
+        "permisos_user_channel": (p: string): string => "<:cancel:804368628861763664> | Oops, You are missing some permissions on the channel: " + p,
 
-        "error": (e: string) => "Something happened, here's a debug: " + e,
+        "error": (e: string): string => "Something happened, here's a debug: " + e,
 
-        "cooldown": (time: string, command: string) => `Please wait ${time} before use \`${command}\``
+        "cooldown": (time: string, command: string): string => `Please wait ${time} before use \`${command}\``
     },
     "music": {
 
@@ -23,9 +23,9 @@ const obj = {
 
         "read_topic": "Read the topic of the channel to get instructions.",
 
-        "nowplaying": (duration: string | number, name: string) => `${duration} Now playing: ${name}`,
+        "nowplaying": (duration: string | number, name: string): string => `${duration} Now playing: ${name}`,
 
-        "queue": (text: string) => "Queue:\n" + text,
+        "queue": (text: string): string => "Queue:\n" + text,
         "queue_modes": [
             "None",
             "Song",
@@ -46,11 +46,11 @@ const obj = {
     },
     "commands": {
         "lockchannel": {
-            "on_block": (mod: string) => "<:moderator:804368587115593800> | " + mod + " has blocked the channel for members.",
+            "on_block": (mod: string): string => "<:moderator:804368587115593800> | " + mod + " has blocked the channel for members.",
 
             "on_block_error": "<:cancel:804368628861763664> | Error trying to block the channel.",
 
-            "on_unblock": (mod: string) => "<:moderator:804368587115593800> | " + mod + " has unblocked the channel for members.",
+            "on_unblock": (mod: string): string => "<:moderator:804368587115593800> | " + mod + " has unblocked the channel for members.",
 
             "on_unblock_error": "<:cancel:804368628861763664> | Error trying to unblock the channel."
         },
@@ -60,7 +60,7 @@ const obj = {
 
             "prefix_length": "<:cancel:804368628861763664> | The prefix must have less than 3 characters.",
 
-            "prefix_nice": (mod: string, prefix: string) => "<:trustedAdmin:804368672520536104> | " + mod + " has established the prefix to: " + prefix,
+            "prefix_nice": (mod: string, prefix: string): string => "<:trustedAdmin:804368672520536104> | " + mod + " has established the prefix to: " + prefix,
 
             "prefix_error": "<:cancel:804368628861763664> | Error setting the prefix."
         },
@@ -69,10 +69,10 @@ const obj = {
             "invalid": "<:cancel:804368628861763664> | Incorrect use of the command."
         },
         "guilds": {
-            "message": (guilds: number) => "I am currently on " + guilds + " servers."
+            "message": (guilds: number): string => "I am currently on " + guilds + " servers."
         },
         "invite": {
-            "message": (bot: string, support: string) => "Bot invitation link: [Link](" + bot + " \"Invite the bot\")🤖\nSupport link: [Link](" + support + " \"You will receive help\")<:zStaffZenitsu:766436216966217729>"
+            "message": (bot: string, support: string): string => "Bot invitation link: [Link](" + bot + " \"Invite the bot\")🤖\nSupport link: [Link](" + support + " \"You will receive help\")<:zStaffZenitsu:766436216966217729>"
         },
         "reportbug": {
 
@@ -94,23 +94,23 @@ const obj = {
 
             "footer": "You can also play with Zenitsu putting z!connect4 easy/medium/hard",
 
-            "user_active": (user: string) => user + " is active in another game.",
+            "user_active": (user: string): string => user + " is active in another game.",
 
             "author_active": "You are active in another game.",
 
-            "wait_user": (user: string) => "<a:waiting:804396292793040987> | " + user + ", you have 1 minute to answer...\nDo you want to play?: answer `s`\nYou dont want?: answer `n`",
+            "wait_user": (user: string): string => "<a:waiting:804396292793040987> | " + user + ", you have 1 minute to answer...\nDo you want to play?: answer `s`\nYou dont want?: answer `n`",
 
-            "dont_answer": (user: string) => "😔 | " + user + " did not answer...",
+            "dont_answer": (user: string): string => "😔 | " + user + " did not answer...",
 
-            "deny": (user: string) => "😔 | " + user + " rejected the invitation...",
+            "deny": (user: string): string => "😔 | " + user + " rejected the invitation...",
 
-            "start": (user: string) => "Begin " + user + ", Choose a number from 1 to 7. [`🔴`]",
+            "start": (user: string): string => "Begin " + user + ", Choose a number from 1 to 7. [`🔴`]",
 
-            "win": (winner: string) => "<:uh:829390140832874506> | " + winner + " won the game!",
+            "win": (winner: string): string => "<:uh:829390140832874506> | " + winner + " won the game!",
 
-            "draw": (p1: string, p2: string) => "<:wtdDud:829390621894508544> | A draw between " + p1 + " and " + p2 + ".",
+            "draw": (p1: string, p2: string): string => "<:wtdDud:829390621894508544> | A draw between " + p1 + " and " + p2 + ".",
 
-            "turn": (user: string, ficha: string) => "" + user + "'s turn [`" + ficha + "`]",
+            "turn": (user: string, ficha: string): string => "" + user + "'s turn [`" + ficha + "`]",
 
             "game_over": "<:wtdDud:829390621894508544> | Game over...",
 
@@ -120,7 +120,7 @@ const obj = {
         },
         "connect4stats": {
 
-            "no_data": (user: string) => "<:cancel:804368628861763664> | No data about " + user + " yet.",
+            "no_data": (user: string): string => "<:cancel:804368628861763664> | No data about " + user + " yet.",
 
             "difficulties": [
                 "Easy",
@@ -135,7 +135,7 @@ const obj = {
             ]
         },
         "connect4top": {
-            "no_data": (dif: string) => "<:cancel:804368628861763664> | There is still no data in " + dif + " difficulty",
+            "no_data": (dif: string): string => "<:cancel:804368628861763664> | There is still no data in " + dif + " difficulty",
             "states": [
                 "Wins",
                 "Loses",
@@ -145,13 +145,13 @@ const obj = {
         "tictactoe": {
             "game": "<:cancel:804368628861763664> | Mention a server member to play.",
             "curso": "<:cancel:804368628861763664> | There is an ongoing game on this server.",
-            "wait_user": (user: string) => "<a:waiting:804396292793040987> | " + user + ", you have 1 minute to answer...\nDo you want to play?: answer `s`\nYou dont want?: answer `n`",
-            "dont_answer": (user: string) => "😔 | " + user + " did not answer...",
-            "deny": (user: string) => "😔 | " + user + " rejected the invitation...",
-            "win": (user: string) => "<:uh:829390140832874506> | " + user + " win the game!",
-            "draw": (p1: string, p2: string) => "<:wtdDud:829390621894508544> | A draw between " + p1 + " and " + p2 + "!",
-            "turn": (user: string) => user + "'s turn",
-            "start": (ficha: string, user: string) => ficha + " | Begin " + user + ", Choose a number from 1 to 9.",
+            "wait_user": (user: string): string => "<a:waiting:804396292793040987> | " + user + ", you have 1 minute to answer...\nDo you want to play?: answer `s`\nYou dont want?: answer `n`",
+            "dont_answer": (user: string): string => "😔 | " + user + " did not answer...",
+            "deny": (user: string): string => "😔 | " + user + " rejected the invitation...",
+            "win": (user: string): string => "<:uh:829390140832874506> | " + user + " win the game!",
+            "draw": (p1: string, p2: string): string => "<:wtdDud:829390621894508544> | A draw between " + p1 + " and " + p2 + "!",
+            "turn": (user: string): string => user + "'s turn",
+            "start": (ficha: string, user: string): string => ficha + " | Begin " + user + ", Choose a number from 1 to 9.",
             "game_over": "<:wtdDud:829390621894508544> | Game over..."
         },
         "help": {
@@ -172,19 +172,19 @@ const obj = {
         },
         "setlogs": {
             invalid: `Incorrect use, please provide a valid webhook and type.`,
-            correct: (webhook: string, type: string) => `Now the webhook **${webhook}** is active in the **${type}** event.`
+            correct: (webhook: string, type: string): string => `Now the webhook **${webhook}** is active in the **${type}** event.`
         },
         "ban": {
             mention: `<:cancel:804368628861763664> | Mention a member.`,
-            cannt_ban: (user: string) => `<:cancel:804368628861763664> | **I can't** ban ${user}`,
-            user_cannt_ban: (user: string) => `<:cancel:804368628861763664> | **You can't** ban ${user}`,
-            ban: (user: string, reason: string) => `<:ban:804368686130397215> | **${user}** was banned${reason ? `, with the reason: ${reason}` : `.`}`
+            cannt_ban: (user: string): string => `<:cancel:804368628861763664> | **I can't** ban ${user}`,
+            user_cannt_ban: (user: string): string => `<:cancel:804368628861763664> | **You can't** ban ${user}`,
+            ban: (user: string, reason: string): string => `<:ban:804368686130397215> | **${user}** was banned${reason ? `, with the reason: ${reason}` : `.`}`
         },
         "kick": {
             mention: `<:cancel:804368628861763664> | Mention a member.`,
-            cannt_kick: (user: string) => `<:cancel:804368628861763664> | **I can't** kick ${user}`,
-            user_cannt_kick: (user: string) => `<:cancel:804368628861763664> | **You can't** kick ${user}`,
-            kick: (user: string, reason: string) => `<:ban:804368686130397215> | **${user}** was kicked${reason ? `, with the reason: ${reason}` : `.`}`
+            cannt_kick: (user: string): string => `<:cancel:804368628861763664> | **I can't** kick ${user}`,
+            user_cannt_kick: (user: string): string => `<:cancel:804368628861763664> | **You can't** kick ${user}`,
+            kick: (user: string, reason: string): string => `<:ban:804368686130397215> | **${user}** was kicked${reason ? `, with the reason: ${reason}` : `.`}`
         }
     }
 }

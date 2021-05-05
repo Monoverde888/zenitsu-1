@@ -2,7 +2,7 @@ import light from 'discord.js-light';
 import Zenitsu from '../../Utils/Classes/client.js';
 import model from '../../models/logs.js'
 
-async function event(client: Zenitsu, message: light.Message): Promise<any> {
+async function event(client: Zenitsu, message: light.Message): Promise<light.APIMessage> {
 
     if (!message) return;
 
@@ -27,14 +27,16 @@ async function event(client: Zenitsu, message: light.Message): Promise<any> {
             size: 2048,
             format: 'png',
             dynamic: true
-        }))
+        }), message.url)
         .setDescription(message.content)
-        .setFooter(`#${(message.channel as light.TextChannel).name}`)
+        .setFooter(`messageDelete - #${(message.channel as light.TextChannel).name}`)
 
     const wh = new light.WebhookClient(find.idWeb, find.tokenWeb);
 
-    wh.send(embed)
-        .catch(async () => {
+    return wh.send(embed)
+        .catch(async (e) => {
+
+            console.log(`[WEBHOOK-MESSAGE_DELETE]: `, e)
 
             const dataa = await model.findOneAndUpdate({ id: data.id }, {
                 $pull: {
@@ -47,6 +49,8 @@ async function event(client: Zenitsu, message: light.Message): Promise<any> {
             }, { new: true })
 
             client.logs.cache.set(data.id, dataa)
+
+            return undefined;
 
         });
 

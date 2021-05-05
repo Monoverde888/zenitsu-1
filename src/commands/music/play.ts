@@ -1,5 +1,6 @@
 import Command from '../../Utils/Classes/command.js';
 import commandinterface from '../../Utils/Interfaces/run.js'
+import light from 'discord.js-light';
 
 class Comando extends Command {
 
@@ -8,15 +9,26 @@ class Comando extends Command {
         this.name = 'play';
         this.category = 'music';
         this.dev = true;
-    };
+    }
 
-    async run({ client, message, embedResponse, args, Hora }: commandinterface) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async run({ client, message, embedResponse, args, Hora }: commandinterface): Promise<void> {
 
-        let busqueda = args.join(' ') || 'rick roll';
+        const busqueda = args.join(' ') || 'rick roll';
 
         message.channel.send(`Buscando \`${busqueda.slice(0, 100)}\`...`)
 
-        return client.music.play(message, busqueda);
+        const date = Date.now()
+
+        console.log(date)
+
+        await client.music.playVoiceChannel(message.member.voice.channel, busqueda, {
+            skip: false,
+            textChannel: message.channel as light.TextChannel,
+            member: message.member
+        });
+
+        console.log(Date.now() - date)
 
     }
 

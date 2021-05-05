@@ -1,6 +1,5 @@
 import light from "discord.js-light";
 import prefixM from "../../models/prefix.js";
-import Zenitsu from "./client.js";
 
 interface obj {
     prefix: string;
@@ -11,20 +10,18 @@ interface obj {
 class PrefixManager {
 
     collection: light.Collection<string, obj>
-    client: Zenitsu;
 
-    constructor(client: Zenitsu) {
-        this.client = client;
+    constructor() {
         this.collection = new light.Collection();
     }
 
-    async set(id: string, prefix: string) {
+    async set(id: string, prefix: string): Promise<obj> {
         const data = await prefixM.findOneAndUpdate({ id }, { prefix }, { new: true, upsert: true });
         this.collection.set(id, data);
         return data;
     }
 
-    async fetch(id: string) {
+    async fetch(id: string): Promise<obj> {
 
         const data = await prefixM.findOne({ id }) || await prefixM.create({ id, prefix: 'z!' });
 
@@ -34,20 +31,20 @@ class PrefixManager {
 
     }
 
-    delete(id: string) {
+    async delete(id: string): Promise<boolean> {
 
-        this.cache.delete(id);
-        return prefixM.findOneAndDelete({ id });
+        await prefixM.findOneAndDelete({ id });
+        return this.cache.delete(id);
 
     }
 
-    cacheOrFetch(id: string) {
+    cacheOrFetch(id: string): Promise<obj> | obj {
 
         return this.cache.get(id) || this.fetch(id);
 
     }
 
-    get cache() {
+    get cache(): light.Collection<string, obj> {
 
         return this.collection;
 

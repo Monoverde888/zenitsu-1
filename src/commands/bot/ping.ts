@@ -10,9 +10,9 @@ class Comando extends Command {
         super();
         this.name = 'ping';
         this.category = 'bot';
-    };
+    }
 
-    async run({ client, message, embedResponse, args, Hora }: commandinterface) {
+    async run({ client, message }: commandinterface): Promise<light.Message> {
 
         let date: number = Date.now();
         const ping_db: number = await new Promise((r, j) => {
@@ -37,8 +37,8 @@ class Comando extends Command {
                 return msg.edit({ embed });
 
             });
-    };
-};
+    }
+}
 
 export default Comando;
 

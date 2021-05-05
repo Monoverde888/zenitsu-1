@@ -1,5 +1,15 @@
 declare module 'node-svg2img' {
-    function potasio(a: any, e: any): any
-    function svg(poto: any, potoo: typeof potasio): any
-    export = svg;
+
+    type input = Buffer | string
+
+    function potasio(a?: Error, e?: Buffer): void
+
+    interface options {
+        witdth?: number
+        height?: number
+        format?: string
+    }
+
+    function svg2img(input: input, options?: options, callback?: typeof potasio): void
+    export = svg2img;
 }

@@ -7,16 +7,16 @@ declare module 'tresenraya' {
 
     export class partida {
 
-        constructor({ jugadores: [] }: { jugadores: string[] });
+        constructor({ jugadores }: { jugadores: string[] });
 
         public on<K extends keyof Events>(event: K, listener: (...args: Events[K]) => void): this;
         public on<S extends string | symbol>(
             event: Exclude<S, keyof Events>,
-            listener: (...args: any[]) => void,
+            listener: (first: string[] | string, second: { array: string[], string: string }, last: number) => void,
         ): this;
 
         public emit<K extends keyof Events>(event: K, ...args: Events[K]): boolean;
-        public emit<S extends string | symbol>(event: Exclude<S, keyof Events>, ...args: any[]): boolean;
+        public emit<S extends string | symbol>(event: Exclude<S, keyof Events>, first: string[] | string, second: { array: string[], string: string }, last: number): boolean;
 
         public finalizado: boolean
         public tablero: {

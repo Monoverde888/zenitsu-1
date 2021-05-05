@@ -1,7 +1,7 @@
 import Command from '../../Utils/Classes/command.js';
 import commandinterface from '../../Utils/Interfaces/run.js'
 import light from 'discord.js-light'
-const regex = /((http|https):\/\/)((www|canary|ptb)\.)?(discordapp|discord)\.com\/api\/webhooks\/([0-9]){7,19}\/[-a-zA-Z0-9@:%._\+~#=]{60,120}/gmi
+const regex = /((http|https):\/\/)((www|canary|ptb)\.)?(discordapp|discord)\.com\/api\/webhooks\/([0-9]){7,19}\/[-a-zA-Z0-9@:%._+~#=]{60,120}/gmi
 
 class Comando extends Command {
 
@@ -11,11 +11,11 @@ class Comando extends Command {
         this.name = "setlogs"
         this.alias = []
         this.category = 'admin'
-        this.botPermissions = { guild: [], channel: ['EMBED_LINKS'] }
+        this.botPermissions = { guild: [], channel: ['ATTACH_FILES'] }
         this.memberPermissions = { guild: ['MANAGE_GUILD'], channel: [] }
-    };
+    }
 
-    async run({ client, message, args, langjson }: commandinterface) {
+    async run({ client, message, args, langjson }: commandinterface): Promise<light.Message> {
 
         const invalidUse = new light.MessageEmbed()
             .setTimestamp()
@@ -32,7 +32,7 @@ class Comando extends Command {
         if (!events.includes(type) || !url)
             return message.channel.send({ embed: invalidUse })
 
-        const match = url.match(url);
+        const match = url.match(regex);
 
         if (!match) return message.channel.send({ embed: invalidUse });
 
@@ -57,7 +57,7 @@ class Comando extends Command {
                     : `https://cdn.discordapp.com/embed/avatars/0.png`)
                 .setDescription(langjson.commands.setlogs.correct(client.unMarkdown(webhook.name), type))
 
-            return message.reply({ embed });
+            return message.channel.send({ embed });
 
         })
     }

@@ -2,6 +2,7 @@ import Command from '../../Utils/Classes/command.js';
 import commandinterface from '../../Utils/Interfaces/run.js';
 import model from '../../models/music.js';
 import emojis from '../../Utils/emojis.js';
+import light from 'discord.js-light';
 
 class Comando extends Command {
 
@@ -19,9 +20,9 @@ class Comando extends Command {
             channel: []
         };
         this.dev = true;
-    };
+    }
 
-    run({ client, message, embedResponse, args, Hora }: commandinterface) {
+    run({ message }: commandinterface): Promise<light.Message> {
 
 
         return message.guild.channels.create('zenitsu-music', { topic: 'topico xd' })
@@ -29,7 +30,7 @@ class Comando extends Command {
 
                 const msg = await c.send({ embed: { description: 'embed base' } });
 
-                for (let i of Object.values(emojis.musica)) await msg.react(i);
+                for (const i of Object.values(emojis.musica)) await msg.react(i);
 
                 let data = await model.findOneAndUpdate({ guild: message.guild.id }, { channel: c.id, message: msg.id }, { new: true });
 

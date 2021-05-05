@@ -1,6 +1,7 @@
 import run from "../../Utils/Interfaces/run.js";
 import Command from '../../Utils/Classes/command.js';
 import c4top from '../../models/c4top.js'
+import light from 'discord.js-light';
 
 export default class Comando extends Command {
     constructor() {
@@ -10,12 +11,12 @@ export default class Comando extends Command {
         this.category = 'fun'
     }
 
-    async run({ args, client, message, lang, langjson }: run) {
+    async run({ args, client, message, langjson }: run): Promise<light.Message> {
 
 
         const difficulty = ['easy', 'medium', 'hard'].includes(args[0]?.toLowerCase()) ? args[0]?.toLowerCase() : 'medium'
 
-        let data = await c4top.find({ difficulty }).sort({ ganadas: -1 }).limit(10);
+        const data = await c4top.find({ difficulty }).sort({ ganadas: -1 }).limit(10);
 
         if (!data.length)
             return client.sendEmbed({
@@ -37,5 +38,5 @@ export default class Comando extends Command {
             footerText: difficulty
         });
 
-    };
-};
+    }
+}

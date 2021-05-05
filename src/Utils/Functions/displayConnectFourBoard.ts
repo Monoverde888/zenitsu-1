@@ -57,9 +57,9 @@ async function displayConnectFourBoard(mapa: string[][], game: c4.Connect4AI, im
         }
 
     let numero = 0;
-    for (let i of mapa) {
+    for (const i of mapa) {
         let lugar = 0;
-        for (let j of i) {
+        for (const j of i) {
             if (imgs[j]) {
                 ctx.drawImage(imgs[j], columna[lugar] + 10, fila[numero] + 10, 50, 50)
             } lugar++
@@ -70,15 +70,15 @@ async function displayConnectFourBoard(mapa: string[][], game: c4.Connect4AI, im
     encoder.addFrame(ctx)
 
     if (game.solution) {
-        for (let i of game.solution) {
+        for (const i of game.solution) {
             ctx.drawImage(win, columna[i.column] + 10, filaR[i.spacesFromBottom] + 10, 50, 50)
         }
         encoder.addFrame(ctx);
-        for (let i of game.solution) {
+        for (const i of game.solution) {
             ctx.drawImage(game.winner == 1 ? imgs['🟢'] : imgs['🟡'], columna[i.column] + 10, filaR[i.spacesFromBottom] + 10, 50, 50)
         }
         encoder.addFrame(ctx);
-        for (let i of game.solution) {
+        for (const i of game.solution) {
             ctx.drawImage(win, columna[i.column] + 10, filaR[i.spacesFromBottom] + 10, 50, 50)
         }
         encoder.addFrame(ctx);

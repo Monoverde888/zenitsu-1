@@ -1,5 +1,4 @@
 import light from 'discord.js-light';
-import Zenitsu from "./client.js";
 import afkModel from '../../models/afk.js'
 
 interface obj {
@@ -13,40 +12,38 @@ interface obj {
 class AfkManager {
 
     collection: light.Collection<string, obj>
-    client: Zenitsu;
 
-    constructor(client: Zenitsu) {
-        this.client = client;
+    constructor() {
         this.collection = new light.Collection();
     }
 
     async fetch(user: string): Promise<obj> {
-        let func = async (): Promise<any> => {
-            return this.collection.get(user) || await afkModel.findOne({ id: user })
+        const func = async (): Promise<obj> => {
+            return this.collection.get(user) || await afkModel.findOne({ id: user }) || await afkModel.create({ id: user, status: false, reason: 'AFK', date: Date.now() })
         }
-        this.collection.set(user, await func() || {});
+        this.collection.set(user, await func());
         return this.collection.get(user);
     }
 
     async delete(user: string): Promise<true> {
-        let cacheAfk = this.collection.get(user);
+        const cacheAfk = this.collection.get(user);
         await this.set(user, cacheAfk.reason, cacheAfk.date, false)
         return true;
     }
 
-    async set(user: string, reason: string = 'AFK', date = Date.now(), status = true) {
-        let info = await afkModel.findOneAndUpdate({ id: user }, { reason, date, status }, { new: true, upsert: true })
+    async set(user: string, reason = 'AFK', date = Date.now(), status = true): Promise<obj> {
+        const info = await afkModel.findOneAndUpdate({ id: user }, { reason, date, status }, { new: true, upsert: true })
         this.collection.set(user, info);
         return this.collection.get(user);
     }
 
-    cacheOrFetch(user: string) {
+    cacheOrFetch(user: string): obj | Promise<obj> {
 
         return this.cache.get(user) || this.fetch(user);
 
     }
 
-    get cache() {
+    get cache(): light.Collection<string, obj> {
         return this.collection;
     }
 
