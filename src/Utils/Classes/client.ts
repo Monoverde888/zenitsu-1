@@ -371,7 +371,8 @@ class Zenitsu extends Client {
             process.env.WEBHOOKTOKEN,
             connection.pass,
             connection.user,
-            connection.host
+            connection.host,
+            process.env.YOUTUBE_COOKIE,
         ].filter(item => item);
 
     }
