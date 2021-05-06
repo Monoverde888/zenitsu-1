@@ -15,36 +15,6 @@ const obj = {
         "cooldown": (time: string, command: string): string => `Por favor espera ${time} antes de usar \`${command}\``,
 
     },
-    "music": {
-        "music_request": "Unete a un canal de voz y pide una canción.",
-
-        "no_queue": "Sin cola.",
-
-        "read_topic": "Lee el tópico del canal para obtener instrucciones.",
-
-        "nowplaying": (duration: string | number, name: string): string => `${duration} Reproduciendo ahora: ${name}`,
-
-        "queue": (text: string): string => "Cola:\n" + text,
-
-        "queue_modes": [
-            "Ninguno",
-            "Canción",
-            "Cola"
-        ],
-
-        "live": "En directo",
-
-        "loop_mode": "Modo de repetición",
-
-        "songs_in_queue": "Canciones en cola",
-
-        "autoplay": "Repetición automatica",
-
-        "yes": "Sí",
-
-        "no": "No",
-
-    },
     "commands": {
         "lockchannel": {
             "on_block": (mod: string): string => "<:moderator:804368587115593800> | " + mod + " ha bloqueado el canal para los miembros.",

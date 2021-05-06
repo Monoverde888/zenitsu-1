@@ -1,7 +1,6 @@
 import light from 'discord.js-light';
 const { Client, Collection, MessageEmbed } = light;
 import Command from './command.js'
-//import musicmodel from '../../models/music.js';
 import dbla from 'dblapi.js'
 import fs from 'fs/promises';
 const { readdir } = fs;
@@ -15,7 +14,6 @@ import AfkManager from "./afkManager.js";
 import PrefixManager from './prefixManager.js';
 import LogsManager from './logsManager.js';
 import LangManager from './langManager.js';
-import Distube from 'distube';
 import modelLang from '../../models/lang.js';
 import imagenesC from "../Interfaces/imagenes.js";
 import axios from 'axios';
@@ -23,8 +21,7 @@ import common from '../Functions/commons.js';
 const res = common(import.meta.url);
 const __dirname: string = res.__dirname;
 import nekos from 'nekos.life';
-import spotify from '@distube/spotify'
-//import lenguajes from '../Lang/langs.js'
+
 interface potasio {
     id: string,
     type: number,
@@ -49,7 +46,6 @@ class Zenitsu extends Client {
     color: string;
     lang: LangManager
     afk: AfkManager;
-    music: Distube;
     nekos: nekos;
     logs: LogsManager
 
@@ -73,13 +69,6 @@ class Zenitsu extends Client {
 
     async init(): Promise<boolean> {
         this.dbl = new dbla(process.env.DBLTOKEN, this);
-        this.music = new Distube(this, {
-            leaveOnFinish: true,
-            leaveOnStop: true,
-            leaveOnEmpty: false,
-            youtubeCookie: process.env.YOUTUBE_COOKIE,
-            plugins: [new spotify({ parallel: true })]
-        });
         this.lang = new LangManager();
         this.prefix = new PrefixManager();
         this.afk = new AfkManager();
@@ -92,106 +81,14 @@ class Zenitsu extends Client {
             '577000793094488085', // AndreMor
             '390726024536653865', // zPablo 鯉
         ];
-        await this.login();
-        await this.loadEvents('discord');
-        await this.loadEvents('distube');
+        await this.loadEvents();
         await this.loadCommands();
         await this.loadImages().catch((e) => console.log(e.message));
+        await this.login();
 
         return true;
 
     }
-
-    /*async updateMusic(guildID: string): Promise<void> {
-
-        const model = musicmodel;
-
-        const data = await model.findOne({ guild: guildID });
-
-        if (!data) throw new Error('No data.')
-
-        const { guild, channel, message } = data,
-            server = this.guilds.cache.get(guild);
-
-        if (!server) {
-            await model.deleteOne({ guild, channel, message });
-            throw new Error('Invalid server.');
-        }
-
-        const canal = server.channels.cache.get(channel);
-
-        if (!canal) {
-            await model.deleteOne({ guild, channel, message });
-            throw new Error('Invalid channel.');
-        }
-
-        const mensaje = (canal as light.TextChannel).messages.cache.get(message) || await (canal as light.TextChannel).messages.fetch(message).catch(() => undefined).then(e => e);
-
-        if (!mensaje) {
-            await model.deleteOne({ guild, channel, message });
-            throw new Error('Invalid message.');
-        }
-
-        const lang = await this.getLang(guildID);
-
-        const queue = this.music.getQueue(guild);
-
-        const datazo = lenguajes[lang]
-
-        if (!queue) {
-            const embedN = new MessageEmbed()
-
-                .setDescription(datazo.music.music_request)
-                .setImage(`https://cdn.discordapp.com/attachments/804318974086610954/825021359532015636/standard.gif`);
-
-            mensaje.edit({
-                content: datazo.music.no_queue, embed: embedN
-            })
-
-            return;
-        }
-
-        const actualSong = queue.songs[0];
-
-        const embed = new MessageEmbed()
-            .setColor('RANDOM')
-            .setDescription(datazo.music.read_topic);
-
-        const texto = datazo.music.nowplaying(actualSong.isLive ? datazo.music.live.toUpperCase() : actualSong.formattedDuration == '00:00' ? '??:??' : actualSong.formattedDuration, actualSong.name)
-
-        embed.setAuthor(texto, `https://cdn.discordapp.com/emojis/804368852388806686.png?v=1`)
-
-        if (actualSong.thumbnail) {
-            embed.setImage(actualSong.thumbnail)
-        }
-
-        embed.setFooter(actualSong.user.tag, actualSong.user.displayAvatarURL({ dynamic: true, size: 2048 }))
-
-        const { songs } = queue;
-
-        const res = songs.slice(1).map((item, i) => {
-
-            return `[${i + 1}] ${item.name} - ${item.isLive ? datazo.music.live : item.formattedDuration == '00:00' ? '??:??' : item.formattedDuration}`;
-
-        });
-
-        const text = datazo.music.queue(palaqueue(res, 1900))
-
-        const totalRes = res.length ? text : datazo.music.no_queue
-
-        const modos: string[] = datazo.music.queue_modes,
-            loopMode = datazo.music.loop_mode,
-            songsinqueue = datazo.music.songs_in_queue,
-            autoplay = datazo.music.autoplay,
-            yes = datazo.music.yes,
-            no = datazo.music.no
-
-        embed.addField(loopMode, modos[queue.repeatMode])
-        embed.addField(songsinqueue, res.length)
-        embed.addField(autoplay, queue.autoplay ? yes : no)
-
-        mensaje.edit({ content: totalRes, embed })
-    }*/
 
     async getLang(id: string): Promise<"es" | "en"> {
 
@@ -286,29 +183,25 @@ class Zenitsu extends Client {
 
     }
 
-    async loadEvents(typee: 'distube' | 'discord'): Promise<Zenitsu> {
+    async loadEvents(): Promise<Zenitsu> {
 
         const ruta = (...str: string[]) => join(__dirname, '..', '..', ...str)
         const load = async (event: string) => {
 
-            const { default: a } = await import(`file:///` + ruta('events', typee, event))
+            const { default: a } = await import(`file:///` + ruta('events', 'discord', event))
 
             try {
 
-                if (typee == 'distube') {
-                    this.music.on((event.split('.')[0] as 'playSong'), a.bind(null, this));//pnche ts xdxd
-                }
-
-                else this.on(event.split('.')[0], a.bind(null, this));
+                this.on(event.split('.')[0], a.bind(null, this));
 
             }
             catch (e) {
-                console.log(event, e.message || e, typee);
+                console.log(event, e.message || e);
             }
 
         };
 
-        const eventos = await readdir(ruta('events', typee))
+        const eventos = await readdir(ruta('events', 'discord'))
 
         for (const i of eventos) {
 
@@ -373,7 +266,6 @@ class Zenitsu extends Client {
             connection.pass,
             connection.user,
             connection.host,
-            process.env.YOUTUBE_COOKIE,
         ].filter(item => item);
 
     }
@@ -381,22 +273,3 @@ class Zenitsu extends Client {
 }
 
 export default Zenitsu;
-
-/*function palaqueue(array: string[], max = 2000) {
-
-    let str = '',
-        ministr = '',
-        res = '';
-    for (const i of array) {
-
-        ministr = `${ministr ? ministr + '\n' : ''}${i}`
-        if (ministr.length >= max) {
-            res = str;
-            break;
-        }
-        str = `${str ? str + '\n' : ''}${i}`
-        res = str
-    }
-    return res.split('\n').reverse().join('\n')
-
-}*/

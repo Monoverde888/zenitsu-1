@@ -15,35 +15,6 @@ const obj = {
 
         "cooldown": (time: string, command: string): string => `Please wait ${time} before use \`${command}\``
     },
-    "music": {
-
-        "music_request": "Join to a voice channel and request a song.",
-
-        "no_queue": "No queue.",
-
-        "read_topic": "Read the topic of the channel to get instructions.",
-
-        "nowplaying": (duration: string | number, name: string): string => `${duration} Now playing: ${name}`,
-
-        "queue": (text: string): string => "Queue:\n" + text,
-        "queue_modes": [
-            "None",
-            "Song",
-            "Queue"
-        ],
-
-        "live": "Live",
-
-        "loop_mode": "Loop mode",
-
-        "songs_in_queue": "Songs in queue",
-
-        "autoplay": "Autoplay",
-
-        "yes": "Yes",
-
-        "no": "No"
-    },
     "commands": {
         "lockchannel": {
             "on_block": (mod: string): string => "<:moderator:804368587115593800> | " + mod + " has blocked the channel for members.",

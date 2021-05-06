@@ -1,7 +1,6 @@
 import ms from '@fabricio-191/ms';
 import light from 'discord.js-light';
 const { WebhookClient, Collection, MessageEmbed, TextChannel, NewsChannel } = light;
-//import model from '../../models/music.js'
 import Comando from '../../Utils/Classes/command.js';
 import Zenitsu from '../../Utils/Classes/client.js';
 const cooldowns: light.Collection<string, light.Collection<string, number>> = new Collection();
@@ -14,20 +13,8 @@ async function event(client: Zenitsu, message: light.Message): Promise<void | li
     if (!(message.channel instanceof TextChannel) && !(message.channel instanceof NewsChannel))
         return;
 
-    //const data = await model.findOne({ guild: message.guild.id });
-
     if (!((message.channel as light.TextChannel).permissionsFor(message.guild.me).has('SEND_MESSAGES')) || !((message.channel as light.TextChannel).permissionsFor(message.guild.me).has('EMBED_LINKS')))
         return;
-
-    /*if (data && (data.channel == message.channel.id) && (message.guild.me.voice.channel ? message.member.voice.channelID == message.guild.me.voice.channelID : message.member.voice.channelID)) {
-        client.music.play(message, message.content).catch(() => {
-
-        })
-            .then(() => {
-                message.delete().catch(() => { })
-            })
-        return;
-    }*/
 
     const requestLang = await client.lang.cacheOrFetch(message.guild.id);
     const lang: 'es' | 'en' = requestLang.lang
