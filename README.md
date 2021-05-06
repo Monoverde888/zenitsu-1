@@ -20,9 +20,6 @@
 			<img src="https://top.gg/api/widget/upvotes/721080193678311554.svg" />
 		</a>
 		<a href="https://top.gg/bot/721080193678311554" >
-			<img src="https://top.gg/api/widget/lib/721080193678311554.svg" />
-		</a>
-		<a href="https://top.gg/bot/721080193678311554" >
 			<img src="https://top.gg/api/widget/owner/721080193678311554.svg" />
 		</a>
 	</p>
