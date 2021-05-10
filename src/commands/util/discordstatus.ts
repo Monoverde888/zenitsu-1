@@ -36,19 +36,17 @@ export default class Comando extends Command {
             '3': 'Push Notifications',
             '4': 'Search',
         };
-        const xd = ['a', 'e'];
-
-        xd[1]
 
         for (const n of [1, 2, 3, 4]) {
-            const array: number[] = data.split(`<svg class="availability-time-line-graphic"`)[n].split('</svg>')[0].split('x="').map(e => e.split('"')[0]).filter(e => !isNaN(e as unknown as number)).map(parseInt),
+            const array: string[] = data.split(`<svg class="availability-time-line-graphic"`)[n].split('</svg>')[0].split('x="').map(e => e.split('"')[0]).filter(e => parseInt(e)),
                 colores = data.split(`<svg class="availability-time-line-graphic" id="uptime-component-`)[n].split('</svg>')[0].split('fill="').map(a => a.split('"')[0]).slice(1)
             ctx.fillStyle = '#ffffff'
+            ctx.font = '15px "Sans"'
             ctx.fillText(texts[n], 5, (n * 60) - 5);
 
             for (const i in array) {
                 ctx.fillStyle = colores[i]
-                ctx.fillRect(array[i], n * 60, 3, 34)
+                ctx.fillRect(parseInt(array[i]), n * 60, 3, 34)
             }
         }
 
