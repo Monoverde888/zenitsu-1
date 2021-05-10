@@ -5,7 +5,7 @@ declare module 'node-svg2img' {
     function potasio(a?: Error, e?: Buffer): void
 
     interface options {
-        witdth?: number
+        width?: number
         height?: number
         format?: string
     }

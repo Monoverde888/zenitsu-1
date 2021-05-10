@@ -156,6 +156,9 @@ const obj = {
             cannt_kick: (user: string): string => `<:cancel:804368628861763664> | **I can't** kick ${user}`,
             user_cannt_kick: (user: string): string => `<:cancel:804368628861763664> | **You can't** kick ${user}`,
             kick: (user: string, reason: string): string => `<:ban:804368686130397215> | **${user}** was kicked${reason ? `, with the reason: ${reason}` : `.`}`
+        },
+        "discordstatus": {
+            message: `<a:CatLoad:804368444526297109> | Wait a moment...`
         }
     }
 }

@@ -26,6 +26,7 @@
     "mongoose": "^5.12.3",
     "nekos.life": "^2.0.7",
     "node-svg2img": "^1.1.0",
+    "puppeteer": "^9.1.1",
     "stream-to-buffer": "^0.1.0",
     "tresenraya": "^0.0.5",
     "typescript": "^4.2.4",
