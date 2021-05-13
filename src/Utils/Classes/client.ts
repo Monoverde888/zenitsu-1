@@ -14,7 +14,7 @@ import PrefixManager from './prefixManager.js';
 import LogsManager from './logsManager.js';
 import mongoose from 'mongoose';
 const { connect, set, connection } = mongoose;
-import Comando from './Command.js'
+import Comando from './command.js'
 import CANVAS from 'canvas';
 const { loadImage } = CANVAS;
 import imagenesC from '../Interfaces/imagenes.js';
