@@ -132,6 +132,8 @@ export default class Comando extends Command {
 
                 if (usuario.id != client.user.id) {
 
+                    if (!games.get(msg.guildID)) return false;
+
                     return games.get(msg.guild.id).jugadores?.includes(msg.author.id)
                         && turno(msg.author.id) === games.get(msg.guild.id).gameStatus().currentPlayer
                         && !isNaN(Number(msg.content))

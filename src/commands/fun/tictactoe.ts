@@ -119,7 +119,8 @@ export default class Comando extends Command {
             max: 0,
             code,
             filter(msg: light.Message) {
-                return partida.jugadores.includes(msg.author.id)
+                return partida
+                    && partida.jugadores.includes(msg.author.id)
                     && msg.author.id === partida.turno.jugador
                     && parseInt(msg.content)
                     && (Number(msg.content) >= 1
