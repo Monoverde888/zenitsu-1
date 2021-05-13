@@ -4,22 +4,14 @@ import Zenitsu from '../Utils/Classes/client.js';
 import MessageEmbed from '../Utils/Classes/Embed.js';
 
 async function event(client: Zenitsu, newMessage: light.Message, oldMessage: light.Message): Promise<light.Message> {
-
     if (!oldMessage || !newMessage) return;
-
-    if (!oldMessage.guild
-        || !oldMessage.guild.id
-        || !oldMessage.author
-        || !oldMessage.author.username
-        || !oldMessage.author.id
-        || oldMessage.author.bot
+    const guild = newMessage.guild;
+    if (!guild
+        || !guild.id
         || !oldMessage.content
-        || !oldMessage.channel
     ) return;
 
-    if (!newMessage.guild
-        || !newMessage.guild.id
-        || !newMessage.author
+    if (!newMessage.author
         || !newMessage.author.username
         || !newMessage.author.id
         || newMessage.author.bot
@@ -37,9 +29,9 @@ async function event(client: Zenitsu, newMessage: light.Message, oldMessage: lig
     const embeds = [
         new MessageEmbed()
             .setColor(0x3498db)
-            .setAuthor(oldMessage.author.username, oldMessage.author.dynamicAvatarURL(), oldMessage.jumpLink)
+            .setAuthor(newMessage.author.username, newMessage.author.dynamicAvatarURL(), newMessage.jumpLink)
             .setDescription(oldMessage.content)
-            .setFooter(`messageUpdate - #${(oldMessage.channel as light.TextChannel).name}`),
+            .setFooter(`messageUpdate - #${(newMessage.channel as light.TextChannel).name}`),
 
         new MessageEmbed()
             .setColor(0x2ecc71)
