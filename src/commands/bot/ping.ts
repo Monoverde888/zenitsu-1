@@ -1,8 +1,8 @@
-import light from 'discord.js-light';
-const { MessageEmbed } = light;
+import MessageEmbed from '../../Utils/Classes/Embed.js'
 import Command from '../../Utils/Classes/command.js';
 import commandinterface from '../../Utils/Interfaces/run.js';
 import mongoose from 'mongoose';
+import eris from 'eris-pluris';
 
 class Comando extends Command {
 
@@ -12,31 +12,19 @@ class Comando extends Command {
         this.category = 'bot';
     }
 
-    async run({ client, message }: commandinterface): Promise<light.Message> {
+    async run({ client, message }: commandinterface): Promise<eris.Message> {
 
-        let date: number = Date.now();
+        const date: number = Date.now();
         const ping_db: number = await new Promise((r, j) => {
             mongoose.connection.db.admin().ping((err, result) => (err || !result) ? j(err || result) : r(Date.now() - date))
         });
-
-        date = Date.now();
-
-        const pong = new MessageEmbed()
+        const embed = new MessageEmbed()
+            .setDescription(`🏓 Bot: ${(message.channel as eris.TextChannel).guild.shard.latency}ms [${getStatus((message.channel as eris.TextChannel).guild.shard.latency)}]\n🏃 Message: ${date - message.createdAt}ms [${getStatus(date - message.createdAt)}]\n🗃️ DB: ${ping_db}ms [${getStatus(ping_db)}]`)
             .setTimestamp()
             .setColor(client.color)
-            .setDescription('Pong?');
 
-        return message.channel.send({ embed: pong })
-            .then(msg => {
+        return message.channel.createMessage({ embed })
 
-                const embed = new MessageEmbed()
-                    .setDescription(`🏓 Bot: ${client.ws.ping}ms [${getStatus(client.ws.ping)}]\n📡 Discord API: ${Date.now() - date}ms [${getStatus(Date.now() - date)}]\n🗃️ DB: ${ping_db}ms [${getStatus(ping_db)}]`)
-                    .setTimestamp()
-                    .setColor(client.color)
-
-                return msg.edit({ embed });
-
-            });
     }
 }
 
@@ -49,7 +37,7 @@ function getStatus(number: number) {
     else if (number >= 300) color = `🔴`
     else if (number >= 200) color = `🟠`
     else if (number >= 100) color = `🟡`
-    else color = `🟢`
-    return `\\${color}`
+    else color = `🟢`;
+    return `\\${color}`;
 
 }

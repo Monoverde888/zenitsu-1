@@ -5,7 +5,7 @@ import commandinterface from '../../Utils/Interfaces/run.js'
 import child_process from 'child_process';
 const { exec: execC } = child_process;
 const exec = promisify(execC)
-import light from 'discord.js-light'
+import light from 'eris-pluris';
 class Comando extends Command {
 
     constructor() {
@@ -19,23 +19,23 @@ class Comando extends Command {
     async run({ message, args }: commandinterface): Promise<light.Message | light.Message[]> {
 
         if (!args[0])
-            return message.channel.send('eres o te haces?');
+            return message.channel.createMessage('eres o te haces?');
 
         try {
 
             const res = await exec(args.join(' '));
 
             if (res.stderr.length) {
-                message.channel.send('STDERR:\n' + res.stderr, { split: { char: '', maxLength: 1950 }, code: '' });
+                message.channel.createMessage('```STDERR:\n' + res.stderr.slice(0, 1500) + '```');
             }
 
             if (res.stdout.length) {
-                message.channel.send('STDOUT:\n' + res.stdout, { split: { char: '', maxLength: 1950 }, code: '' });
+                return message.channel.createMessage('```STDOUT:\n' + res.stdout.slice(0, 1500) + '```');
             }
 
         } catch (err) {
 
-            return message.channel.send('ERR:\n' + err, { split: { char: '', maxLength: 1950 }, code: '' });
+            return message.channel.createMessage('```ERR:\n' + err.message.slice(0, 1500) + '```');
 
         }
     }

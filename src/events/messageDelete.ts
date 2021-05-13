@@ -1,15 +1,16 @@
-import light from 'discord.js-light';
-import Zenitsu from '../../Utils/Classes/client.js';
-import model from '../../models/logs.js'
+import light from 'eris-pluris';
+import Zenitsu from '../Utils/Classes/client.js';
+import model from '../models/logs.js'
+import MessageEmbed from '../Utils/Classes/Embed.js';
 
-async function event(client: Zenitsu, message: light.Message): Promise<light.APIMessage> {
+async function event(client: Zenitsu, message: light.Message): Promise<light.Message> {
 
     if (!message) return;
 
     if (!message.guild
         || !message.guild.id
         || !message.author
-        || !message.author.tag
+        || !message.author.username
         || !message.author.id
         || message.author.bot
         || !message.content
@@ -21,19 +22,13 @@ async function event(client: Zenitsu, message: light.Message): Promise<light.API
 
     if (!find) return;
 
-    const embed = new light.MessageEmbed()
-        .setColor('RED')
-        .setAuthor(message.author.tag, message.author.displayAvatarURL({
-            size: 2048,
-            format: 'png',
-            dynamic: true
-        }), message.url)
+    const embed = new MessageEmbed()
+        .setColor(0xff0000)
+        .setAuthor(message.author.username, message.author.dynamicAvatarURL(), message.jumpLink)
         .setDescription(message.content)
         .setFooter(`messageDelete - #${(message.channel as light.TextChannel).name}`)
 
-    const wh = new light.WebhookClient(find.idWeb, find.tokenWeb);
-
-    return wh.send(embed)
+    return client.executeWebhook(find.idWeb, find.tokenWeb, { embeds: [embed] })
         .catch(async (e) => {
 
             console.log(`[WEBHOOK-MESSAGE_DELETE]: `, e)

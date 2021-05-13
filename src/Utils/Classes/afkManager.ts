@@ -1,5 +1,5 @@
-import light from 'discord.js-light';
 import afkModel from '../../models/afk.js'
+import Collection from './Collection.js'
 
 interface obj {
     reason: string;
@@ -8,13 +8,12 @@ interface obj {
     id: string
 }
 
-
 class AfkManager {
 
-    collection: light.Collection<string, obj>
+    collection: Collection<string, obj>
 
     constructor() {
-        this.collection = new light.Collection();
+        this.collection = new Collection();
     }
 
     async fetch(user: string): Promise<obj> {
@@ -43,7 +42,7 @@ class AfkManager {
 
     }
 
-    get cache(): light.Collection<string, obj> {
+    get cache(): Collection<string, obj> {
         return this.collection;
     }
 

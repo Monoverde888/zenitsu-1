@@ -1,27 +1,28 @@
 import run from "../../Utils/Interfaces/run.js";
-import light from 'discord.js-light';
-const { MessageEmbed } = light;
+import light from 'eris-pluris';
 import Command from '../../Utils/Classes/command.js';
 import c4top from '../../models/c4top.js'
+import MessageEmbed from "../../Utils/Classes/Embed.js";
 
 export default class Comando extends Command {
     constructor() {
         super()
         this.name = "conecta4stats"
-        this.alias = [`connect4stats`, 'fourinrowstats', '4enlineastats', 'c4stats']
+        this.alias = [`conecta4stats`, 'fourinrowstats', '4enlineastats', 'c4stats']
         this.category = 'fun'
     }
-    async run({ message, args, client, langjson }: run): Promise<light.Message> {
+    async run({ message, client, langjson }: run): Promise<light.Message> {
 
-        const member = message.guild.members.cache.find(a => a.user.username === args.join(' ')) || message.guild.members.cache.find(a => a.user.tag === args.join(' ')) || message.guild.members.cache.find(a => a.displayName === args.join(' ')) || message.guild.members.cache.get(args[0]) || message.mentions.members.first() || message.member
+        const member = message.mentions[0] || message.author
 
-        const data = await c4top.find({ id: member.user.id });
+        const data = await c4top.find({ id: member.id });
 
-        if (!data || !data.length)
-            return client.sendEmbed({
-                channel: message.channel,
-                description: langjson.commands.connect4stats.no_data(member.user.toString())
-            });
+        if (!data || !data.length) {
+            const embed = new MessageEmbed()
+                .setDescription(langjson.commands.connect4stats.no_data(member.mention))
+                .setColor(client.color)
+            return message.channel.createMessage({ embed });
+        }
 
         const easy = data.find(item => item.difficulty == 'easy'),
             medium = data.find(item => item.difficulty == 'medium'),
@@ -33,11 +34,11 @@ export default class Comando extends Command {
 
         const embed = new MessageEmbed()
             .setColor(client.color)
-            .setAuthor(member.user.tag, member.user.displayAvatarURL({ size: 2048, dynamic: true }))
+            .setAuthor(member.username, member.dynamicAvatarURL())
         if (easy) embed.addField(difi[0], `${states[0]}: ${easy.ganadas} ${states[1]}: ${easy.perdidas} ${states[2]}: ${easy.empates}`)
         if (medium) embed.addField(difi[1], `${states[0]}: ${medium.ganadas} ${states[1]}: ${medium.perdidas} ${states[2]}: ${medium.empates}`)
         if (hard) embed.addField(difi[2], `${states[0]}: ${hard.ganadas} ${states[1]}: ${hard.perdidas} ${states[2]}: ${hard.empates}`)
 
-        return message.channel.send({ embed: embed });
+        return message.channel.createMessage({ embed: embed });
     }
 }

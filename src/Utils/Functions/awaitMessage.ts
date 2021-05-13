@@ -1,4 +1,4 @@
-import light from 'discord.js-light';
+/*import light from 'discord.js-light';
 
 function awaitMessage(obj: { filter: light.CollectorFilter<[light.Message]>, channel: light.TextChannel | light.DMChannel | light.NewsChannel, max: number, time: number }): Promise<light.Collection<light.Snowflake, light.Message>> {
     const { filter, channel, max, time } = obj;
@@ -10,4 +10,4 @@ function awaitMessage(obj: { filter: light.CollectorFilter<[light.Message]>, cha
     });
 }
 
-export default awaitMessage;
+export default awaitMessage;*/

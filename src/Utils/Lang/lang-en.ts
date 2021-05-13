@@ -87,7 +87,7 @@ const obj = {
 
             "game_over2": "<:wtdDud:829390621894508544> | Game over D:",
 
-            "time_over": "<:dislike1:369553357377110027> | You lasted three minutes without answering, game over! -"
+            "time_over": "<:dislike1:369553357377110027> | You lasted three minutes without answering, game over!"
         },
         "connect4stats": {
 

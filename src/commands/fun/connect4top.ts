@@ -1,12 +1,13 @@
 import run from "../../Utils/Interfaces/run.js";
 import Command from '../../Utils/Classes/command.js';
 import c4top from '../../models/c4top.js'
-import light from 'discord.js-light';
+import light from 'eris-pluris';
+import MessageEmbed from "../../Utils/Classes/Embed.js";
 
 export default class Comando extends Command {
     constructor() {
         super()
-        this.name = "conecta4top"
+        this.name = "connect4top"
         this.alias = [`connect4top`, 'fourinrowtop', '4enlineatop', 'c4top']
         this.category = 'fun'
     }
@@ -18,11 +19,12 @@ export default class Comando extends Command {
 
         const data = await c4top.find({ difficulty }).sort({ ganadas: -1 }).limit(10);
 
+        const embed = new MessageEmbed()
+            .setDescription(langjson.commands.connect4top.no_data(difficulty))
+            .setColor(client.color)
+
         if (!data.length)
-            return client.sendEmbed({
-                description: langjson.commands.connect4top.no_data(difficulty),
-                channel: message.channel
-            });
+            return message.channel.createMessage({ embed })
 
         const states: string[] = langjson.commands.connect4top.states
 
@@ -32,11 +34,12 @@ export default class Comando extends Command {
 
         }).join('\n\n')
 
-        return client.sendEmbed({
-            description,
-            channel: message.channel,
-            footerText: difficulty
-        });
+        const embed2 = new MessageEmbed()
+            .setFooter(difficulty)
+            .setDescription(description)
+            .setColor(client.color);
+
+        return message.channel.createMessage({ embed: embed2 })
 
     }
 }

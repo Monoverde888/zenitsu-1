@@ -1,4 +1,4 @@
-import light from "discord.js-light";
+import Collection from './Collection.js'
 import prefixM from "../../models/prefix.js";
 
 interface obj {
@@ -6,13 +6,12 @@ interface obj {
     id: string;
 }
 
-
 class PrefixManager {
 
-    collection: light.Collection<string, obj>
+    collection: Collection<string, obj>
 
     constructor() {
-        this.collection = new light.Collection();
+        this.collection = new Collection();
     }
 
     async set(id: string, prefix: string): Promise<obj> {
@@ -44,7 +43,7 @@ class PrefixManager {
 
     }
 
-    get cache(): light.Collection<string, obj> {
+    get cache(): Collection<string, obj> {
 
         return this.collection;
 

@@ -11,7 +11,7 @@ interface Connect4 extends mongoose.Document {
 }
 
 const Guild = new Schema({
-    id: { type: String, required: true, unique: true },
+    id: { type: String, required: true },
     difficulty: { type: String, default: 'medium' },
     perdidas: { type: Number, default: 0 },
     ganadas: { type: Number, default: 0 },

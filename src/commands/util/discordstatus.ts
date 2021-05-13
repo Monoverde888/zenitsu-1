@@ -1,7 +1,6 @@
 import Command from '../../Utils/Classes/command.js'
 import run from '../../Utils/Interfaces/run.js';
-import light from 'discord.js-light';
-const { MessageEmbed, MessageAttachment } = light;
+import light from 'eris-pluris'
 import Canvas from 'canvas'
 import puppeteer from 'puppeteer'
 import svg2img from 'node-svg2img'
@@ -15,10 +14,9 @@ export default class Comando extends Command {
         this.category = 'utils'
         this.cooldown = 60;
     }
-    async run({ client, message, langjson }: run): Promise<light.Message> {
+    async run({ message, langjson }: run): Promise<light.Message> {
 
-        const msg = await message.channel.send(langjson.commands.discordstatus.message);
-
+        const msg = await message.channel.createMessage(langjson.commands.discordstatus.message);
         const url = `https://discordstatus.com`;
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
@@ -55,18 +53,9 @@ export default class Comando extends Command {
         const res = await Canvas.loadImage(preRes)
         ctx.drawImage(res, 0, 320, 900, 100);
 
-        const att = new MessageAttachment(canvas.toBuffer(), 'img.png');
-        const embed = new MessageEmbed()
-            .setColor(client.color)
-            .setTimestamp()
-            .attachFiles([att])
-            .setImage('attachment://img.png')
-            .setAuthor('Discord Status', 'https://cdn.discordapp.com/attachments/649043690765025352/813915354010222642/750851146884710541.png', 'https://discordstatus.com/');
-        return message.channel.send({ embed }).finally(() => {
-            try {
-                if (msg.deletable) return msg.delete();
-                // eslint-disable-next-line no-empty
-            } catch { }
+        const att = canvas.toBuffer();
+        return message.channel.createMessage({ content: 'Discord Status https://discordstatus.com/' }, { file: att, name: 'img.png' }).finally(() => {
+            return msg.delete().catch(() => undefined);
         })
 
     }

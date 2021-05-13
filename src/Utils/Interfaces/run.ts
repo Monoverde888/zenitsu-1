@@ -1,5 +1,5 @@
 import Zenitsu from '../../Utils/Classes/client.js';
-import pkg from 'discord.js-light'
+import pkg from 'eris-pluris';
 import langjsonES from '../Lang/lang-es.js'
 import langjsonEN from '../Lang/lang-en.js'
 

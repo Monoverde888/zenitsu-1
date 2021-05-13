@@ -1,4 +1,4 @@
-import light from 'discord.js-light';
+import Collection from './Collection.js'
 import Model from '../../models/logs.js'
 
 interface logs {
@@ -14,10 +14,10 @@ interface Logs {
 
 class LogsManager {
 
-    collection: light.Collection<string, Logs>
+    collection: Collection<string, Logs>
 
     constructor() {
-        this.collection = new light.Collection();
+        this.collection = new Collection();
     }
 
     async delete(id: string): Promise<boolean> {
@@ -97,7 +97,7 @@ class LogsManager {
         return this.cache.get(id) || this.fetch(id);
     }
 
-    get cache(): light.Collection<string, Logs> {
+    get cache(): Collection<string, Logs> {
         return this.collection;
     }
 

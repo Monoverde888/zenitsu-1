@@ -1,15 +1,16 @@
-import light from 'discord.js-light';
-import model from '../../models/logs.js'
-import Zenitsu from '../../Utils/Classes/client.js';
+import light from 'eris-pluris';
+import model from '../models/logs.js'
+import Zenitsu from '../Utils/Classes/client.js';
+import MessageEmbed from '../Utils/Classes/Embed.js';
 
-async function event(client: Zenitsu, oldMessage: light.Message, newMessage: light.Message): Promise<light.APIMessage> {
+async function event(client: Zenitsu, newMessage: light.Message, oldMessage: light.Message): Promise<light.Message> {
 
     if (!oldMessage || !newMessage) return;
 
     if (!oldMessage.guild
         || !oldMessage.guild.id
         || !oldMessage.author
-        || !oldMessage.author.tag
+        || !oldMessage.author.username
         || !oldMessage.author.id
         || oldMessage.author.bot
         || !oldMessage.content
@@ -19,7 +20,7 @@ async function event(client: Zenitsu, oldMessage: light.Message, newMessage: lig
     if (!newMessage.guild
         || !newMessage.guild.id
         || !newMessage.author
-        || !newMessage.author.tag
+        || !newMessage.author.username
         || !newMessage.author.id
         || newMessage.author.bot
         || !newMessage.content
@@ -34,31 +35,21 @@ async function event(client: Zenitsu, oldMessage: light.Message, newMessage: lig
     if (!find) return;
 
     const embeds = [
-        new light.MessageEmbed()
-            .setColor('BLUE')
-            .setAuthor(oldMessage.author.tag, oldMessage.author.displayAvatarURL({
-                size: 2048,
-                format: 'png',
-                dynamic: true
-            }), oldMessage.url)
+        new MessageEmbed()
+            .setColor(0x3498db)
+            .setAuthor(oldMessage.author.username, oldMessage.author.dynamicAvatarURL(), oldMessage.jumpLink)
             .setDescription(oldMessage.content)
             .setFooter(`messageUpdate - #${(oldMessage.channel as light.TextChannel).name}`),
 
-        new light.MessageEmbed()
-            .setColor('GREEN')
-            .setAuthor(newMessage.author.tag, newMessage.author.displayAvatarURL({
-                size: 2048,
-                format: 'png',
-                dynamic: true
-            }), newMessage.url)
+        new MessageEmbed()
+            .setColor(0x2ecc71)
+            .setAuthor(newMessage.author.username, newMessage.author.dynamicAvatarURL(), newMessage.jumpLink)
             .setDescription(newMessage.content)
             .setFooter(`messageUpdate - #${(newMessage.channel as light.TextChannel).name}`)
     ]
 
 
-    const wh = new light.WebhookClient(find.idWeb, find.tokenWeb);
-
-    return wh.send({ embeds })
+    return client.executeWebhook(find.idWeb, find.tokenWeb, { embeds })
         .catch(async (e) => {
 
             console.log(`[WEBHOOK-MESSAGE_UPDATE]: `, e)

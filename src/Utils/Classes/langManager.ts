@@ -1,4 +1,4 @@
-import light from "discord.js-light";
+import Collection from './Collection.js'
 import langM from "../../models/lang.js";
 
 interface obj {
@@ -6,13 +6,12 @@ interface obj {
     lang: 'es' | 'en';
 }
 
-
 class LangManager {
 
-    collection: light.Collection<string, obj>
+    collection: Collection<string, obj>
 
     constructor() {
-        this.collection = new light.Collection();
+        this.collection = new Collection();
     }
 
     async set(id: string, lang: 'es' | 'en'): Promise<obj> {
@@ -42,7 +41,7 @@ class LangManager {
 
     }
 
-    get cache(): light.Collection<string, obj> {
+    get cache(): Collection<string, obj> {
 
         return this.collection;
 

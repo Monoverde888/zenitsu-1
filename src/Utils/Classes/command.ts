@@ -1,5 +1,47 @@
 import inte from '../Interfaces/run.js';
-import light from 'discord.js-light'
+
+type permissions = 'createInstantInvite' |
+    'kickMembers' |
+    'banMembers' |
+    'administrator' |
+    'manageChannels' |
+    'manageGuild' |
+    'addReactions' |
+    'viewAuditLog' |
+    'viewAuditLogs' |
+    'voicePrioritySpeaker' |
+    'voiceStream' |
+    'stream' |
+    'viewChannel' |
+    'readMessages' |
+    'sendMessages' |
+    'sendTTSMessages' |
+    'manageMessages' |
+    'embedLinks' |
+    'attachFiles' |
+    'readMessageHistory' |
+    'mentionEveryone' |
+    'useExternalEmojis' |
+    'externalEmojis' |
+    'viewGuildInsights' |
+    'voiceConnect' |
+    'voiceSpeak' |
+    'voiceMuteMembers' |
+    'voiceDeafenMembers' |
+    'voiceMoveMembers' |
+    'voiceUseVAD' |
+    'changeNickname' |
+    'manageNicknames' |
+    'manageRoles' |
+    'manageWebhooks' |
+    'manageEmojis' |
+    'useSlashCommands' |
+    'voiceRequestToSpeak' |
+    'allGuild' |
+    'allText' |
+    'allVoice' |
+    'all';
+
 
 class Command {
 
@@ -8,13 +50,13 @@ class Command {
     name: string
     category: string
     botPermissions: {
-        guild: light.PermissionResolvable[]
-        channel: light.PermissionResolvable[]
+        guild: permissions[]
+        channel: permissions[]
     }
     cooldown: number
     memberPermissions: {
-        guild: light.PermissionResolvable[]
-        channel: light.PermissionResolvable[]
+        guild: permissions[]
+        channel: permissions[]
     }
 
     constructor() {
