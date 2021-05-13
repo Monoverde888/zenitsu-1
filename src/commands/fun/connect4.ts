@@ -8,28 +8,11 @@ import Command from '../../Utils/Classes/command.js';
 const games: Map<string, c4.Connect4AI> = new Map();
 import model from '../../models/c4top.js';
 import MessageEmbed from '../../Utils/Classes/Embed.js';
-const idle: Map<string, { date: number; col: light.MessageCollector<light.TextableChannel>; id: string; reason: string }> = new Map();
-function getIdle(str: string): { date: number; col: light.MessageCollector<light.TextableChannel>; id: string; reason: string } {
-    return idle.get(str)
-}
 function obtenerTurno(obj: { member: string, guild: string }) {
 
     return turnosPorId.get(obj.guild) ? turnosPorId.get(obj.guild).get(obj.member) : null
 
 }
-
-setInterval(() => {
-
-    for (const data of Array.from(idle).map(item => item[1])) {
-
-        if (Date.now() > data.date) {
-            idle.get(data.id).reason = 'IDLE'
-            data.col.stop();
-        }
-        continue;
-    }
-
-}, 15 * 1000)
 
 export default class Comando extends Command {
 
@@ -140,8 +123,12 @@ export default class Comando extends Command {
             .setImage('attachment://4enraya.gif')
         message.channel.createMessage({ embed: embedStart }, [{ name: '4enraya.gif', file: res }]);
         const TIME_IDLE = ((3 * 60) * 1000);
-        const colector = new light.MessageCollector(message.channel, {
-            filter: (msg) => {
+
+        client.listener.add({
+            channelID: message.channel.id,
+            max: 0,
+            code: message.author.id + message.guild.id + Date.now() * Math.random(),
+            filter(msg) {
 
                 if (usuario.id != client.user.id) {
 
@@ -165,147 +152,137 @@ export default class Comando extends Command {
                     && !games.get(message.guild.id).gameStatus().gameOver
                     || (games.get(message.guild.id)?.jugadores.includes(msg.author.id) && msg.content == 'surrender')
 
-            }, timeout: ((30 * 60) * 1000)
-        });
-
-        idle.set(message.guildID, { date: TIME_IDLE + Date.now(), reason: '', id: message.guildID, col: colector })
-        colector.run();
-        colector.on('collect', async (msg: light.Message) => {
-
-            if (msg.content === 'surrender') {
-                getIdle(message.guildID).reason = 'SURRENDER'
-                return colector.stop();
-            }
-
-            games.get(message.guild.id).play(parseInt(msg.content) - 1)
-            idle.set(message.guildID, { date: TIME_IDLE + Date.now(), reason: '', id: message.guildID, col: colector })
-            if (games.get(msg.guild.id).gameStatus().gameOver && games.get(msg.guild.id).gameStatus().solution) {
-                const res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(msg.guild.id), client.imagenes);
-                const embed = new MessageEmbed()
-                    .setDescription(langjson.commands.connect4.win(msg.author.username))
-                    .setColor(client.color)
-                    .setImage('attachment://4enraya.gif')
-
-                message.channel.createMessage({ embed }, [{ file: res, name: '4enraya.gif' }])
-                getIdle(message.guildID).reason = 'WIN'
-                turnosPorId.delete(message.guild.id)
-                if (usuario.id == client.user.id) await model.findOneAndUpdate({ id: message.author.id, difficulty: args[0] }, { $inc: { ganadas: 1 }, $set: { cacheName: message.author.username } }, { upsert: true });
-                return colector.stop();
-            }
-
-            else if (games.get(msg.guild.id).gameStatus().gameOver) {
-                const res = await displayConnectFourBoard(displayBoard(games.get(msg.guild.id).ascii()), games.get(msg.guild.id), client.imagenes);
-
-                const embed = new MessageEmbed()
-                    .setDescription(langjson.commands.connect4.draw(usuario.username, message.author.username))
-                    .setColor(client.color)
-                    .setImage('attachment://4enraya.gif')
-
-                message.channel.createMessage({ embed }, [{ file: res, name: '4enraya.gif' }])
-                getIdle(message.guildID).reason = 'WIN'
-                turnosPorId.delete(message.guild.id)
-                if (usuario.id == client.user.id) await model.findOneAndUpdate({ id: message.author.id, difficulty: args[0] }, { $inc: { empates: 1 }, $set: { cacheName: message.author.username } }, { upsert: true });
-                return colector.stop();
-            }
-
-            if (usuario.id == client.user.id) {
-                games.get(message.guild.id).playAI(args[0]);
-
-                if (games.get(message.guild.id).gameStatus().gameOver && games.get(message.guild.id).gameStatus().solution) {
-                    const res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes);
-
+            },
+            idle: TIME_IDLE,
+            async onStop(_, reason) {
+                if (reason === 'surrender' && games.get(message.guild.id)) {
+                    if (usuario.id == client.user.id) await model.findOneAndUpdate({ id: message.author.id, difficulty: args[0] }, { $inc: { perdidas: 1 }, $set: { cacheName: message.author.username } }, { upsert: true });
                     const embed = new MessageEmbed()
-                        .setDescription(langjson.commands.connect4.win(usuario.username))
+                        .setDescription(langjson.commands.connect4.game_over)
                         .setColor(client.color)
-                        .setImage('attachment://4enraya.gif')
-                    getIdle(message.guildID).reason = 'WIN'
-                    message.channel.createMessage({ embed }, [{ file: res, name: '4enraya.gif' }]);
+                        .setImage(`attachment://4enraya.gif`)
 
-                    turnosPorId.delete(message.guild.id);
-                    await model.findOneAndUpdate({ id: message.author.id, difficulty: args[0] }, { $inc: { perdidas: 1 }, $set: { cacheName: message.author.username } }, { upsert: true });
-                    return colector.stop();
+                    message.channel.createMessage({ embed }, [{ name: '4enraya.gif', file: await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes) }])
+                    turnosPorId.delete(message.guild.id)
+                    return games.delete(message.guild.id);
                 }
 
-                else if ((games.get(message.guild.id)).gameStatus().gameOver) {
-                    const res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes);
+                else if (reason === 'idle' && games.get(message.guild.id)) {
+                    if (usuario.id == client.user.id) await model.findOneAndUpdate({ id: message.author.id, difficulty: args[0] }, { $inc: { perdidas: 1 }, $set: { cacheName: message.author.username } }, { upsert: true });
+                    const embed = new MessageEmbed()
+                        .setDescription(langjson.commands.connect4.time_over)
+                        .setColor(client.color)
+                        .setImage(`attachment://4enraya.gif`)
+
+                    message.channel.createMessage({ embed }, [{ name: '4enraya.gif', file: await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes) }])
+                    turnosPorId.delete(message.guild.id)
+                    return games.delete(message.guild.id)
+                }
+
+                else if (reason == 'time' && games.get(message.guild.id)) {
+                    if (usuario.id == client.user.id) await model.findOneAndUpdate({ id: message.author.id, difficulty: args[0] }, { $inc: { perdidas: 1 }, $set: { cacheName: message.author.username } }, { upsert: true });
+                    const embed = new MessageEmbed()
+                        .setDescription(langjson.commands.connect4.game_over2)
+                        .setColor(client.color)
+                        .setImage(`attachment://4enraya.gif`)
+
+                    message.channel.createMessage({ embed }, [{ name: '4enraya.gif', file: await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes) }])
+                    turnosPorId.delete(message.guild.id)
+                    return games.delete(message.guild.id)
+                }
+                else return games.delete(message.guildID)
+            },
+            async onCollect(msg, colector) {
+
+                if (msg.content === 'surrender') {
+                    return client.listener.stop(colector, 'surrender');
+                }
+
+                games.get(message.guild.id).play(parseInt(msg.content) - 1)
+                if (games.get(msg.guild.id).gameStatus().gameOver && games.get(msg.guild.id).gameStatus().solution) {
+                    const res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(msg.guild.id), client.imagenes);
+                    const embed = new MessageEmbed()
+                        .setDescription(langjson.commands.connect4.win(msg.author.username))
+                        .setColor(client.color)
+                        .setImage('attachment://4enraya.gif')
+
+                    message.channel.createMessage({ embed }, [{ file: res, name: '4enraya.gif' }])
+                    turnosPorId.delete(message.guild.id)
+                    if (usuario.id == client.user.id) await model.findOneAndUpdate({ id: message.author.id, difficulty: args[0] }, { $inc: { ganadas: 1 }, $set: { cacheName: message.author.username } }, { upsert: true });
+                    return client.listener.stop(colector, 'win');
+                }
+
+                else if (games.get(msg.guild.id).gameStatus().gameOver) {
+                    const res = await displayConnectFourBoard(displayBoard(games.get(msg.guild.id).ascii()), games.get(msg.guild.id), client.imagenes);
+
                     const embed = new MessageEmbed()
                         .setDescription(langjson.commands.connect4.draw(usuario.username, message.author.username))
                         .setColor(client.color)
                         .setImage('attachment://4enraya.gif')
 
                     message.channel.createMessage({ embed }, [{ file: res, name: '4enraya.gif' }])
-                    getIdle(message.guildID).reason = 'WIN'
-                    turnosPorId.delete(message.guild.id);
-                    await model.findOneAndUpdate({ id: message.author.id, difficulty: args[0] }, { $inc: { empates: 1 }, $set: { cacheName: message.author.username } }, { upsert: true });
-                    return colector.stop();
+                    turnosPorId.delete(message.guild.id)
+                    if (usuario.id == client.user.id) await model.findOneAndUpdate({ id: message.author.id, difficulty: args[0] }, { $inc: { empates: 1 }, $set: { cacheName: message.author.username } }, { upsert: true });
+                    return client.listener.stop(colector, 'win');
                 }
 
-                const res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes);
-                const embed = new MessageEmbed()
-                    .setDescription(langjson.commands.connect4.turn(message.author.username, '🔴'))
-                    .setColor(client.color)
-                    .setImage('attachment://4enraya.gif')
-                    .setFooter(args[0])
+                if (usuario.id == client.user.id) {
+                    games.get(message.guild.id).playAI(args[0]);
 
-                message.channel.createMessage({ embed }, [{ file: res, name: '4enraya.gif' }])
+                    if (games.get(message.guild.id).gameStatus().gameOver && games.get(message.guild.id).gameStatus().solution) {
+                        const res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes);
 
-            }
+                        const embed = new MessageEmbed()
+                            .setDescription(langjson.commands.connect4.win(usuario.username))
+                            .setColor(client.color)
+                            .setImage('attachment://4enraya.gif')
+                        message.channel.createMessage({ embed }, [{ file: res, name: '4enraya.gif' }]);
 
-            if ((usuario.id != client.user.id) && (games.get(message.guild.id))) {
-                const res = await displayConnectFourBoard(displayBoard(games.get(msg.guild.id).ascii()), games.get(msg.guild.id), client.imagenes);
-                const embed = new MessageEmbed()
-                    .setDescription(langjson.commands.connect4.turn(
-                        turno(message.author.id) == turno(msg.author.id) ? usuario.username : message.author.username,
-                        turno(msg.author.id) == 2 ? `🔴` : `🟡`
-                    ))
-                    .setImage(`attachment://4enraya.gif`)
-                    .setColor(client.color);
+                        turnosPorId.delete(message.guild.id);
+                        await model.findOneAndUpdate({ id: message.author.id, difficulty: args[0] }, { $inc: { perdidas: 1 }, $set: { cacheName: message.author.username } }, { upsert: true });
+                        return client.listener.stop(colector, 'win');
+                    }
 
-                await message.channel.createMessage({ embed }, [{ file: res, name: '4enraya.gif' }])
-            }
-        })
+                    else if ((games.get(message.guild.id)).gameStatus().gameOver) {
+                        const res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes);
+                        const embed = new MessageEmbed()
+                            .setDescription(langjson.commands.connect4.draw(usuario.username, message.author.username))
+                            .setColor(client.color)
+                            .setImage('attachment://4enraya.gif')
 
-        colector.on('stop', async () => {
-            const msg = message;
-            const r = idle.get(msg.guildID).reason;
-            idle.delete(msg.guildID)
-            if (r === 'SURRENDER' && games.get(message.guild.id)) {
-                if (usuario.id == client.user.id) await model.findOneAndUpdate({ id: message.author.id, difficulty: args[0] }, { $inc: { perdidas: 1 }, $set: { cacheName: message.author.username } }, { upsert: true });
-                const embed = new MessageEmbed()
-                    .setDescription(langjson.commands.connect4.game_over)
-                    .setColor(client.color)
-                    .setImage(`attachment://4enraya.gif`)
+                        message.channel.createMessage({ embed }, [{ file: res, name: '4enraya.gif' }])
+                        turnosPorId.delete(message.guild.id);
+                        await model.findOneAndUpdate({ id: message.author.id, difficulty: args[0] }, { $inc: { empates: 1 }, $set: { cacheName: message.author.username } }, { upsert: true });
+                        return client.listener.stop(colector, 'win');
+                    }
 
-                message.channel.createMessage({ embed }, [{ name: '4enraya.gif', file: await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes) }])
-                turnosPorId.delete(message.guild.id)
-                return games.delete(message.guild.id);
-            }
+                    const res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes);
+                    const embed = new MessageEmbed()
+                        .setDescription(langjson.commands.connect4.turn(message.author.username, '🔴'))
+                        .setColor(client.color)
+                        .setImage('attachment://4enraya.gif')
+                        .setFooter(args[0])
 
-            else if (r === 'IDLE' && games.get(message.guild.id)) {
-                if (usuario.id == client.user.id) await model.findOneAndUpdate({ id: message.author.id, difficulty: args[0] }, { $inc: { perdidas: 1 }, $set: { cacheName: message.author.username } }, { upsert: true });
-                const embed = new MessageEmbed()
-                    .setDescription(langjson.commands.connect4.time_over)
-                    .setColor(client.color)
-                    .setImage(`attachment://4enraya.gif`)
+                    message.channel.createMessage({ embed }, [{ file: res, name: '4enraya.gif' }])
 
-                message.channel.createMessage({ embed }, [{ name: '4enraya.gif', file: await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes) }])
-                turnosPorId.delete(message.guild.id)
-                return games.delete(message.guild.id)
-            }
+                }
 
-            else if (games.get(message.guild.id) && r != 'WIN') {
-                if (usuario.id == client.user.id) await model.findOneAndUpdate({ id: message.author.id, difficulty: args[0] }, { $inc: { perdidas: 1 }, $set: { cacheName: message.author.username } }, { upsert: true });
-                const embed = new MessageEmbed()
-                    .setDescription(langjson.commands.connect4.game_over2)
-                    .setColor(client.color)
-                    .setImage(`attachment://4enraya.gif`)
+                if ((usuario.id != client.user.id) && (games.get(message.guild.id))) {
+                    const res = await displayConnectFourBoard(displayBoard(games.get(msg.guild.id).ascii()), games.get(msg.guild.id), client.imagenes);
+                    const embed = new MessageEmbed()
+                        .setDescription(langjson.commands.connect4.turn(
+                            turno(message.author.id) == turno(msg.author.id) ? usuario.username : message.author.username,
+                            turno(msg.author.id) == 2 ? `🔴` : `🟡`
+                        ))
+                        .setImage(`attachment://4enraya.gif`)
+                        .setColor(client.color);
 
-                message.channel.createMessage({ embed }, [{ name: '4enraya.gif', file: await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes) }])
-                turnosPorId.delete(message.guild.id)
-                return games.delete(message.guild.id)
-            }
-            else return games.delete(message.guildID)
-        })
+                    await message.channel.createMessage({ embed }, [{ file: res, name: '4enraya.gif' }])
+
+                }
+            },
+            timeLimit: ((30 * 60) * 1000)
+        });
     }
 }
 

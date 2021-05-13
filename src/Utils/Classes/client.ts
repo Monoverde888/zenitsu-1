@@ -18,9 +18,12 @@ import Comando from './command.js'
 import CANVAS from 'canvas';
 const { loadImage } = CANVAS;
 import imagenesC from '../Interfaces/imagenes.js';
+import listener from './Listener.js';
+import Listener from './Listener.js';
 
 class Zenitsu extends eris.Client {
 
+    listener: listener;
     fileTOPGG: Buffer;
     dbl: dbla;
     color: number;
@@ -43,6 +46,7 @@ class Zenitsu extends eris.Client {
     }
 
     async init(): Promise<this> {
+        this.listener = new Listener();
         const file = await fs.readFile(this.rutaImagen('topgg.png'));
         this.fileTOPGG = file;
         this.devs = ['507367752391196682', '577000793094488085', '390726024536653865']

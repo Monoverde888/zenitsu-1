@@ -1,7 +1,6 @@
 import mapaCanvas from '../../Utils/Functions/mapaCanvas.js';
 import tresenraya from 'tresenraya';
 import light from 'eris-pluris';
-const { MessageCollector } = light;
 const users: Map<string, string> = new Map();
 import Command from '../../Utils/Classes/command.js'
 import run from '../../Utils/Interfaces/run.js';
@@ -30,6 +29,8 @@ export default class Comando extends Command {
             embedResponse(langjson.commands.tictactoe.wait_user(usuario.username));
         }
 
+        const code = message.author.id + message.guild.id + Date.now() * Math.random();
+
         const partida = new tresenraya.partida({ jugadores: [message.author.id, usuario.id] });
         partidas.add(message.guild.id)
 
@@ -51,6 +52,8 @@ export default class Comando extends Command {
         users.set(usuario.id, usuario.username)
         users.set(message.author.id, message.author.username)
 
+        partida.jugadores = [message.author.id, usuario.id]
+
         partida.on('ganador', async (jugador, tablero) => {
             partidas.delete(message.guild.id);
             const embed = new MessageEmbed()
@@ -58,6 +61,7 @@ export default class Comando extends Command {
                 .setDescription(langjson.commands.tictactoe.win(users.get(jugador as string)) + `\n\n${tablero.string}`)
                 .setImage('attachment://tictactoe.gif')
 
+            client.listener.stop(code, 'NO');
             message.channel.createMessage({ embed }, [{ file: await mapaCanvas(tablero.array, client.imagenes, true), name: 'tictactoe.gif' }])
             users.delete(message.author.id)
             users.delete(usuario.id)
@@ -70,6 +74,7 @@ export default class Comando extends Command {
                 .setDescription(langjson.commands.tictactoe.draw(users.get(jugadores[0]), users.get(jugadores[1])))
                 .setImage('attachment://tictactoe.gif')
 
+            client.listener.stop(code, 'NO');
             message.channel.createMessage({ embed }, [{ file: await mapaCanvas(tablero.array, client.imagenes), name: 'tictactoe.gif' }])
             users.delete(message.author.id)
             users.delete(usuario.id)
@@ -82,6 +87,7 @@ export default class Comando extends Command {
                 .setDescription(langjson.commands.tictactoe.game_over + `\n\n${tablero.string}`)
                 .setImage('attachment://tictactoe.gif');
 
+            client.listener.stop(code, 'NO');
             message.channel.createMessage({ embed }, [{ file: await mapaCanvas(tablero.array, client.imagenes), name: 'tictactoe.gif' }])
             users.delete(message.author.id)
             users.delete(usuario.id)
@@ -108,47 +114,59 @@ export default class Comando extends Command {
             await message.channel.createMessage({ embed }, [{ file: await mapaCanvas(partida.tablero.array, client.imagenes), name: 'tictactoe.gif' }])
         }
 
-        const colector = new MessageCollector(message.channel, {
-            filter:
-                (msg: light.Message) => msg.author.id === partida.turno.jugador && parseInt(msg.content) && (Number(msg.content) >= 1 && Number(msg.content) <= 9) && partida.disponible(parseInt(msg.content)) && !partida.finalizado,
-            timeout:
-                (10 * 60) * 1000
-        });
-        colector.run();
-        colector.on('collect', async (msg) => {
-            partida.elegir(parseInt(msg.content));
+        client.listener.add({
+            channelID: message.channel.id,
+            max: 0,
+            code,
+            filter(msg: light.Message) {
+                return partida.jugadores.includes(msg.author.id)
+                    && msg.author.id === partida.turno.jugador
+                    && parseInt(msg.content)
+                    && (Number(msg.content) >= 1
+                        && Number(msg.content) <= 9)
+                    && partida.disponible(parseInt(msg.content))
+                    && !partida.finalizado
+            },
+            idle: Infinity,
+            async onStop(_, r) {
+                if (r != 'NO') !partida || partida.finalizado ? null : partida.emit('finalizado', partida.jugadores, partida.tablero, partida.paso)
+            },
+            async onCollect(msg, colector) {
+                partida.elegir(parseInt(msg.content));
 
-            if (partida.finalizado) {
-                colector.stop();
-                return;
-            }
+                if (partida.finalizado) {
+                    client.listener.stop(colector, '');
+                    return;
+                }
 
-            if (partida.turno.jugador != client.user.id) {
-                const embed = new MessageEmbed()
-                    .setColor(client.color)
-                    .setDescription(langjson.commands.tictactoe.turn(users.get(partida.turno.jugador)) + ` [\`${partida.turno.ficha}\`]\n\n${partida.tablero.string}`)
-                    .setImage('attachment://tictactoe.gif');
-
-                await message.channel.createMessage({ embed }, [{ file: await mapaCanvas(partida.tablero.array, client.imagenes), name: 'tictactoe.gif' }]);
-            }
-
-            if (!partida.finalizado && partida.turno.jugador == client.user.id) {
-                const disponibles = [1, 2, 3, 4, 5, 6, 7, 8, 9].filter(a => partida.disponible(a));
-                const jugada = disponibles[Math.floor(Math.random() * disponibles.length)]
-                partida.elegir(jugada)
-                if (!partida.finalizado) {
+                if (partida.turno.jugador != client.user.id) {
                     const embed = new MessageEmbed()
                         .setColor(client.color)
                         .setDescription(langjson.commands.tictactoe.turn(users.get(partida.turno.jugador)) + ` [\`${partida.turno.ficha}\`]\n\n${partida.tablero.string}`)
                         .setImage('attachment://tictactoe.gif');
 
                     await message.channel.createMessage({ embed }, [{ file: await mapaCanvas(partida.tablero.array, client.imagenes), name: 'tictactoe.gif' }]);
-
                 }
-            }
 
+                if (!partida.finalizado && partida.turno.jugador == client.user.id) {
+                    const disponibles = [1, 2, 3, 4, 5, 6, 7, 8, 9].filter(a => partida.disponible(a));
+                    const jugada = disponibles[Math.floor(Math.random() * disponibles.length)]
+                    partida.elegir(jugada)
+                    if (!partida.finalizado) {
+                        const embed = new MessageEmbed()
+                            .setColor(client.color)
+                            .setDescription(langjson.commands.tictactoe.turn(users.get(partida.turno.jugador)) + ` [\`${partida.turno.ficha}\`]\n\n${partida.tablero.string}`)
+                            .setImage('attachment://tictactoe.gif');
+
+                        await message.channel.createMessage({ embed }, [{ file: await mapaCanvas(partida.tablero.array, client.imagenes), name: 'tictactoe.gif' }]);
+
+                    }
+                }
+            },
+            timeLimit: (10 * 60) * 1000
         });
-        colector.on('stop', () => !partida || partida.finalizado ? null : partida.emit('finalizado', partida.jugadores, partida.tablero, partida.paso))
+
         return true;
+
     }
 }

@@ -28,6 +28,8 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
         return message.channel.createMessage(message.author.mention + ', ' + texto)
     }
 
+    client.listener.listen(message);
+
     for (const user of message.mentions.filter(user => !user.bot)) {
 
         const cacheAfk = await client.afk.cacheOrFetch(user.id);
