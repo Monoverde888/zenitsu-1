@@ -3,7 +3,7 @@ import Eris from 'eris-pluris';
 import Zenitsu from '../Utils/Classes/client.js';
 import MessageEmbed from '../Utils/Classes/Embed.js';
 import lenguajes from '../Utils/Lang/langs.js';
-import Comando from '../Utils/Classes/Command.js';
+import Comando from '../Utils/Classes/command.js';
 import Collection from '../Utils/Classes/Collection.js';
 const cooldowns: Collection<string, Collection<string, number>> = new Collection();
 
