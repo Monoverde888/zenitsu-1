@@ -76,7 +76,6 @@ export default class Comando extends Command {
 
             const respuesta = res.map(item => item)[0]?.content
 
-
             if (!respuesta) {
                 games.delete(message.guild.id)
                 turnosPorId.delete(message.guild.id)
