@@ -11,11 +11,16 @@ interface status {
     solution: solution[];
 }
 
+interface player {
+    id: string;
+    turn: number;
+}
+
 declare module 'connect4-ai' {
 
     class Connect4 {
 
-        jugadores: string[];
+        jugadores: player[];
         play(play: number): void;
         gameStatus(): status
         ascii(): string;
