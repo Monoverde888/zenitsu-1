@@ -103,14 +103,29 @@ export default class Comando extends Command {
 
         if (usuario.id != client.user.id) {
 
-            const temp = turnosPorId.get(message.guild.id);
+            let temp = turnosPorId.get(message.guild.id);
+
+            if (!temp) {
+                const obj = new Map();
+                turnosPorId.set(message.guild.id, obj)
+                temp = turnosPorId.get(message.guild.id);
+            }
+
             temp.set(usuario.id, Math.floor(Math.random() * 2) + 1 == 2 ? 2 : 1);
             temp.set(message.author.id, temp.get(usuario.id) == 2 ? 1 : 2);
 
         }
 
         else {
-            const temp = turnosPorId.get(message.guild.id);
+
+            let temp = turnosPorId.get(message.guild.id);
+
+            if (!temp) {
+                const obj = new Map();
+                turnosPorId.set(message.guild.id, obj)
+                temp = turnosPorId.get(message.guild.id);
+            }
+
             temp.set(usuario.id, 2);
             temp.set(message.author.id, 1);
         }
