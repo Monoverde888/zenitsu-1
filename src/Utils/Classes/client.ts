@@ -103,7 +103,6 @@ class Zenitsu extends eris.Client {
             bug2: await loadImage(this.rutaProfile('bug2.png', 'Flags')),
             bug3: await loadImage(this.rutaProfile('bug3.png', 'Flags')),
             staff: await loadImage(this.rutaProfile('staff.png', 'Flags')),
-            topc4: await loadImage(this.rutaProfile('bug1.png', 'Flags')),
             vip: await loadImage(this.rutaProfile('vip.png', 'Flags')),
             hamburger: await loadImage(this.rutaProfile('hamburger.png', 'Flags')),
         }

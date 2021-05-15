@@ -6,7 +6,6 @@ interface Flags {
     bug2: canvas.Image;
     bug3: canvas.Image;
     staff: canvas.Image;
-    topc4: canvas.Image;
     vip: canvas.Image;
     hamburger: canvas.Image;
 }

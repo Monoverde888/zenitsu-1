@@ -28,7 +28,7 @@ class Listener extends EventEmitter {
 
         setInterval(() => {
 
-            for (const data of this.listenersXD) {
+            for (const data of this.listenersXD.filter(item => item.running)) {
 
                 if (Date.now() > (data.lastIdle + data.idle)) {
                     this.stop(data, 'idle');
