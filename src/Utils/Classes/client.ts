@@ -105,7 +105,7 @@ class Zenitsu extends eris.Client {
             staff: await loadImage(this.rutaProfile('staff.png', 'Flags')),
             topc4: await loadImage(this.rutaProfile('bug1.png', 'Flags')),
             vip: await loadImage(this.rutaProfile('vip.png', 'Flags')),
-            hamburger: await loadImage(this.rutaProfile('hamburger.png', 'Flags'));
+            hamburger: await loadImage(this.rutaProfile('hamburger.png', 'Flags')),
         }
 
         const buffer = (await promisify(svg)(`https://top.gg/api/widget/721080193678311554.svg`, {})) as Buffer
