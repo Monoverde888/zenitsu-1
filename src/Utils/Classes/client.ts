@@ -2,7 +2,7 @@ import common from '../Functions/commons.js';
 import path from 'path';
 const { join } = path;
 import fs from 'fs/promises';
-const { readdir } = fs;
+const { readdir, writeFile } = fs;
 const res = common(import.meta.url);
 const __dirname: string = res.__dirname;
 import eris from 'eris-pluris';
@@ -16,13 +16,20 @@ import mongoose from 'mongoose';
 const { connect, set, connection } = mongoose;
 import Comando from './command.js'
 import CANVAS from 'canvas';
-const { loadImage } = CANVAS;
+const { loadImage, registerFont } = CANVAS;
 import imagenesC from '../Interfaces/imagenes.js';
 import listener from './Listener.js';
 import Listener from './Listener.js';
+import svg from 'node-svg2img';
+import util from 'util';
+const { promisify } = util;
+import Flag from '../Interfaces/profile/flag.js';
+import Profile from './profileManager.js'
 
 class Zenitsu extends eris.Client {
 
+    profile: Profile;
+    flags: Flag;
     listener: listener;
     fileTOPGG: Buffer;
     dbl: dbla;
@@ -31,9 +38,9 @@ class Zenitsu extends eris.Client {
     lang: LangManager
     prefix: PrefixManager;
     afk: AfkManager;
-    logs: LogsManager
-    commands: Collection<string, Comando>
-    devs: string[]
+    logs: LogsManager;
+    commands: Collection<string, Comando>;
+    devs: string[];
 
     constructor(token: string, options: eris.ClientOptions) {
         super(token, options);
@@ -46,6 +53,7 @@ class Zenitsu extends eris.Client {
     }
 
     async init(): Promise<this> {
+        registerFont(join(__dirname, '..', '..', '..', 'Assets', 'bettersans.ttf'), { family: 'Comic Sans' })
         this.listener = new Listener();
         const file = await fs.readFile(this.rutaImagen('topgg.png'));
         this.fileTOPGG = file;
@@ -53,6 +61,7 @@ class Zenitsu extends eris.Client {
         this.commands = new Collection();
         this.dbl = new dbla(process.env.DBLTOKEN, this);
         this.color = 14720566;
+        this.profile = new Profile();
         this.lang = new LangManager();
         this.prefix = new PrefixManager();
         this.afk = new AfkManager();
@@ -60,11 +69,10 @@ class Zenitsu extends eris.Client {
         set('useFindAndModify', false);
         await connect(process.env.MONGODB, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => console.log(`Connected to MONGODB.`));
         await this.loadImages();
-        await this.loadEvents();
         await this.loadCommands();
+        await this.loadEvents();
         return this;
     }
-
 
     async loadImages(): Promise<imagenesC> {
         this.imagenes = {
@@ -85,10 +93,40 @@ class Zenitsu extends eris.Client {
                 win: await loadImage(this.rutaImagen('morado_de_4.png')),
                 verde: await loadImage(this.rutaImagen('rojo_de_cuatro.png')),
                 amarillo: await loadImage(this.rutaImagen('amarillo_de_cuatro.png'))
-            }
+            },
+            empty: await loadImage(this.rutaImagen('empty.png'))
+        };
+
+        this.flags = {
+            booster: await loadImage(this.rutaProfile('booster.png', 'Flags')),
+            bug1: await loadImage(this.rutaProfile('bug1.png', 'Flags')),
+            bug2: await loadImage(this.rutaProfile('bug2.png', 'Flags')),
+            bug3: await loadImage(this.rutaProfile('bug3.png', 'Flags')),
+            staff: await loadImage(this.rutaProfile('staff.png', 'Flags')),
+            topc4: await loadImage(this.rutaProfile('bug1.png', 'Flags')),
+            vip: await loadImage(this.rutaProfile('vip.png', 'Flags')),
         }
+
+        const buffer = (await promisify(svg)(`https://top.gg/api/widget/721080193678311554.svg`, {})) as Buffer
+
+        this.fileTOPGG = buffer;
+
+        await writeFile(this.rutaImagen('topgg.png'), this.fileTOPGG)
+
         return this.imagenes;
 
+    }
+
+    async postStats(update = false): Promise<boolean> {
+        await this.dbl.postStats(this.guilds.size);
+
+        if (update) {
+            const buffer = (await promisify(svg)(`https://top.gg/api/widget/721080193678311554.svg`, {})) as Buffer
+            this.fileTOPGG = buffer;
+            await writeFile(this.rutaImagen('topgg.png'), this.fileTOPGG)
+        }
+
+        return true;
     }
 
     async loadCommands(): Promise<Zenitsu> {
@@ -131,6 +169,10 @@ class Zenitsu extends eris.Client {
 
     rutaImagen(str: string): string {
         return join(__dirname, '..', '..', '..', 'Images', str)
+    }
+
+    rutaProfile(str: string, type: 'Flags' | 'Achievements'): string {
+        return join(__dirname, '..', '..', '..', 'Profile', type, str)
     }
 
     async loadEvents(): Promise<Zenitsu> {

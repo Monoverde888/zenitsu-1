@@ -2,45 +2,26 @@ import mongoose from 'mongoose';
 const { Schema, model } = mongoose;
 
 const Guild = new Schema({
+
     id: { type: String, unique: true },
     description: {
         type: String,
-        default: 'NONE.'
+        default: '\u200b'
     },
 
-    insignias: {
+    flags: {
         type: Array,
         default: []
     },
 
-    img: {
-        type: String,
-        default: 'https://cdn.discordapp.com/attachments/758009020526362715/766329070035402763/kimetsu-no-yaiba-romance-tanjiro-kanao.png'
-    },
-
-    thumbnail: {
-        type: String,
-        default: 'https://cdn.discordapp.com/attachments/758009020526362715/766329070035402763/kimetsu-no-yaiba-romance-tanjiro-kanao.png'
-    },
-
-    footer: {
-        type: String,
-        default: 'https://cdn.discordapp.com/attachments/758009020526362715/766329070035402763/kimetsu-no-yaiba-romance-tanjiro-kanao.png'
-    },
-
-    footertext: {
-        type: String,
-        default: 'NONE.'
+    achievements: {
+        type: Array,
+        default: []
     },
 
     color: {
         type: String,
-        default: '#E09E36'
-    },
-
-    nick: {
-        type: String,
-        default: 'NONE.'
+        default: '000000'
     },
 
 });
@@ -48,13 +29,9 @@ const Guild = new Schema({
 interface Profile extends mongoose.Document {
     id: string;
     description: string;
-    insignias: string[];
-    img: string;
-    thumbnail: string;
-    footer: string;
-    footertext: string;
+    flags: string[];
+    achievements: string[];
     color: string;
-    nick: string;
 }
 
 export default model<Profile>('profile', Guild)

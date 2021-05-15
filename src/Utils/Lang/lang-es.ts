@@ -178,6 +178,17 @@ const obj = {
         },
         "discordstatus": {
             message: `<a:CatLoad:804368444526297109> | Espere un momento...`
+        },
+        "profile": {
+            flags: 'Insignias',
+            achievements: 'Logros'
+        },
+        "editprofile": {
+            bad_usage: (prefix: string): string => `Uso: ${prefix || 'z!'}editprofile <(color|description)> <valor>`,
+            invalid: `Uso invalido.`,
+            new_color: `<-- Nuevo color.`,
+            description_invalid: (prefix: string): string => `Uso invalido.\nUso correcto: **${prefix || 'z!'}editprofile description Nueva descripción**`,
+            description_nice: (prefix: string): string => `Ahora usa ${prefix || 'z!'}profile para ver tu descripción.`
         }
     }
 }

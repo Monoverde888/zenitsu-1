@@ -20,7 +20,7 @@ export default class Comando extends Command {
 
     async run({ client, message, args, langjson, embedResponse }: run): Promise<light.Message> {
 
-        if (games.has(message.guild.id)) {
+        if (games.get(message.guild.id)) {
             const embed = new MessageEmbed()
                 .setColor(client.color)
                 .setDescription(langjson.commands.connect4.curso)
@@ -76,12 +76,12 @@ export default class Comando extends Command {
                 return embedResponse(langjson.commands.connect4.deny(usuario.username))
             }
 
-            if (games.get(message.guildID).jugadores.find(item => item.id == usuario.id)) {
+            if (findTurn(usuario.id)) {
                 games.delete(message.guild.id)
                 return embedResponse(langjson.commands.connect4.user_active(usuario.username));
             }
 
-            if (games.get(message.guildID).jugadores.find(item => item.id == message.author.id)) {
+            if (findTurn(message.author.id)) {
                 games.delete(message.guild.id)
                 return embedResponse(langjson.commands.connect4.author_active);
             }

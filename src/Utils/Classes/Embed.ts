@@ -1,5 +1,5 @@
 import eris from 'eris-pluris';
-type AttachmentResolvable = Buffer | eris.Attachment | string;
+type AttachmentResolvable = Buffer | eris.Attachment | { file: Buffer | string, name: string } | string;
 
 class MessageEmbed {
 
@@ -57,8 +57,7 @@ class MessageEmbed {
     }
 
     attachFiles(file: AttachmentResolvable[]): this {
-        this.files.push(...file)
-
+        for (const i of file) this.files.push(i);
         return this;
     }
 

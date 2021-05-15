@@ -18,7 +18,8 @@ interface imagenesC {
         win: canvas.Image;
         verde: canvas.Image;
         amarillo: canvas.Image;
-    }
+    };
+    empty: canvas.Image;
 }
 
 export default imagenesC;

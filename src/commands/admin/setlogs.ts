@@ -58,6 +58,7 @@ class Comando extends Command {
                     ? `https://cdn.discordapp.com/avatars/${webhook.id}/${webhook.avatar}.png`
                     : `https://cdn.discordapp.com/embed/avatars/0.png`)
                 .setDescription(langjson.commands.setlogs.correct(client.unMarkdown(webhook.name), type))
+                .setColor(client.color);
 
             return message.channel.createMessage({ embed });
 
