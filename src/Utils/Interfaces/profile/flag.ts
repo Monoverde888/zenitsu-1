@@ -8,6 +8,7 @@ interface Flags {
     staff: canvas.Image;
     topc4: canvas.Image;
     vip: canvas.Image;
+    hamburger: canvas.Image;
 }
 
 export default Flags
