@@ -1,3 +1,4 @@
+/*
 import * as Sharder from '@lil_marcrock22/eris-sharder';
 import dotenv from 'dotenv';
 import Zenitsu from './Utils/Classes/client.js';
@@ -25,3 +26,4 @@ new Sharder.Master(process.env.DISCORD_TOKEN, `./dist/index.js`, {
     },
     debug: false
 }, Zenitsu);
+*/

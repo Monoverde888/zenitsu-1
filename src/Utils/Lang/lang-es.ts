@@ -189,6 +189,44 @@ const obj = {
             new_color: `<-- Nuevo color.`,
             description_invalid: (prefix: string): string => `Uso invalido.\nUso correcto: **${prefix || 'z!'}editprofile description Nueva descripción**`,
             description_nice: (prefix: string): string => `Ahora usa ${prefix || 'z!'}profile para ver tu descripción.`
+        },
+        "mute": {
+            no_role: (prefix: string): string => `Usa **${prefix || 'z!'}settings muterole init** antes de usar este comando.`,
+            cant_role: (role: string): string => `No puedo gestionar el rol **${role}**.`,
+            already_muted: (member: string): string => `**${member}** ya estaba silenciado.`,
+            mention: `<:cancel:804368628861763664> | Menciona a un miembro.`,
+            cannt_mute: (user: string): string => `<:cancel:804368628861763664> | **No puedo** silenciar a ${user}`,
+            user_cannt_mute: (user: string): string => `<:cancel:804368628861763664> | **No puedes** silenciar a ${user}`,
+            mute: (user: string): string => `<:MUTE:807729858649391105> | **${user}** ha sido silenciado.`
+        },
+        "unmute": {
+            no_role: (prefix: string): string => `Usa **${prefix || 'z!'}settings muterole init** antes de usar este comando.`,
+            cant_role: (role: string): string => `No puedo gestionar el rol **${role}**.`,
+            already_unmuted: (member: string): string => `**${member}** no está silenciado.`,
+            mention: `<:cancel:804368628861763664> | Menciona a un miembro.`,
+            cannt_unmute: (user: string): string => `<:cancel:804368628861763664> | **No puedo** quitar el silencio a ${user}`,
+            user_cannt_unmute: (user: string): string => `<:cancel:804368628861763664> | **No puedes** quitar el silencio a ${user}`,
+            unmute: (user: string): string => `<:UNMUTE:807729857693876224> | **${user}** ya no está silenciado.`
+        },
+        "settings": {
+            cooldown: 'Espera que el otro proceso termine.',
+            muterole: {
+                init: {
+                    use_refresh: (prefix: string): string => `Usa \`${prefix}settings muterole refresh\` para **actualizar los canales sin la configuración**.`,
+                    cannt_edit: (role: string): string => `No puedo editar ${role}.`,
+                    editando: `Editando canales.`,
+                    success: `Canales configurados.`,
+                    else: `Parece que no tengo todos mis permisos.`
+                },
+                refresh: {
+                    use_init: (prefix: string): string => `Usa \`${prefix}settings muterole init\`.`,
+                    cannt_edit: (role: string): string => `No puedo editar ${role}.`,
+                    already: `Todos los canales ya estaban configurados.`,
+                    editando: `Editando canales.`,
+                    success: `Canales configurados.`,
+                    else: `Parece que no tengo todos mis permisos.`
+                }
+            }
         }
     }
 }

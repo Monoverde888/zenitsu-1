@@ -1,15 +1,12 @@
 import Collection from './Collection.js'
-import langM from "../../models/profile.js";
+import langM from "../../models/settings.js";
 
 interface obj {
     id: string;
-    description: string;
-    flags: string[];
-    achievements: string[];
-    color: string;
+    muterole: string;
 }
 
-class ProfileManager {
+class SettingsManager {
 
     collection: Collection<string, obj>
 
@@ -17,7 +14,7 @@ class ProfileManager {
         this.collection = new Collection();
     }
 
-    async set(id: string, what: 'description' | 'color', value: string): Promise<obj> {
+    async set(id: string, what: 'muterole', value: string): Promise<obj> {
         const data = await langM.findOneAndUpdate({ id }, { [what]: value }, { new: true, upsert: true });
         this.collection.set(id, data);
         return data;
@@ -26,10 +23,7 @@ class ProfileManager {
     async fetch(id: string): Promise<obj> {
         const data = await langM.findOne({ id }) || await langM.create({
             id,
-            flags: [],
-            achievements: [],
-            color: '000000',
-            description: `\u200b`
+            muterole: '1'
         });
         this.collection.set(id, data);
         return data;
@@ -44,16 +38,10 @@ class ProfileManager {
         return this.cache.get(id) || this.fetch(id);
     }
 
-    async add(id: string, what: 'flags' | 'achievements', toAdd: string): Promise<obj> {
-        const data = await langM.findOneAndUpdate({ id }, { $addToSet: { [what]: toAdd } }, { new: true, upsert: true });
-        this.cache.set(id, data);
-        return data;
-    }
-
     get cache(): Collection<string, obj> {
         return this.collection;
     }
 
 }
 
-export default ProfileManager;
+export default SettingsManager;

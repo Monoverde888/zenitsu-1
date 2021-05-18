@@ -1,4 +1,11 @@
+//Functions
 import common from '../Functions/commons.js';
+
+//Interfaces
+import imagenesC from '../Interfaces/imagenes.js';
+import Flag from '../Interfaces/profile/flag.js';
+
+//Values
 import path from 'path';
 const { join } = path;
 import fs from 'fs/promises';
@@ -6,31 +13,34 @@ const { readdir, writeFile } = fs;
 const res = common(import.meta.url);
 const __dirname: string = res.__dirname;
 import eris from 'eris-pluris';
-import Collection from './Collection.js'
-import dbla from 'dblapi.js'
+import dbla from 'dblapi.js';
+import mongoose from 'mongoose';
+const { connect, set, connection } = mongoose;
+import CANVAS from 'canvas';
+const { loadImage, registerFont } = CANVAS;
+import svg from 'node-svg2img';
+import util from 'util';
+const { promisify } = util;
+
+//Classes
+import Collection from './Collection.js';
+import Listener from './Listener.js';
+import Comando from './command.js';
+
+//Managers
+import Profile from './profileManager.js'
 import LangManager from './langManager.js';
 import AfkManager from "./afkManager.js";
 import PrefixManager from './prefixManager.js';
 import LogsManager from './logsManager.js';
-import mongoose from 'mongoose';
-const { connect, set, connection } = mongoose;
-import Comando from './command.js'
-import CANVAS from 'canvas';
-const { loadImage, registerFont } = CANVAS;
-import imagenesC from '../Interfaces/imagenes.js';
-import listener from './Listener.js';
-import Listener from './Listener.js';
-import svg from 'node-svg2img';
-import util from 'util';
-const { promisify } = util;
-import Flag from '../Interfaces/profile/flag.js';
-import Profile from './profileManager.js'
+import Settings from './settingsManager.js';
 
 class Zenitsu extends eris.Client {
 
+    settings: Settings;
     profile: Profile;
     flags: Flag;
-    listener: listener;
+    listener: Listener;
     fileTOPGG: Buffer;
     dbl: dbla;
     color: number;
@@ -61,6 +71,7 @@ class Zenitsu extends eris.Client {
         this.commands = new Collection();
         this.dbl = new dbla(process.env.DBLTOKEN, this);
         this.color = 14720566;
+        this.settings = new Settings();
         this.profile = new Profile();
         this.lang = new LangManager();
         this.prefix = new PrefixManager();

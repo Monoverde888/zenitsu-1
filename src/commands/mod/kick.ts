@@ -3,18 +3,7 @@ import Command from '../../Utils/Classes/command.js';
 import light from 'eris-pluris';
 import canMod from "../../Utils/Functions/canMod.js";
 import MessageEmbed from "../../Utils/Classes/Embed.js";
-function getHighest(member: light.Member): light.Role {
-
-    const memberRole = Array.from(member.roleList).map(e => e[1]);
-
-    memberRole.push(member.guild.roles.get(member.guild.id))
-
-    const memberRoleSort = memberRole.sort((a, b) => b.position - a.position)[0];
-
-    return memberRoleSort
-
-}
-
+import getHighest from '../../Utils/Functions/getHighest.js';
 
 export default class Comando extends Command {
     constructor() {
@@ -29,7 +18,7 @@ export default class Comando extends Command {
     run({ args, message, langjson, client, embedResponse }: run): Promise<light.Message> {
 
 
-        const user = message.mentions.filter(member => member.id != message.author.id)[0];
+        const user = message.mentions.filter(user => user.id != message.author.id || user.id != message.guild.ownerID)[0];
         const member = message.guild.members.get(user?.id);
         if (!member) return embedResponse(langjson.commands.kick.mention);
         if (!canMod(member, client, 'kick')) return embedResponse(langjson.commands.kick.cannt_kick(`**${client.unMarkdown(member.user.username)}**`))

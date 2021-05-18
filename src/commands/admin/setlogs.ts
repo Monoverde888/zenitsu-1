@@ -9,7 +9,6 @@ class Comando extends Command {
 
     constructor() {
         super();
-        this.cooldown = 0;
         this.name = "setlogs"
         this.alias = []
         this.category = 'admin'

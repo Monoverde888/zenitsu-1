@@ -1,7 +1,8 @@
 import dotenv from 'dotenv';
+dotenv.config();
+/*
 import * as sharder from '@lil_marcrock22/eris-sharder';
 import eris from 'eris-pluris';
-dotenv.config();
 const { Base } = sharder;
 class Sharder extends Base {
 
@@ -16,3 +17,19 @@ class Sharder extends Base {
 }
 
 export default Sharder;
+*/
+
+import Zenitsu from "./Utils/Classes/client.js";
+
+new Zenitsu(process.env.DISCORD_TOKEN, {
+    allowedMentions: {
+        everyone: false,
+        roles: [],
+        users: [],
+        repliedUser: true
+    },
+    defaultImageFormat: 'png',
+    defaultImageSize: 2048,
+    intents: 1701,
+    maxShards: 'auto'
+}).connect();

@@ -6,6 +6,7 @@ import lenguajes from '../Utils/Lang/langs.js';
 import Comando from '../Utils/Classes/command.js';
 import Collection from '../Utils/Classes/Collection.js';
 const cooldowns: Collection<string, Collection<string, number>> = new Collection();
+const internalCooldown: Set<string> = new Set();
 
 async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eris.Message> {
 
@@ -60,6 +61,9 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
     };
 
     const comando = client.commands.filter(filter).find((c) => c.name == command || c.alias.includes(command));
+
+    if (internalCooldown.has(message.author.id))
+        return;
 
     if (comando) {
 
@@ -152,7 +156,8 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
         }
 
         try {
-            await comando.run({ message, args, embedResponse, Hora, client, lang, langjson })
+            internalCooldown.add(message.author.id)
+            await comando.run({ message, args, embedResponse, client, lang, langjson })
         }
 
         catch (e) {
@@ -163,7 +168,7 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
                     .setTimestamp()
                     .setDescription((e.stack || e.message || e)?.slice(0, 2048) || e)
                     .addField('Comando usado', command)
-                    .setAuthor(message.content.slice(0, 1000))
+                    .setAuthor(message.content.slice(0, 300))
             ]
 
             console.log(e);
@@ -173,48 +178,12 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
             return message.channel.createMessage(langjson.messages.error((e.message || e?.toString() || e)));
         }
 
+        finally {
+            internalCooldown.delete(message.author.id);
+        }
+
     }
 
     return;
 }
-
-function Hora(date = Date.now(), dia = false) {
-
-    const fecha = new Date(date - ms('4h'))
-
-    const hora = fecha.getHours();
-
-    const minutos = fecha.getMinutes();
-
-    const segundos = fecha.getSeconds();
-
-    let horaS: string,
-        minutosS: string,
-        segundosS: string
-
-    if (hora < 10) {
-        horaS = '0' + hora
-    }
-
-    if (minutos < 10) {
-        minutosS = '0' + minutos
-    }
-    if (segundos < 10) {
-        segundosS = "0" + segundos
-    }
-    if (!dia)
-        return horaS + ":" + minutosS + ":" + segundosS
-
-    else {
-
-        const dia = new Date(date - ms('4h')).getDay() + 1,
-            mes = new Date(date - ms('4h')).getMonth() + 1,
-            año = new Date(date - ms('4h')).getFullYear()
-
-        return `${horaS}: ${minutosS}: ${segundosS} - ${dia} /${mes}/${año} `
-
-    }
-
-}
-
 export default event

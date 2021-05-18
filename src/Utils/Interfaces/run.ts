@@ -8,7 +8,6 @@ interface run {
     message?: pkg.Message;
     args?: string[];
     embedResponse?(descriptionhere: string, channel?: pkg.TextChannel): Promise<pkg.Message>;
-    Hora?(date: number | Date, dia: boolean): string;
     lang?: 'es' | 'en';
     langjson?: typeof langjsonEN | typeof langjsonES
 }
