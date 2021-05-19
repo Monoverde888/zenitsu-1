@@ -4,7 +4,6 @@ import light from 'eris-pluris';
 import MessageEmbed from "../../Utils/Classes/Embed.js";
 import settings from "../../models/settings.js";
 import getHighest from '../../Utils/Functions/getHighest.js';
-import canMod from "../../Utils/Functions/canMod.js";
 
 export default class Comando extends Command {
     constructor() {
