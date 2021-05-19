@@ -176,8 +176,7 @@ const obj = {
             cant_role: (role: string): string => `I can't manage the role **${role}**.`,
             already_muted: (member: string): string => `**${member}** is already muted.`,
             mention: `<:cancel:804368628861763664> | Mention a member.`,
-            cannt_mute: (user: string): string => `<:cancel:804368628861763664> | **I can't** mute ${user}`,
-            user_cannt_mute: (user: string): string => `<:cancel:804368628861763664> | **You can't** mute ${user}`,
+             user_cannt_mute: (user: string): string => `<:cancel:804368628861763664> | **You can't** mute ${user}`,
             mute: (user: string): string => `<:MUTE:807729858649391105> | **${user}** was muted.`
         },
         "unmute": {
@@ -185,8 +184,7 @@ const obj = {
             cant_role: (role: string): string => `I can't manage the role **${role}**.`,
             already_unmuted: (member: string): string => `**${member}** is already unmuted.`,
             mention: `<:cancel:804368628861763664> | Mention a member.`,
-            cannt_unmute: (user: string): string => `<:cancel:804368628861763664> | **I can't** unmute ${user}`,
-            user_cannt_unmute: (user: string): string => `<:cancel:804368628861763664> | **You can't** unmute ${user}`,
+             user_cannt_unmute: (user: string): string => `<:cancel:804368628861763664> | **You can't** unmute ${user}`,
             unmute: (user: string): string => `<:UNMUTE:807729857693876224> | **${user}** was unmuted.`
         },
         "settings": {

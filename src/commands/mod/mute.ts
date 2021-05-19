@@ -33,7 +33,6 @@ export default class Comando extends Command {
 
         if (!member) return embedResponse(langjson.commands.mute.mention);
         if (member.roles.includes(role.id)) return embedResponse(langjson.commands.mute.already_muted(client.unMarkdown(member.username)));
-        if (!canMod(member, client, null)) return embedResponse(langjson.commands.mute.cannt_mute(`**${client.unMarkdown(member.user.username)}**`))
         if (message.author.id != message.guild.ownerID) {
             if (getHighest(message.member).position < getHighest(member).position) return embedResponse(langjson.commands.mute.user_cannt_mute(`**${client.unMarkdown(member.user.username)}**`))
         }
