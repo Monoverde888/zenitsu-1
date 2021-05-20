@@ -5,10 +5,20 @@ import MessageEmbed from '../Utils/Classes/Embed.js';
 import lenguajes from '../Utils/Lang/langs.js';
 import Comando from '../Utils/Classes/command.js';
 import Collection from '../Utils/Classes/Collection.js';
-const cooldowns: Collection<string, Collection<string, number>> = new Collection();
-const internalCooldown: Set<string> = new Set();
+const cooldowns: Collection<string, Collection<string, { cooldown: number, avisado: boolean }>> = new Collection();
+const antiabuzzz: Collection<string, number[]> = new Collection();
+const abusadores: Set<string> = new Set();
+
+function check(items: number[]): boolean {
+    const sorted = items.sort((a, b) => b - a);
+    const filter = sorted.filter(date => (date + (15 * 1000)) > Date.now());
+    return filter.length > 8;
+}
 
 async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eris.Message> {
+
+    if (abusadores.has(message?.author?.id))
+        return;
 
     if (!((message.channel as Eris.TextChannel).guild) || !message.author || !message.member || message.author.bot) return;
 
@@ -19,17 +29,29 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
         return;
 
     const requestLang = await client.lang.cacheOrFetch(message.channel.guild.id);
-    const lang: 'es' | 'en' = requestLang.lang
-    const langjson = lenguajes[lang]
-    const afk = await client.afk.cacheOrFetch(message.author.id)
+    const lang: 'es' | 'en' = requestLang.lang;
+    const langjson = lenguajes[lang];
+    const afk = await client.afk.cacheOrFetch(message.author.id);
 
     if (afk.status) {
         await client.afk.delete(message.author.id);
         const texto = langjson.messages.afk_volver;
-        return message.channel.createMessage(message.author.mention + ', ' + texto)
+        return message.channel.createMessage(message.author.mention + ', ' + texto);
     }
 
-    client.listener.listen(message);
+    //antiabuzz
+    const topush = client.listener.listen(message).filter(item => item?.author?.id == message.author.id);
+    if (!antiabuzzz.get(message.author.id)) {
+        antiabuzzz.set(message.author.id, []);
+    }
+    for (const { createdAt } of topush) antiabuzzz.get(message.author.id).push(createdAt);
+    if (check(antiabuzzz.get(message.author.id))) {
+        setTimeout(() => abusadores.delete(message.author.id), (60 * 1000))
+        antiabuzzz.delete(message.author.id);
+        abusadores.add(message.author.id);
+        return message.channel.createMessage(langjson.messages.abuz);
+    }
+    //antiabuzz
 
     for (const user of message.mentions.filter(user => !user.bot)) {
 
@@ -41,12 +63,11 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
                 .setAuthor(user.username, user.dynamicAvatarURL())
                 .setDescription(cacheAfk.reason)
                 .setFooter('AFK | ' + ms(Date.now() - cacheAfk.date, { language: lang, long: true }))
-
+            antiabuzzz.get(message.author.id).push(message.createdAt);
             message.channel.createMessage({ embed }).catch(() => undefined)
             break;
         }
     }
-
 
     const requestPrefix = await client.prefix.cacheOrFetch(message.channel.guild.id);
     const prefix = requestPrefix.prefix;
@@ -62,11 +83,7 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
 
     const comando = client.commands.filter(filter).find((c) => c.name == command || c.alias.includes(command));
 
-    if (internalCooldown.has(message.author.id))
-        return;
-
     if (comando) {
-
         if (!cooldowns.has(comando.name)) {
             cooldowns.set(comando.name, new Collection());
         }
@@ -77,69 +94,75 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
 
         if (!client.devs.includes(message.author.id)) {
             if (timestamps.has(message.author.id)) {
-                const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
+                const expirationTime = timestamps.get(message.author.id).cooldown + cooldownAmount;
                 if (now < expirationTime) {
-                    const timeLeft = (expirationTime - now);
-                    return message.channel.createMessage(message.author.mention + ' ,' + langjson.messages.cooldown(ms(timeLeft, { long: true, language: lang }), command));
+                    if (!timestamps.get(message.author.id).avisado) {
+                        const timeLeft = (expirationTime - now);
+                        timestamps.get(message.author.id).avisado = true;
+                        antiabuzzz.get(message.author.id).push(message.createdAt);
+                        return message.channel.createMessage(message.author.mention + ' ,' + langjson.messages.cooldown(ms(timeLeft, { long: true, language: lang }), command));
+                    }
+                    else return;
                 }
-                else timestamps.set(message.author.id, now);
+                else timestamps.set(message.author.id, { cooldown: now, avisado: false });
             }
-
-            else {
-                timestamps.set(message.author.id, now);
-            }
+            else timestamps.set(message.author.id, { cooldown: now, avisado: false });
         }
 
         let check = comando.botPermissions.channel.filter(perm => !((message.channel as Eris.TextChannel | Eris.NewsChannel).permissionsOf(client.user.id).has(perm)))
 
         if (check.length) {
 
+            antiabuzzz.get(message.author.id).push(message.createdAt);
             const embed = new MessageEmbed()
                 .setColor(client.color)
                 .setDescription(langjson.messages.permisos_bot_channel(`\`${check.join(',')}\``))
                 .setTimestamp()
                 .setFooter('\u200b', 'https://media1.tenor.com/images/41334cbe64331dad2e2dc6272334b47f/tenor.gif');
-
             return message.channel.createMessage({ embed: embed })
+
         }
 
         check = comando.memberPermissions.channel.filter(perm => !((message.channel as Eris.TextChannel | Eris.NewsChannel).permissionsOf(message.member.id).has(perm)))
 
         if (check.length) {
 
+            antiabuzzz.get(message.author.id).push(message.createdAt);
             const embed = new MessageEmbed()
                 .setColor(client.color)
                 .setDescription(langjson.messages.permisos_user_channel(`\`${check.join(',')}\``))
                 .setTimestamp()
                 .setFooter('\u200b', 'https://media1.tenor.com/images/41334cbe64331dad2e2dc6272334b47f/tenor.gif');
-
             return message.channel.createMessage({ embed: embed })
+
         }
 
         check = comando.botPermissions.guild.filter(perm => !((message.channel as Eris.TextChannel).guild.members.get(client.user.id).permissions.has(perm)));
 
         if (check.length) {
 
+            antiabuzzz.get(message.author.id).push(message.createdAt);
             const embed = new MessageEmbed()
                 .setColor(client.color)
                 .setDescription(langjson.messages.permisos_bot_guild(`\`${check.join(',')}\``))
                 .setTimestamp()
                 .setFooter('\u200b', 'https://media1.tenor.com/images/41334cbe64331dad2e2dc6272334b47f/tenor.gif');
-
             return message.channel.createMessage({ embed: embed })
+
         }
 
         check = comando.memberPermissions.guild.filter(perm => !(message.member.permissions.has(perm)));
 
         if (check.length) {
 
+            antiabuzzz.get(message.author.id).push(message.createdAt);
             const embed = new MessageEmbed()
                 .setColor(client.color)
                 .setDescription(langjson.messages.permisos_user_guild(`\`${check.join(',')}\``))
                 .setTimestamp()
                 .setFooter('\u200b', 'https://media1.tenor.com/images/41334cbe64331dad2e2dc6272334b47f/tenor.gif');
-
             return message.channel.createMessage({ embed: embed })
+
         }
 
         const embedResponse = (descriptionHere: string, option: Eris.TextChannel): Promise<Eris.Message> => {
@@ -148,15 +171,13 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
                 .setDescription(descriptionHere)
                 .setTimestamp()
                 .setColor(client.color);
-
             const canal: Eris.TextChannel | Eris.NewsChannel | Eris.PrivateChannel = option || message.channel;
-
             return canal.createMessage({ embed: embed })
 
         }
 
         try {
-            internalCooldown.add(message.author.id)
+            antiabuzzz.get(message.author.id).push(message.createdAt);
             await comando.run({ message, args, embedResponse, client, lang, langjson })
         }
 
@@ -170,20 +191,14 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
                     .addField('Comando usado', command)
                     .setAuthor(message.content.slice(0, 300))
             ]
-
             console.log(e);
             client.executeWebhook(process.env.WEBHOOKID, process.env.WEBHOOKTOKEN, {
                 embeds
             })
             return message.channel.createMessage(langjson.messages.error((e.message || e?.toString() || e)));
-        }
 
-        finally {
-            internalCooldown.delete(message.author.id);
         }
 
     }
-
-    return;
 }
 export default event

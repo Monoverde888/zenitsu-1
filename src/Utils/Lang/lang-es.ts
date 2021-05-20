@@ -14,6 +14,8 @@ const obj = {
 
         "cooldown": (time: string, command: string): string => `Por favor espera ${time} antes de usar \`${command}\``,
 
+        "abuz": 'Fuiste demasiado rápido, ahora tendrás que esperar un minuto :).',
+
     },
     "commands": {
         "lockchannel": {
@@ -194,7 +196,7 @@ const obj = {
             no_role: (prefix: string): string => `Usa **${prefix || 'z!'}settings muterole init** antes de usar este comando.`,
             cant_role: (role: string): string => `No puedo gestionar el rol **${role}**.`,
             already_muted: (member: string): string => `**${member}** ya estaba silenciado.`,
-            mention: `<:cancel:804368628861763664> | Menciona a un miembro.`,            user_cannt_mute: (user: string): string => `<:cancel:804368628861763664> | **No puedes** silenciar a ${user}`,
+            mention: `<:cancel:804368628861763664> | Menciona a un miembro.`, user_cannt_mute: (user: string): string => `<:cancel:804368628861763664> | **No puedes** silenciar a ${user}`,
             mute: (user: string): string => `<:MUTE:807729858649391105> | **${user}** ha sido silenciado.`
         },
         "unmute": {
@@ -202,7 +204,7 @@ const obj = {
             cant_role: (role: string): string => `No puedo gestionar el rol **${role}**.`,
             already_unmuted: (member: string): string => `**${member}** no está silenciado.`,
             mention: `<:cancel:804368628861763664> | Menciona a un miembro.`,
-             user_cannt_unmute: (user: string): string => `<:cancel:804368628861763664> | **No puedes** quitar el silencio a ${user}`,
+            user_cannt_unmute: (user: string): string => `<:cancel:804368628861763664> | **No puedes** quitar el silencio a ${user}`,
             unmute: (user: string): string => `<:UNMUTE:807729857693876224> | **${user}** ya no está silenciado.`
         },
         "settings": {
@@ -222,7 +224,10 @@ const obj = {
                     editando: `Editando canales.`,
                     success: `Canales configurados.`,
                     else: `Parece que no tengo todos mis permisos.`
-                }
+                },
+            },
+            reset: {
+                message: `Configuración borrada.`
             }
         }
     }

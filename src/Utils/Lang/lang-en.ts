@@ -13,7 +13,10 @@ const obj = {
 
         "error": (e: string): string => "Something happened, here's a debug: " + e,
 
-        "cooldown": (time: string, command: string): string => `Please wait ${time} before use \`${command}\``
+        "cooldown": (time: string, command: string): string => `Please wait ${time} before use \`${command}\``,
+
+        "abuz": 'You were too fast, now you\'ll have to wait a minute :).',
+
     },
     "commands": {
         "lockchannel": {
@@ -176,7 +179,7 @@ const obj = {
             cant_role: (role: string): string => `I can't manage the role **${role}**.`,
             already_muted: (member: string): string => `**${member}** is already muted.`,
             mention: `<:cancel:804368628861763664> | Mention a member.`,
-             user_cannt_mute: (user: string): string => `<:cancel:804368628861763664> | **You can't** mute ${user}`,
+            user_cannt_mute: (user: string): string => `<:cancel:804368628861763664> | **You can't** mute ${user}`,
             mute: (user: string): string => `<:MUTE:807729858649391105> | **${user}** was muted.`
         },
         "unmute": {
@@ -184,7 +187,7 @@ const obj = {
             cant_role: (role: string): string => `I can't manage the role **${role}**.`,
             already_unmuted: (member: string): string => `**${member}** is already unmuted.`,
             mention: `<:cancel:804368628861763664> | Mention a member.`,
-             user_cannt_unmute: (user: string): string => `<:cancel:804368628861763664> | **You can't** unmute ${user}`,
+            user_cannt_unmute: (user: string): string => `<:cancel:804368628861763664> | **You can't** unmute ${user}`,
             unmute: (user: string): string => `<:UNMUTE:807729857693876224> | **${user}** was unmuted.`
         },
         "settings": {
@@ -204,7 +207,10 @@ const obj = {
                     editando: `Editing channels.`,
                     success: `The channels were edited`,
                     else: `It seems that I do not have all the necessary permissions.`
-                }
+                },
+            },
+            reset: {
+                message: 'Erased configuration.'
             }
         }
     }

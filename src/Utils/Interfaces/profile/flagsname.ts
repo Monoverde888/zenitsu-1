@@ -5,4 +5,5 @@ type Names = 'booster'
     | 'staff'
     | 'vip'
     | 'hamburger'
+    | 'helper'
 export default Names

@@ -20,6 +20,8 @@ export default class Comando extends Command {
 
     async run({ client, message, args, langjson, embedResponse }: run): Promise<light.Message> {
 
+        const DATAPROFILE = await client.profile.cacheOrFetch(message.author.id);
+
         if (games.get(message.guild.id)) {
             const embed = new MessageEmbed()
                 .setColor(client.color)
@@ -211,7 +213,26 @@ export default class Comando extends Command {
                         .setImage('attachment://4enraya.gif')
 
                     message.channel.createMessage({ embed }, [{ file: res, name: '4enraya.gif' }])
-                    if (usuario.id == client.user.id) await model.findOneAndUpdate({ id: message.author.id, difficulty: args[0] }, { $inc: { ganadas: 1 }, $set: { cacheName: message.author.username } }, { upsert: true });
+                    if (usuario.id == client.user.id) {
+                        const data = await model.findOneAndUpdate({ id: message.author.id, difficulty: args[0] }, { $inc: { ganadas: 1 }, $set: { cacheName: message.author.username } }, { upsert: true, new: true });
+
+                        if (args[0] == 'hard') {
+
+                            if ((data.ganadas >= 10) && !(DATAPROFILE.achievements.includes('c4level1')))
+                                await client.profile.add(message.author.id, 'achievements', 'c4level1')
+
+                            if ((data.ganadas >= 25) && !(DATAPROFILE.achievements.includes('c4level2')))
+                                await client.profile.add(message.author.id, 'achievements', 'c4level2')
+
+                            if ((data.ganadas >= 50) && !(DATAPROFILE.achievements.includes('c4level3')))
+                                await client.profile.add(message.author.id, 'achievements', 'c4level3')
+
+                            if ((data.ganadas >= 100) && !(DATAPROFILE.achievements.includes('c4top')))
+                                await client.profile.add(message.author.id, 'achievements', 'c4top')
+
+                        }
+
+                    }
                     return client.listener.stop(colector, 'win');
                 }
 

@@ -4,6 +4,7 @@ import common from '../Functions/commons.js';
 //Interfaces
 import imagenesC from '../Interfaces/imagenes.js';
 import Flag from '../Interfaces/profile/flag.js';
+import Achievement from '../Interfaces/profile/achievement.js';
 
 //Values
 import path from 'path';
@@ -51,6 +52,7 @@ class Zenitsu extends eris.Client {
     logs: LogsManager;
     commands: Collection<string, Comando>;
     devs: string[];
+    achievements: Achievement;
 
     constructor(token: string, options: eris.ClientOptions) {
         super(token, options);
@@ -116,7 +118,15 @@ class Zenitsu extends eris.Client {
             staff: await loadImage(this.rutaProfile('staff.png', 'Flags')),
             vip: await loadImage(this.rutaProfile('vip.png', 'Flags')),
             hamburger: await loadImage(this.rutaProfile('hamburger.png', 'Flags')),
-        }
+            helper: await loadImage(this.rutaProfile('helper.png', 'Flags')),
+        };
+
+        this.achievements = {
+            c4level1: await loadImage(this.rutaProfile('c4level1.png', 'Achievements')),
+            c4level2: await loadImage(this.rutaProfile('c4level2.png', 'Achievements')),
+            c4level3: await loadImage(this.rutaProfile('c4level3.png', 'Achievements')),
+            c4top: await loadImage(this.rutaProfile('c4top.png', 'Achievements')),
+        };
 
         const buffer = (await promisify(svg)(`https://top.gg/api/widget/721080193678311554.svg`, {})) as Buffer
 

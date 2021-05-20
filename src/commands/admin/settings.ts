@@ -119,10 +119,11 @@ class Comando extends Command {
                     default: {
                         return embedResponse(
                             `
-                            ${prefix}settings (view|muterole)
+                            ${prefix}settings (view|muterole|reset)
                             ${prefix}settings view
                             ${prefix}settings muterole init [role]
                             ${prefix}settings muterole refresh
+                            ${prefix}settings reset
                             `
                         )
                     }
@@ -141,14 +142,28 @@ class Comando extends Command {
             }
                 break;
 
+            case 'reset': {
+
+                await client.settings.delete(message.guildID);
+                const embed = new MessageEmbed()
+                    .setColor(client.color)
+                    .setDescription(langjson.commands.settings.reset.message)
+                    .setTimestamp();
+                return message.channel.createMessage({ embed });
+
+
+            }
+                break;
+
             default: {
 
                 return embedResponse(
                     `
-                    ${prefix}settings (view|muterole)
+                    ${prefix}settings (view|muterole|reset)
                     ${prefix}settings view
-                    ${prefix}settings muterole init <role>
+                    ${prefix}settings muterole init [role]
                     ${prefix}settings muterole refresh
+                    ${prefix}settings reset
                     `
                 )
 

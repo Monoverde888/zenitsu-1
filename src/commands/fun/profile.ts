@@ -4,6 +4,7 @@ import Command from '../../Utils/Classes/command.js';
 import MessageEmbed from '../../Utils/Classes/Embed.js';
 import CANVAS from 'canvas';
 import names from '../../Utils/Interfaces/profile/flagsname.js'
+import namesXD from '../../Utils/Interfaces/profile/achiementesnames.js'
 const { loadImage, createCanvas } = CANVAS;
 export default class Comando extends Command {
 
@@ -84,10 +85,10 @@ export default class Comando extends Command {
                 o = 0;
             }
             if (!o) {
-                ctx.drawImage(i, 380, 200 + y, 100, 100);
+                ctx.drawImage(client.achievements[i as namesXD], 380, 200 + y, 100, 100);
             }
             else {
-                ctx.drawImage(i, ((o) + 380), 200 + y, 100, 100);
+                ctx.drawImage(client.achievements[i as namesXD], ((o) + 380), 200 + y, 100, 100);
             }
             o += wochi;
         }

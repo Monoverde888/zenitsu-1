@@ -66,9 +66,10 @@ class Listener extends EventEmitter {
 
     }
 
-    listen(message: eris.Message): boolean {
+    listen(message: eris.Message): eris.Message[] {
 
         const listeners = this.listenersXD
+        const poto: eris.Message[] = [];
         for (const listener of listeners.filter(item => item.running)) {
             const res = listener.filter(message);
             if (res && (listener.channelID == message.channel?.id)) {
@@ -83,13 +84,14 @@ class Listener extends EventEmitter {
                     listener.lastIdle = Date.now();
                     listener.messages.push(message);
                     listener.times += 1;
+                    poto.push(message);
 
                 }
                 continue;
             }
             else continue;
         }
-        return true;
+        return poto;
     }
 
     stop(listener: listeners | string, reason: string): void {
