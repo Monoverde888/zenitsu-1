@@ -21,11 +21,10 @@ export default class Comando extends Command {
         const equis = await loadImage(`https://cdn.discordapp.com/attachments/833946431500320788/845838368985055232/811436270768619540.png`).catch(() => null),
             circulo = await loadImage(`https://cdn.discordapp.com/attachments/833946431500320788/845838392864538624/796617468327886880.png`).catch(() => null);
 
-        const miembro = message.mentions[0]?.member;
+        const usuario = message.mentions[0];
+        const miembro = usuario?.member;
 
-        if (!miembro || miembro.id == message.author.id || (miembro.user.bot && miembro.id != client.user.id)) return embedResponse(langjson.commands.tictactoe.game, message.channel, client.color);
-
-        const usuario = miembro.user;
+        if (!miembro || miembro.id == message.author.id || (usuario.bot && miembro.id != client.user.id)) return embedResponse(langjson.commands.tictactoe.game, message.channel, client.color);
 
         if (partidas.has(message.guild.id))
             return embedResponse(langjson.commands.tictactoe.curso, message.channel, client.color);

@@ -33,7 +33,7 @@ export default class Comando extends Command {
 
         args[0] = args[0]?.toLowerCase();
 
-        const usuario = ['easy', 'medium', 'hard'].includes(args[0]) ? client.user : message.mentions.filter(member => !member.bot)[0];
+        const usuario = ['easy', 'medium', 'hard'].includes(args[0]) ? client.user : message.mentions.filter(user => !user.bot)[0];
 
         if (!usuario || usuario.id == message.author.id || (usuario.bot && usuario.id != client.user.id)) {
             const embed = new MessageEmbed()
