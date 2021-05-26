@@ -5,8 +5,6 @@ const users: Map<string, string> = new Map();
 import Command from '../../Utils/Classes/command.js'
 import run from '../../Utils/Interfaces/run.js';
 import MessageEmbed from '../../Utils/Classes/Embed.js';
-import canvas from 'canvas';
-const { loadImage } = canvas;
 const partidas: Set<string> = new Set();
 export default class Comando extends Command {
     constructor() {
@@ -17,9 +15,6 @@ export default class Comando extends Command {
         this.botPermissions.channel = ['attachFiles'];
     }
     async run({ message, client, langjson, embedResponse }: run): Promise<light.Message | boolean> {
-
-        const equis = await loadImage(`https://cdn.discordapp.com/attachments/833946431500320788/845838368985055232/811436270768619540.png`).catch(() => null),
-            circulo = await loadImage(`https://cdn.discordapp.com/attachments/833946431500320788/845838392864538624/796617468327886880.png`).catch(() => null);
 
         const usuario = message.mentions[0];
         const miembro = usuario?.member;
@@ -66,7 +61,7 @@ export default class Comando extends Command {
                 .setImage('attachment://tictactoe.gif')
 
             client.listener.stop(code, 'NO');
-            message.channel.createMessage({ embed }, [{ file: await mapaCanvas(tablero.array, client.imagenes, true, { equis, circulo }), name: 'tictactoe.gif' }])
+            message.channel.createMessage({ embed }, [{ file: await mapaCanvas(tablero.array, client.imagenes, true), name: 'tictactoe.gif' }])
             users.delete(message.author.id)
             users.delete(usuario.id)
         });
@@ -79,7 +74,7 @@ export default class Comando extends Command {
                 .setImage('attachment://tictactoe.gif')
 
             client.listener.stop(code, 'NO');
-            message.channel.createMessage({ embed }, [{ file: await mapaCanvas(tablero.array, client.imagenes, false, { equis, circulo }), name: 'tictactoe.gif' }])
+            message.channel.createMessage({ embed }, [{ file: await mapaCanvas(tablero.array, client.imagenes, false), name: 'tictactoe.gif' }])
             users.delete(message.author.id)
             users.delete(usuario.id)
         });
@@ -92,7 +87,7 @@ export default class Comando extends Command {
                 .setImage('attachment://tictactoe.gif');
 
             client.listener.stop(code, 'NO');
-            message.channel.createMessage({ embed }, [{ file: await mapaCanvas(tablero.array, client.imagenes, false, { equis, circulo }), name: 'tictactoe.gif' }])
+            message.channel.createMessage({ embed }, [{ file: await mapaCanvas(tablero.array, client.imagenes, false), name: 'tictactoe.gif' }])
             users.delete(message.author.id)
             users.delete(usuario.id)
         });
@@ -103,7 +98,7 @@ export default class Comando extends Command {
                 .setDescription(langjson.commands.tictactoe.start(partida.turno.ficha, users.get(partida.turno.jugador)) + `\n\n${partida.tablero.string}`)
                 .setImage('attachment://tictactoe.gif');
 
-            await message.channel.createMessage({ embed }, [{ file: await mapaCanvas(partida.tablero.array, client.imagenes, false, { equis, circulo }), name: 'tictactoe.gif' }])
+            await message.channel.createMessage({ embed }, [{ file: await mapaCanvas(partida.tablero.array, client.imagenes, false), name: 'tictactoe.gif' }])
         }
 
         if (partida.turno.jugador == client.user.id) {
@@ -115,7 +110,7 @@ export default class Comando extends Command {
                 .setDescription(langjson.commands.tictactoe.turn(users.get(partida.turno.jugador) + ` [\`${partida.turno.ficha}\`]\n\n${partida.tablero.string}`))
                 .setImage('attachment://tictactoe.gif');
 
-            await message.channel.createMessage({ embed }, [{ file: await mapaCanvas(partida.tablero.array, client.imagenes, false, { equis, circulo }), name: 'tictactoe.gif' }])
+            await message.channel.createMessage({ embed }, [{ file: await mapaCanvas(partida.tablero.array, client.imagenes, false), name: 'tictactoe.gif' }])
         }
 
         client.listener.add({
@@ -150,7 +145,7 @@ export default class Comando extends Command {
                         .setDescription(langjson.commands.tictactoe.turn(users.get(partida.turno.jugador)) + ` [\`${partida.turno.ficha}\`]\n\n${partida.tablero.string}`)
                         .setImage('attachment://tictactoe.gif');
 
-                    await message.channel.createMessage({ embed }, [{ file: await mapaCanvas(partida.tablero.array, client.imagenes, false, { equis, circulo }), name: 'tictactoe.gif' }]);
+                    await message.channel.createMessage({ embed }, [{ file: await mapaCanvas(partida.tablero.array, client.imagenes, false), name: 'tictactoe.gif' }]);
                 }
 
                 if (!partida.finalizado && partida.turno.jugador == client.user.id) {
@@ -163,7 +158,7 @@ export default class Comando extends Command {
                             .setDescription(langjson.commands.tictactoe.turn(users.get(partida.turno.jugador)) + ` [\`${partida.turno.ficha}\`]\n\n${partida.tablero.string}`)
                             .setImage('attachment://tictactoe.gif');
 
-                        await message.channel.createMessage({ embed }, [{ file: await mapaCanvas(partida.tablero.array, client.imagenes, false, { equis, circulo }), name: 'tictactoe.gif' }]);
+                        await message.channel.createMessage({ embed }, [{ file: await mapaCanvas(partida.tablero.array, client.imagenes, false), name: 'tictactoe.gif' }]);
 
                     }
                 }
