@@ -1,6 +1,6 @@
 import Command from '../../Utils/Classes/command.js';
-import commandinterface from '../../Utils/Interfaces/run.js'
-import eris from 'eris-pluris';
+import command from '../../Utils/Interfaces/run.js'
+import eris from '@lil_macrock22/eris-light-pluris';
 import MessageEmbed from '../../Utils/Classes/Embed.js';
 
 class Comando extends Command {
@@ -13,9 +13,9 @@ class Comando extends Command {
         this.memberPermissions = { guild: [], channel: [] }
     }
 
-    async run({ client, message, langjson }: commandinterface): Promise<eris.Message> {
+    async run({ client, message, langjson }: command): Promise<eris.Message> {
 
-        const link = 'https://discordapp.com/oauth2/authorize?client_id=721080193678311554&scope=bot&permissions=2146958847';
+        const link = 'https://discord.com/oauth2/authorize?client_id=721080193678311554&scope=bot&permissions=8';
         const invitacionLink = 'https://discord.gg/hbSahh8';
         const embed = new MessageEmbed()
             .setThumbnail(client.user.dynamicAvatarURL())

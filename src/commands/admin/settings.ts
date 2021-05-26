@@ -1,7 +1,7 @@
 const cooldown: Set<string> = new Set();
 import Command from '../../Utils/Classes/command.js';
-import commandinterface from '../../Utils/Interfaces/run.js'
-import eris from 'eris-pluris';
+import command from '../../Utils/Interfaces/run.js'
+import eris from '@lil_macrock22/eris-light-pluris';
 import FLAGS from '../../Utils/Const/FLAGS.js';
 import MessageEmbed from '../../Utils/Classes/Embed.js';
 import Zenitsu from '../../Utils/Classes/client.js';
@@ -19,7 +19,7 @@ class Comando extends Command {
         this.memberPermissions = { guild: ['manageGuild'], channel: [] }
     }
 
-    async run({ client, message, args, embedResponse, langjson }: commandinterface): Promise<eris.Message> {
+    async run({ client, message, args, embedResponse, langjson }: command): Promise<eris.Message> {
 
         const { muterole, cooldown: cooldownMessage } = langjson.commands.settings;
         const pre_prefix = await client.prefix.cacheOrFetch(message.guildID);
@@ -28,7 +28,7 @@ class Comando extends Command {
         const GUILDME = message.guild.members.get(client.user.id)
 
         if (cooldown.has(message.guildID))
-            return embedResponse(cooldownMessage);
+            return embedResponse(cooldownMessage, message.channel, client.color);
 
         switch (args[0]) {
 
@@ -39,7 +39,7 @@ class Comando extends Command {
                     case 'init': {
 
                         if (message.guild.roles.get(data.muterole)) return embedResponse(
-                            muterole.init.use_refresh(prefix)
+                            muterole.init.use_refresh(prefix), message.channel, client.color
                         );
 
                         cooldown.add(message.guildID);
@@ -49,27 +49,27 @@ class Comando extends Command {
 
                         if ((getHighest(GUILDME).position < role.position) || role.managed) {
                             cooldown.delete(message.guildID);
-                            return embedResponse(muterole.init.cannt_edit(role.mention));
+                            return embedResponse(muterole.init.cannt_edit(role.mention), message.channel, client.color);
                         }
 
-                        await embedResponse(muterole.init.editando);
+                        await embedResponse(muterole.init.editando, message.channel, client.color);
                         const { success, error } = await Edit({ canales, id: role.id, message, client })
 
                         if (success) {
                             //Todo bien, todo correcto...
                             cooldown.delete(message.guildID);
                             await client.settings.set(message.guildID, 'muterole', role.id)
-                            return embedResponse(muterole.init.success);
+                            return embedResponse(muterole.init.success, message.channel, client.color);
                         }
                         else if (error) {
                             //Error al editar un canal...
                             cooldown.delete(message.guildID);
-                            return embedResponse(`Error: ${error.name || error?.toString() || error}`);
+                            return embedResponse(`Error: ${error.name || error?.toString() || error}`, message.channel, client.color);
                         }
                         else {
                             //El usuario le quito permisos al bot...
                             cooldown.delete(message.guildID);
-                            return embedResponse(muterole.init.else);
+                            return embedResponse(muterole.init.else, message.channel, client.color);
                         }
                     }
                         break;
@@ -79,22 +79,22 @@ class Comando extends Command {
                         const role = message.guild.roles.get(data.muterole);
 
                         if (!role) return embedResponse(
-                            muterole.refresh.use_init(prefix)
+                            muterole.refresh.use_init(prefix), message.channel, client.color
                         );
 
                         if ((getHighest(GUILDME).position < role.position) || role.managed) {
                             cooldown.delete(message.guildID);
-                            return embedResponse(muterole.refresh.cannt_edit(role.mention));
+                            return embedResponse(muterole.refresh.cannt_edit(role.mention), message.channel, client.color);
                         }//ya(role: string)
 
                         const canales = message.guild.channels.filter(item => filter(item, role.id))
 
                         if (!canales.length)
-                            return embedResponse(muterole.refresh.already);
+                            return embedResponse(muterole.refresh.already, message.channel, client.color);
 
                         cooldown.add(message.guildID);
 
-                        await embedResponse(muterole.refresh.editando);
+                        await embedResponse(muterole.refresh.editando, message.channel, client.color);
 
                         const { success, error } = await Edit({ canales, message, client, id: role.id })
 
@@ -102,17 +102,17 @@ class Comando extends Command {
                             //Todo bien, todo correcto...
                             cooldown.delete(message.guildID);
                             await client.settings.set(message.guildID, 'muterole', role.id)
-                            return embedResponse(muterole.refresh.success);
+                            return embedResponse(muterole.refresh.success, message.channel, client.color);
                         }
                         else if (error) {
                             //Error al editar un canal...
                             cooldown.delete(message.guildID);
-                            return embedResponse(`Error: ${error.name || error?.toString() || error}`);
+                            return embedResponse(`Error: ${error.name || error?.toString() || error}`, message.channel, client.color);
                         }
                         else {
                             //El usuario le quito permisos al bot...
                             cooldown.delete(message.guildID);
-                            return embedResponse(muterole.refresh.else);
+                            return embedResponse(muterole.refresh.else, message.channel, client.color);
                         }
                     }
                         break;
@@ -124,7 +124,7 @@ class Comando extends Command {
                             ${prefix}settings muterole init [role]
                             ${prefix}settings muterole refresh
                             ${prefix}settings reset
-                            `
+                            `, message.channel, client.color
                         )
                     }
                         break;
@@ -164,7 +164,7 @@ class Comando extends Command {
                     ${prefix}settings muterole init [role]
                     ${prefix}settings muterole refresh
                     ${prefix}settings reset
-                    `
+                    `, message.channel, client.color
                 )
 
             }

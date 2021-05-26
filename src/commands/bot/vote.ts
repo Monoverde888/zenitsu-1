@@ -1,7 +1,7 @@
-import light from 'eris-pluris';
+import light from '@lil_macrock22/eris-light-pluris';
 import Command from '../../Utils/Classes/command.js';
 import MessageEmbed from '../../Utils/Classes/Embed.js';
-import commandinterface from '../../Utils/Interfaces/run.js';
+import command from '../../Utils/Interfaces/run.js';
 
 class Comando extends Command {
 
@@ -13,7 +13,7 @@ class Comando extends Command {
         this.botPermissions.channel = ['attachFiles']
     }
 
-    async run({ client, message }: commandinterface): Promise<light.Message> {
+    async run({ client, message }: command): Promise<light.Message> {
 
         const embed = new MessageEmbed()
             .setThumbnail(client.user.dynamicAvatarURL())

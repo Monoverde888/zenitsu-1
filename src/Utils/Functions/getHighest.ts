@@ -1,4 +1,4 @@
-import light from 'eris-pluris';
+import light from '@lil_macrock22/eris-light-pluris';
 
 function getHighest(member: light.Member): light.Role {
 

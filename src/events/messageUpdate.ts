@@ -1,4 +1,4 @@
-import light from 'eris-pluris';
+import light from '@lil_macrock22/eris-light-pluris';
 import model from '../models/logs.js'
 import Zenitsu from '../Utils/Classes/client.js';
 import MessageEmbed from '../Utils/Classes/Embed.js';
@@ -41,7 +41,7 @@ async function event(client: Zenitsu, newMessage: light.Message, oldMessage: lig
     ]
 
 
-    return client.executeWebhook(find.idWeb, find.tokenWeb, { embeds })
+    return client.executeWebhook(find.idWeb, find.tokenWeb, { embeds, wait: true })
         .catch(async (e) => {
 
             console.log(`[WEBHOOK-MESSAGE_UPDATE]: `, e)

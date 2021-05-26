@@ -1,8 +1,8 @@
 import MessageEmbed from '../../Utils/Classes/Embed.js'
 import Command from '../../Utils/Classes/command.js';
-import commandinterface from '../../Utils/Interfaces/run.js';
+import command from '../../Utils/Interfaces/run.js';
 import mongoose from 'mongoose';
-import eris from 'eris-pluris';
+import eris from '@lil_macrock22/eris-light-pluris';
 
 class Comando extends Command {
 
@@ -12,7 +12,7 @@ class Comando extends Command {
         this.category = 'bot';
     }
 
-    async run({ client, message }: commandinterface): Promise<eris.Message> {
+    async run({ client, message }: command): Promise<eris.Message> {
 
         const date: number = Date.now();
         const ping_db: number = await new Promise((r, j) => {

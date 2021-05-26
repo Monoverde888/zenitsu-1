@@ -1,4 +1,4 @@
-import light from 'eris-pluris';
+import light from '@lil_macrock22/eris-light-pluris';
 import Zenitsu from '../Utils/Classes/client.js';
 import model from '../models/logs.js'
 import MessageEmbed from '../Utils/Classes/Embed.js';
@@ -28,7 +28,7 @@ async function event(client: Zenitsu, message: light.Message): Promise<light.Mes
         .setDescription(message.content)
         .setFooter(`messageDelete - #${(message.channel as light.TextChannel).name}`)
 
-    return client.executeWebhook(find.idWeb, find.tokenWeb, { embeds: [embed] })
+    return client.executeWebhook(find.idWeb, find.tokenWeb, { embeds: [embed], wait: true })
         .catch(async (e) => {
 
             console.log(`[WEBHOOK-MESSAGE_DELETE]: `, e)

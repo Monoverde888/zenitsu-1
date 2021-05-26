@@ -3,6 +3,8 @@ dotenv.config();
 import Zenitsu from "./Utils/Classes/client.js";
 
 new Zenitsu(process.env.DISCORD_TOKEN, {
+    cacheMembers: false,
+    cacheUsers: false,
     allowedMentions: {
         everyone: false,
         roles: [],
@@ -59,7 +61,7 @@ new Zenitsu(process.env.DISCORD_TOKEN, {
 }).connect();
 /*
 import * as sharder from '@lil_marcrock22/eris-sharder';
-import eris from 'eris-pluris';
+import eris from '@lil_macrock22/eris-light-pluris';
 const { Base } = sharder;
 class Sharder extends Base {
 

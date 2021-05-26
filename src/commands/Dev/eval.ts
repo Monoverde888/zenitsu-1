@@ -1,6 +1,6 @@
 import Command from '../../Utils/Classes/command.js';
-import commandinterface from '../../Utils/Interfaces/run.js';
-import eris from 'eris-pluris';
+import command from '../../Utils/Interfaces/run.js';
+import eris from '@lil_macrock22/eris-light-pluris';
 import replace from '../../Utils/Functions/replace.js'
 import util from 'util';
 const { inspect } = util;
@@ -16,7 +16,7 @@ class Comando extends Command {
         this.dev = true;
     }
 
-    async run({ client, message, args }: commandinterface): Promise<eris.Message> {
+    async run({ client, message, args }: command): Promise<eris.Message> {
 
         try {
             const code = args.join(" ");

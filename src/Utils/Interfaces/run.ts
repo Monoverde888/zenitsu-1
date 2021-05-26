@@ -1,15 +1,15 @@
 import Zenitsu from '../../Utils/Classes/client.js';
-import pkg from 'eris-pluris';
-import langjsonES from '../Lang/lang-es.js'
-import langjsonEN from '../Lang/lang-en.js'
+import pkg from '@lil_macrock22/eris-light-pluris';
+import jsonES from '../Lang/lang-es.js'
+import jsonEN from '../Lang/lang-en.js'
 
 interface run {
     client?: Zenitsu;
     message?: pkg.Message;
     args?: string[];
-    embedResponse?(descriptionhere: string, channel?: pkg.TextChannel): Promise<pkg.Message>;
+    embedResponse?(descriptionhere: string, channel: pkg.TextChannel | pkg.NewsChannel | pkg.PrivateChannel, color: number): Promise<pkg.Message>;
     lang?: 'es' | 'en';
-    langjson?: typeof langjsonEN | typeof langjsonES
+    langjson?: typeof jsonEN | typeof jsonES
 }
 
 export default run;

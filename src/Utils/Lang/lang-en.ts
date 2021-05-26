@@ -19,15 +19,6 @@ const obj = {
 
     },
     "commands": {
-        "lockchannel": {
-            "on_block": (mod: string): string => "<:moderator:804368587115593800> | " + mod + " has blocked the channel for members.",
-
-            "on_block_error": "<:cancel:804368628861763664> | Error trying to block the channel.",
-
-            "on_unblock": (mod: string): string => "<:moderator:804368587115593800> | " + mod + " has unblocked the channel for members.",
-
-            "on_unblock_error": "<:cancel:804368628861763664> | Error trying to unblock the channel."
-        },
         "setprefix": {
 
             "no_prefix": "<:cancel:804368628861763664> | You need to specify the new prefix.",

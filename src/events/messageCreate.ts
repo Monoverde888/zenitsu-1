@@ -1,5 +1,5 @@
 import ms from '@fabricio-191/ms';
-import Eris from 'eris-pluris';
+import Eris from '@lil_macrock22/eris-light-pluris';
 import Zenitsu from '../Utils/Classes/client.js';
 import MessageEmbed from '../Utils/Classes/Embed.js';
 import lenguajes from '../Utils/Lang/langs.js';
@@ -30,12 +30,12 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
 
     const requestLang = await client.lang.cacheOrFetch(message.channel.guild.id);
     const lang: 'es' | 'en' = requestLang.lang;
-    const langjson = lenguajes[lang];
+    const json = lenguajes[lang];
     const afk = await client.afk.cacheOrFetch(message.author.id);
 
     if (afk.status) {
         await client.afk.delete(message.author.id);
-        const texto = langjson.messages.afk_volver;
+        const texto = json.messages.afk_volver;
         return message.channel.createMessage(message.author.mention + ', ' + texto);
     }
 
@@ -49,7 +49,7 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
         setTimeout(() => abusadores.delete(message.author.id), (60 * 1000))
         antiabuzzz.delete(message.author.id);
         abusadores.add(message.author.id);
-        return message.channel.createMessage(langjson.messages.abuz);
+        return message.channel.createMessage(json.messages.abuz);
     }
     //antiabuzz
 
@@ -71,7 +71,6 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
 
     const requestPrefix = await client.prefix.cacheOrFetch(message.channel.guild.id);
     const prefix = requestPrefix.prefix;
-
     if (!message.content.startsWith(prefix)) return;
 
     const args = message.content.slice(prefix.length).trim().split(/ +/);
@@ -100,7 +99,7 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
                         const timeLeft = (expirationTime - now);
                         timestamps.get(message.author.id).avisado = true;
                         antiabuzzz.get(message.author.id).push(message.createdAt);
-                        return message.channel.createMessage(message.author.mention + ' ,' + langjson.messages.cooldown(ms(timeLeft, { long: true, language: lang }), command));
+                        return message.channel.createMessage(message.author.mention + ' ,' + json.messages.cooldown(ms(timeLeft, { long: true, language: lang }), command));
                     }
                     else return;
                 }
@@ -116,7 +115,7 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
             antiabuzzz.get(message.author.id).push(message.createdAt);
             const embed = new MessageEmbed()
                 .setColor(client.color)
-                .setDescription(langjson.messages.permisos_bot_channel(`\`${check.join(',')}\``))
+                .setDescription(json.messages.permisos_bot_channel(`\`${check.join(',')}\``))
                 .setTimestamp()
                 .setFooter('\u200b', 'https://media1.tenor.com/images/41334cbe64331dad2e2dc6272334b47f/tenor.gif');
             return message.channel.createMessage({ embed: embed })
@@ -130,7 +129,7 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
             antiabuzzz.get(message.author.id).push(message.createdAt);
             const embed = new MessageEmbed()
                 .setColor(client.color)
-                .setDescription(langjson.messages.permisos_user_channel(`\`${check.join(',')}\``))
+                .setDescription(json.messages.permisos_user_channel(`\`${check.join(',')}\``))
                 .setTimestamp()
                 .setFooter('\u200b', 'https://media1.tenor.com/images/41334cbe64331dad2e2dc6272334b47f/tenor.gif');
             return message.channel.createMessage({ embed: embed })
@@ -144,7 +143,7 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
             antiabuzzz.get(message.author.id).push(message.createdAt);
             const embed = new MessageEmbed()
                 .setColor(client.color)
-                .setDescription(langjson.messages.permisos_bot_guild(`\`${check.join(',')}\``))
+                .setDescription(json.messages.permisos_bot_guild(`\`${check.join(',')}\``))
                 .setTimestamp()
                 .setFooter('\u200b', 'https://media1.tenor.com/images/41334cbe64331dad2e2dc6272334b47f/tenor.gif');
             return message.channel.createMessage({ embed: embed })
@@ -158,27 +157,16 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
             antiabuzzz.get(message.author.id).push(message.createdAt);
             const embed = new MessageEmbed()
                 .setColor(client.color)
-                .setDescription(langjson.messages.permisos_user_guild(`\`${check.join(',')}\``))
+                .setDescription(json.messages.permisos_user_guild(`\`${check.join(',')}\``))
                 .setTimestamp()
                 .setFooter('\u200b', 'https://media1.tenor.com/images/41334cbe64331dad2e2dc6272334b47f/tenor.gif');
             return message.channel.createMessage({ embed: embed })
 
         }
 
-        const embedResponse = (descriptionHere: string, option: Eris.TextChannel): Promise<Eris.Message> => {
-
-            const embed = new MessageEmbed()
-                .setDescription(descriptionHere)
-                .setTimestamp()
-                .setColor(client.color);
-            const canal: Eris.TextChannel | Eris.NewsChannel | Eris.PrivateChannel = option || message.channel;
-            return canal.createMessage({ embed: embed })
-
-        }
-
         try {
             antiabuzzz.get(message.author.id).push(message.createdAt);
-            await comando.run({ message, args, embedResponse, client, lang, langjson })
+            await comando.run({ message, args, embedResponse, client, lang, langjson: json })
         }
 
         catch (e) {
@@ -193,12 +181,24 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
             ]
             console.log(e);
             client.executeWebhook(process.env.WEBHOOKID, process.env.WEBHOOKTOKEN, {
-                embeds
+                embeds,
+                wait: true
             })
-            return message.channel.createMessage(langjson.messages.error((e.message || e?.toString() || e)));
+            return message.channel.createMessage(json.messages.error((e.message || e?.toString() || e)));
 
         }
 
     }
 }
 export default event
+
+function embedResponse(descriptionHere: string, option: Eris.TextChannel, color: number): Promise<Eris.Message> {
+
+    const embed = new MessageEmbed()
+        .setDescription(descriptionHere)
+        .setTimestamp()
+        .setColor(color);
+    const canal: Eris.TextChannel | Eris.NewsChannel | Eris.PrivateChannel = option;
+    return canal.createMessage({ embed: embed })
+
+}

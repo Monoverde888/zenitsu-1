@@ -1,6 +1,6 @@
 import Command from '../../Utils/Classes/command.js';
-import commandinterface from '../../Utils/Interfaces/run.js'
-import eris from 'eris-pluris';
+import command from '../../Utils/Interfaces/run.js'
+import eris from '@lil_macrock22/eris-light-pluris';
 import MessageEmbed from '../../Utils/Classes/Embed.js';
 const regex = /((http|https):\/\/)((www|canary|ptb)\.)?(discordapp|discord)\.com\/api\/webhooks\/([0-9]){7,19}\/[-a-zA-Z0-9@:%._+~#=]{60,120}/gmi
 import axios from 'axios';
@@ -16,7 +16,7 @@ class Comando extends Command {
         this.memberPermissions = { guild: ['manageGuild'], channel: [] }
     }
 
-    async run({ client, message, args, langjson }: commandinterface): Promise<eris.Message> {
+    async run({ client, message, args, langjson }: command): Promise<eris.Message> {
 
         const invalidUse = new MessageEmbed()
             .setTimestamp()

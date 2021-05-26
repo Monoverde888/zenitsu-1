@@ -1,4 +1,4 @@
-import light from 'eris-pluris';
+import light from '@lil_macrock22/eris-light-pluris';
 import run from '../../Utils/Interfaces/run.js';
 import Command from '../../Utils/Classes/command.js';
 import MessageEmbed from '../../Utils/Classes/Embed.js';

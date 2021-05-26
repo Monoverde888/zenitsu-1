@@ -15,6 +15,7 @@
   "keywords": [],
   "devDependencies": {
     "@types/gifencoder": "^2.0.1",
+    "@types/twemoji-parser": "^12.1.0",
     "@types/ws": "^7.4.2",
     "@typescript-eslint/eslint-plugin": "^4.22.1",
     "@typescript-eslint/parser": "^4.22.1",
@@ -22,6 +23,8 @@
   },
   "dependencies": {
     "@fabricio-191/ms": "^1.0.4-2",
+    "@lil_macrock22/eris-light-pluris": "git+https://github.com/MARCROCK22/eris-light-pluris.git",
+    "@lil_marcrock22/eris-light": "git+https://github.com/MARCROCK22/eris.git",
     "@lil_marcrock22/eris-sharder": "git+https://github.com/MARCROCK22/eris-sharder.git",
     "axios": "^0.21.1",
     "canvas": "^2.7.0",
@@ -33,6 +36,7 @@
     "node-svg2img": "^1.1.0",
     "puppeteer": "^9.1.1",
     "stream-to-buffer": "^0.1.0",
-    "tresenraya": "0.0.5"
+    "tresenraya": "0.0.5",
+    "twemoji-parser": "^13.0.0"
   }
 }

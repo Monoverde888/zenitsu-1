@@ -1,6 +1,6 @@
 import Command from '../../Utils/Classes/command.js'
 import run from '../../Utils/Interfaces/run.js';
-import light from 'eris-pluris';
+import light from '@lil_macrock22/eris-light-pluris';
 export default class Comando extends Command {
     constructor() {
         super()

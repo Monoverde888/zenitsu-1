@@ -1,9 +1,9 @@
-import eris from 'eris-pluris';
+import eris from '@lil_macrock22/eris-light-pluris';
 import Zenitsu from '../Classes/client.js';
 
 function canMod(member: eris.Member, client: Zenitsu, mod: 'kick' | 'ban' | null): boolean {
-    if (member.user.id === member.guild.ownerID) return false;
-    if (member.user.id === client.user.id) return false;
+    if (member.id === member.guild.ownerID) return false;
+    if (member.id === client.user.id) return false;
     if (client.user.id === member.guild.ownerID) return true;
     const everyone = member.guild.roles.get(member.guild.id)
     const role = Array.from(member.guild.members.get(client.user.id).roleList).map(e => e[1]);

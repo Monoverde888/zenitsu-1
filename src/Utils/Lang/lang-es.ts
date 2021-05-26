@@ -18,16 +18,6 @@ const obj = {
 
     },
     "commands": {
-        "lockchannel": {
-            "on_block": (mod: string): string => "<:moderator:804368587115593800> | " + mod + " ha bloqueado el canal para los miembros.",
-
-            "on_block_error": "<:cancel:804368628861763664> | Error al intentar bloquear el canal.",
-
-            "on_unblock": (mod: string): string => "<:moderator:804368587115593800> | " + mod + " ha desbloqueado el canal para los miembros.",
-
-            "on_unblock_error": "<:cancel:804368628861763664> | Error al intentar desbloquear el canal.",
-
-        },
         "setprefix": {
             "no_prefix": "<:cancel:804368628861763664> | Necesitas especificar el prefijo nuevo.",
 

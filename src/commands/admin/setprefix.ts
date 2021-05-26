@@ -1,6 +1,6 @@
 import Command from '../../Utils/Classes/command.js';
-import commandinterface from '../../Utils/Interfaces/run.js'
-import light from 'eris-pluris';
+import command from '../../Utils/Interfaces/run.js'
+import light from '@lil_macrock22/eris-light-pluris';
 import MessageEmbed from '../../Utils/Classes/Embed.js';
 
 class Comando extends Command {
@@ -13,7 +13,7 @@ class Comando extends Command {
         this.memberPermissions = { guild: ['manageGuild'], channel: [] }
     }
 
-    run({ client, message, args, langjson }: commandinterface): Promise<light.Message> {
+    run({ client, message, args, langjson }: command): Promise<light.Message> {
 
         const embedErr = new MessageEmbed()
             .setColor(client.color)

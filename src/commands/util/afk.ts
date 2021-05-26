@@ -1,6 +1,6 @@
 import Command from '../../Utils/Classes/command.js'
 import run from '../../Utils/Interfaces/run.js';
-import eris from 'eris-pluris';
+import eris from '@lil_macrock22/eris-light-pluris';
 import MessageEmbed from '../../Utils/Classes/Embed.js'
 export default class Comando extends Command {
     constructor() {

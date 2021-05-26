@@ -8,7 +8,7 @@ const promisified = util.promisify(buffer)
 interface potoImage {
     [x: string]: canvas.Image
 }
-async function mapaCanvas(mapatest: string[], imagenes: imagenesC, win = false): Promise<Buffer> {
+async function mapaCanvas(mapatest: string[], imagenes: imagenesC, win: boolean, personalizado?: { equis: canvas.Image, circulo: canvas.Image }): Promise<Buffer> {
 
     const numeros = [
         '1️⃣', '2️⃣', '3️⃣',
@@ -28,8 +28,8 @@ async function mapaCanvas(mapatest: string[], imagenes: imagenesC, win = false):
     ctx.drawImage(bck, 0, 0, canvas.width, canvas.height)
 
     const img: potoImage = {
-        '❌': imagenes.tictactoe.equis,
-        '⭕': imagenes.tictactoe.circulo
+        '❌': personalizado?.equis || imagenes.tictactoe.equis,
+        '⭕': personalizado?.circulo || imagenes.tictactoe.circulo
     }
 
     if (!soniguales) {

@@ -1,11 +1,11 @@
 import util from 'util'
 const { promisify } = util;
 import Command from '../../Utils/Classes/command.js';
-import commandinterface from '../../Utils/Interfaces/run.js'
+import command from '../../Utils/Interfaces/run.js'
 import child_process from 'child_process';
 const { exec: execC } = child_process;
 const exec = promisify(execC)
-import light from 'eris-pluris';
+import light from '@lil_macrock22/eris-light-pluris';
 class Comando extends Command {
 
     constructor() {
@@ -16,7 +16,7 @@ class Comando extends Command {
         this.dev = true;
     }
 
-    async run({ message, args }: commandinterface): Promise<light.Message | light.Message[]> {
+    async run({ message, args }: command): Promise<light.Message | light.Message[]> {
 
         if (!args[0])
             return message.channel.createMessage('eres o te haces?');

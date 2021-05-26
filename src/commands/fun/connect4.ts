@@ -1,6 +1,6 @@
 import c4 from 'connect4-ai';
 const { Connect4AI } = c4
-import light from 'eris-pluris';
+import light from '@lil_macrock22/eris-light-pluris';
 import run from '../../Utils/Interfaces/run.js';
 import displayConnectFourBoard from '../../Utils/Functions/displayConnectFourBoard.js'
 import Command from '../../Utils/Classes/command.js';
@@ -49,11 +49,11 @@ export default class Comando extends Command {
 
         if (usuario.id != client.user.id)
             if (findTurn(usuario.id)) {
-                return embedResponse(langjson.commands.connect4.user_active(usuario.username));
+                return embedResponse(langjson.commands.connect4.user_active(usuario.username), message.channel, client.color);
             }
 
         if (findTurn(message.author.id)) {
-            return embedResponse(langjson.commands.connect4.author_active);
+            return embedResponse(langjson.commands.connect4.author_active, message.channel, client.color);
         }
 
         const poto = new Connect4AI();
@@ -62,7 +62,7 @@ export default class Comando extends Command {
 
         if (usuario.id != client.user.id) {
 
-            await embedResponse(langjson.commands.connect4.wait_user(usuario.username));
+            await embedResponse(langjson.commands.connect4.wait_user(usuario.username), message.channel, client.color);
 
             const res = await message.channel.awaitMessages({ filter: (m: light.Message) => m.author.id == usuario.id && ['s', 'n'].some(item => item == m.content), timeout: (1 * 60) * 1000, count: 1 }).then(item => item.collected)
 
@@ -70,22 +70,22 @@ export default class Comando extends Command {
 
             if (!respuesta) {
                 games.delete(message.guild.id)
-                return embedResponse(langjson.commands.connect4.dont_answer(usuario.username))
+                return embedResponse(langjson.commands.connect4.dont_answer(usuario.username), message.channel, client.color)
             }
 
             if (respuesta == 'n') {
                 games.delete(message.guild.id)
-                return embedResponse(langjson.commands.connect4.deny(usuario.username))
+                return embedResponse(langjson.commands.connect4.deny(usuario.username), message.channel, client.color)
             }
 
             if (findTurn(usuario.id)) {
                 games.delete(message.guild.id)
-                return embedResponse(langjson.commands.connect4.user_active(usuario.username));
+                return embedResponse(langjson.commands.connect4.user_active(usuario.username), message.channel, client.color);
             }
 
             if (findTurn(message.author.id)) {
                 games.delete(message.guild.id)
-                return embedResponse(langjson.commands.connect4.author_active);
+                return embedResponse(langjson.commands.connect4.author_active, message.channel, client.color);
             }
 
         }
@@ -134,7 +134,7 @@ export default class Comando extends Command {
         client.listener.add({
             channelID: message.channel.id,
             max: 0,
-            code: message.author.id + message.guild.id + Date.now() * Math.random(),
+            code: 'user:' + message.author.id + 'guild:' + message.guild.id + 'date:' + Date.now() + 'random:' + Math.random(),
             filter(msg) {
 
                 if (usuario.id != client.user.id) {
