@@ -23,8 +23,8 @@
   },
   "dependencies": {
     "@fabricio-191/ms": "^1.0.4-2",
-    "@lil_macrock22/eris-light-pluris": "git+https://github.com/MARCROCK22/eris-light-pluris.git",
-    "@lil_marcrock22/eris-light": "git+https://github.com/MARCROCK22/eris.git",
+    "@lil_macrock22/eris-light-pluris": "git+https://github.com/marcrock22/eris-light-pluris.git",
+    "@lil_marcrock22/eris-light": "git+https://github.com/marcrock22/eris.git",
     "@lil_marcrock22/eris-sharder": "git+https://github.com/MARCROCK22/eris-sharder.git",
     "axios": "^0.21.1",
     "canvas": "^2.7.0",
