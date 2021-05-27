@@ -12,7 +12,6 @@ const abusadores: Set<string> = new Set();
 function check(items: number[]): boolean {
     const sorted = items.sort((a, b) => b - a);
     const filter = sorted.filter(date => (date + (15 * 1000)) > Date.now());
-    console.log(filter);
     return filter.length > 8;
 }
 
@@ -73,7 +72,7 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
 
     const requestPrefix = await client.prefix.cacheOrFetch(message.channel.guild.id);
     const prefix = requestPrefix.prefix;
-    console.log(prefix); if (!message.content.startsWith(prefix)) return;
+    if (!message.content.startsWith(prefix)) return;
 
     const args = message.content.slice(prefix.length).trim().split(/ +/);
     const command = args.shift().toLowerCase();
