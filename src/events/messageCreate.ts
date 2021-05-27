@@ -6,12 +6,13 @@ import lenguajes from '../Utils/Lang/langs.js';
 import Comando from '../Utils/Classes/command.js';
 import Collection from '../Utils/Classes/Collection.js';
 const cooldowns: Collection<string, Collection<string, { cooldown: number, avisado: boolean }>> = new Collection();
-const antiabuzzz: Collection<string, number[]> = new Collection();
+const antiabuzzz: Set<[string, number]> = new Set();
 const abusadores: Set<string> = new Set();
 
 function check(items: number[]): boolean {
     const sorted = items.sort((a, b) => b - a);
     const filter = sorted.filter(date => (date + (15 * 1000)) > Date.now());
+    console.log(filter);
     return filter.length > 8;
 }
 
@@ -41,13 +42,14 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
 
     //antiabuzz
     const topush = client.listener.listen(message).filter(item => item?.author?.id == message.author.id);
-    if (!antiabuzzz.get(message.author.id)) {
-        antiabuzzz.set(message.author.id, []);
-    }
-    for (const { createdAt } of topush) antiabuzzz.get(message.author.id).push(createdAt);
-    if (check(antiabuzzz.get(message.author.id))) {
+
+    for (const { createdAt } of topush) antiabuzzz.add([message.author.id, createdAt]);
+
+    const filtered = Array.from(antiabuzzz).filter(item => item[0] == message.author.id);
+
+    if (check(filtered.map(e => e[1]))) {
         setTimeout(() => abusadores.delete(message.author.id), (60 * 1000))
-        antiabuzzz.delete(message.author.id);
+        for (const i of filtered) antiabuzzz.delete(i);
         abusadores.add(message.author.id);
         return message.channel.createMessage(json.messages.abuz);
     }
@@ -63,7 +65,7 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
                 .setAuthor(user.username, user.dynamicAvatarURL())
                 .setDescription(cacheAfk.reason)
                 .setFooter('AFK | ' + ms(Date.now() - cacheAfk.date, { language: lang, long: true }))
-            antiabuzzz.get(message.author.id).push(message.createdAt);
+            antiabuzzz.add([message.author.id, message.createdAt]);
             message.channel.createMessage({ embed }).catch(() => undefined)
             break;
         }
@@ -71,7 +73,7 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
 
     const requestPrefix = await client.prefix.cacheOrFetch(message.channel.guild.id);
     const prefix = requestPrefix.prefix;
-    if (!message.content.startsWith(prefix)) return;
+    console.log(prefix); if (!message.content.startsWith(prefix)) return;
 
     const args = message.content.slice(prefix.length).trim().split(/ +/);
     const command = args.shift().toLowerCase();
@@ -98,7 +100,7 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
                     if (!timestamps.get(message.author.id).avisado) {
                         const timeLeft = (expirationTime - now);
                         timestamps.get(message.author.id).avisado = true;
-                        antiabuzzz.get(message.author.id).push(message.createdAt);
+                        antiabuzzz.add([message.author.id, message.createdAt]);
                         return message.channel.createMessage(message.author.mention + ' ,' + json.messages.cooldown(ms(timeLeft, { long: true, language: lang }), command));
                     }
                     else return;
@@ -112,7 +114,7 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
 
         if (check.length) {
 
-            antiabuzzz.get(message.author.id).push(message.createdAt);
+            antiabuzzz.add([message.author.id, message.createdAt]);
             const embed = new MessageEmbed()
                 .setColor(client.color)
                 .setDescription(json.messages.permisos_bot_channel(`\`${check.join(',')}\``))
@@ -126,7 +128,7 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
 
         if (check.length) {
 
-            antiabuzzz.get(message.author.id).push(message.createdAt);
+            antiabuzzz.add([message.author.id, message.createdAt]);
             const embed = new MessageEmbed()
                 .setColor(client.color)
                 .setDescription(json.messages.permisos_user_channel(`\`${check.join(',')}\``))
@@ -140,7 +142,7 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
 
         if (check.length) {
 
-            antiabuzzz.get(message.author.id).push(message.createdAt);
+            antiabuzzz.add([message.author.id, message.createdAt]);
             const embed = new MessageEmbed()
                 .setColor(client.color)
                 .setDescription(json.messages.permisos_bot_guild(`\`${check.join(',')}\``))
@@ -154,7 +156,7 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
 
         if (check.length) {
 
-            antiabuzzz.get(message.author.id).push(message.createdAt);
+            antiabuzzz.add([message.author.id, message.createdAt]);
             const embed = new MessageEmbed()
                 .setColor(client.color)
                 .setDescription(json.messages.permisos_user_guild(`\`${check.join(',')}\``))
@@ -165,7 +167,7 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
         }
 
         try {
-            antiabuzzz.get(message.author.id).push(message.createdAt);
+            antiabuzzz.add([message.author.id, message.createdAt]);
             await comando.run({ message, args, embedResponse, client, lang, langjson: json })
         }
 
