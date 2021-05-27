@@ -1,5 +1,5 @@
 import Zenitsu from '../../Utils/Classes/client.js';
-import pkg from '@lil_macrock22/eris-light-pluris';
+import pkg from '@lil_marcrock22/eris-light-pluris';
 import jsonES from '../Lang/lang-es.js'
 import jsonEN from '../Lang/lang-en.js'
 

@@ -1,6 +1,6 @@
 import mapaCanvas from '../../Utils/Functions/mapaCanvas.js';
 import tresenraya from 'tresenraya';
-import light from '@lil_macrock22/eris-light-pluris';
+import light from '@lil_marcrock22/eris-light-pluris';
 const users: Map<string, string> = new Map();
 import Command from '../../Utils/Classes/command.js'
 import run from '../../Utils/Interfaces/run.js';

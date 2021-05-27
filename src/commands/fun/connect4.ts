@@ -1,6 +1,6 @@
 import c4 from 'connect4-ai';
 const { Connect4AI } = c4
-import light from '@lil_macrock22/eris-light-pluris';
+import light from '@lil_marcrock22/eris-light-pluris';
 import run from '../../Utils/Interfaces/run.js';
 import displayConnectFourBoard from '../../Utils/Functions/displayConnectFourBoard.js'
 import Command from '../../Utils/Classes/command.js';

@@ -1,7 +1,7 @@
 import run from "../../Utils/Interfaces/run.js";
 import Command from '../../Utils/Classes/command.js';
 import c4top from '../../models/c4top.js'
-import light from '@lil_macrock22/eris-light-pluris';
+import light from '@lil_marcrock22/eris-light-pluris';
 import MessageEmbed from "../../Utils/Classes/Embed.js";
 
 export default class Comando extends Command {

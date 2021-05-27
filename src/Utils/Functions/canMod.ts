@@ -1,4 +1,4 @@
-import eris from '@lil_macrock22/eris-light-pluris';
+import eris from '@lil_marcrock22/eris-light-pluris';
 import Zenitsu from '../Classes/client.js';
 
 function canMod(member: eris.Member, client: Zenitsu, mod: 'kick' | 'ban' | null): boolean {

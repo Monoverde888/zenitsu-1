@@ -1,5 +1,5 @@
 import ms from '@fabricio-191/ms';
-import Eris from '@lil_macrock22/eris-light-pluris';
+import Eris from '@lil_marcrock22/eris-light-pluris';
 import Zenitsu from '../Utils/Classes/client.js';
 import MessageEmbed from '../Utils/Classes/Embed.js';
 import lenguajes from '../Utils/Lang/langs.js';

@@ -1,6 +1,6 @@
 import run from "../../Utils/Interfaces/run.js";
 import Command from '../../Utils/Classes/command.js';
-import light from '@lil_macrock22/eris-light-pluris';
+import light from '@lil_marcrock22/eris-light-pluris';
 import canMod from "../../Utils/Functions/canMod.js";
 import MessageEmbed from "../../Utils/Classes/Embed.js";
 import getHighest from '../../Utils/Functions/getHighest.js';

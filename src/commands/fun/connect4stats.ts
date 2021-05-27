@@ -1,5 +1,5 @@
 import run from "../../Utils/Interfaces/run.js";
-import light from '@lil_macrock22/eris-light-pluris';
+import light from '@lil_marcrock22/eris-light-pluris';
 import Command from '../../Utils/Classes/command.js';
 import c4top from '../../models/c4top.js'
 import MessageEmbed from "../../Utils/Classes/Embed.js";

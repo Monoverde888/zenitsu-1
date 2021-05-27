@@ -1,4 +1,4 @@
-import eris from '@lil_macrock22/eris-light-pluris';
+import eris from '@lil_marcrock22/eris-light-pluris';
 type AttachmentResolvable = Buffer | eris.Attachment | { file: Buffer | string, name: string } | string;
 
 class MessageEmbed {
