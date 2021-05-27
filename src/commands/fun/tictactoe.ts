@@ -19,7 +19,7 @@ export default class Comando extends Command {
         const usuario = message.mentions[0];
         const miembro = usuario?.member;
 
-        if ((!miembro) ||/*( miembro.id == message.author.id) ||*/ (usuario.bot && miembro.id != client.user.id)) return embedResponse(langjson.commands.tictactoe.game, message.channel, client.color);
+        if ((!miembro) || (miembro.id == message.author.id) || (usuario.bot && miembro.id != client.user.id)) return embedResponse(langjson.commands.tictactoe.game, message.channel, client.color);
 
         if (partidas.has(message.guild.id))
             return embedResponse(langjson.commands.tictactoe.curso, message.channel, client.color);
