@@ -1,8 +1,8 @@
-import light from '@lil_marcrock22/eris-light-pluris';
+import * as light from '@lil_marcrock22/eris-light';
 
 function getHighest(member: light.Member): light.Role {
 
-    const memberRole = Array.from(member.roleList).map(e => e[1]);
+    const memberRole = member.roles.map(item => member.guild.roles.get(item)).filter(xd => xd);
 
     memberRole.push(member.guild.roles.get(member.guild.id))
 

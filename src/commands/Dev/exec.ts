@@ -5,7 +5,7 @@ import command from '../../Utils/Interfaces/run.js'
 import child_process from 'child_process';
 const { exec: execC } = child_process;
 const exec = promisify(execC)
-import light from '@lil_marcrock22/eris-light-pluris';
+import * as light from '@lil_marcrock22/eris-light';
 class Comando extends Command {
 
     constructor() {

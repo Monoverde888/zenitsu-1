@@ -1,4 +1,4 @@
-import light from '@lil_marcrock22/eris-light-pluris';
+import * as  light from '@lil_marcrock22/eris-light';
 import model from '../models/logs.js'
 import Zenitsu from '../Utils/Classes/client.js';
 import MessageEmbed from '../Utils/Classes/Embed.js';

@@ -1,5 +1,5 @@
 import Zenitsu from '../Utils/Classes/client.js';
-import eris from '@lil_marcrock22/eris-light-pluris';
+import * as eris from '@lil_marcrock22/eris-light';
 const activities: {
     [x: string]: eris.BotActivityType
 } = {

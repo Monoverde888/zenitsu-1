@@ -1,7 +1,7 @@
 const cooldown: Set<string> = new Set();
 import Command from '../../Utils/Classes/command.js';
 import command from '../../Utils/Interfaces/run.js'
-import eris from '@lil_marcrock22/eris-light-pluris';
+import * as  eris from '@lil_marcrock22/eris-light';
 import FLAGS from '../../Utils/Const/FLAGS.js';
 import MessageEmbed from '../../Utils/Classes/Embed.js';
 import Zenitsu from '../../Utils/Classes/client.js';

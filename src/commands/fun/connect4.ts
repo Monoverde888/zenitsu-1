@@ -1,6 +1,6 @@
 import c4 from 'connect4-ai';
 const { Connect4AI } = c4
-import light from '@lil_marcrock22/eris-light-pluris';
+import * as light from '@lil_marcrock22/eris-light';
 import run from '../../Utils/Interfaces/run.js';
 import displayConnectFourBoard from '../../Utils/Functions/displayConnectFourBoard.js'
 import Command from '../../Utils/Classes/command.js';
@@ -35,7 +35,7 @@ export default class Comando extends Command {
 
         const usuario = ['easy', 'medium', 'hard'].includes(args[0]) ? client.user : message.mentions.filter(user => !user.bot)[0];
 
-        if (!usuario || usuario.id == message.author.id || (usuario.bot && usuario.id != client.user.id)) {
+        if ((!usuario) || (usuario.id == message.author.id) || (usuario.bot && usuario.id != client.user.id)) {
             const embed = new MessageEmbed()
                 .setDescription(langjson.commands.connect4.mention)
                 .setFooter(langjson.commands.connect4.footer)
@@ -64,9 +64,26 @@ export default class Comando extends Command {
 
             await embedResponse(langjson.commands.connect4.wait_user(usuario.username), message.channel, client.color);
 
-            const res = await message.channel.awaitMessages({ filter: (m: light.Message) => m.author.id == usuario.id && ['s', 'n'].some(item => item == m.content), timeout: (1 * 60) * 1000, count: 1 }).then(item => item.collected)
+            const res: string | undefined = await new Promise(resolve => {
+                client.listener.add({
+                    channelID: message.channel.id,
+                    max: 1,
+                    code: 'user:' + message.author.id + 'guild:' + message.guild.id + 'date:' + Date.now() + 'random:' + Math.random(),
+                    filter(m) {
+                        return m.author.id == usuario.id && ['s', 'n'].some(item => item == m.content)
+                    },
+                    idle: ((1 * 60) * 1000) * 2,
+                    async onStop() {
+                        resolve(undefined);
+                    },
+                    async onCollect(msg) {
+                        resolve(msg.content);
+                    },
+                    timeLimit: (1 * 60) * 1000,
+                });
+            });
 
-            const respuesta = res.map(item => item)[0]?.content
+            const respuesta = res;
 
             if (!respuesta) {
                 games.delete(message.guild.id)

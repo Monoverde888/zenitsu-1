@@ -1,6 +1,6 @@
 import Command from '../../Utils/Classes/command.js'
 import run from '../../Utils/Interfaces/run.js';
-import light from '@lil_marcrock22/eris-light-pluris'
+import * as  light from '@lil_marcrock22/eris-light'
 import Canvas from 'canvas'
 import puppeteer from 'puppeteer'
 import svg2img from 'node-svg2img'

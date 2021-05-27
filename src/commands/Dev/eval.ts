@@ -1,6 +1,6 @@
 import Command from '../../Utils/Classes/command.js';
 import command from '../../Utils/Interfaces/run.js';
-import eris from '@lil_marcrock22/eris-light-pluris';
+import * as eris from '@lil_marcrock22/eris-light';
 import replace from '../../Utils/Functions/replace.js'
 import util from 'util';
 const { inspect } = util;

@@ -1,6 +1,6 @@
 import mapaCanvas from '../../Utils/Functions/mapaCanvas.js';
 import tresenraya from 'tresenraya';
-import light from '@lil_marcrock22/eris-light-pluris';
+import * as  light from '@lil_marcrock22/eris-light';
 const users: Map<string, string> = new Map();
 import Command from '../../Utils/Classes/command.js'
 import run from '../../Utils/Interfaces/run.js';
@@ -19,7 +19,7 @@ export default class Comando extends Command {
         const usuario = message.mentions[0];
         const miembro = usuario?.member;
 
-        if (!miembro || miembro.id == message.author.id || (usuario.bot && miembro.id != client.user.id)) return embedResponse(langjson.commands.tictactoe.game, message.channel, client.color);
+        if ((!miembro) ||/*( miembro.id == message.author.id) ||*/ (usuario.bot && miembro.id != client.user.id)) return embedResponse(langjson.commands.tictactoe.game, message.channel, client.color);
 
         if (partidas.has(message.guild.id))
             return embedResponse(langjson.commands.tictactoe.curso, message.channel, client.color);
@@ -29,13 +29,32 @@ export default class Comando extends Command {
         }
 
         const code = 'user:' + message.author.id + 'guild:' + message.guild.id + 'date:' + Date.now() + 'random:' + Math.random();
-
         const partida = new tresenraya.partida({ jugadores: [message.author.id, usuario.id] });
+
         partidas.add(message.guild.id);
 
         if (client.user.id != usuario.id) {
-            const pre_respuesta = await message.channel.awaitMessages({ filter: (m: light.Message) => m.author.id == usuario.id && ['s', 'n'].some(item => item == m.content), timeout: (1 * 60) * 1000, count: 1 });
-            const respuesta = pre_respuesta.collected.map(item => item)[0]?.content
+
+            const res: string | undefined = await new Promise(resolve => {
+                client.listener.add({
+                    channelID: message.channel.id,
+                    max: 1,
+                    code: 'user:' + message.author.id + 'guild:' + message.guild.id + 'date:' + Date.now() + 'random:' + Math.random(),
+                    filter(m) {
+                        return m.author.id == usuario.id && ['s', 'n'].some(item => item == m.content)
+                    },
+                    idle: ((1 * 60) * 1000) * 2,
+                    async onStop() {
+                        resolve(undefined);
+                    },
+                    async onCollect(msg) {
+                        resolve(msg.content);
+                    },
+                    timeLimit: (1 * 60) * 1000,
+                });
+            });
+
+            const respuesta = res;
 
             if (!respuesta) {
                 embedResponse(langjson.commands.tictactoe.dont_answer(usuario.username), message.channel, client.color)
@@ -101,7 +120,7 @@ export default class Comando extends Command {
             await message.channel.createMessage({ embed }, [{ file: await mapaCanvas(partida.tablero.array, client.imagenes, false), name: 'tictactoe.gif' }])
         }
 
-        if (partida.turno.jugador == client.user.id) {
+        else {
             const disponibles = [1, 2, 3, 4, 5, 6, 7, 8, 9].filter(a => partida.disponible(a));
             const jugada = disponibles[Math.floor(Math.random() * disponibles.length)];
             partida.elegir(jugada)

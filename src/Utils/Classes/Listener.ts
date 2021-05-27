@@ -1,6 +1,6 @@
 import events from 'events';
 const { EventEmitter } = events;
-import eris from '@lil_marcrock22/eris-light-pluris';
+import * as eris from '@lil_marcrock22/eris-light';
 
 interface listeners {
     filter: (aver: eris.Message<eris.TextableChannel>) => boolean;

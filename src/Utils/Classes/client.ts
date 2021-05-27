@@ -13,7 +13,7 @@ import fs from 'fs/promises';
 const { readdir, writeFile } = fs;
 const res = common(import.meta.url);
 const __dirname: string = res.__dirname;
-import eris from '@lil_marcrock22/eris-light-pluris';
+import * as eris from '@lil_marcrock22/eris-light';
 import dbla from 'dblapi.js';
 import mongoose from 'mongoose';
 const { connect, set, connection } = mongoose;

@@ -61,7 +61,7 @@ new Zenitsu(process.env.DISCORD_TOKEN, {
 }).connect();
 /*
 import * as sharder from '@lil_marcrock22/eris-sharder';
-import eris from '@lil_marcrock22/eris-light-pluris';
+import eris from '@lil_marcrock22/eris-light';
 const { Base } = sharder;
 class Sharder extends Base {
 
