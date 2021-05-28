@@ -4,7 +4,6 @@ import command from '../../Utils/Interfaces/run.js'
 import * as  eris from '@lil_marcrock22/eris-light';
 import FLAGS from '../../Utils/Const/FLAGS.js';
 import MessageEmbed from '../../Utils/Classes/Embed.js';
-import Zenitsu from '../../Utils/Classes/client.js';
 import getHighest from '../../Utils/Functions/getHighest.js';
 
 class Comando extends Command {
@@ -25,7 +24,7 @@ class Comando extends Command {
         const pre_prefix = await client.prefix.cacheOrFetch(message.guildID);
         const prefix = pre_prefix.prefix;
         const data = await client.settings.cacheOrFetch(message.guildID);
-        const GUILDME = message.guild.members.get(client.user.id)
+        const GUILDME = message.guild.me;
 
         if (cooldown.has(message.guildID))
             return embedResponse(cooldownMessage, message.channel, client.color);
@@ -53,7 +52,7 @@ class Comando extends Command {
                         }
 
                         await embedResponse(muterole.init.editando, message.channel, client.color);
-                        const { success, error } = await Edit({ canales, id: role.id, message, client })
+                        const { success, error } = await Edit({ canales, id: role.id, message })
 
                         if (success) {
                             //Todo bien, todo correcto...
@@ -96,7 +95,7 @@ class Comando extends Command {
 
                         await embedResponse(muterole.refresh.editando, message.channel, client.color);
 
-                        const { success, error } = await Edit({ canales, message, client, id: role.id })
+                        const { success, error } = await Edit({ canales, message, id: role.id })
 
                         if (success) {
                             //Todo bien, todo correcto...
@@ -177,12 +176,12 @@ export default Comando;
 
 type el_canal = eris.AnyGuildChannel
 
-async function Edit(all: { canales: el_canal[], id: string, message: eris.Message, client: Zenitsu }): Promise<{ error: Error, success: boolean }> {
+async function Edit(all: { canales: el_canal[], id: string, message: eris.Message }): Promise<{ error: Error, success: boolean }> {
 
-    const { canales, id, message, client } = all;
+    const { canales, id, message } = all;
     let success = true;
     let error: Error = null;
-    const GUILDME = message.guild.members.get(client.user.id);
+    const GUILDME = message.guild.me;
 
     type permisitos = 'manageGuild' | 'manageRoles' | 'manageChannels';
     const permisos: permisitos[] = ['manageGuild', 'manageRoles', 'manageChannels'];

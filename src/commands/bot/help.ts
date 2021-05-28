@@ -10,7 +10,6 @@ class Comando extends Command {
         this.name = "help"
         this.alias = ['h']
         this.category = 'bot'
-        this.botPermissions.channel = ['attachFiles'];
 
     }
     run({ client, message, langjson }: command): Promise<light.Message> {
@@ -24,10 +23,13 @@ class Comando extends Command {
             .addField(categories[1], client.commands.filter(a => a.category === 'fun').map(a => `\`${a.name}\``).join(', '))
             .addField(categories[2], client.commands.filter(a => a.category === 'mod').map(a => `\`${a.name}\``).join(', '))
             .addField(categories[3], client.commands.filter(a => a.category === 'bot').map(a => `\`${a.name}\``).join(', '))
-            .addField(categories[4], client.commands.filter(a => a.category === 'admin').map(a => `\`${a.name}\``).join(', '))
-            .setImage(`attachment://topgg.png`);
+            .addField(categories[4], client.commands.filter(a => a.category === 'admin').map(a => `\`${a.name}\``).join(', '));
 
-        return message.channel.createMessage({ embed: embedHelp }, [{ file: client.fileTOPGG, name: 'topgg.png' }]);
+        if (message.guild.me.permissions.has('attachFiles'))
+            embedHelp.setImage(`attachment://topgg.png`);
+
+        return message.channel.createMessage({ embed: embedHelp }, message.guild.me.permissions.has('attachFiles') ? [{ file: client.fileTOPGG, name: 'topgg.png' }] : undefined);
+
     }
 }
 

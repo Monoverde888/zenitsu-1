@@ -17,7 +17,7 @@ export default class Comando extends Command {
     async run({ message, langjson, client, embedResponse }: run): Promise<light.Message> {
 
         const data = await client.settings.cacheOrFetch(message.guildID);
-        const ROLE_BOT = getHighest(message.guild.members.get(client.user.id));
+        const ROLE_BOT = getHighest(message.guild.me);
         const role = message.guild.roles.get(data?.muterole);
 
         if (!role)

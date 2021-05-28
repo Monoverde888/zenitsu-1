@@ -128,7 +128,7 @@ class Zenitsu extends eris.Client {
             c4top: await loadImage(this.rutaProfile('c4top.png', 'Achievements')),
         };
 
-        const buffer = (await promisify(svg)(`https://top.gg/api/widget/721080193678311554.svg`, {})) as Buffer
+        const buffer = (await promisify(svg)(`https://top.gg/api/widget/721080193678311554.svg`, {}));
 
         this.fileTOPGG = buffer;
 
@@ -142,7 +142,7 @@ class Zenitsu extends eris.Client {
         await this.dbl.postStats(this.guilds.size);
 
         if (update) {
-            const buffer = (await promisify(svg)(`https://top.gg/api/widget/721080193678311554.svg`, {})) as Buffer
+            const buffer = (await promisify(svg)(`https://top.gg/api/widget/721080193678311554.svg`, {}));
             this.fileTOPGG = buffer;
             await writeFile(this.rutaImagen('topgg.png'), this.fileTOPGG)
         }

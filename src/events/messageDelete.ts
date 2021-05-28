@@ -2,6 +2,7 @@ import * as light from '@lil_marcrock22/eris-light';
 import Zenitsu from '../Utils/Classes/client.js';
 import model from '../models/logs.js'
 import MessageEmbed from '../Utils/Classes/Embed.js';
+import fetch from 'node-fetch';
 
 async function event(client: Zenitsu, message: light.Message): Promise<light.Message> {
 
@@ -22,13 +23,15 @@ async function event(client: Zenitsu, message: light.Message): Promise<light.Mes
 
     if (!find) return;
 
+    const file = await fetch(message.author.dynamicAvatarURL(undefined, 64)).then(RESPONSE => RESPONSE.buffer());
+
     const embed = new MessageEmbed()
         .setColor(0xff0000)
-        .setAuthor(message.author.username, message.author.dynamicAvatarURL(), message.jumpLink)
+        .setAuthor(message.author.username, 'attachment://avatar.png', message.jumpLink)
         .setDescription(message.content)
         .setFooter(`messageDelete - #${(message.channel as light.TextChannel).name}`)
 
-    return client.executeWebhook(find.idWeb, find.tokenWeb, { embeds: [embed], wait: true })
+    return client.executeWebhook(find.idWeb, find.tokenWeb, { embeds: [embed], wait: true, file: [{ name: 'avatar.png', file }] })
         .catch(async (e) => {
 
             console.log(`[WEBHOOK-MESSAGE_DELETE]: `, e)

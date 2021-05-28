@@ -82,12 +82,9 @@ async function mapaCanvas(mapatest: string[], imagenes: imagenesC, win: boolean,
 
     let positions = pos.find(p => p.every(x => mapatest[x] == '❌')) || pos.find(p => p.every(x => mapatest[x] == '⭕'))//Buscando las posiciones con las cuales se gano.
 
-    /**
-     * @returns {String}
-     */
     const whowin = () => {
 
-        return pos.find(p => p.every(x => mapatest[x] == '❌')) ? '#D60A0A' : pos.find(p => p.every(x => mapatest[x] == '⭕')) ? '#257f9e' : '#000000';
+        return '#f1cd82'//pos.find(p => p.every(x => mapatest[x] == '❌')) ? '#D60A0A' : pos.find(p => p.every(x => mapatest[x] == '⭕')) ? '#257f9e' : '#000000';
 
     }
 
@@ -405,7 +402,7 @@ async function mapaCanvas(mapatest: string[], imagenes: imagenesC, win: boolean,
     else {
         final = attachment
     }
-    return (final as Buffer);
+    return (final);
 }
 
 

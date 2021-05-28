@@ -12,7 +12,7 @@ function canMod(member: eris.Member, client: Zenitsu, mod: 'kick' | 'ban' | null
     const memberRole = member.roles.map(item => member.guild.roles.get(item)).filter(xd => xd);
     memberRole.push(everyone)
     const memberRoleSort = memberRole.sort((a, b) => b.position - a.position)[0];
-    return (roleSort.position > memberRoleSort.position) && (mod ? member.guild.members.get(client.user.id).permissions.has(mod == 'kick' ? 'kickMembers' : 'banMembers') : true);
+    return (roleSort.position > memberRoleSort.position) && (mod ? member.guild.me.permissions.has(mod == 'kick' ? 'kickMembers' : 'banMembers') : true);
 }
 
 export default canMod;

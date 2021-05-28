@@ -17,7 +17,7 @@ export default class Comando extends Command {
     async run({ message, langjson, client, embedResponse }: run): Promise<light.Message> {
 
         const data = await client.settings.cacheOrFetch(message.guildID);
-        const ROLE_BOT = getHighest(message.guild.members.get(client.user.id));
+        const ROLE_BOT = getHighest(message.guild.me);
         const role = message.guild.roles.get(data?.muterole);
 
         if (!role)
@@ -28,6 +28,7 @@ export default class Comando extends Command {
 
         const user = message.mentions.filter(user => user.id != message.author.id)[0];
         const member = user?.member;
+
         if (!member) return embedResponse(langjson.commands.mute.mention, message.channel, client.color);
         if (member.roles.includes(role.id)) return embedResponse(langjson.commands.mute.already_muted(client.unMarkdown(user.username)), message.channel, client.color);
         if (message.author.id != message.guild.ownerID) {

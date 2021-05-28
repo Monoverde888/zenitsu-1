@@ -3,7 +3,7 @@ import command from '../../Utils/Interfaces/run.js'
 import * as  eris from '@lil_marcrock22/eris-light';
 import MessageEmbed from '../../Utils/Classes/Embed.js';
 const regex = /((http|https):\/\/)((www|canary|ptb)\.)?(discordapp|discord)\.com\/api\/webhooks\/([0-9]){7,19}\/[-a-zA-Z0-9@:%._+~#=]{60,120}/gmi
-import axios from 'axios';
+import fetch from 'node-fetch';
 
 class Comando extends Command {
 
@@ -39,7 +39,7 @@ class Comando extends Command {
 
         const [token, id] = match[0].split('/').reverse();
 
-        const webhook: eris.Webhook = await axios.get(`https://canary.discord.com/api/webhooks/${id.trim()}/${token.trim()}`).then(({ data }) => data).catch(() => undefined);
+        const webhook: eris.Webhook = await fetch(`https://canary.discord.com/api/webhooks/${id.trim()}/${token.trim()}`).then((data) => data.json()).catch(() => undefined);
 
         if (!webhook || (webhook?.guild_id != message.guild.id)) return message.channel.createMessage({ embed: invalidUse });
 

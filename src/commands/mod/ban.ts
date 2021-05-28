@@ -26,6 +26,7 @@ export default class Comando extends Command {
         }
 
         const reason = args.join(' ')?.replace('<@!' + member.id + '>', '').slice(0, 500) || null;
+
         return member.ban(7, reason).then(() => {
 
             const embed = new MessageEmbed()

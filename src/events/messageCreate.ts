@@ -20,7 +20,7 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
     if (abusadores.has(message?.author?.id))
         return;
 
-    if (!((message.channel as Eris.TextChannel).guild) || !message.author || !message.member || message.author.bot) return;
+    if (!message.guild || !message.author || !message.member || message.author.bot) return;
 
     if (!(message.channel instanceof Eris.TextChannel) && !(message.channel instanceof Eris.NewsChannel))
         return;
@@ -109,7 +109,9 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
             else timestamps.set(message.author.id, { cooldown: now, avisado: false });
         }
 
-        let check = comando.botPermissions.channel.filter(perm => !((message.channel as Eris.TextChannel | Eris.NewsChannel).permissionsOf(client.user.id).has(perm)))
+        const channel = message.channel;
+
+        let check = comando.botPermissions.channel.filter(perm => !((channel).permissionsOf(client.user.id).has(perm)))
 
         if (check.length) {
 
@@ -123,7 +125,7 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
 
         }
 
-        check = comando.memberPermissions.channel.filter(perm => !((message.channel as Eris.TextChannel | Eris.NewsChannel).permissionsOf(message.member.id).has(perm)))
+        check = comando.memberPermissions.channel.filter(perm => !((channel).permissionsOf(message.member.id).has(perm)))
 
         if (check.length) {
 
@@ -137,7 +139,7 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
 
         }
 
-        check = comando.botPermissions.guild.filter(perm => !((message.channel as Eris.TextChannel).guild.members.get(client.user.id).permissions.has(perm)));
+        check = comando.botPermissions.guild.filter(perm => !((channel).guild.me.permissions.has(perm)));
 
         if (check.length) {
 
@@ -188,7 +190,6 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
             return message.channel.createMessage(json.messages.error((e.message || e?.toString() || e)));
 
         }
-
     }
 }
 export default event

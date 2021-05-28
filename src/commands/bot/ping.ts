@@ -19,7 +19,7 @@ class Comando extends Command {
             mongoose.connection.db.admin().ping((err, result) => (err || !result) ? j(err || result) : r(Date.now() - date))
         });
         const embed = new MessageEmbed()
-            .setDescription(`🏓 Bot: ${(message.channel as eris.TextChannel).guild.shard.latency}ms [${getStatus((message.channel as eris.TextChannel).guild.shard.latency)}]\n🏃 Message: ${date - message.createdAt}ms [${getStatus(date - message.createdAt)}]\n🗃️ DB: ${ping_db}ms [${getStatus(ping_db)}]`)
+            .setDescription(`🏓 Bot: ${message.guild.shard.latency}ms [${getStatus(message.guild.shard.latency)}]\n🏃 Message: ${date - message.createdAt}ms [${getStatus(date - message.createdAt)}]\n🗃️ DB: ${ping_db}ms [${getStatus(ping_db)}]`)
             .setTimestamp()
             .setColor(client.color)
 

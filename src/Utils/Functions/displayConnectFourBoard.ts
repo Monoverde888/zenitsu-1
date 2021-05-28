@@ -85,7 +85,7 @@ async function displayConnectFourBoard(mapa: string[][], game: c4.Connect4AI, im
     }
     encoder.finish();
 
-    return (toBuffer(stream) as Promise<Buffer>);
+    return (toBuffer(stream));
 
 }
 
