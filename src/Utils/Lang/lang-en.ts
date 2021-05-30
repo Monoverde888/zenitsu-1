@@ -194,7 +194,7 @@ const obj = {
                     else: `It seems that I do not have all the necessary permissions.`
                 },
                 refresh: {
-                    use_init: (prefix: string): string => `Use \`${prefix}settings muterole init\`.`,
+                    use_init: (prefix: string): string => `Use \`${prefix}settings muterole init @Role\`.`,
                     cannt_edit: (role: string): string => `I can't edit ${role}.`,
                     already: `All channels were already configured.`,
                     editando: `Editing channels.`,

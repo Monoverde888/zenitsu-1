@@ -21,9 +21,9 @@ class Comando extends Command {
         const embed = new MessageEmbed()
             .setDescription(`🏓 Bot: ${message.guild.shard.latency}ms [${getStatus(message.guild.shard.latency)}]\n🏃 Message: ${date - message.createdAt}ms [${getStatus(date - message.createdAt)}]\n🗃️ DB: ${ping_db}ms [${getStatus(ping_db)}]`)
             .setTimestamp()
-            .setColor(client.color)
+            .setColor(client.color);
 
-        return message.channel.createMessage({ embed })
+        return message.channel.createMessage({ embed });
 
     }
 }

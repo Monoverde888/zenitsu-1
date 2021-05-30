@@ -20,7 +20,8 @@ class Comando extends Command {
 
     async run({ client, message, args, embedResponse, langjson }: command): Promise<eris.Message> {
 
-        const { muterole, cooldown: cooldownMessage } = langjson.commands.settings;
+        const settings = langjson.commands.settings;
+        const { muterole, cooldown: cooldownMessage } = settings;
         const pre_prefix = await client.prefix.cacheOrFetch(message.guildID);
         const prefix = pre_prefix.prefix;
         const data = await client.settings.cacheOrFetch(message.guildID);
@@ -41,17 +42,25 @@ class Comando extends Command {
                             muterole.init.use_refresh(prefix), message.channel, client.color
                         );
 
-                        cooldown.add(message.guildID);
+                        const role = message.guild.roles.get(args[2]) || message.guild.roles.find(item => item.name == args.slice(2).join(' ')) || message.guild.roles.get(message.roleMentions[0]);
 
-                        const canales = message.guild.channels.filter(item => item.type == 0 || item.type == 4 || item.type == 5 || item.type == 2 || item.type == 13);
-                        const role = message.guild.roles.get(args[2]) || message.guild.roles.get(message.roleMentions[0]) || await message.guild.createRole({ name: 'Muted', color: 0x6e5b56, permissions: 0 });
+                        if (!role)
+                            return embedResponse(
+                                muterole.refresh.use_init(prefix), message.channel, client.color
+                            );
 
-                        if ((getHighest(GUILDME).position < role.position) || role.managed) {
-                            cooldown.delete(message.guildID);
-                            return embedResponse(muterole.init.cannt_edit(role.mention), message.channel, client.color);
+                        const canales = message.guild.channels.filter(item => item.type == 0 || item.type == 4 || item.type == 5 || item.type == 2 || item.type == 13).filter(canal => filter(canal, role.id));
+
+                        if (!canales.length) {
+                            if (data.muterole != role.id) await client.settings.set(message.guildID, 'muterole', role.id)
+                            return embedResponse(muterole.refresh.already, message.channel, client.color);
                         }
 
+                        if ((getHighest(GUILDME).position < role.position) || role.managed)
+                            return embedResponse(muterole.init.cannt_edit(role.mention), message.channel, client.color);
+
                         await embedResponse(muterole.init.editando, message.channel, client.color);
+                        cooldown.add(message.guildID);
                         const { success, error } = await Edit({ canales, id: role.id, message })
 
                         if (success) {
@@ -190,7 +199,8 @@ async function Edit(all: { canales: el_canal[], id: string, message: eris.Messag
 
         const permisosBit = FLAGS.SEND_MESSAGES + FLAGS.ADD_REACTIONS;
         const permisosVoice = FLAGS.CONNECT + FLAGS.SPEAK + FLAGS.STREAM;
-        const check = permisos.every(item => GUILDME.permissions.has(item)) && message.guild.roles.get(id);
+        const role = message.guild.roles.get(id);
+        const check = permisos.every(item => GUILDME.permissions.has(item)) && role && !((getHighest(GUILDME).position < role.position) || role.managed);
 
         if (check && success) {
             await canal.editPermission(id, 0, (canal.type == 2 || canal.type == 13) ? permisosVoice : permisosBit, 'role')
