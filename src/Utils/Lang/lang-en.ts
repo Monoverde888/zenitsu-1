@@ -126,7 +126,9 @@ const obj = {
                 "Mod",
                 "Bot",
                 "Admin"
-            ]
+            ],
+            invite: 'Invite Zenitsu.',
+            support: 'Support server.'
         },
         "djs": {
             "what": "<a:CatLoad:804368444526297109> | What do you want to look for in the Discord.js documentation?",

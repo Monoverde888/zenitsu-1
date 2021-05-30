@@ -10,7 +10,7 @@ class Comando extends Command {
         this.name = "setlang"
         this.alias = []
         this.category = 'admin'
-        this.memberPermissions = { guild: [], channel: ['manageGuild'] }
+        this.memberPermissions = { guild: ['manageGuild'], channel: [] }
     }
 
     async run({ client, message, args, langjson }: command): Promise<light.Message> {

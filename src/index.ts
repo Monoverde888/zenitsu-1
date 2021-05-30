@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import Zenitsu from "./Utils/Classes/client.js";
+import * as eris from '@lil_marcrock22/eris-light';
 
 new Zenitsu(process.env.DISCORD_TOKEN, {
     cacheMembers: false,
@@ -59,6 +60,16 @@ new Zenitsu(process.env.DISCORD_TOKEN, {
         INTERACTION_CREATE: true
     }
 }).connect();
+
+process.on("unhandledRejection", (e: Error) => {
+    console.log(e)
+    new eris.Client(null)
+        .executeWebhook(process.env.WEBHOOKID, process.env.WEBHOOKTOKEN, {
+            wait: true,
+            embeds: [{ description: '```js\n' + (e.stack || e.message || (e)?.toString()).slice(0, 1900) + '```' }]
+        });
+});
+
 /*
 import * as sharder from '@lil_marcrock22/eris-sharder';
 import eris from '@lil_marcrock22/eris-light';

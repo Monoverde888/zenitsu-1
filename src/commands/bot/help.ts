@@ -1,7 +1,8 @@
 import Command from '../../Utils/Classes/command.js';
 import command from '../../Utils/Interfaces/run.js'
-import * as  light from '@lil_marcrock22/eris-light';
+import * as light from '@lil_marcrock22/eris-light';
 import MessageEmbed from '../../Utils/Classes/Embed.js';
+import URLButton from '../../Utils/Buttons/URL.js';
 
 class Comando extends Command {
 
@@ -28,7 +29,22 @@ class Comando extends Command {
         if (message.guild.me.permissions.has('attachFiles'))
             embedHelp.setImage(`attachment://topgg.png`);
 
-        return message.channel.createMessage({ embed: embedHelp }, message.guild.me.permissions.has('attachFiles') ? [{ file: client.fileTOPGG, name: 'topgg.png' }] : undefined);
+        const BUTTONS =
+            [
+                new URLButton()
+                    .setLabel(langjson.commands.help.support)
+                    .setURL('https://discord.gg/4Yzc7Hk'),
+                new URLButton()
+                    .setLabel(langjson.commands.help.invite)
+                    .setURL('https://discord.com/oauth2/authorize?client_id=721080193678311554&scope=bot&permissions=8')
+            ]
+
+        return message.channel.createMessage({
+            embed: embedHelp, components: [{
+                type: 1,
+                components: BUTTONS
+            }]
+        }, message.guild.me.permissions.has('attachFiles') ? [{ file: client.fileTOPGG, name: 'topgg.png' }] : undefined);
 
     }
 }

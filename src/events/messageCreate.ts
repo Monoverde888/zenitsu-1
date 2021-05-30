@@ -25,7 +25,7 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
     if (!(message.channel instanceof Eris.TextChannel) && !(message.channel instanceof Eris.NewsChannel))
         return;
 
-    if (!((message.channel as Eris.TextChannel).permissionsOf(client.user.id).has('sendMessages')) || !((message.channel as Eris.TextChannel).permissionsOf(client.user.id).has('embedLinks')))
+    if (!['sendMessages', 'embedLinks'].every((perm: 'sendMessages' | 'embedLinks') => (message.channel as Eris.TextChannel).permissionsOf(message.guild.me).has(perm)))
         return;
 
     const requestLang = await client.lang.cacheOrFetch(message.channel.guild.id);
@@ -111,7 +111,7 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
 
         const channel = message.channel;
 
-        let check = comando.botPermissions.channel.filter(perm => !((channel).permissionsOf(client.user.id).has(perm)))
+        let check = comando.botPermissions.channel.filter(perm => !((channel).permissionsOf(message.guild.me).has(perm)))
 
         if (check.length) {
 
@@ -125,7 +125,7 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
 
         }
 
-        check = comando.memberPermissions.channel.filter(perm => !((channel).permissionsOf(message.member.id).has(perm)))
+        check = comando.memberPermissions.channel.filter(perm => !((channel).permissionsOf(message.member).has(perm)))
 
         if (check.length) {
 
