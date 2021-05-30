@@ -3,6 +3,7 @@ import command from '../../Utils/Interfaces/run.js'
 import * as light from '@lil_marcrock22/eris-light';
 import MessageEmbed from '../../Utils/Classes/Embed.js';
 import URLButton from '../../Utils/Buttons/URL.js';
+import Components from '../../Utils/Buttons/Component.js';
 
 class Comando extends Command {
 
@@ -37,13 +38,12 @@ class Comando extends Command {
                 new URLButton()
                     .setLabel(langjson.commands.help.invite)
                     .setURL('https://discord.com/oauth2/authorize?client_id=721080193678311554&scope=bot&permissions=8')
-            ]
+            ];
+
+        const componente = new Components(...BUTTONS)
 
         return message.channel.createMessage({
-            embed: embedHelp, components: [{
-                type: 1,
-                components: BUTTONS
-            }]
+            embed: embedHelp, components: [componente]
         }, message.guild.me.permissions.has('attachFiles') ? [{ file: client.fileTOPGG, name: 'topgg.png' }] : undefined);
 
     }

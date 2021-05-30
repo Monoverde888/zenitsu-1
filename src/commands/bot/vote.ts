@@ -9,8 +9,7 @@ class Comando extends Command {
         super();
         this.name = "vote"
         this.category = 'bot'
-        this.alias = ['topgg']
-        this.botPermissions.channel = ['attachFiles']
+        this.alias = ['topgg'];
     }
 
     async run({ client, message }: command): Promise<light.Message> {
@@ -18,14 +17,16 @@ class Comando extends Command {
         const embed = new MessageEmbed()
             .setThumbnail(client.user.dynamicAvatarURL())
             .setDescription(`https://top.gg/bot/721080193678311554`)
-            .attachFiles([client.rutaImagen('topgg.png')])
-            .setImage(`attachment://topgg.png`)
             .setColor(client.color)
             .setFooter(message.author.username, message.author.dynamicAvatarURL())
-            .setTimestamp()
-        return message.channel.createMessage({ embed: embed })
-    }
+            .setTimestamp();
 
+        if (message.guild.me.permissions.has('attachFiles'))
+            embed.setImage(`attachment://topgg.png`);
+
+        return message.channel.createMessage({ embed: embed }, message.guild.me.permissions.has('attachFiles') ? [{ file: client.fileTOPGG, name: 'topgg.png' }] : undefined)
+
+    }
 }
 
 export default Comando;
