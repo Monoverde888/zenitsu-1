@@ -25,19 +25,20 @@ const { promisify } = util;
 
 //Classes
 import Collection from './Collection.js';
+import Buttons from './ListernerButtons.js';
 import Listener from './Listener.js';
 import Comando from './command.js';
 
 //Managers
 import Profile from './profileManager.js'
 import LangManager from './langManager.js';
-import AfkManager from "./afkManager.js";
 import PrefixManager from './prefixManager.js';
 import LogsManager from './logsManager.js';
 import Settings from './settingsManager.js';
 
 class Zenitsu extends eris.Client {
 
+    buttons: Buttons;
     settings: Settings;
     profile: Profile;
     flags: Flag;
@@ -48,7 +49,6 @@ class Zenitsu extends eris.Client {
     imagenes: imagenesC;
     lang: LangManager
     prefix: PrefixManager;
-    afk: AfkManager;
     logs: LogsManager;
     commands: Collection<string, Comando>;
     devs: string[];
@@ -66,7 +66,6 @@ class Zenitsu extends eris.Client {
 
     async init(): Promise<this> {
         registerFont(join(__dirname, '..', '..', '..', 'Assets', 'bettersans.ttf'), { family: 'Comic Sans' })
-        this.listener = new Listener();
         const file = await fs.readFile(this.rutaImagen('topgg.png'));
         this.fileTOPGG = file;
         this.devs = ['507367752391196682', '577000793094488085', '390726024536653865']
@@ -77,7 +76,8 @@ class Zenitsu extends eris.Client {
         this.profile = new Profile();
         this.lang = new LangManager();
         this.prefix = new PrefixManager();
-        this.afk = new AfkManager();
+        this.buttons = new Buttons();
+        this.listener = new Listener();
         this.logs = new LogsManager();
         set('useFindAndModify', false);
         await connect(process.env.MONGODB, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => console.log(`Connected to MONGODB.`));

@@ -1,6 +1,5 @@
 const obj = {
     "messages": {
-        "afk_volver": "<:sesonroja:804750422828515339> | ¡Bienvenido de vuelta!",
 
         "permisos_bot_guild": (p: string): string => "<:cancel:804368628861763664> | Ups, me faltan algun/algunos permiso(s) en el servidor: " + p,
 
@@ -112,25 +111,14 @@ const obj = {
         },
         "tictactoe": {
             "game": "<:cancel:804368628861763664> | Menciona a un miembro del servidor para jugar.",
-
             "curso": "<:cancel:804368628861763664> | Hay una partida en curso en este servidor.",
-
             "wait_user": (user: string): string => "<a:waiting:804396292793040987> | " + user + ", tienes un minuto para responder...\n¿Quieres jugar?: responde `s`\n¿No quieres jugar?: responde `n`",
-
             "dont_answer": (user: string): string => "😔 | " + user + " no respondió...",
-
             "deny": (user: string): string => "😔 | " + user + " rechazó la invitación...",
-
             "win": (user: string): string => "<:uh:829390140832874506> | ¡" + user + " ha ganado la partida!",
-
             "draw": (p1: string, p2: string): string => "<:wtdDud:829390621894508544> | Un empate entre " + p1 + " y " + p2 + "!",
-
-            "turn": (user: string): string => "Turno de " + user,
-
             "start": (ficha: string, user: string): string => ficha + " | Empieza " + user + ", elige un numero del 1 al 9.",
-
             "game_over": "<:wtdDud:829390621894508544> | Juego terminado...",
-
         },
         "help": {
             "categories": [
@@ -148,9 +136,6 @@ const obj = {
 
             "no_result": "<:cancel:804368628861763664> | Sin resultados.",
 
-        },
-        "afk": {
-            "reason": "<:cancel:804368628861763664> | La razón debe tener menos de 250 caracteres.",
         },
         "setlogs": {
             invalid: `Uso incorrecto, por favor ingresa una webhook valida y tipo.`,

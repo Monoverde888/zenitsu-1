@@ -3,9 +3,10 @@ dotenv.config();
 import Zenitsu from "./Utils/Classes/client.js";
 import * as eris from '@lil_marcrock22/eris-light';
 
-new Zenitsu(process.env.DISCORD_TOKEN, {
+const client = new Zenitsu(process.env.DISCORD_TOKEN, {
     cacheMembers: false,
     cacheUsers: false,
+    cacheEmojis: false,
     allowedMentions: {
         everyone: false,
         roles: [],
@@ -29,8 +30,8 @@ new Zenitsu(process.env.DISCORD_TOKEN, {
         INVITE_CREATE: true,
         INVITE_DELETE: true,
         GUILD_MEMBER_ADD: true,
-        GUILD_MEMBER_REMOVE: false,
-        GUILD_MEMBER_UPDATE: false,
+        GUILD_MEMBER_REMOVE: true,
+        GUILD_MEMBER_UPDATE: true,
         GUILD_MEMBERS_CHUNK: true,
         GUILD_INTEGRATIONS_UPDATE: true,
         GUILD_ROLE_CREATE: false,
@@ -51,16 +52,17 @@ new Zenitsu(process.env.DISCORD_TOKEN, {
         MESSAGE_REACTION_REMOVE: true,
         MESSAGE_REACTION_REMOVE_ALL: true,
         MESSAGE_REACTION_REMOVE_EMOJI: true,
-        USER_UPDATE: false,
+        USER_UPDATE: true,
         PRESENCE_UPDATE: true,
         TYPING_START: true,
         VOICE_STATE_UPDATE: true,
         VOICE_SERVER_UPDATE: true,
         WEBHOOKS_UPDATE: true,
-        INTERACTION_CREATE: true
+        INTERACTION_CREATE: false
     }
-}).connect();
+});
 
+client.connect();
 process.on("unhandledRejection", (e: Error) => {
     console.log(e)
     new eris.Client(null)

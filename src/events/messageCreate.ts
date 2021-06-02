@@ -29,15 +29,8 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
         return;
 
     const requestLang = await client.lang.cacheOrFetch(message.channel.guild.id);
-    const lang: 'es' | 'en' = requestLang.lang;
+    const lang = requestLang.lang;
     const json = lenguajes[lang];
-    const afk = await client.afk.cacheOrFetch(message.author.id);
-
-    if (afk.status) {
-        await client.afk.delete(message.author.id);
-        const texto = json.messages.afk_volver;
-        return message.channel.createMessage(message.author.mention + ', ' + texto);
-    }
 
     //antiabuzz
     const topush = client.listener.listen(message).filter(item => item?.author?.id == message.author.id);
@@ -53,22 +46,6 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
         return message.channel.createMessage(json.messages.abuz);
     }
     //antiabuzz
-
-    for (const user of message.mentions.filter(user => !user.bot)) {
-
-        const cacheAfk = await client.afk.cacheOrFetch(user.id);
-        if (cacheAfk && cacheAfk.status) {
-
-            const embed = new MessageEmbed()
-                .setColor(client.color)
-                .setAuthor(user.username, user.dynamicAvatarURL())
-                .setDescription(cacheAfk.reason)
-                .setFooter('AFK | ' + ms(Date.now() - cacheAfk.date, { language: lang, long: true }))
-            antiabuzzz.add([message.author.id, message.createdAt]);
-            message.channel.createMessage({ embed }).catch(() => undefined)
-            break;
-        }
-    }
 
     const requestPrefix = await client.prefix.cacheOrFetch(message.channel.guild.id);
     const prefix = requestPrefix.prefix;
@@ -192,15 +169,16 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
         }
     }
 }
-export default event
 
-function embedResponse(descriptionHere: string, option: Eris.TextChannel, color: number): Promise<Eris.Message> {
+export default event;
+
+function embedResponse(descriptionHere: string, option: Eris.TextChannel | Eris.NewsChannel | Eris.PrivateChannel, color: number): Promise<Eris.Message> {
 
     const embed = new MessageEmbed()
         .setDescription(descriptionHere)
         .setTimestamp()
         .setColor(color);
-    const canal: Eris.TextChannel | Eris.NewsChannel | Eris.PrivateChannel = option;
+    const canal = option;
     return canal.createMessage({ embed: embed })
 
 }
