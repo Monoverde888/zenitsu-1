@@ -6,6 +6,7 @@ import run from '../../Utils/Interfaces/run.js';
 import MessageEmbed from '../../Utils/Classes/Embed.js';
 import Button from '../../Utils/Buttons/Normal.js';
 import Components from '../../Utils/Buttons/Component.js';
+import { estilos } from '../../Utils/Buttons/types.js';
 
 function resolveMarkdown(user: Eris.User, partida: tresenraya.partida) {
 
@@ -20,16 +21,21 @@ function generateButtons(partida: tresenraya.partida, forceDisable = false) {
     for (const i in partida.tablero.array) {
 
         const but = partida.tablero.array[i]
-        const check = ['❌', '⭕'].some(item => but == item);
+        const check = ['❌', '⭕'].find(item => but == item);
         const number = parseInt(i) + 1;
+        const colors: {
+            [x: string]: estilos
+        } = {
+            '❌': 'danger',
+            '⭕': 'primary'
+        };
 
-        const temp = new Button(check ? 'danger' : 'primary')
+        const temp = new Button(colors[check] ? colors[check] : 'secondary')
             .setCustomID(`${number}`)
-            .setDisabled(forceDisable || check)
-            .setLabel(`${number}`);
+            .setDisabled(forceDisable || !!check)
 
-        if (check)
-            temp.setEmoji({ id: but == '❌' ? '849685084236021790' : '849685083967586304', name: but == '❌' ? 'x_tic' : 'o_tic' });
+        if (check) temp.setEmoji({ id: but == '❌' ? '849685084236021790' : '849685083967586304', name: but == '❌' ? 'x_tic' : 'o_tic' });
+        else temp.setLabel('~')
 
         res.push(temp);
 
@@ -178,7 +184,10 @@ export default class Comando extends Command {
             },
             async onCollect(button, colector) {
 
-                button.defer();
+                const res = await button.defer().then(() => true).catch(() => false);
+
+                if (!res) return res;
+
                 partida.elegir(parseInt(button.customID));
 
                 if (partida.finalizado) {
