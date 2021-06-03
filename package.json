@@ -34,7 +34,7 @@
     "mongoose": "^5.12.12",
     "node-fetch": "^2.6.1",
     "node-svg2img": "^1.1.0",
-    "puppeteer": "^9.1.1",
+    "puppeteer": "^10.0.0",
     "stream-to-buffer": "^0.1.0",
     "tresenraya": "0.0.5",
     "twemoji-parser": "^13.1.0",
