@@ -1,5 +1,6 @@
+import AI from 'ai-tic-tac-toe';
 import tresenraya from 'tresenraya';
-import Eris, * as  light from '@lil_marcrock22/eris-light';
+import * as light from '@lil_marcrock22/eris-light';
 const users: Map<string, string> = new Map();
 import Command from '../../Utils/Classes/command.js'
 import run from '../../Utils/Interfaces/run.js';
@@ -8,7 +9,11 @@ import Button from '../../Utils/Buttons/Normal.js';
 import Components from '../../Utils/Buttons/Component.js';
 import { estilos } from '../../Utils/Buttons/types.js';
 
-function resolveMarkdown(user: Eris.User, partida: tresenraya.partida) {
+function AIplay(partida: tresenraya.partida) {
+    return (AI.getmove(partida.tablero.array.map(item => item == '❌' ? 'x' : item == '⭕' ? 'o' : ''), partida.turno.ficha == '❌' ? 'x' : 'o')) + 1;
+}
+
+function resolveMarkdown(user: light.User, partida: tresenraya.partida) {
 
     return partida.turno.jugador == user.id ? `**${user.username}**` : user.username
 
@@ -152,7 +157,7 @@ export default class Comando extends Command {
             users.delete(usuario.id)
         });
 
-        let msg: Eris.Message;
+        let msg: light.Message;
 
         if (partida.turno.jugador != client.user.id) {
             msg = await message.channel.createMessage({ content: `${resolveMarkdown(message.author, partida)} vs ${resolveMarkdown(usuario, partida)}\n\n${langjson.commands.tictactoe.start(partida.turno.jugador == message.author.id ? message.author.username : usuario.username, partida.turno.ficha)}`, components: generateButtons(partida) })
@@ -160,7 +165,7 @@ export default class Comando extends Command {
 
         else {
             const disponibles = [1, 2, 3, 4, 5, 6, 7, 8, 9].filter(a => partida.disponible(a));
-            const jugada = disponibles[Math.floor(Math.random() * disponibles.length)];
+            const jugada = AIplay(partida) || disponibles[Math.floor(Math.random() * disponibles.length)]
             partida.elegir(jugada)
             msg = await message.channel.createMessage({ content: `${resolveMarkdown(message.author, partida)} vs ${resolveMarkdown(usuario, partida)}`, components: generateButtons(partida) })
         }
@@ -201,7 +206,8 @@ export default class Comando extends Command {
 
                 if (!partida.finalizado && partida.turno.jugador == client.user.id) {
                     const disponibles = [1, 2, 3, 4, 5, 6, 7, 8, 9].filter(a => partida.disponible(a));
-                    const jugada = disponibles[Math.floor(Math.random() * disponibles.length)]
+                    const jugada = AIplay(partida) || disponibles[Math.floor(Math.random() * disponibles.length)]
+
                     partida.elegir(jugada)
                     if (!partida.finalizado) {
 
