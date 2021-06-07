@@ -20,7 +20,7 @@ function resolveMarkdown(user: light.User, partida: tresenraya.partida) {
 
 }
 
-function generateButtons(partida: tresenraya.partida, forceDisable = false, empate = false) {
+function generateButtons(partida: tresenraya.partida, forceDisable = false, empate = '') {
 
     const res = [];
 
@@ -140,7 +140,7 @@ async function jugar(firstp: light.Member, secondp: light.Member, client: Zenits
         users.delete(firstp.id)
         users.delete(secondp.id)
 
-        const empate = await channel.createMessage({ embed, components: generateButtons(partida, true, true) })
+        const empate = await channel.createMessage({ embed, components: generateButtons(partida, true, langjson.commands.tictactoe.rematch) })
 
         const res: false | light.ButtonInteraction = await new Promise(resolve => {
             client.buttons.add({

@@ -119,6 +119,7 @@ const obj = {
             "draw": (p1: string, p2: string): string => "<:wtdDud:829390621894508544> | Un empate entre " + p1 + " y " + p2 + "!",
             "start": (ficha: string, user: string): string => ficha + " | Empieza " + user + ", elige un numero del 1 al 9.",
             "game_over": "<:wtdDud:829390621894508544> | Juego terminado...",
+            "rematch": "Revancha"
         },
         "help": {
             "categories": [

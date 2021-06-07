@@ -114,7 +114,8 @@ const obj = {
             "win": (user: string): string => "<:uh:829390140832874506> | " + user + " win the game!",
             "draw": (p1: string, p2: string): string => "<:wtdDud:829390621894508544> | A draw between " + p1 + " and " + p2 + "!",
             "start": (ficha: string, user: string): string => ficha + " | Begin " + user + ", Choose a number from 1 to 9.",
-            "game_over": "<:wtdDud:829390621894508544> | Game over..."
+            "game_over": "<:wtdDud:829390621894508544> | Game over...",
+            "rematch": "Rematch"
         },
         "help": {
             "categories": [
