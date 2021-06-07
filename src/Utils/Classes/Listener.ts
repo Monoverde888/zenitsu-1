@@ -73,20 +73,19 @@ class Listener extends EventEmitter {
         for (const listener of listeners.filter(item => item.running)) {
             const res = listener.filter(message);
             if (res && (listener.channelID == message.channel?.id)) {
+               
+                listener.onCollect(message, listener);
+                listener.lastIdle = Date.now();
+                listener.messages.push(message);
+                listener.times += 1;
+                poto.push(message);
+
                 if (listener.max && listener.max === listener.times) {
 
                     this.stop(listener, 'max');
 
                 }
-                else {
-
-                    listener.onCollect(message, listener);
-                    listener.lastIdle = Date.now();
-                    listener.messages.push(message);
-                    listener.times += 1;
-                    poto.push(message);
-
-                }
+                
                 continue;
             }
             else continue;

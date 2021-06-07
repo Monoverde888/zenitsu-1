@@ -31,12 +31,13 @@ class Listener extends EventEmitter {
 
                 if (Date.now() > (data.lastIdle + data.idle)) {
                     this.stop(data, 'idle');
+                    continue;
                 }
 
                 else if (Date.now() > (data.timeLimit + data.createdAt)) {
                     this.stop(data, 'time');
+                    continue;
                 }
-                continue;
             }
 
         }, 15000);
@@ -72,15 +73,16 @@ class Listener extends EventEmitter {
         for (const listener of listeners.filter(item => item.running)) {
             const res = listener.filter(button);
             if (res && (listener.messageID == button.message.id)) {
-                if (listener.max && listener.max === listener.times) {
+                  
+                listener.onCollect(button, listener);
+                listener.lastIdle = Date.now();
+                listener.times += 1;
+                poto.push(button);
+
+                if (listener.max && (listener.max === listener.times)) {
                     this.stop(listener, 'max');
                 }
-                else {
-                    listener.onCollect(button, listener);
-                    listener.lastIdle = Date.now();
-                    listener.times += 1;
-                    poto.push(button);
-                }
+                
                 continue;
             }
 
