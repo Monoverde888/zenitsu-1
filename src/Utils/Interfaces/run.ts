@@ -10,6 +10,7 @@ interface run {
     embedResponse?(descriptionhere: string, channel: pkg.TextChannel | pkg.NewsChannel | pkg.PrivateChannel, color: number): Promise<pkg.Message>;
     lang?: 'es' | 'en';
     langjson?: typeof jsonEN | typeof jsonES
+    prefix: string;
 }
 
 export default run;

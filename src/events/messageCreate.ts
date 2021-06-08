@@ -146,7 +146,7 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
 
         try {
             antiabuzzz.add([message.author.id, message.createdAt]);
-            await comando.run({ message, args, embedResponse, client, lang, langjson: json })
+            await comando.run({ message, args, embedResponse, client, lang, langjson: json, prefix })
         }
 
         catch (e) {

@@ -13,8 +13,7 @@ class Comando extends Command {
         this.memberPermissions = { guild: ['manageGuild'], channel: [] }
     }
 
-    async run({ client, message, args, langjson }: command): Promise<light.Message> {
-
+    async run({ client, message, args, langjson, prefix }: command): Promise<light.Message> {
         const selectLang = args[0] ? args[0].toLowerCase() : null;
 
         switch (selectLang) {
@@ -45,7 +44,7 @@ class Comando extends Command {
                         new MessageEmbed()
                             .setColor(client.color)
                             .setDescription(langjson.commands.setlang.invalid)
-                            .setAuthor(`${client.prefix.cache.get(message.guild.id).prefix}setlang (es|en)`)
+                            .setAuthor(`${prefix}setlang (es|en)`)
                 });
 
 

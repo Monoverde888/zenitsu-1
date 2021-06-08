@@ -1,5 +1,5 @@
-import Collection from './Collection.js'
-import Model from '../../models/logs.js'
+import Model from '../../../models/logs.js'
+import Manager from './RedisManager.js'
 
 interface logs {
     idWeb: string;
@@ -14,15 +14,15 @@ interface Logs {
 
 class LogsManager {
 
-    collection: Collection<string, Logs>
+    redisClient: Manager;
 
-    constructor() {
-        this.collection = new Collection();
+    constructor(manager: Manager) {
+        this.redisClient = manager;
     }
 
-    async delete(id: string): Promise<boolean> {
+    async delete(id: string): Promise<number> {
         await Model.deleteOne({ id });
-        return this.cache.delete(id);
+        return this.redisClient.del(id, 'logs_')
     }
 
     async update(datazo: {
@@ -51,7 +51,7 @@ class LogsManager {
                 }, { new: true, upsert: true });
 
 
-            this.cache.set(datazo.id, data);
+            await this.redisClient.set(datazo.id, JSON.stringify(data), 'logs_');
             return data;
         }
 
@@ -73,7 +73,7 @@ class LogsManager {
                     },
                 }, { new: true, upsert: true });
 
-            this.cache.set(datazo.id, data);
+            await this.redisClient.set(datazo.id, JSON.stringify(data), 'logs_');
 
             return data;
         }
@@ -83,22 +83,23 @@ class LogsManager {
     async fetch(id: string): Promise<Logs> {
 
         const data = await Model.findOne({ id }) || await Model.create({
-            id: id,
+            id,
             logs: []
         });
 
-        this.cache.set(id, data)
+        await this.redisClient.set(id, JSON.stringify(data), 'logs_');
 
         return data;
 
     }
 
-    cacheOrFetch(id: string): Promise<Logs> | Logs {
-        return this.cache.get(id) || this.fetch(id);
-    }
+    async cacheOrFetch(id: string): Promise<Logs> {
+        
+        const data = await this.redisClient.get(id, 'logs_') || await this.fetch(id);
 
-    get cache(): Collection<string, Logs> {
-        return this.collection;
+        if (typeof data == 'string')
+            return JSON.parse(data)
+        return data;
     }
 
 }

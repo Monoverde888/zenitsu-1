@@ -30,12 +30,12 @@ import Listener from './Listener.js';
 import Comando from './command.js';
 
 //Managers
-import Profile from './profileManager.js'
-import Redis from './RedisManager.js'
-import LangManager from './langManager.js';
-import PrefixManager from './prefixManager.js';
-import LogsManager from './logsManager.js';
-import Settings from './settingsManager.js';
+import Profile from './Managers/profileManager.js'
+import Redis from './Managers/RedisManager.js'
+import LangManager from './Managers/langManager.js';
+import PrefixManager from './Managers/prefixManager.js';
+import LogsManager from './Managers/logsManager.js';
+import Settings from './Managers/settingsManager.js';
 
 class Zenitsu extends eris.Client {
 
@@ -54,13 +54,14 @@ class Zenitsu extends eris.Client {
     commands: Collection<string, Comando>;
     devs: string[];
     achievements: Achievement;
+    redis: Redis;
 
     constructor(token: string, options: eris.ClientOptions) {
         super(token, options);
     }
 
     async connect(): Promise<void> {
-        new Redis();
+        this.redis = new Redis();
         await this.init();
         await super.connect();
         return;
@@ -74,13 +75,13 @@ class Zenitsu extends eris.Client {
         this.commands = new Collection();
         this.dbl = new dbla(process.env.DBLTOKEN, this);
         this.color = 14720566;
-        this.settings = new Settings();
-        this.profile = new Profile();
-        this.lang = new LangManager();
-        this.prefix = new PrefixManager();
+        this.settings = new Settings(this.redis);
+        this.profile = new Profile(this.redis);
+        this.lang = new LangManager(this.redis);
+        this.prefix = new PrefixManager(this.redis);
         this.buttons = new Buttons();
         this.listener = new Listener();
-        this.logs = new LogsManager();
+        this.logs = new LogsManager(this.redis);
         set('useFindAndModify', false);
         await connect(process.env.MONGODB, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => console.log(`Connected to MONGODB.`));
         await this.loadImages();

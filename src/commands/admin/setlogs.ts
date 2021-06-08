@@ -16,13 +16,13 @@ class Comando extends Command {
         this.memberPermissions = { guild: ['manageGuild'], channel: [] }
     }
 
-    async run({ client, message, args, langjson }: command): Promise<eris.Message> {
+    async run({ client, message, args, langjson, prefix }: command): Promise<eris.Message> {
 
         const invalidUse = new MessageEmbed()
             .setTimestamp()
             .setColor(client.color)
             .setDescription(langjson.commands.setlogs.invalid)
-            .setFooter(`${client.prefix.cache.get(message.guild.id)?.prefix || 'z!'}setlogs (WebhookURL) (messageUpdate|messageDelete)`)
+            .setFooter(`${prefix}setlogs (WebhookURL) (messageUpdate|messageDelete)`)
             .setImage(`https://i.imgur.com/2WZ1ctQ.gif`)
             .setThumbnail(`https://i.imgur.com/7DdnGh5.png`)
 

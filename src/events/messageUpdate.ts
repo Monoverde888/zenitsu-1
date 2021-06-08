@@ -53,7 +53,7 @@ async function event(client: Zenitsu, newMessage: light.Message, oldMessage: lig
                         }
                     }
                 }, { new: true })
-                client.logs.cache.set(data.id, dataa)
+                await client.logs.redisClient.set(data.id, JSON.stringify(dataa), 'logs_')
                 return undefined;
             }
 

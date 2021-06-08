@@ -14,14 +14,14 @@ export default class Comando extends Command {
         this.memberPermissions.guild = ['kickMembers'];
     }
 
-    async run({ message, langjson, client, embedResponse }: run): Promise<light.Message> {
+    async run({ message, langjson, client, embedResponse, prefix }: run): Promise<light.Message> {
 
         const data = await client.settings.cacheOrFetch(message.guildID);
         const ROLE_BOT = getHighest(message.guild.me);
         const role = message.guild.roles.get(data?.muterole);
 
         if (!role)
-            return embedResponse(langjson.commands.unmute.no_role(client.prefix.cache.get(message.guild.id)?.prefix), message.channel, client.color);
+            return embedResponse(langjson.commands.unmute.no_role(prefix), message.channel, client.color);
 
         if (role.position >= ROLE_BOT.position)
             return embedResponse(langjson.commands.unmute.cant_role(role.mentionable ? role.name : role.mention), message.channel, client.color)

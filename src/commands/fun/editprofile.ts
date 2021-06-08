@@ -11,7 +11,7 @@ export default class Comando extends Command {
         this.category = 'fun';
     }
 
-    async run({ message, client, langjson, args }: run): Promise<light.Message> {
+    async run({ message, client, langjson, args, prefix }: run): Promise<light.Message> {
 
         const [what, ...value] = args
 
@@ -19,7 +19,7 @@ export default class Comando extends Command {
 
             const embed = new MessageEmbed()
                 .setColor(client.color)
-                .setDescription(langjson.commands.editprofile.bad_usage(client.prefix.cache.get(message.guildID)?.prefix))
+                .setDescription(langjson.commands.editprofile.bad_usage(prefix))
             return message.channel.createMessage({ embed });
 
         }
@@ -57,7 +57,7 @@ export default class Comando extends Command {
                 if (!value.join(' ')) {
 
                     const embed = new MessageEmbed()
-                        .setDescription(langjson.commands.editprofile.description_invalid(client.prefix.cache.get(message.guildID)?.prefix))
+                        .setDescription(langjson.commands.editprofile.description_invalid(prefix))
                         .setColor(client.color);
                     return message.channel.createMessage({ embed });
 
@@ -67,7 +67,7 @@ export default class Comando extends Command {
 
                     const embed = new MessageEmbed()
                         .setColor(client.color)
-                        .setDescription(langjson.commands.editprofile.description_nice(client.prefix.cache.get(message.guildID)?.prefix));
+                        .setDescription(langjson.commands.editprofile.description_nice(prefix));
                     return message.channel.createMessage({ embed });
 
                 });
@@ -79,7 +79,7 @@ export default class Comando extends Command {
 
                 const embed = new MessageEmbed()
                     .setColor(client.color)
-                    .setDescription(langjson.commands.editprofile.bad_usage(client.prefix.cache.get(message.guildID)?.prefix))
+                    .setDescription(langjson.commands.editprofile.bad_usage(prefix))
                 return message.channel.createMessage({ embed });
 
             }
