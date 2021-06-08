@@ -27,6 +27,7 @@
     "@lil_marcrock22/eris-light": "git+https://github.com/marcrock22/eris.git",
     "@lil_marcrock22/eris-sharder": "git+https://github.com/MARCROCK22/eris-sharder.git",
     "@types/node-fetch": "^2.5.10",
+    "@types/redis": "^2.8.29",
     "ai-tic-tac-toe": "git+https://github.com/marcrock22/ai-tic-tac-toe.git",
     "canvas": "^2.8.0",
     "connect4-ai": "^0.1.3",
@@ -37,8 +38,8 @@
     "node-fetch": "^2.6.1",
     "node-svg2img": "^1.1.0",
     "puppeteer": "^10.0.0",
+    "redis": "^3.1.2",
     "stream-to-buffer": "^0.1.0",
-    "string-similarity": "^4.0.4",
     "tresenraya": "0.0.5",
     "twemoji-parser": "^13.1.0",
     "typescript": "^4.3.2"

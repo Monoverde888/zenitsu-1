@@ -31,6 +31,7 @@ import Comando from './command.js';
 
 //Managers
 import Profile from './profileManager.js'
+import Redis from './RedisManager.js'
 import LangManager from './langManager.js';
 import PrefixManager from './prefixManager.js';
 import LogsManager from './logsManager.js';
@@ -59,6 +60,7 @@ class Zenitsu extends eris.Client {
     }
 
     async connect(): Promise<void> {
+        new Redis();
         await this.init();
         await super.connect();
         return;

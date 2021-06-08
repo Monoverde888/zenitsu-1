@@ -150,7 +150,7 @@ async function jugar(firstp: light.Member, secondp: light.Member, client: Zenits
                 filter(b) {
                     return (jugadores.includes(b.member.user.id) && b.customID == 'repeat');
                 },
-                idle: ((1 * 60) * 1000) * 2,
+                idle: Infinity,
                 async onStop() {
                     resolve(false);
                 },
@@ -247,22 +247,22 @@ async function jugar(firstp: light.Member, secondp: light.Member, client: Zenits
 
 export default class Comando extends Command {
     constructor() {
-        super()
+        super();
         this.name = "tictactoe";
         this.alias = ['ttt', 'tresenraya'];
         this.category = 'fun';
         this.botPermissions.channel = ['attachFiles'];
     }
-    async run(run: run): Promise<light.Message | boolean> {
+    async run(RUN: run): Promise<light.Message | boolean> {
 
-        const { message, client, langjson, embedResponse } = run;
-
+        const { message, client, langjson, embedResponse } = RUN;
         const usuario = message.mentions[0];
         const miembro = usuario?.member;
+        
         if ((!miembro) || (miembro.id == message.author.id) || (usuario.bot && miembro.id != client.user.id))
             return embedResponse(langjson.commands.tictactoe.game, message.channel, client.color);
 
-       return jugar(message.member, miembro, client, message.channel, run)
+        return jugar(message.member, miembro, client, message.channel, RUN);
 
     }
 }
