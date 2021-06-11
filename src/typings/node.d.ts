@@ -3,6 +3,8 @@ declare global {
     namespace NodeJS {
 
         interface ProcessEnv {
+            APICONNECTFOUR: string;
+            APIKEY: string;
             MONGODB: string;
             DISCORD_TOKEN: string;
             PASSWORD: string;

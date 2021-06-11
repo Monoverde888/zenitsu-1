@@ -244,6 +244,7 @@ class Zenitsu extends eris.Client {
             connection.pass,
             connection.user,
             connection.host,
+            process.env.APIKEY,
         ].filter(item => item);
     }
 
