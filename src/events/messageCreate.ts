@@ -86,86 +86,87 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
             else timestamps.set(message.author.id, { cooldown: now, avisado: false });
         }
 
-        const channel = message.channel;
+        const check = comando.cantRun(message);
 
-        let check = comando.botPermissions.channel.filter(perm => !((channel).permissionsOf(message.guild.me).has(perm)))
+        switch (check.case) {
 
-        if (check.length) {
+            case 5:
+                {
+                    
+                try {
+                    antiabuzzz.add([message.author.id, message.createdAt]);
+                    await comando.run({ message, args, embedResponse, client, lang, langjson: json, prefix })
+                }
 
-            antiabuzzz.add([message.author.id, message.createdAt]);
-            const embed = new MessageEmbed()
-                .setColor(client.color)
-                .setDescription(json.messages.permisos_bot_channel(`\`${check.join(',')}\``))
-                .setTimestamp()
-                .setFooter('\u200b', 'https://media1.tenor.com/images/41334cbe64331dad2e2dc6272334b47f/tenor.gif');
-            return message.channel.createMessage({ embed: embed })
+                catch (e) {
+                    
+                    const embeds = [
+                        new MessageEmbed()
+                            .setColor(client.color)
+                            .setTimestamp()
+                            .setDescription((e.stack || e.message || e)?.slice(0, 2048) || e)
+                            .addField('Comando usado', command)
+                            .setAuthor(message.content.slice(0, 300))
+                            .setFooter(message.author.tag, message.author.dynamicAvatarURL())
+                    ]
+                    console.log(e);
+                    client.executeWebhook(process.env.WEBHOOKID, process.env.WEBHOOKTOKEN, {
+                        embeds,
+                        wait: true
+                    });
+                    return message.channel.createMessage(json.messages.error((e.message || e?.toString() || e)));
 
-        }
+                    }
+                }
+                break;
+            
+            case 1: {
 
-        check = comando.memberPermissions.channel.filter(perm => !((channel).permissionsOf(message.member).has(perm)))
-
-        if (check.length) {
-
-            antiabuzzz.add([message.author.id, message.createdAt]);
-            const embed = new MessageEmbed()
-                .setColor(client.color)
-                .setDescription(json.messages.permisos_user_channel(`\`${check.join(',')}\``))
-                .setTimestamp()
-                .setFooter('\u200b', 'https://media1.tenor.com/images/41334cbe64331dad2e2dc6272334b47f/tenor.gif');
-            return message.channel.createMessage({ embed: embed })
-
-        }
-
-        check = comando.botPermissions.guild.filter(perm => !((channel).guild.me.permissions.has(perm)));
-
-        if (check.length) {
-
-            antiabuzzz.add([message.author.id, message.createdAt]);
-            const embed = new MessageEmbed()
-                .setColor(client.color)
-                .setDescription(json.messages.permisos_bot_guild(`\`${check.join(',')}\``))
-                .setTimestamp()
-                .setFooter('\u200b', 'https://media1.tenor.com/images/41334cbe64331dad2e2dc6272334b47f/tenor.gif');
-            return message.channel.createMessage({ embed: embed })
-
-        }
-
-        check = comando.memberPermissions.guild.filter(perm => !(message.member.permissions.has(perm)));
-
-        if (check.length) {
-
-            antiabuzzz.add([message.author.id, message.createdAt]);
-            const embed = new MessageEmbed()
-                .setColor(client.color)
-                .setDescription(json.messages.permisos_user_guild(`\`${check.join(',')}\``))
-                .setTimestamp()
-                .setFooter('\u200b', 'https://media1.tenor.com/images/41334cbe64331dad2e2dc6272334b47f/tenor.gif');
-            return message.channel.createMessage({ embed: embed })
-
-        }
-
-        try {
-            antiabuzzz.add([message.author.id, message.createdAt]);
-            await comando.run({ message, args, embedResponse, client, lang, langjson: json, prefix })
-        }
-
-        catch (e) {
-
-            const embeds = [
-                new MessageEmbed()
+                antiabuzzz.add([message.author.id, message.createdAt]);
+                const embed = new MessageEmbed()
                     .setColor(client.color)
+                    .setDescription(json.messages.permisos_bot_channel(`\`${check.perms.join(',')}\``))
                     .setTimestamp()
-                    .setDescription((e.stack || e.message || e)?.slice(0, 2048) || e)
-                    .addField('Comando usado', command)
-                    .setAuthor(message.content.slice(0, 300))
-            ]
-            console.log(e);
-            client.executeWebhook(process.env.WEBHOOKID, process.env.WEBHOOKTOKEN, {
-                embeds,
-                wait: true
-            })
-            return message.channel.createMessage(json.messages.error((e.message || e?.toString() || e)));
+                    .setFooter('\u200b', 'https://media1.tenor.com/images/41334cbe64331dad2e2dc6272334b47f/tenor.gif');
+                return message.channel.createMessage({ embed: embed })
 
+            }
+                break;
+            
+            case 2: {
+                antiabuzzz.add([message.author.id, message.createdAt]);
+                const embed = new MessageEmbed()
+                    .setColor(client.color)
+                    .setDescription(json.messages.permisos_user_channel(`\`${check.perms.join(',')}\``))
+                    .setTimestamp()
+                    .setFooter('\u200b', 'https://media1.tenor.com/images/41334cbe64331dad2e2dc6272334b47f/tenor.gif');
+                return message.channel.createMessage({ embed: embed })
+            }
+                break;
+            
+            case 3: {
+                antiabuzzz.add([message.author.id, message.createdAt]);
+                const embed = new MessageEmbed()
+                    .setColor(client.color)
+                    .setDescription(json.messages.permisos_bot_guild(`\`${check.perms.join(',')}\``))
+                    .setTimestamp()
+                    .setFooter('\u200b', 'https://media1.tenor.com/images/41334cbe64331dad2e2dc6272334b47f/tenor.gif');
+                return message.channel.createMessage({ embed: embed })
+            }
+                break;
+            
+            case 4: {
+
+                antiabuzzz.add([message.author.id, message.createdAt]);
+                const embed = new MessageEmbed()
+                    .setColor(client.color)
+                    .setDescription(json.messages.permisos_user_guild(`\`${check.perms.join(',')}\``))
+                    .setTimestamp()
+                    .setFooter('\u200b', 'https://media1.tenor.com/images/41334cbe64331dad2e2dc6272334b47f/tenor.gif');
+                return message.channel.createMessage({ embed: embed })
+            }
+                break;
+            
         }
     }
 }

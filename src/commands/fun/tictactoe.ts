@@ -1,3 +1,19 @@
+const pos = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6]
+];
+const colors: {
+    [x: string]: estilos
+} = {
+    '❌': 'danger',
+    '⭕': 'primary'
+};
 import AI from 'ai-tic-tac-toe';
 import tresenraya from 'tresenraya';
 import * as light from '@lil_marcrock22/eris-light';
@@ -29,12 +45,6 @@ function generateButtons(partida: tresenraya.partida, forceDisable = false, empa
         const but = partida.tablero.array[i]
         const check = ['❌', '⭕'].find(item => but == item);
         const number = parseInt(i) + 1;
-        const colors: {
-            [x: string]: estilos
-        } = {
-            '❌': 'danger',
-            '⭕': 'primary'
-        };
 
         const temp = new Button(colors[check] ? colors[check] : 'secondary')
             .setCustomID(`${number}`)
@@ -124,10 +134,30 @@ async function jugar(firstp: light.Member, secondp: light.Member, client: Zenits
             .setColor(client.color)
             .setDescription(langjson.commands.tictactoe.win(users.get(jugador as string)))
 
+        const positions = pos.find(p => p.every(x => partida.tablero.array[x] == '❌')) || pos.find(p => p.every(x => partida.tablero.array[x] == '⭕')),
+            botones = generateButtons(partida, true),
+            pasaber = [...botones[0].components, ...botones[1].components, ...botones[2].components]
+
+        let fila = 0;
+        
+        for (const i in pasaber) {
+            const numero = parseInt(i)
+            
+            if (numero == 3)
+                fila = 1;
+            else if (numero == 6)
+                fila = 2;
+
+            const check = positions.some(item => item == numero);
+            if (check)
+                (botones[fila].components[numero % 3] as Button).setStyle('success');
+        
+        }
+        
         client.buttons.stop(code, 'NO');
-        channel.createMessage({ embed, components: generateButtons(partida, true) })
-        users.delete(firstp.id)
-        users.delete(secondp.id)
+        channel.createMessage({ embed, components: botones });
+        users.delete(firstp.id);
+        users.delete(secondp.id);
     });
 
     partida.on('empate', async (jugadores) => {

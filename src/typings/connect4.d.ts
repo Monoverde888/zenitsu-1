@@ -22,12 +22,15 @@ declare module 'connect4-ai' {
 
         jugadores: player[];
         play(play: number): void;
-        gameStatus(): status
+        gameStatus(): status;
         ascii(): string;
-        canPlay(number: number): boolean
-        playAI(play: string): void
-        solution: solution[] | null
-        winner: number | null
+        canPlay(number: number): boolean;
+        playAI(play: string): void;
+        solution: solution[] | null;
+        winner: number | null;
+        board: {
+            [x: string]: number[];
+        }
 
     }
 
@@ -38,3 +41,15 @@ declare module 'connect4-ai' {
     }
 
 }
+
+/*
+ {
+            '0': number[];
+            '1': number[];
+            '2': number[];
+            '3': number[];
+            '4': number[];
+            '5': number[];
+            '6': number[];
+        } |
+*/

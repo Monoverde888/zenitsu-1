@@ -17,6 +17,13 @@ const obj = {
 
     },
     "commands": {
+
+        "connect4view": {
+
+            "invalid": "Invalid ID."
+
+        },
+
         "setprefix": {
 
             "no_prefix": "<:cancel:804368628861763664> | You need to specify the new prefix.",
@@ -79,7 +86,10 @@ const obj = {
 
             "game_over2": "<:wtdDud:829390621894508544> | Game over D:",
 
-            "time_over": "<:dislike1:369553357377110027> | You lasted three minutes without answering, game over!"
+            "time_over": "<:dislike1:369553357377110027> | You lasted three minutes without answering, game over!",
+            
+            "save": "Save game?"
+            
         },
         "connect4stats": {
 

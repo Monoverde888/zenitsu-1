@@ -25,7 +25,7 @@ export default class Comando extends Command {
             if (getHighest(message.member).position <= getHighest(member).position) return embedResponse(langjson.commands.kick.user_cannt_kick(`**${client.unMarkdown(user.username)}**`), message.channel, client.color)
         }
 
-        const reason = args.join(' ')?.replace('<@!' + member.id + '>', '').slice(0, 500) || null;
+        const reason = args.join(' ')?.replace(member.nick ? member.mention : user.mention, '').slice(0, 500) || null;
 
         return member.kick(reason).then(() => {
 
@@ -36,8 +36,7 @@ export default class Comando extends Command {
 
             return message.channel.createMessage({ embed })
 
-        })
-            .catch((error) => {
+        }).catch((error) => {
 
                 const embed = new MessageEmbed()
                     .setColor(0xff0000)

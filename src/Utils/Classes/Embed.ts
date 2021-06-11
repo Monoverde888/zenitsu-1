@@ -26,6 +26,7 @@ class MessageEmbed {
     url: string;
 
     constructor() {
+        this.setColor(Math.floor(Math.random() * (0xffffff + 1)));
         this.fields = [];
         this.files = [];
     }

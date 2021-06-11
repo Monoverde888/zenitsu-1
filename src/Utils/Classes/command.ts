@@ -1,4 +1,5 @@
 import inte from '../Interfaces/run.js';
+import * as Eris from '@lil_marcrock22/eris-light';
 
 type permissions = 'createInstantInvite' |
     'kickMembers' |
@@ -60,7 +61,6 @@ class Command {
     }
 
     constructor() {
-
         this.dev = false;
         this.alias = []
         this.name = 'NO_NAME_COMMAND'
@@ -77,6 +77,31 @@ class Command {
     }
     run(runthis: inte): unknown {
         return runthis;
+    }
+
+    cantRun(message: Eris.Message<Eris.TextChannel | Eris.TextableChannel>): { case: number; perms: permissions[] } {
+
+        const channel = message.channel as Eris.TextChannel;
+
+        const check_1 = this.botPermissions.channel.filter(perm => !((channel).permissionsOf(message.guild.me).has(perm)))
+
+        if (check_1.length) return { case: 1, perms: check_1 };
+
+        const check_2 = this.memberPermissions.channel.filter(perm => !((channel).permissionsOf(message.member).has(perm)))
+
+        if (check_2.length) return { case: 2, perms: check_2 };
+
+        const check_3 = this.botPermissions.guild.filter(perm => !((channel).guild.me.permissions.has(perm)));
+        
+        if (check_3.length) return { case: 3, perms: check_3 };
+
+        const check_4 = this.memberPermissions.guild.filter(perm => !(message.member.permissions.has(perm)));
+
+        if (check_4.length) return { case: 4, perms: check_4 };
+
+        return { case: 5, perms: [] };
+
+
     }
 
 }

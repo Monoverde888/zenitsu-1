@@ -8,7 +8,7 @@ export default class Comando extends Command {
     constructor() {
         super()
         this.name = "connect4top"
-        this.alias = [`connect4top`, 'fourinrowtop', '4enlineatop', 'c4top']
+        this.alias = [`conecta4top`, 'fourinrowtop', '4enlineatop', 'c4top']
         this.category = 'fun'
     }
 

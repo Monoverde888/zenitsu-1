@@ -38,6 +38,11 @@ class Button {
         return this;
     }
 
+    setStyle(style: estilos): Button {
+        this.style = STYLES[style];
+        return this;
+    }
+
 }
 
 export default Button;

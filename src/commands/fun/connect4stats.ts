@@ -7,7 +7,7 @@ import MessageEmbed from "../../Utils/Classes/Embed.js";
 export default class Comando extends Command {
     constructor() {
         super()
-        this.name = "conecta4stats"
+        this.name = "connect4stats"
         this.alias = [`conecta4stats`, 'fourinrowstats', '4enlineastats', 'c4stats']
         this.category = 'fun'
     }

@@ -17,6 +17,13 @@ const obj = {
 
     },
     "commands": {
+
+        "connect4view": {
+
+            "invalid": "ID invalida."
+
+        },
+
         "setprefix": {
             "no_prefix": "<:cancel:804368628861763664> | Necesitas especificar el prefijo nuevo.",
 
@@ -79,6 +86,8 @@ const obj = {
             "game_over2": "<:wtdDud:829390621894508544> | Juego terminado D:",
 
             "time_over": "<:dislike1:369553357377110027> | Duraste tres minutos sin responder, juego terminado!",
+
+            "save": 'Guardar partida?'
 
         },
         "connect4stats": {

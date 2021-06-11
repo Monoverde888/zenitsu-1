@@ -7,6 +7,8 @@ import Command from '../../Utils/Classes/command.js';
 const games: Map<string, c4.Connect4AI> = new Map();
 import model from '../../models/c4top.js';
 import MessageEmbed from '../../Utils/Classes/Embed.js';
+import MODEL from '../../models/c4maps.js';
+import canvas from 'canvas';
 
 export default class Comando extends Command {
 
@@ -18,8 +20,9 @@ export default class Comando extends Command {
         this.botPermissions.channel = ['attachFiles']
     }
 
-    async run({ client, message, args, langjson, embedResponse }: run): Promise<light.Message> {
+    async run({ client, message, args, langjson, embedResponse, prefix }: run): Promise<light.Message> {
 
+        const ArrayOfArrayOfNumbers: [number, number, canvas.Image][] = [];
         const DATAPROFILE = await client.profile.cacheOrFetch(message.author.id);
 
         if (games.get(message.guild.id)) {
@@ -28,7 +31,7 @@ export default class Comando extends Command {
                 .setDescription(langjson.commands.connect4.curso)
             return message.channel.createMessage({
                 embed
-            })
+            });
         }
 
         args[0] = args[0]?.toLowerCase();
@@ -39,6 +42,7 @@ export default class Comando extends Command {
             const embed = new MessageEmbed()
                 .setDescription(langjson.commands.connect4.mention)
                 .setFooter(langjson.commands.connect4.footer)
+                .setColor(client.color)
 
             return message.channel.createMessage({
                 embed
@@ -140,13 +144,27 @@ export default class Comando extends Command {
         }
 
         const res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes);
-
+        
         const embedStart = new MessageEmbed()
             .setDescription(langjson.commands.connect4.start(findTurn(message.author.id)?.turn == 1 ? message.author.username : usuario.username))
             .setColor(client.color)
             .setImage('attachment://4enraya.gif')
         message.channel.createMessage({ embed: embedStart }, [{ name: '4enraya.gif', file: res }]);
         const TIME_IDLE = ((3 * 60) * 1000);
+
+        async function sendCoso(embed: MessageEmbed, ress: Buffer) {
+            
+            if (ArrayOfArrayOfNumbers.length) {
+                const temp = ArrayOfArrayOfNumbers.map(item => item.map(coso => coso == client.imagenes.connect4.verde ? 'red' : coso == client.imagenes.connect4.amarillo ? 'yellow' : coso));
+                const data = await MODEL.create({ maps: temp, users: [message.author.id, usuario.id], dif: args[0] });
+                embed.setFooter(prefix + 'connect4view ' + JSON.parse(JSON.stringify(data))._id);
+            }
+
+            return message.channel.createMessage({
+                embed
+            }, [{ name: '4enraya.gif', file: ress }]);
+
+        }
 
         client.listener.add({
             channelID: message.channel.id,
@@ -181,15 +199,18 @@ export default class Comando extends Command {
             },
             idle: TIME_IDLE,
             async onStop(_, reason) {
+                
                 if (reason === 'surrender' && games.get(message.guild.id)) {
                     if (usuario.id == client.user.id) await model.findOneAndUpdate({ id: message.author.id, difficulty: args[0] }, { $inc: { perdidas: 1 }, $set: { cacheName: message.author.username } }, { upsert: true });
                     const embed = new MessageEmbed()
                         .setDescription(langjson.commands.connect4.game_over)
                         .setColor(client.color)
                         .setImage(`attachment://4enraya.gif`)
-
-                    message.channel.createMessage({ embed }, [{ name: '4enraya.gif', file: await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes) }])
+                    const res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes);
+                    sendCoso(embed, res);
+                    
                     return games.delete(message.guild.id);
+
                 }
 
                 else if (reason === 'idle' && games.get(message.guild.id)) {
@@ -198,9 +219,11 @@ export default class Comando extends Command {
                         .setDescription(langjson.commands.connect4.time_over)
                         .setColor(client.color)
                         .setImage(`attachment://4enraya.gif`)
+                    const res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes);
+                    sendCoso(embed, res);
+                    
+                    return games.delete(message.guild.id);
 
-                    message.channel.createMessage({ embed }, [{ name: '4enraya.gif', file: await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes) }])
-                    return games.delete(message.guild.id)
                 }
 
                 else if (reason == 'time' && games.get(message.guild.id)) {
@@ -209,27 +232,34 @@ export default class Comando extends Command {
                         .setDescription(langjson.commands.connect4.game_over2)
                         .setColor(client.color)
                         .setImage(`attachment://4enraya.gif`)
+                    const res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes);
+                    sendCoso(embed, res);
+                    
+                    return games.delete(message.guild.id);
 
-                    message.channel.createMessage({ embed }, [{ name: '4enraya.gif', file: await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes) }])
-                    return games.delete(message.guild.id)
                 }
                 else return games.delete(message.guildID)
             },
             async onCollect(msg, colector) {
 
-                if (msg.content === 'surrender') {
+                if (msg.content === 'surrender')
                     return client.listener.stop(colector, 'surrender');
-                }
-
+                
                 games.get(message.guild.id).play(parseInt(msg.content) - 1)
+                
+                const game = games.get(message.guildID);
+                const board = game.board[(parseInt(msg.content) - 1)];
+                let temp = findTurn(msg.author.id)?.turn == 1 ? client.imagenes.connect4.verde : client.imagenes.connect4.amarillo;
+                ArrayOfArrayOfNumbers.push([board.length - 1, parseInt(msg.content) - 1, temp]);
+
                 if (games.get(msg.guild.id).gameStatus().gameOver && games.get(msg.guild.id).gameStatus().solution) {
-                    const res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(msg.guild.id), client.imagenes);
+                    const res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes);
                     const embed = new MessageEmbed()
                         .setDescription(langjson.commands.connect4.win(msg.author.username))
                         .setColor(client.color)
                         .setImage('attachment://4enraya.gif')
+                    sendCoso(embed, res);
 
-                    message.channel.createMessage({ embed }, [{ file: res, name: '4enraya.gif' }])
                     if (usuario.id == client.user.id) {
                         const data = await model.findOneAndUpdate({ id: message.author.id, difficulty: args[0] }, { $inc: { ganadas: 1 }, $set: { cacheName: message.author.username } }, { upsert: true, new: true });
 
@@ -254,8 +284,7 @@ export default class Comando extends Command {
                 }
 
                 else if (games.get(msg.guild.id).gameStatus().gameOver) {
-                    const res = await displayConnectFourBoard(displayBoard(games.get(msg.guild.id).ascii()), games.get(msg.guild.id), client.imagenes);
-
+                    const res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes);
                     const embed = new MessageEmbed()
                         .setDescription(langjson.commands.connect4.draw(usuario.username, message.author.username))
                         .setColor(client.color)
@@ -267,17 +296,22 @@ export default class Comando extends Command {
                 }
 
                 if (usuario.id == client.user.id) {
-                    games.get(message.guild.id).playAI(args[0]);
+                    const old = games.get(message.guild.id);
+                    const oldBoard = JSON.parse(JSON.stringify(old.board)) as {[x:string]: number[]};
+                    old.playAI(args[0]);
 
+                    const board = games.get(message.guild.id).board;
+                    const index = Object.values(board).findIndex((arr, y) => arr.find((item, i) => item != Object.values(oldBoard)[y][i]))
+                    temp = findTurn(client.user.id)?.turn == 1 ? client.imagenes.connect4.verde : client.imagenes.connect4.amarillo;
+                    ArrayOfArrayOfNumbers.push([board[index].length - 1, index, temp]);
+            
                     if (games.get(message.guild.id).gameStatus().gameOver && games.get(message.guild.id).gameStatus().solution) {
                         const res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes);
-
                         const embed = new MessageEmbed()
                             .setDescription(langjson.commands.connect4.win(usuario.username))
                             .setColor(client.color)
                             .setImage('attachment://4enraya.gif')
-                        message.channel.createMessage({ embed }, [{ file: res, name: '4enraya.gif' }]);
-
+                        sendCoso(embed, res);
                         await model.findOneAndUpdate({ id: message.author.id, difficulty: args[0] }, { $inc: { perdidas: 1 }, $set: { cacheName: message.author.username } }, { upsert: true });
                         return client.listener.stop(colector, 'win');
                     }
@@ -289,7 +323,7 @@ export default class Comando extends Command {
                             .setColor(client.color)
                             .setImage('attachment://4enraya.gif')
 
-                        message.channel.createMessage({ embed }, [{ file: res, name: '4enraya.gif' }])
+                        sendCoso(embed, res);
                         await model.findOneAndUpdate({ id: message.author.id, difficulty: args[0] }, { $inc: { empates: 1 }, $set: { cacheName: message.author.username } }, { upsert: true });
                         return client.listener.stop(colector, 'win');
                     }
