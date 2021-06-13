@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 const { Schema, model } = mongoose;
 
-interface Connect4Map extends mongoose.Document {
+export interface Connect4Map extends mongoose.Document {
     maps: [number, number, string][]
     users: string[];
     dif: string;

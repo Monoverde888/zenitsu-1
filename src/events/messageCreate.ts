@@ -5,6 +5,8 @@ import MessageEmbed from '../Utils/Classes/Embed.js';
 import lenguajes from '../Utils/Lang/langs.js';
 import Comando from '../Utils/Classes/command.js';
 import Collection from '../Utils/Classes/Collection.js';
+import langModel, { Lang as LANG } from '../models/lang.js';
+import prefixModel, { Prefix as PREFIX } from '../models/prefix.js';
 const cooldowns: Collection<string, Collection<string, { cooldown: number, avisado: boolean }>> = new Collection();
 const antiabuzzz: Set<[string, number]> = new Set();
 const abusadores: Set<string> = new Set();
@@ -28,7 +30,8 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
     if (!['sendMessages', 'embedLinks'].every((perm: 'sendMessages' | 'embedLinks') => (message.channel as Eris.TextChannel).permissionsOf(message.guild.me).has(perm)))
         return;
 
-    const requestLang = await client.lang.cacheOrFetch(message.channel.guild.id);
+    const requestLang: LANG = await client.redis.get(message.guildID, 'lang_').then(x => typeof x == 'string' ? JSON.parse(x) : null) || await langModel.findOne({ id: message.guildID }).lean() || await langModel.create({ id: message.guildID, lang: 'en' });
+    await client.redis.set(message.guildID, JSON.stringify(requestLang), 'lang_');
     const lang = requestLang.lang;
     const json = lenguajes[lang];
 
@@ -46,8 +49,9 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
         return message.channel.createMessage(json.messages.abuz);
     }
     //antiabuzz
-
-    const requestPrefix = await client.prefix.cacheOrFetch(message.channel.guild.id);
+    
+    const requestPrefix: PREFIX = await client.redis.get(message.guildID, 'prefix_').then(x => typeof x == 'string' ? JSON.parse(x) : null) || await prefixModel.findOne({ id: message.guildID }).lean() || await prefixModel.create({ id: message.guildID, prefix: 'z!' });
+    await client.redis.set(message.guildID, JSON.stringify(requestPrefix), 'prefix_');
     const prefix = requestPrefix.prefix;
     if (!message.content.startsWith(prefix)) return;
 

@@ -23,6 +23,12 @@ client.on("error", (...errors) => {
 
 class RedisManager {
 
+    default: redis.RedisClient;
+
+    constructor() {
+        this.default = client;
+    }
+
     set(key: string, value: string, prefix: string): Promise<string> {
         
         return setPromise(prefix + key, value);

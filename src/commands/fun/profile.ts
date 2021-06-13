@@ -5,7 +5,9 @@ import MessageEmbed from '../../Utils/Classes/Embed.js';
 import CANVAS from 'canvas';
 import names from '../../Utils/Interfaces/profile/flagsname.js'
 import namesXD from '../../Utils/Interfaces/profile/achiementesnames.js'
+import profile, { Profile as PROFILE } from '../../models/profile.js';
 const { loadImage, createCanvas } = CANVAS;
+
 export default class Comando extends Command {
 
     constructor() {
@@ -20,7 +22,16 @@ export default class Comando extends Command {
 
         const bloque = client.imagenes.empty;
         const user = message.mentions.filter(user => !user.bot)[0] || message.author;
-        const data = await client.profile.cacheOrFetch(user.id);
+        const data: PROFILE =  await client.redis.get(message.author.id, 'profile_').then(x => typeof x == 'string' ? JSON.parse(x) : null) || await profile.findOne({ id: message.author.id }) || await profile.create({
+            id: message.author.id,
+            flags: [],
+            achievements: [],
+            color: '000000',
+            description: `\u200b`
+        });
+
+        await client.redis.set(message.author.id, JSON.stringify(data), 'profile_');
+
         const { flags, achievements } = data;
         const randomColor = Math.floor(Math.random() * (0xffffff + 1));
         let color = data.color || randomColor.toString(16)

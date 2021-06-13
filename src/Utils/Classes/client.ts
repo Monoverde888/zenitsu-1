@@ -30,27 +30,17 @@ import Listener from './Listener.js';
 import Comando from './command.js';
 
 //Managers
-import Profile from './Managers/profileManager.js'
 import Redis from './Managers/RedisManager.js'
-import LangManager from './Managers/langManager.js';
-import PrefixManager from './Managers/prefixManager.js';
-import LogsManager from './Managers/logsManager.js';
-import Settings from './Managers/settingsManager.js';
 
 class Zenitsu extends eris.Client {
 
     buttons: Buttons;
-    settings: Settings;
-    profile: Profile;
     flags: Flag;
     listener: Listener;
     fileTOPGG: Buffer;
     dbl: dbla;
     color: number;
     imagenes: imagenesC;
-    lang: LangManager
-    prefix: PrefixManager;
-    logs: LogsManager;
     commands: Collection<string, Comando>;
     devs: string[];
     achievements: Achievement;
@@ -75,13 +65,8 @@ class Zenitsu extends eris.Client {
         this.commands = new Collection();
         this.dbl = new dbla(process.env.DBLTOKEN, this);
         this.color = 14720566;
-        this.settings = new Settings(this.redis);
-        this.profile = new Profile(this.redis);
-        this.lang = new LangManager(this.redis);
-        this.prefix = new PrefixManager(this.redis);
         this.buttons = new Buttons();
         this.listener = new Listener();
-        this.logs = new LogsManager(this.redis);
         set('useFindAndModify', false);
         await connect(process.env.MONGODB, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => console.log(`Connected to MONGODB.`));
         await this.loadImages();

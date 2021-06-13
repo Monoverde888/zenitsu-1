@@ -26,7 +26,7 @@ const Guild = new Schema({
 
 });
 
-interface Profile extends mongoose.Document {
+export interface Profile extends mongoose.Document {
     id: string;
     description: string;
     flags: string[];

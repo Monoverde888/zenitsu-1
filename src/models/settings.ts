@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 const { Schema, model } = mongoose;
 
-interface Settings extends mongoose.Document {
+export interface Settings extends mongoose.Document {
     id: string;
     muterole: string;
 }

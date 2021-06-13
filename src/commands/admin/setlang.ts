@@ -2,6 +2,7 @@ import Command from '../../Utils/Classes/command.js';
 import command from '../../Utils/Interfaces/run.js'
 import * as light from '@lil_marcrock22/eris-light';
 import MessageEmbed from '../../Utils/Classes/Embed.js';
+import lang from '../../models/lang.js';
 
 class Comando extends Command {
 
@@ -14,12 +15,17 @@ class Comando extends Command {
     }
 
     async run({ client, message, args, langjson, prefix }: command): Promise<light.Message> {
+        
         const selectLang = args[0] ? args[0].toLowerCase() : null;
 
         switch (selectLang) {
 
-            case 'es':
-                await client.lang.set(message.guild.id, 'es')
+            case 'es': {
+
+                const data = await lang.findOneAndUpdate({ id: message.guild.id }, { lang: 'es' }, { new: true, upsert: true }).lean();
+
+                await client.redis.set(message.guildID, JSON.stringify(data), 'lang_');
+
                 return message.channel.createMessage({
                     embed:
                         new MessageEmbed()
@@ -27,9 +33,14 @@ class Comando extends Command {
                             .setDescription(`🇪🇸 | Establecido al español :D.`)
                             .setAuthor(message.author.username, message.author.dynamicAvatarURL())
                 });
+            }
+                
+            case 'en': {
+                
+                const data = await lang.findOneAndUpdate({ id: message.guild.id }, { lang: 'en' }, { new: true, upsert: true }).lean();
 
-            case 'en':
-                await client.lang.set(message.guild.id, 'en')
+                await client.redis.set(message.guildID, JSON.stringify(data), 'lang_');
+                
                 return message.channel.createMessage({
                     embed:
                         new MessageEmbed()
@@ -38,6 +49,8 @@ class Comando extends Command {
                             .setAuthor(message.author.username, message.author.dynamicAvatarURL())
                 });
 
+            }
+                
             default:
                 return message.channel.createMessage({
                     embed:

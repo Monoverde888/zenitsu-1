@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 const { Schema, model } = mongoose;
 
-interface Prefix extends mongoose.Document {
+export interface Prefix extends mongoose.Document {
     id: string;
     prefix: 'z!' | string
 }

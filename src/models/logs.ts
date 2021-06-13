@@ -16,7 +16,7 @@ interface logs {
     TYPE: string;
 }
 
-interface Logs extends mongoose.Document {
+export interface Logs extends mongoose.Document {
     id: string;
     logs: logs[]
 }

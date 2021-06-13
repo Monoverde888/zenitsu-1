@@ -9,7 +9,7 @@ const Guild = new Schema({
     }
 })
 
-interface Lang extends mongoose.Document {
+export interface Lang extends mongoose.Document {
     id: string;
     lang: 'es' | 'en'
 }

@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 const { Schema, model } = mongoose;
 
-interface Connect4 extends mongoose.Document {
+export interface Connect4 extends mongoose.Document {
     id: string;
     difficulty: string;
     perdidas: number;

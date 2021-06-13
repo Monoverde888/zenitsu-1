@@ -2,6 +2,7 @@ import * as  light from '@lil_marcrock22/eris-light';
 import run from '../../Utils/Interfaces/run.js';
 import Command from '../../Utils/Classes/command.js';
 import MessageEmbed from '../../Utils/Classes/Embed.js';
+import profile from '../../models/profile.js';
 
 export default class Comando extends Command {
 
@@ -40,8 +41,10 @@ export default class Comando extends Command {
 
                 }
 
-                return client.profile.set(message.author.id, 'color', newColor.toString(16)).then(() => {
+                return profile.findOneAndUpdate({ id: message.author.id }, { color: newColor.toString(16) }, { new: true, upsert: true }).then(async (d) => {
 
+                    await client.redis.set(message.author.id, JSON.stringify(d), 'profile_');
+                    
                     const embed = new MessageEmbed()
                         .setColor(newColor)
                         .setDescription(langjson.commands.editprofile.new_color)
@@ -63,7 +66,9 @@ export default class Comando extends Command {
 
                 }
 
-                return client.profile.set(message.author.id, 'description', value.join(' ')).then(() => {
+                return profile.findOneAndUpdate({ id: message.author.id }, { description: value.join(' ') }, { new: true, upsert: true }).then(async (d) => {
+
+                    await client.redis.set(message.author.id, JSON.stringify(d), 'profile_');
 
                     const embed = new MessageEmbed()
                         .setColor(client.color)

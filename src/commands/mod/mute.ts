@@ -3,6 +3,7 @@ import Command from '../../Utils/Classes/command.js';
 import * as light from '@lil_marcrock22/eris-light';
 import MessageEmbed from "../../Utils/Classes/Embed.js";
 import getHighest from '../../Utils/Functions/getHighest.js';
+import settings, { Settings as SETTINGS } from "../../models/settings.js";
 
 export default class Comando extends Command {
     constructor() {
@@ -16,7 +17,13 @@ export default class Comando extends Command {
 
     async run({ message, langjson, client, embedResponse, prefix }: run): Promise<light.Message> {
 
-        const data = await client.settings.cacheOrFetch(message.guildID);
+        const data: SETTINGS = await client.redis.get(message.guildID, 'settings_').then(x => typeof x == 'string' ? JSON.parse(x) : null) || await settings.findOne({ id: message.guildID }) || await settings.create({
+            id: message.guildID,
+            muterole: '1'
+        });
+
+        await client.redis.set(message.guildID, JSON.stringify(data), 'settings_');
+
         const ROLE_BOT = getHighest(message.guild.me);
         const role = message.guild.roles.get(data?.muterole);
 

@@ -5,6 +5,8 @@ import * as  eris from '@lil_marcrock22/eris-light';
 import FLAGS from '../../Utils/Const/FLAGS.js';
 import MessageEmbed from '../../Utils/Classes/Embed.js';
 import getHighest from '../../Utils/Functions/getHighest.js';
+import settingsMODEL, { Settings as SETTINGS } from '../../models/settings.js';
+
 
 class Comando extends Command {
 
@@ -18,13 +20,11 @@ class Comando extends Command {
         this.memberPermissions = { guild: ['manageGuild'], channel: [] }
     }
 
-    async run({ client, message, args, embedResponse, langjson }: command): Promise<eris.Message> {
+    async run({ client, message, args, embedResponse, langjson, prefix }: command): Promise<eris.Message> {
 
         const settings = langjson.commands.settings;
         const { muterole, cooldown: cooldownMessage } = settings;
-        const pre_prefix = await client.prefix.cacheOrFetch(message.guildID);
-        const prefix = pre_prefix.prefix;
-        const data = await client.settings.cacheOrFetch(message.guildID);
+        const data: SETTINGS = await client.redis.get(message.guildID, 'settings_').then(x => typeof x == 'string' ? JSON.parse(x) : null) || await settingsMODEL.findOne({ id: message.guildID }).lean() || await settingsMODEL.create({ id: message.guildID });
         const GUILDME = message.guild.me;
 
         if (cooldown.has(message.guildID))
@@ -52,7 +52,10 @@ class Comando extends Command {
                         const canales = message.guild.channels.filter(item => item.type == 0 || item.type == 4 || item.type == 5 || item.type == 2 || item.type == 13).filter(canal => filter(canal, role.id));
 
                         if (!canales.length) {
-                            if (data.muterole != role.id) await client.settings.set(message.guildID, 'muterole', role.id)
+                            if (data.muterole != role.id) {
+                                const temp = await settingsMODEL.findOneAndUpdate({ id: message.guildID }, { muterole: role.id }, { new: true }).lean();
+                                await client.redis.set(message.guildID, JSON.stringify(temp), 'settings_');
+                            }
                             return embedResponse(muterole.refresh.already, message.channel, client.color);
                         }
 
@@ -66,7 +69,8 @@ class Comando extends Command {
                         if (success) {
                             //Todo bien, todo correcto...
                             cooldown.delete(message.guildID);
-                            await client.settings.set(message.guildID, 'muterole', role.id)
+                            const temp = await settingsMODEL.findOneAndUpdate({ id: message.guildID }, { muterole: role.id }, { new: true }).lean();
+                            await client.redis.set(message.guildID, JSON.stringify(temp), 'settings_');
                             return embedResponse(muterole.init.success, message.channel, client.color);
                         }
                         else if (error) {
@@ -109,7 +113,8 @@ class Comando extends Command {
                         if (success) {
                             //Todo bien, todo correcto...
                             cooldown.delete(message.guildID);
-                            await client.settings.set(message.guildID, 'muterole', role.id)
+                            const temp = await settingsMODEL.findOneAndUpdate({ id: message.guildID }, { muterole: role.id }, { new: true }).lean();
+                            await client.redis.set(message.guildID, JSON.stringify(temp), 'settings_');
                             return embedResponse(muterole.refresh.success, message.channel, client.color);
                         }
                         else if (error) {
@@ -152,7 +157,9 @@ class Comando extends Command {
 
             case 'reset': {
 
-                await client.settings.delete(message.guildID);
+                await settingsMODEL.deleteOne({ id: message.guildID });
+                await client.redis.del(message.guildID, 'settings_');
+                
                 const embed = new MessageEmbed()
                     .setColor(client.color)
                     .setDescription(langjson.commands.settings.reset.message)

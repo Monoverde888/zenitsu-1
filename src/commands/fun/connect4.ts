@@ -9,6 +9,7 @@ import model from '../../models/c4top.js';
 import MessageEmbed from '../../Utils/Classes/Embed.js';
 import MODEL from '../../models/c4maps.js';
 import canvas from 'canvas';
+import profile, { Profile as PROFILE } from '../../models/profile.js';
 
 export default class Comando extends Command {
 
@@ -23,7 +24,7 @@ export default class Comando extends Command {
     async run({ client, message, args, langjson, embedResponse, prefix }: run): Promise<light.Message> {
 
         const ArrayOfArrayOfNumbers: [number, number, canvas.Image][] = [];
-        const DATAPROFILE = await client.profile.cacheOrFetch(message.author.id);
+        const DATAPROFILE: PROFILE = await client.redis.get(message.author.id, 'profile_').then(x => typeof x == 'string' ? JSON.parse(x) : null) || await profile.findOne({ id: message.author.id }) || await profile.create({ id: message.author.id });
 
         if (games.get(message.guild.id)) {
             const embed = new MessageEmbed()
@@ -265,17 +266,33 @@ export default class Comando extends Command {
 
                         if (args[0] == 'hard') {
 
-                            if ((data.ganadas >= 10) && !(DATAPROFILE.achievements.includes('c4level1')))
-                                await client.profile.add(message.author.id, 'achievements', 'c4level1')
+                            if ((data.ganadas >= 10) && !(DATAPROFILE.achievements.includes('c4level1'))) {
 
-                            if ((data.ganadas >= 25) && !(DATAPROFILE.achievements.includes('c4level2')))
-                                await client.profile.add(message.author.id, 'achievements', 'c4level2')
+                                const data = await profile.findOneAndUpdate({ id: message.author.id }, { $addToSet: { achievements: 'c4level1' } }, { new: true }).lean();
+                                await client.redis.set(message.author.id, JSON.stringify(data), 'profile_');
 
-                            if ((data.ganadas >= 50) && !(DATAPROFILE.achievements.includes('c4level3')))
-                                await client.profile.add(message.author.id, 'achievements', 'c4level3')
+                            }
+                            
+                            if ((data.ganadas >= 25) && !(DATAPROFILE.achievements.includes('c4level2'))) {
 
-                            if ((data.ganadas >= 100) && !(DATAPROFILE.achievements.includes('c4top')))
-                                await client.profile.add(message.author.id, 'achievements', 'c4top')
+                                const data = await profile.findOneAndUpdate({ id: message.author.id }, { $addToSet: { achievements: 'c4level2' } }, { new: true }).lean();
+                                await client.redis.set(message.author.id, JSON.stringify(data), 'profile_');
+
+                            }
+
+                            if ((data.ganadas >= 50) && !(DATAPROFILE.achievements.includes('c4level3'))) {
+
+                                const data = await profile.findOneAndUpdate({ id: message.author.id }, { $addToSet: { achievements: 'c4level3' } }, { new: true }).lean();
+                                await client.redis.set(message.author.id, JSON.stringify(data), 'profile_');
+
+                            }
+                            
+                            if ((data.ganadas >= 100) && !(DATAPROFILE.achievements.includes('c4top'))) {
+
+                                const data = await profile.findOneAndUpdate({ id: message.author.id }, { $addToSet: { achievements: 'c4top' } }, { new: true }).lean();
+                                await client.redis.set(message.author.id, JSON.stringify(data), 'profile_');
+
+                            }
 
                         }
 

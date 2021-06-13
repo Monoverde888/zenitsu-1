@@ -3,8 +3,10 @@ import command from '../../Utils/Interfaces/run.js'
 import * as  eris from '@lil_marcrock22/eris-light';
 import MessageEmbed from '../../Utils/Classes/Embed.js';
 const regex = /((http|https):\/\/)((www|canary|ptb)\.)?(discordapp|discord)\.com\/api\/webhooks\/([0-9]){7,19}\/[-a-zA-Z0-9@:%._+~#=]{60,120}/gmi
-import fetch from 'node-fetch';
-
+import nodefetch from 'node-fetch';
+import logs from '../../models/logs.js';
+import { Logs as LOGS } from '../../models/logs.js'
+    
 class Comando extends Command {
 
     constructor() {
@@ -39,18 +41,54 @@ class Comando extends Command {
 
         const [token, id] = match[0].split('/').reverse();
 
-        const webhook: eris.Webhook = await fetch(`https://canary.discord.com/api/webhooks/${id.trim()}/${token.trim()}`).then((data) => data.json()).catch(() => undefined);
+        const webhook: eris.Webhook = await nodefetch(`https://canary.discord.com/api/webhooks/${id.trim()}/${token.trim()}`).then((data) => data.json()).catch(() => undefined);
 
         if (!webhook || (webhook?.guild_id != message.guild.id)) return message.channel.createMessage({ embed: invalidUse });
 
-        return client.logs.update({
-            id: message.guild.id,
-            webhook: {
-                id,
-                token
-            },
-            TYPE: type
-        }).then(() => {
+        const pre_fetch = await client.redis.get(message.guildID, 'logs_') || await logs.findOne({ id: message.guildID }).lean() || await logs.create({ id: message.guildID, logs: [] }),
+            fetch: LOGS = typeof pre_fetch == 'string' ? JSON.parse(pre_fetch) : pre_fetch,
+            check = (fetch.logs.find(item => (item.TYPE == type)))
+
+        let data: LOGS;
+        
+        if (!check) {
+
+            data = await logs.findOneAndUpdate({ id: message.guildID },
+                {
+                    $addToSet: {
+                        logs: {
+                            TYPE: type,
+                            tokenWeb: token,
+                            idWeb: id
+                        },
+                    },
+                }, { new: true }).lean();
+            
+        }
+
+        else {
+            
+            await logs.findOneAndUpdate({ id: message.guildID }, {
+                $pull: {
+                    logs: check
+                }
+            }, { new: true }).lean()
+
+            data = await logs.findOneAndUpdate({ id: message.guildID },
+                {
+                    $addToSet: {
+                        logs: {
+                            TYPE: type,
+                            tokenWeb: token,
+                            idWeb: id
+                        },
+                    },
+                }, { new: true }).lean();
+
+        }
+
+        return client.redis.set(message.guildID, JSON.stringify(data), 'logs_')
+            .then(() => {
 
             const embed = new MessageEmbed()
                 .setAuthor(webhook.name, webhook.avatar

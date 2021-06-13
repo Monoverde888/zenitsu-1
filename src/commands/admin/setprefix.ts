@@ -1,7 +1,9 @@
 import Command from '../../Utils/Classes/command.js';
 import command from '../../Utils/Interfaces/run.js'
-import * as  light from '@lil_marcrock22/eris-light';
+import * as light from '@lil_marcrock22/eris-light';
 import MessageEmbed from '../../Utils/Classes/Embed.js';
+import prefix from '../../models/prefix.js';
+
 
 class Comando extends Command {
 
@@ -31,8 +33,10 @@ class Comando extends Command {
         if (args[0].length >= 4)
             return message.channel.createMessage({ embed: embedE })
 
-        return client.prefix.set(message.guild.id, args[0]).then(data => {
+        return prefix.findOneAndUpdate({ id: message.guildID }, {prefix: args[0]}, {new:true, upsert: true }).lean().then(async data => {
 
+            await client.redis.set(message.guildID, JSON.stringify(data), 'prefix_')
+            
             const embed = new MessageEmbed()
                 .setColor(client.color)
                 .setDescription(langjson.commands.setprefix.prefix_nice(message.author.username, data.prefix))
