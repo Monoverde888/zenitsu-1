@@ -22,15 +22,15 @@ export default class Comando extends Command {
 
         const bloque = client.imagenes.empty;
         const user = message.mentions.filter(user => !user.bot)[0] || message.author;
-        const data: PROFILE =  await client.redis.get(message.author.id, 'profile_').then(x => typeof x == 'string' ? JSON.parse(x) : null) || await profile.findOne({ id: message.author.id }) || await profile.create({
-            id: message.author.id,
+        const data: PROFILE =  await client.redis.get(user.id, 'profile_').then(x => typeof x == 'string' ? JSON.parse(x) : null) || await profile.findOne({ id: user.id }) || await profile.create({
+            id: user.id,
             flags: [],
             achievements: [],
             color: '000000',
             description: `\u200b`
         });
 
-        await client.redis.set(message.author.id, JSON.stringify(data), 'profile_');
+        await client.redis.set(user.id, JSON.stringify(data), 'profile_');
 
         const { flags, achievements } = data;
         const randomColor = Math.floor(Math.random() * (0xffffff + 1));
