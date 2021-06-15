@@ -1,5 +1,6 @@
 import inte from '../Interfaces/run.js';
 import * as Eris from '@lil_marcrock22/eris-light';
+import Zenitsu from './client.js';
 
 type permissions = 'createInstantInvite' |
     'kickMembers' |
@@ -59,6 +60,7 @@ class Command {
         guild: permissions[]
         channel: permissions[]
     }
+    client: Zenitsu;
 
     constructor() {
         this.dev = false;
@@ -79,6 +81,10 @@ class Command {
         return runthis;
     }
 
+    init(bot: Zenitsu) {
+        this.client = bot;
+    }
+
     cantRun(message: Eris.Message<Eris.TextChannel | Eris.TextableChannel>): { case: number; perms: permissions[] } {
 
         const channel = message.channel as Eris.TextChannel;
@@ -92,7 +98,7 @@ class Command {
         if (check_2.length) return { case: 2, perms: check_2 };
 
         const check_3 = this.botPermissions.guild.filter(perm => !((channel).guild.me.permissions.has(perm)));
-        
+
         if (check_3.length) return { case: 3, perms: check_3 };
 
         const check_4 = this.memberPermissions.guild.filter(perm => !(message.member.permissions.has(perm)));

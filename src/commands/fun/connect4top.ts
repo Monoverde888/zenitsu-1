@@ -12,16 +12,15 @@ export default class Comando extends Command {
         this.category = 'fun'
     }
 
-    async run({ args, client, message, langjson }: run): Promise<light.Message> {
+    async run({ args, message, langjson }: run): Promise<light.Message> {
 
-
-        const difficulty = ['easy', 'medium', 'hard'].includes(args[0]?.toLowerCase()) ? args[0]?.toLowerCase() : 'medium'
+        const difficulty = ['easy', 'medium', 'hard'].includes(args[0] ?.toLowerCase()) ? args[0] ?.toLowerCase() : 'medium'
 
         const data = await c4top.find({ difficulty }).sort({ ganadas: -1 }).limit(10);
 
         const embed = new MessageEmbed()
             .setDescription(langjson.commands.connect4top.no_data(difficulty))
-            .setColor(client.color)
+            .setColor(this.client.color)
 
         if (!data.length)
             return message.channel.createMessage({ embed })
@@ -37,7 +36,7 @@ export default class Comando extends Command {
         const embed2 = new MessageEmbed()
             .setFooter(difficulty)
             .setDescription(description)
-            .setColor(client.color);
+            .setColor(this.client.color);
 
         return message.channel.createMessage({ embed: embed2 })
 

@@ -75,7 +75,7 @@ function generateButtons(partida: tresenraya.partida, forceDisable = false, empa
 const partidas: Set<string> = new Set();
 
 async function jugar(firstp: light.Member, secondp: light.Member, client: Zenitsu, channel: light.TextableChannel, run: run) {
-    
+
     const { embedResponse, langjson } = run;
 
     if (partidas.has(firstp.guild.id))
@@ -139,10 +139,10 @@ async function jugar(firstp: light.Member, secondp: light.Member, client: Zenits
             pasaber = [...botones[0].components, ...botones[1].components, ...botones[2].components]
 
         let fila = 0;
-        
+
         for (const i in pasaber) {
             const numero = parseInt(i)
-            
+
             if (numero == 3)
                 fila = 1;
             else if (numero == 6)
@@ -151,9 +151,9 @@ async function jugar(firstp: light.Member, secondp: light.Member, client: Zenits
             const check = positions.some(item => item == numero);
             if (check)
                 (botones[fila].components[numero % 3] as Button).setStyle('success');
-        
+
         }
-        
+
         client.buttons.stop(code, 'NO');
         channel.createMessage({ embed, components: botones });
         users.delete(firstp.id);
@@ -192,7 +192,7 @@ async function jugar(firstp: light.Member, secondp: light.Member, client: Zenits
         });
 
         if (res) {
-            const temp = [res.member.id != firstp.id ? secondp : firstp, res.member.id == firstp.id  ? secondp : firstp]
+            const temp = [res.member.id != firstp.id ? secondp : firstp, res.member.id == firstp.id ? secondp : firstp]
             return jugar(temp[0], temp[1], client, channel, run);
         }
 
@@ -285,14 +285,14 @@ export default class Comando extends Command {
     }
     async run(RUN: run): Promise<light.Message | boolean> {
 
-        const { message, client, langjson, embedResponse } = RUN;
+        const { message, langjson, embedResponse } = RUN;
         const usuario = message.mentions[0];
-        const miembro = usuario?.member;
-        
-        if ((!miembro) || (miembro.id == message.author.id) || (usuario.bot && miembro.id != client.user.id))
-            return embedResponse(langjson.commands.tictactoe.game, message.channel, client.color);
+        const miembro = usuario ?.member;
 
-        return jugar(message.member, miembro, client, message.channel, RUN);
+        if ((!miembro) || (miembro.id == message.author.id) || (usuario.bot && miembro.id != this.client.user.id))
+            return embedResponse(langjson.commands.tictactoe.game, message.channel, this.client.color);
+
+        return jugar(message.member, miembro, this.client, message.channel, RUN);
 
     }
 }

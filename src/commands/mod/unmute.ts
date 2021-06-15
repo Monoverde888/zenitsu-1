@@ -15,31 +15,31 @@ export default class Comando extends Command {
         this.memberPermissions.guild = ['kickMembers'];
     }
 
-    async run({ message, langjson, client, embedResponse, prefix }: run): Promise<light.Message> {
-        
-        const data: SETTINGS = await client.redis.get(message.guildID, 'settings_').then(x => typeof x == 'string' ? JSON.parse(x) : null) || await settings.findOne({ id: message.guildID }) || await settings.create({
+    async run({ message, langjson, embedResponse, prefix }: run): Promise<light.Message> {
+
+        const data: SETTINGS = await this.client.redis.get(message.guildID, 'settings_').then(x => typeof x == 'string' ? JSON.parse(x) : null) || await settings.findOne({ id: message.guildID }) || await settings.create({
             id: message.guildID,
             muterole: '1'
         });
 
-        await client.redis.set(message.guildID, JSON.stringify(data), 'settings_');
+        await this.client.redis.set(message.guildID, JSON.stringify(data), 'settings_');
 
         const ROLE_BOT = getHighest(message.guild.me);
-        const role = message.guild.roles.get(data?.muterole);
+        const role = message.guild.roles.get(data ?.muterole);
 
         if (!role)
-            return embedResponse(langjson.commands.unmute.no_role(prefix), message.channel, client.color);
+            return embedResponse(langjson.commands.unmute.no_role(prefix), message.channel, this.client.color);
 
         if (role.position >= ROLE_BOT.position)
-            return embedResponse(langjson.commands.unmute.cant_role(role.mentionable ? role.name : role.mention), message.channel, client.color)
+            return embedResponse(langjson.commands.unmute.cant_role(role.mentionable ? role.name : role.mention), message.channel, this.client.color)
 
         const user = message.mentions.filter(user => user.id != message.author.id)[0];
-        const member = user?.member;
+        const member = user ?.member;
 
-        if (!member) return embedResponse(langjson.commands.unmute.mention, message.channel, client.color);
-        if (!member.roles.includes(role.id)) return embedResponse(langjson.commands.unmute.already_unmuted(client.unMarkdown(user.username)), message.channel, client.color);
+        if (!member) return embedResponse(langjson.commands.unmute.mention, message.channel, this.client.color);
+        if (!member.roles.includes(role.id)) return embedResponse(langjson.commands.unmute.already_unmuted(this.client.unMarkdown(user.username)), message.channel, this.client.color);
         if (message.author.id != message.guild.ownerID) {
-            if (getHighest(message.member).position <= getHighest(member).position) return embedResponse(langjson.commands.unmute.user_cannt_unmute(`**${client.unMarkdown(user.username)}**`), message.channel, client.color)
+            if (getHighest(message.member).position <= getHighest(member).position) return embedResponse(langjson.commands.unmute.user_cannt_unmute(`**${this.client.unMarkdown(user.username)}**`), message.channel, this.client.color)
         }
 
         return member.removeRole(role.id)
@@ -47,7 +47,7 @@ export default class Comando extends Command {
 
                 const embed = new MessageEmbed()
                     .setColor(0x2ecc71)
-                    .setDescription(langjson.commands.unmute.unmute(client.unMarkdown(user.username)))
+                    .setDescription(langjson.commands.unmute.unmute(this.client.unMarkdown(user.username)))
                     .setFooter(message.author.username, message.author.dynamicAvatarURL())
 
                 return message.channel.createMessage({ embed })
@@ -57,7 +57,7 @@ export default class Comando extends Command {
 
                 const embed = new MessageEmbed()
                     .setColor(0xff0000)
-                    .setDescription(`Error: ${error?.message || error?.toString() || error}`)
+                    .setDescription(`Error: ${error ?.message || error ?.toString() || error}`)
                     .setFooter(message.author.username, message.author.dynamicAvatarURL())
 
                 return message.channel.createMessage({ embed })

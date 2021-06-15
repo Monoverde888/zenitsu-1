@@ -18,11 +18,11 @@ export default class Comando extends Command {
         this.cooldown = 10;
     }
 
-    async run({ message, client, langjson }: run): Promise<light.Message> {
+    async run({ message, langjson }: run): Promise<light.Message> {
 
-        const bloque = client.imagenes.empty;
+        const bloque = this.client.imagenes.empty;
         const user = message.mentions.filter(user => !user.bot)[0] || message.author;
-        const data: PROFILE =  await client.redis.get(user.id, 'profile_').then(x => typeof x == 'string' ? JSON.parse(x) : null) || await profile.findOne({ id: user.id }) || await profile.create({
+        const data: PROFILE = await this.client.redis.get(user.id, 'profile_').then(x => typeof x == 'string' ? JSON.parse(x) : null) || await profile.findOne({ id: user.id }) || await profile.create({
             id: user.id,
             flags: [],
             achievements: [],
@@ -30,7 +30,7 @@ export default class Comando extends Command {
             description: `\u200b`
         });
 
-        await client.redis.set(user.id, JSON.stringify(data), 'profile_');
+        await this.client.redis.set(user.id, JSON.stringify(data), 'profile_');
 
         const { flags, achievements } = data;
         const randomColor = Math.floor(Math.random() * (0xffffff + 1));
@@ -96,10 +96,10 @@ export default class Comando extends Command {
                 o = 0;
             }
             if (!o) {
-                ctx.drawImage(client.achievements[i as namesXD], 380, 200 + y, 100, 100);
+                ctx.drawImage(this.client.achievements[i as namesXD], 380, 200 + y, 100, 100);
             }
             else {
-                ctx.drawImage(client.achievements[i as namesXD], ((o) + 380), 200 + y, 100, 100);
+                ctx.drawImage(this.client.achievements[i as namesXD], ((o) + 380), 200 + y, 100, 100);
             }
             o += wochi;
         }
@@ -131,10 +131,10 @@ export default class Comando extends Command {
                 o = 0;
             }
             if (!o) {
-                ctx.drawImage(client.flags[i as names], 200, 700 + y, 100, 100);
+                ctx.drawImage(this.client.flags[i as names], 200, 700 + y, 100, 100);
             }
             else {
-                ctx.drawImage(client.flags[i as names], ((o) + 200), 700 + y, 100, 100);
+                ctx.drawImage(this.client.flags[i as names], ((o) + 200), 700 + y, 100, 100);
             }
             o += wochi;
         }

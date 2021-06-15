@@ -12,14 +12,14 @@ export default class Comando extends Command {
         this.category = 'fun';
     }
 
-    async run({ message, client, langjson, args, prefix }: run): Promise<light.Message> {
+    async run({ message, langjson, args, prefix }: run): Promise<light.Message> {
 
         const [what, ...value] = args
 
         if (!what) {
 
             const embed = new MessageEmbed()
-                .setColor(client.color)
+                .setColor(this.client.color)
                 .setDescription(langjson.commands.editprofile.bad_usage(prefix))
             return message.channel.createMessage({ embed });
 
@@ -36,15 +36,15 @@ export default class Comando extends Command {
                     const embed = new MessageEmbed()
                         .setImage(`https://cdn.discordapp.com/attachments/842090973311270914/843166076673327134/G64ZYWcv.gif`)
                         .setDescription(langjson.commands.editprofile.invalid)
-                        .setColor(client.color);
+                        .setColor(this.client.color);
                     return message.channel.createMessage({ embed });
 
                 }
 
                 return profile.findOneAndUpdate({ id: message.author.id }, { color: newColor.toString(16) }, { new: true, upsert: true }).then(async (d) => {
 
-                    await client.redis.set(message.author.id, JSON.stringify(d), 'profile_');
-                    
+                    await this.client.redis.set(message.author.id, JSON.stringify(d), 'profile_');
+
                     const embed = new MessageEmbed()
                         .setColor(newColor)
                         .setDescription(langjson.commands.editprofile.new_color)
@@ -53,7 +53,6 @@ export default class Comando extends Command {
                 });
 
             }
-                break;
 
             case 'description': {
 
@@ -61,29 +60,28 @@ export default class Comando extends Command {
 
                     const embed = new MessageEmbed()
                         .setDescription(langjson.commands.editprofile.description_invalid(prefix))
-                        .setColor(client.color);
+                        .setColor(this.client.color);
                     return message.channel.createMessage({ embed });
 
                 }
 
                 return profile.findOneAndUpdate({ id: message.author.id }, { description: value.join(' ') }, { new: true, upsert: true }).then(async (d) => {
 
-                    await client.redis.set(message.author.id, JSON.stringify(d), 'profile_');
+                    await this.client.redis.set(message.author.id, JSON.stringify(d), 'profile_');
 
                     const embed = new MessageEmbed()
-                        .setColor(client.color)
+                        .setColor(this.client.color)
                         .setDescription(langjson.commands.editprofile.description_nice(prefix));
                     return message.channel.createMessage({ embed });
 
                 });
 
             }
-                break;
 
             default: {
 
                 const embed = new MessageEmbed()
-                    .setColor(client.color)
+                    .setColor(this.client.color)
                     .setDescription(langjson.commands.editprofile.bad_usage(prefix))
                 return message.channel.createMessage({ embed });
 

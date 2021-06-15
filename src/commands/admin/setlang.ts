@@ -14,8 +14,8 @@ class Comando extends Command {
         this.memberPermissions = { guild: ['manageGuild'], channel: [] }
     }
 
-    async run({ client, message, args, langjson, prefix }: command): Promise<light.Message> {
-        
+    async run({ message, args, langjson, prefix }: command): Promise<light.Message> {
+
         const selectLang = args[0] ? args[0].toLowerCase() : null;
 
         switch (selectLang) {
@@ -24,38 +24,38 @@ class Comando extends Command {
 
                 const data = await lang.findOneAndUpdate({ id: message.guild.id }, { lang: 'es' }, { new: true, upsert: true }).lean();
 
-                await client.redis.set(message.guildID, JSON.stringify(data), 'lang_');
+                await this.client.redis.set(message.guildID, JSON.stringify(data), 'lang_');
 
                 return message.channel.createMessage({
                     embed:
                         new MessageEmbed()
-                            .setColor(client.color)
+                            .setColor(this.client.color)
                             .setDescription(`🇪🇸 | Establecido al español :D.`)
                             .setAuthor(message.author.username, message.author.dynamicAvatarURL())
                 });
             }
-                
+
             case 'en': {
-                
+
                 const data = await lang.findOneAndUpdate({ id: message.guild.id }, { lang: 'en' }, { new: true, upsert: true }).lean();
 
-                await client.redis.set(message.guildID, JSON.stringify(data), 'lang_');
-                
+                await this.client.redis.set(message.guildID, JSON.stringify(data), 'lang_');
+
                 return message.channel.createMessage({
                     embed:
                         new MessageEmbed()
-                            .setColor(client.color)
+                            .setColor(this.client.color)
                             .setDescription(`🇺🇸 | Established in English.`)
                             .setAuthor(message.author.username, message.author.dynamicAvatarURL())
                 });
 
             }
-                
+
             default:
                 return message.channel.createMessage({
                     embed:
                         new MessageEmbed()
-                            .setColor(client.color)
+                            .setColor(this.client.color)
                             .setDescription(langjson.commands.setlang.invalid)
                             .setAuthor(`${prefix}setlang (es|en)`)
                 });

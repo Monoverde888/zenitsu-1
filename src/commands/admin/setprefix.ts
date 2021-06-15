@@ -15,10 +15,10 @@ class Comando extends Command {
         this.memberPermissions = { guild: ['manageGuild'], channel: [] }
     }
 
-    run({ client, message, args, langjson }: command): Promise<light.Message> {
+    async run({ message, args, langjson }: command): Promise<light.Message> {
 
         const embedErr = new MessageEmbed()
-            .setColor(client.color)
+            .setColor(this.client.color)
             .setDescription(langjson.commands.setprefix.no_prefix)
             .setTimestamp()
 
@@ -26,19 +26,19 @@ class Comando extends Command {
             return message.channel.createMessage({ embed: embedErr })
 
         const embedE = new MessageEmbed()
-            .setColor(client.color)
+            .setColor(this.client.color)
             .setDescription(langjson.commands.setprefix.prefix_length)
             .setTimestamp()
 
         if (args[0].length >= 4)
             return message.channel.createMessage({ embed: embedE })
 
-        return prefix.findOneAndUpdate({ id: message.guildID }, {prefix: args[0]}, {new:true, upsert: true }).lean().then(async data => {
+        return prefix.findOneAndUpdate({ id: message.guildID }, { prefix: args[0] }, { new: true, upsert: true }).lean().then(async data => {
 
-            await client.redis.set(message.guildID, JSON.stringify(data), 'prefix_')
-            
+            await this.client.redis.set(message.guildID, JSON.stringify(data), 'prefix_')
+
             const embed = new MessageEmbed()
-                .setColor(client.color)
+                .setColor(this.client.color)
                 .setDescription(langjson.commands.setprefix.prefix_nice(message.author.username, data.prefix))
                 .setTimestamp()
             return message.channel.createMessage({ embed: embed })
@@ -46,7 +46,7 @@ class Comando extends Command {
         }).catch(err => {
 
             const embed = new MessageEmbed()
-                .setColor(client.color)
+                .setColor(this.client.color)
                 .setDescription(langjson.commands.setprefix.prefix_error)
                 .setTimestamp()
                 .setFooter(err.message || err)

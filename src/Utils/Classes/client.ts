@@ -155,7 +155,7 @@ class Zenitsu extends eris.Client {
 
                         continue;
                     }
-
+                    instance.init(this);
                     this.commands.set(instance.name, instance);
                 } catch (e) {
                     console.log(e, file);

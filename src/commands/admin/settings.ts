@@ -20,15 +20,15 @@ class Comando extends Command {
         this.memberPermissions = { guild: ['manageGuild'], channel: [] }
     }
 
-    async run({ client, message, args, embedResponse, langjson, prefix }: command): Promise<eris.Message> {
+    async run({ message, args, embedResponse, langjson, prefix }: command): Promise<eris.Message> {
 
         const settings = langjson.commands.settings;
         const { muterole, cooldown: cooldownMessage } = settings;
-        const data: SETTINGS = await client.redis.get(message.guildID, 'settings_').then(x => typeof x == 'string' ? JSON.parse(x) : null) || await settingsMODEL.findOne({ id: message.guildID }).lean() || await settingsMODEL.create({ id: message.guildID });
+        const data: SETTINGS = await this.client.redis.get(message.guildID, 'settings_').then(x => typeof x == 'string' ? JSON.parse(x) : null) || await settingsMODEL.findOne({ id: message.guildID }).lean() || await settingsMODEL.create({ id: message.guildID });
         const GUILDME = message.guild.me;
 
         if (cooldown.has(message.guildID))
-            return embedResponse(cooldownMessage, message.channel, client.color);
+            return embedResponse(cooldownMessage, message.channel, this.client.color);
 
         switch (args[0]) {
 
@@ -39,14 +39,14 @@ class Comando extends Command {
                     case 'init': {
 
                         if (message.guild.roles.get(data.muterole)) return embedResponse(
-                            muterole.init.use_refresh(prefix), message.channel, client.color
+                            muterole.init.use_refresh(prefix), message.channel, this.client.color
                         );
 
                         const role = message.guild.roles.get(args[2]) || message.guild.roles.find(item => item.name == args.slice(2).join(' ')) || message.guild.roles.get(message.roleMentions[0]);
 
                         if (!role)
                             return embedResponse(
-                                muterole.refresh.use_init(prefix), message.channel, client.color
+                                muterole.refresh.use_init(prefix), message.channel, this.client.color
                             );
 
                         const canales = message.guild.channels.filter(item => item.type == 0 || item.type == 4 || item.type == 5 || item.type == 2 || item.type == 13).filter(canal => filter(canal, role.id));
@@ -54,15 +54,15 @@ class Comando extends Command {
                         if (!canales.length) {
                             if (data.muterole != role.id) {
                                 const temp = await settingsMODEL.findOneAndUpdate({ id: message.guildID }, { muterole: role.id }, { new: true }).lean();
-                                await client.redis.set(message.guildID, JSON.stringify(temp), 'settings_');
+                                await this.client.redis.set(message.guildID, JSON.stringify(temp), 'settings_');
                             }
-                            return embedResponse(muterole.refresh.already, message.channel, client.color);
+                            return embedResponse(muterole.refresh.already, message.channel, this.client.color);
                         }
 
                         if ((getHighest(GUILDME).position < role.position) || role.managed)
-                            return embedResponse(muterole.init.cannt_edit(role.mention), message.channel, client.color);
+                            return embedResponse(muterole.init.cannt_edit(role.mention), message.channel, this.client.color);
 
-                        await embedResponse(muterole.init.editando, message.channel, client.color);
+                        await embedResponse(muterole.init.editando, message.channel, this.client.color);
                         cooldown.add(message.guildID);
                         const { success, error } = await Edit({ canales, id: role.id, message })
 
@@ -70,43 +70,42 @@ class Comando extends Command {
                             //Todo bien, todo correcto...
                             cooldown.delete(message.guildID);
                             const temp = await settingsMODEL.findOneAndUpdate({ id: message.guildID }, { muterole: role.id }, { new: true }).lean();
-                            await client.redis.set(message.guildID, JSON.stringify(temp), 'settings_');
-                            return embedResponse(muterole.init.success, message.channel, client.color);
+                            await this.client.redis.set(message.guildID, JSON.stringify(temp), 'settings_');
+                            return embedResponse(muterole.init.success, message.channel, this.client.color);
                         }
                         else if (error) {
                             //Error al editar un canal...
                             cooldown.delete(message.guildID);
-                            return embedResponse(`Error: ${error.name || error?.toString() || error}`, message.channel, client.color);
+                            return embedResponse(`Error: ${error.name || error ?.toString() || error}`, message.channel, this.client.color);
                         }
                         else {
                             //El usuario le quito permisos al bot...
                             cooldown.delete(message.guildID);
-                            return embedResponse(muterole.init.else, message.channel, client.color);
+                            return embedResponse(muterole.init.else, message.channel, this.client.color);
                         }
                     }
-                        break;
 
                     case 'refresh': {
 
                         const role = message.guild.roles.get(data.muterole);
 
                         if (!role) return embedResponse(
-                            muterole.refresh.use_init(prefix), message.channel, client.color
+                            muterole.refresh.use_init(prefix), message.channel, this.client.color
                         );
 
                         if ((getHighest(GUILDME).position < role.position) || role.managed) {
                             cooldown.delete(message.guildID);
-                            return embedResponse(muterole.refresh.cannt_edit(role.mention), message.channel, client.color);
-                        }//ya(role: string)
+                            return embedResponse(muterole.refresh.cannt_edit(role.mention), message.channel, this.client.color);
+                        };
 
                         const canales = message.guild.channels.filter(item => filter(item, role.id))
 
                         if (!canales.length)
-                            return embedResponse(muterole.refresh.already, message.channel, client.color);
+                            return embedResponse(muterole.refresh.already, message.channel, this.client.color);
 
                         cooldown.add(message.guildID);
 
-                        await embedResponse(muterole.refresh.editando, message.channel, client.color);
+                        await embedResponse(muterole.refresh.editando, message.channel, this.client.color);
 
                         const { success, error } = await Edit({ canales, message, id: role.id })
 
@@ -114,21 +113,21 @@ class Comando extends Command {
                             //Todo bien, todo correcto...
                             cooldown.delete(message.guildID);
                             const temp = await settingsMODEL.findOneAndUpdate({ id: message.guildID }, { muterole: role.id }, { new: true }).lean();
-                            await client.redis.set(message.guildID, JSON.stringify(temp), 'settings_');
-                            return embedResponse(muterole.refresh.success, message.channel, client.color);
+                            await this.client.redis.set(message.guildID, JSON.stringify(temp), 'settings_');
+                            return embedResponse(muterole.refresh.success, message.channel, this.client.color);
                         }
                         else if (error) {
                             //Error al editar un canal...
                             cooldown.delete(message.guildID);
-                            return embedResponse(`Error: ${error.name || error?.toString() || error}`, message.channel, client.color);
+                            return embedResponse(`Error: ${error.name || error ?.toString() || error}`, message.channel, this.client.color);
                         }
                         else {
                             //El usuario le quito permisos al bot...
                             cooldown.delete(message.guildID);
-                            return embedResponse(muterole.refresh.else, message.channel, client.color);
+                            return embedResponse(muterole.refresh.else, message.channel, this.client.color);
                         }
                     }
-                        break;
+
                     default: {
                         return embedResponse(
                             `
@@ -137,38 +136,34 @@ class Comando extends Command {
                             ${prefix}settings muterole init [role]
                             ${prefix}settings muterole refresh
                             ${prefix}settings reset
-                            `, message.channel, client.color
+                            `, message.channel, this.client.color
                         )
                     }
-                        break;
                 }
             }
-                break;
 
             case 'view': {
                 const rol = message.guild.roles.get(data.muterole);
                 const embed = new MessageEmbed()
-                    .setColor(client.color)
+                    .setColor(this.client.color)
                     .addField('Muterole', rol ? `${rol.mention}  \`[${rol.id}]\`` : '❌')
                     .setTimestamp();
                 return message.channel.createMessage({ embed });
             }
-                break;
 
             case 'reset': {
 
                 await settingsMODEL.deleteOne({ id: message.guildID });
-                await client.redis.del(message.guildID, 'settings_');
-                
+                await this.client.redis.del(message.guildID, 'settings_');
+
                 const embed = new MessageEmbed()
-                    .setColor(client.color)
+                    .setColor(this.client.color)
                     .setDescription(langjson.commands.settings.reset.message)
                     .setTimestamp();
                 return message.channel.createMessage({ embed });
 
 
             }
-                break;
 
             default: {
 
@@ -179,11 +174,10 @@ class Comando extends Command {
                     ${prefix}settings muterole init [role]
                     ${prefix}settings muterole refresh
                     ${prefix}settings reset
-                    `, message.channel, client.color
+                    `, message.channel, this.client.color
                 )
 
             }
-                break;
         }
     }
 }

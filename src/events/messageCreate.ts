@@ -99,7 +99,7 @@ async function on(client: Zenitsu, message: Eris.Message): Promise<void | Eris.M
 
                     try {
                         antiabuzzz.add([message.author.id, message.createdAt]);
-                        await comando.run({ message, args, embedResponse, client, lang, langjson: json, prefix })
+                        await comando.run({ message, args, embedResponse, lang, langjson: json, prefix })
                     }
 
                     catch (e) {

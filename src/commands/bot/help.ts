@@ -14,18 +14,18 @@ class Comando extends Command {
         this.category = 'bot'
 
     }
-    run({ client, message, langjson }: command): Promise<light.Message> {
+    run({ message, langjson }: command): Promise<light.Message> {
 
         const categories: string[] = langjson.commands.help.categories;
 
         const embedHelp = new MessageEmbed()
-            .setColor(client.color)
+            .setColor(this.client.color)
             .setTimestamp()
-            .addField(categories[0], client.commands.filter(a => a.category === 'utils').map(a => `\`${a.name}\``).join(', '))
-            .addField(categories[1], client.commands.filter(a => a.category === 'fun').map(a => `\`${a.name}\``).join(', '))
-            .addField(categories[2], client.commands.filter(a => a.category === 'mod').map(a => `\`${a.name}\``).join(', '))
-            .addField(categories[3], client.commands.filter(a => a.category === 'bot').map(a => `\`${a.name}\``).join(', '))
-            .addField(categories[4], client.commands.filter(a => a.category === 'admin').map(a => `\`${a.name}\``).join(', '));
+            .addField(categories[0], this.client.commands.filter(a => a.category === 'utils').map(a => `\`${a.name}\``).join(', '))
+            .addField(categories[1], this.client.commands.filter(a => a.category === 'fun').map(a => `\`${a.name}\``).join(', '))
+            .addField(categories[2], this.client.commands.filter(a => a.category === 'mod').map(a => `\`${a.name}\``).join(', '))
+            .addField(categories[3], this.client.commands.filter(a => a.category === 'bot').map(a => `\`${a.name}\``).join(', '))
+            .addField(categories[4], this.client.commands.filter(a => a.category === 'admin').map(a => `\`${a.name}\``).join(', '));
 
         if (message.guild.me.permissions.has('attachFiles'))
             embedHelp.setImage(`attachment://topgg.png`);
@@ -44,7 +44,7 @@ class Comando extends Command {
 
         return message.channel.createMessage({
             embed: embedHelp, components: [componente]
-        }, message.guild.me.permissions.has('attachFiles') ? [{ file: client.fileTOPGG, name: 'topgg.png' }] : undefined);
+        }, message.guild.me.permissions.has('attachFiles') ? [{ file: this.client.fileTOPGG, name: 'topgg.png' }] : undefined);
 
     }
 }

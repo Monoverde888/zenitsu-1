@@ -11,7 +11,7 @@ export default class Comando extends Command {
         this.alias = [`conecta4stats`, 'fourinrowstats', '4enlineastats', 'c4stats']
         this.category = 'fun'
     }
-    async run({ message, client, langjson }: run): Promise<light.Message> {
+    async run({ message, langjson }: run): Promise<light.Message> {
 
         const member = message.mentions[0] || message.author
 
@@ -20,7 +20,7 @@ export default class Comando extends Command {
         if (!data || !data.length) {
             const embed = new MessageEmbed()
                 .setDescription(langjson.commands.connect4stats.no_data(member.mention))
-                .setColor(client.color)
+                .setColor(this.client.color)
             return message.channel.createMessage({ embed });
         }
 
@@ -33,7 +33,7 @@ export default class Comando extends Command {
             states: string[] = json.states
 
         const embed = new MessageEmbed()
-            .setColor(client.color)
+            .setColor(this.client.color)
             .setAuthor(member.username, member.dynamicAvatarURL())
         if (easy) embed.addField(difi[0], `${states[0]}: ${easy.ganadas} ${states[1]}: ${easy.perdidas} ${states[2]}: ${easy.empates}`)
         if (medium) embed.addField(difi[1], `${states[0]}: ${medium.ganadas} ${states[1]}: ${medium.perdidas} ${states[2]}: ${medium.empates}`)

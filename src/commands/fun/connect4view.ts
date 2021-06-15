@@ -14,11 +14,11 @@ export default class Comando extends Command {
         this.cooldown = 20;
     }
 
-    async run({ args, message, client, langjson }: run): Promise<eris.Message> {
+    async run({ args, message, langjson }: run): Promise<eris.Message> {
 
         const _id = args[0];
         const embed = new MessageEmbed()
-            .setColor(client.color)
+            .setColor(this.client.color)
             .setImage('https://i.imgur.com/qcek7Ll.gif')
             .setDescription(langjson.commands.connect4view.invalid);
 

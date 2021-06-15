@@ -10,22 +10,22 @@ class Comando extends Command {
 
     constructor() {
         super();
-        this.name = 'asynceval';
+        this.name = 'eval';
         this.category = 'developer';
-        this.alias = ['ae'];
+        this.alias = ['e'];
         this.dev = true;
     }
 
-    async run({ client, message, args }: command): Promise<eris.Message> {
+    async run({ message, args }: command): Promise<eris.Message> {
 
         try {
             const code = args.join(" ");
             const res_evalued = await eval(`(async() => { ${code} })()`);
             const TYPE = typeof (res_evalued)
             let evalued = inspect(res_evalued, { depth: 0 });
-            evalued = replace(evalued, client.private)
+            evalued = replace(evalued, this.client.private)
             const embed = new MessageEmbed()
-                .setColor(client.color)
+                .setColor(this.client.color)
                 .setDescription('```js\n' + evalued.slice(0, 2000) + '\n```')
                 .setTimestamp()
                 .setFooter(message.author.username, message.author.dynamicAvatarURL())

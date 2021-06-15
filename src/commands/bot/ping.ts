@@ -12,7 +12,7 @@ class Comando extends Command {
         this.category = 'bot';
     }
 
-    async run({ client, message }: command): Promise<eris.Message> {
+    async run({ message }: command): Promise<eris.Message> {
 
         const date: number = Date.now();
         const ping_db: number = await new Promise((r, j) => {
@@ -21,7 +21,7 @@ class Comando extends Command {
         const embed = new MessageEmbed()
             .setDescription(`🏓 Bot: ${message.guild.shard.latency}ms [${getStatus(message.guild.shard.latency)}]\n🏃 Message: ${date - message.createdAt}ms [${getStatus(date - message.createdAt)}]\n🗃️ DB: ${ping_db}ms [${getStatus(ping_db)}]`)
             .setTimestamp()
-            .setColor(client.color);
+            .setColor(this.client.color);
 
         return message.channel.createMessage({ embed });
 
