@@ -21,7 +21,7 @@ export default class Comando extends Command {
             .setColor(client.color)
             .setImage('https://i.imgur.com/qcek7Ll.gif')
             .setDescription(langjson.commands.connect4view.invalid);
-        
+
         if (!_id) return message.channel.createMessage({ embed });
 
         const data = await MODEL.findById(_id).catch(() => {
@@ -29,14 +29,25 @@ export default class Comando extends Command {
         });
 
         if (!data) return message.channel.createMessage({ embed });
-      
-        const files = [{
-            file: await fetch(`${process.env.APICONNECTFOUR}/${encodeURIComponent(JSON.stringify(data.maps))}`,
-                { headers: { 'authorization': process.env.APIKEY } }
-            ).then(x => x.buffer()), name: 'ggez.gif'
-        }];
-                
-        return message.channel.createMessage(undefined, files);
+
+        try {
+
+            const response = await fetch(`${process.env.APICONNECTFOUR}/${encodeURIComponent(JSON.stringify(data.maps))}`, {
+                headers:
+                    { 'authorization': process.env.APIKEY }
+            });
+
+            const buffer = await response.buffer();
+
+            return message.channel.createMessage(undefined, [{ file: buffer, name: 'ggez.gif' }]);
+
+        }
+
+        catch (e) {
+
+            return message.channel.createMessage('Error...');
+
+        }
 
     }
 }
