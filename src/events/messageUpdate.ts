@@ -4,7 +4,7 @@ import Zenitsu from '../Utils/Classes/client.js';
 import MessageEmbed from '../Utils/Classes/Embed.js';
 import logs, { Logs as LOGS } from '../models/logs.js';
 
-async function on(client: Zenitsu, newMessage: light.Message, oldMessage: light.Message): Promise<light.Message> {
+async function on(client: Zenitsu, newMessage: light.Message, oldMessage: light.OldMessage): Promise<light.Message> {
 
     if (!oldMessage || !newMessage) return;
 
