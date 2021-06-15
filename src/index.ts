@@ -64,17 +64,16 @@ const client = new Zenitsu(process.env.DISCORD_TOKEN, {
 
 client.connect();
 process.on("unhandledRejection", (e: Error) => {
-    console.log(e)
+    console.log(e);
     new eris.Client(null)
         .executeWebhook(process.env.WEBHOOKID, process.env.WEBHOOKTOKEN, {
             wait: true,
-            embeds: [{ description: '```js\n' + (e.stack || e.message || (e)?.toString()).slice(0, 1900) + '```' }]
+            embeds: [{ description: '```js\n' + (e.stack || e.message || `${e}`).slice(0, 1900) + '```' }]
         });
 });
 
 /*
 import * as sharder from '@lil_marcrock22/eris-sharder';
-import eris from '@lil_marcrock22/eris-light';
 const { Base } = sharder;
 class Sharder extends Base {
 

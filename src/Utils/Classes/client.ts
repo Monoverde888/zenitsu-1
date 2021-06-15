@@ -193,8 +193,8 @@ class Zenitsu extends eris.Client {
 
             try {
 
-                this[(event.split('.')[0] != 'ready') ? 'on' : 'once'](event.split('.')[0], a.bind(null, this));
-               
+                this[a.name as 'on' | 'once'](event.split('.')[0], a.bind(null, this));
+
             }
             catch (e) {
                 console.log(event, e.message || e);

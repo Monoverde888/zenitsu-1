@@ -4,11 +4,11 @@ import model from '../models/logs.js'
 import MessageEmbed from '../Utils/Classes/Embed.js';
 import logs, { Logs as LOGS } from '../models/logs.js';
 
-async function event(client: Zenitsu, message: light.Message): Promise<light.Message> {
+async function on(client: Zenitsu, message: light.Message): Promise<light.Message> {
 
-    if (!message) return;
+    if (!message || !message.id) return;
 
-    const check = client.buttons.listenersXD.find(item => item?.messageID == message?.id);
+    const check = client.buttons.listenersXD.find(item => item.messageID == message.id);
 
     if (check)
         client.buttons.stop(check, 'DELETED');
@@ -54,4 +54,4 @@ async function event(client: Zenitsu, message: light.Message): Promise<light.Mes
         });
 }
 
-export default event;
+export default on;

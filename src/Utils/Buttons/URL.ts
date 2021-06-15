@@ -25,7 +25,7 @@ class URLButton {
         return this;
     }
 
-    setEmoji(emoji: { name: string, id: string }): URLButton {
+    setEmoji(emoji: { name: string, id: string | undefined }): URLButton {
         this.emoji = emoji;
         return this;
     }

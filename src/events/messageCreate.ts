@@ -17,17 +17,17 @@ function check(items: number[]): boolean {
     return filter.length > 8;
 }
 
-async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eris.Message> {
+async function on(client: Zenitsu, message: Eris.Message): Promise<void | Eris.Message> {
 
-    if (abusadores.has(message?.author?.id))
-        return;
-
-    if (!message.guild || !message.author || !message.member || message.author.bot) return;
+    if (!message || !message.guild || !message.author || !message.member || message.author.bot) return;
 
     if (!(message.channel instanceof Eris.TextChannel) && !(message.channel instanceof Eris.NewsChannel))
         return;
 
     if (!['sendMessages', 'embedLinks'].every((perm: 'sendMessages' | 'embedLinks') => (message.channel as Eris.TextChannel).permissionsOf(message.guild.me).has(perm)))
+        return;
+
+    if (abusadores.has(message.author.id))
         return;
 
     const requestLang: LANG = await client.redis.get(message.guildID, 'lang_').then(x => typeof x == 'string' ? JSON.parse(x) : null) || await langModel.findOne({ id: message.guildID }).lean() || await langModel.create({ id: message.guildID, lang: 'en' });
@@ -36,7 +36,7 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
     const json = lenguajes[lang];
 
     //antiabuzz
-    const topush = client.listener.listen(message).filter(item => item?.author?.id == message.author.id);
+    const topush = client.listener.listen(message).filter(item => item.author.id == message.author.id);
 
     for (const { createdAt } of topush) antiabuzzz.add([message.author.id, createdAt]);
 
@@ -49,7 +49,7 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
         return message.channel.createMessage(json.messages.abuz);
     }
     //antiabuzz
-    
+
     const requestPrefix: PREFIX = await client.redis.get(message.guildID, 'prefix_').then(x => typeof x == 'string' ? JSON.parse(x) : null) || await prefixModel.findOne({ id: message.guildID }).lean() || await prefixModel.create({ id: message.guildID, prefix: 'z!' });
     await client.redis.set(message.guildID, JSON.stringify(requestPrefix), 'prefix_');
     const prefix = requestPrefix.prefix;
@@ -96,34 +96,34 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
 
             case 5:
                 {
-                    
-                try {
-                    antiabuzzz.add([message.author.id, message.createdAt]);
-                    await comando.run({ message, args, embedResponse, client, lang, langjson: json, prefix })
-                }
 
-                catch (e) {
-                    
-                    const embeds = [
-                        new MessageEmbed()
-                            .setColor(client.color)
-                            .setTimestamp()
-                            .setDescription((e.stack || e.message || e)?.slice(0, 2048) || e)
-                            .addField('Comando usado', command)
-                            .setAuthor(message.content.slice(0, 300))
-                            .setFooter(message.author.tag, message.author.dynamicAvatarURL())
-                    ]
-                    console.log(e);
-                    client.executeWebhook(process.env.WEBHOOKID, process.env.WEBHOOKTOKEN, {
-                        embeds,
-                        wait: true
-                    });
-                    return message.channel.createMessage(json.messages.error((e.message || e?.toString() || e)));
+                    try {
+                        antiabuzzz.add([message.author.id, message.createdAt]);
+                        await comando.run({ message, args, embedResponse, client, lang, langjson: json, prefix })
+                    }
+
+                    catch (e) {
+
+                        const embeds = [
+                            new MessageEmbed()
+                                .setColor(client.color)
+                                .setTimestamp()
+                                .setDescription((e.stack || e.message || e) ?.slice(0, 2048) || e)
+                                .addField('Comando usado', command)
+                                .setAuthor(message.content.slice(0, 300))
+                                .setFooter(message.author.tag, message.author.dynamicAvatarURL())
+                        ]
+                        console.log(e);
+                        client.executeWebhook(process.env.WEBHOOKID, process.env.WEBHOOKTOKEN, {
+                            embeds,
+                            wait: true
+                        });
+                        return message.channel.createMessage(json.messages.error((e.message || e ?.toString() || e)));
 
                     }
                 }
                 break;
-            
+
             case 1: {
 
                 antiabuzzz.add([message.author.id, message.createdAt]);
@@ -135,8 +135,7 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
                 return message.channel.createMessage({ embed: embed })
 
             }
-                break;
-            
+
             case 2: {
                 antiabuzzz.add([message.author.id, message.createdAt]);
                 const embed = new MessageEmbed()
@@ -146,8 +145,7 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
                     .setFooter('\u200b', 'https://media1.tenor.com/images/41334cbe64331dad2e2dc6272334b47f/tenor.gif');
                 return message.channel.createMessage({ embed: embed })
             }
-                break;
-            
+
             case 3: {
                 antiabuzzz.add([message.author.id, message.createdAt]);
                 const embed = new MessageEmbed()
@@ -157,8 +155,7 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
                     .setFooter('\u200b', 'https://media1.tenor.com/images/41334cbe64331dad2e2dc6272334b47f/tenor.gif');
                 return message.channel.createMessage({ embed: embed })
             }
-                break;
-            
+
             case 4: {
 
                 antiabuzzz.add([message.author.id, message.createdAt]);
@@ -169,13 +166,12 @@ async function event(client: Zenitsu, message: Eris.Message): Promise<void | Eri
                     .setFooter('\u200b', 'https://media1.tenor.com/images/41334cbe64331dad2e2dc6272334b47f/tenor.gif');
                 return message.channel.createMessage({ embed: embed })
             }
-                break;
-            
+
         }
     }
 }
 
-export default event;
+export default on;
 
 function embedResponse(descriptionHere: string, option: Eris.TextChannel | Eris.NewsChannel | Eris.PrivateChannel, color: number): Promise<Eris.Message> {
 

@@ -30,7 +30,7 @@ const messages: {
         type: activities['LISTENING']
     }];
 
-async function event(client: Zenitsu): Promise<void> {
+async function once(client: Zenitsu): Promise<void> {
     const random = messages[Math.floor(Math.random() * messages.length)];
     client.editStatus('idle', random);
     console.log(`${client.user.username} está listo :):):):):):).`);
@@ -40,4 +40,4 @@ async function event(client: Zenitsu): Promise<void> {
     }, ((60 * 30) * 1000));//30m
 }
 
-export default event;
+export default once;

@@ -4,9 +4,12 @@ import Zenitsu from '../Utils/Classes/client.js';
 import MessageEmbed from '../Utils/Classes/Embed.js';
 import logs, { Logs as LOGS } from '../models/logs.js';
 
-async function event(client: Zenitsu, newMessage: light.Message, oldMessage: light.Message): Promise<light.Message> {
+async function on(client: Zenitsu, newMessage: light.Message, oldMessage: light.Message): Promise<light.Message> {
+
     if (!oldMessage || !newMessage) return;
+
     const guild = newMessage.guild;
+
     if (!guild
         || !guild.id
         || !oldMessage.content
@@ -62,4 +65,4 @@ async function event(client: Zenitsu, newMessage: light.Message, oldMessage: lig
         });
 }
 
-export default event;
+export default on;
