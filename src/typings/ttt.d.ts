@@ -34,6 +34,7 @@ declare module 'tresenraya' {
     public disponible(num: number): boolean
     public pasar(): void
     public finalizar(): void
+    public mejorPos: number;
 
   }
 
