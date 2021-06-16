@@ -30,7 +30,7 @@ class Comando extends Command {
         .setTimestamp()
         .setFooter(message.author.username, message.author.dynamicAvatarURL())
         .addField('typeof', TYPE, true)
-        .addField('Class', res_evalued!.constructor!.name || 'nao nao amiko', true)
+        .addField('Class', (res_evalued && res_evalued.constructor && res_evalued.constructor.name) ? res_evalued.constructor.name || 'NO CLASS' : 'NO CLASS', true)
       return await message.channel.createMessage({ embed: embed })
     }
     catch (err) {
