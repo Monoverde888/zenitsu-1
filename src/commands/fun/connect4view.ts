@@ -6,48 +6,48 @@ import MessageEmbed from '../../Utils/Classes/Embed.js';
 import fetch from 'node-fetch';
 
 export default class Comando extends Command {
-    constructor() {
-        super()
-        this.name = "connect4view";
-        this.category = 'fun';
-        this.alias = [`conecta4view`, 'fourinrowview', '4enlineaview', 'c4view']
-        this.cooldown = 20;
-    }
+  constructor() {
+    super()
+    this.name = "connect4view";
+    this.category = 'fun';
+    this.alias = [`conecta4view`, 'fourinrowview', '4enlineaview', 'c4view']
+    this.cooldown = 20;
+  }
 
-    async run({ args, message, langjson }: run): Promise<eris.Message> {
+  async run({ args, message, langjson }: run): Promise<eris.Message> {
 
-        const _id = args[0];
-        const embed = new MessageEmbed()
-            .setColor(this.client.color)
-            .setImage('https://i.imgur.com/qcek7Ll.gif')
-            .setDescription(langjson.commands.connect4view.invalid);
+    const _id = args[0];
+    const embed = new MessageEmbed()
+      .setColor(this.client.color)
+      .setImage('https://i.imgur.com/qcek7Ll.gif')
+      .setDescription(langjson.commands.connect4view.invalid);
 
-        if (!_id) return message.channel.createMessage({ embed });
+    if (!_id) return message.channel.createMessage({ embed });
 
-        const data = await MODEL.findById(_id).catch(() => {
-            null;
-        });
+    const data = await MODEL.findById(_id).catch(() => {
+      null;
+    });
 
-        if (!data) return message.channel.createMessage({ embed });
+    if (!data) return message.channel.createMessage({ embed });
 
-        try {
+    try {
 
-            const response = await fetch(`${process.env.APICONNECTFOUR}/${encodeURIComponent(JSON.stringify(data.maps))}`, {
-                headers:
-                    { 'authorization': process.env.APIKEY }
-            });
+      const response = await fetch(`${process.env.APICONNECTFOUR}/${encodeURIComponent(JSON.stringify(data.maps))}`, {
+        headers:
+          { 'authorization': process.env.APIKEY }
+      });
 
-            const buffer = await response.buffer();
+      const buffer = await response.buffer();
 
-            return message.channel.createMessage(undefined, [{ file: buffer, name: 'ggez.gif' }]);
-
-        }
-
-        catch (e) {
-
-            return message.channel.createMessage('Error...');
-
-        }
+      return message.channel.createMessage(undefined, [{ file: buffer, name: 'ggez.gif' }]);
 
     }
+
+    catch (e) {
+
+      return message.channel.createMessage('Error...');
+
+    }
+
+  }
 }

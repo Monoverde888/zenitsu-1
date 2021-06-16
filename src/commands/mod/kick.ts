@@ -6,45 +6,45 @@ import MessageEmbed from "../../Utils/Classes/Embed.js";
 import getHighest from '../../Utils/Functions/getHighest.js';
 
 export default class Comando extends Command {
-    constructor() {
-        super()
-        this.name = "kick"
-        this.category = 'mod';
-        this.botPermissions.guild = ['kickMembers'];
-        this.cooldown = 6;
-        this.memberPermissions.guild = ['kickMembers'];
+  constructor() {
+    super()
+    this.name = "kick"
+    this.category = 'mod';
+    this.botPermissions.guild = ['kickMembers'];
+    this.cooldown = 6;
+    this.memberPermissions.guild = ['kickMembers'];
+  }
+
+  async run({ args, message, langjson, embedResponse }: run): Promise<light.Message> {
+
+    const user = message.mentions.filter(user => user.id != message.author.id)[0];
+    const member = user ? user.member : null;
+    if (!member) return embedResponse(langjson.commands.kick.mention, message.channel, this.client.color);
+    if (!canMod(member, this.client, 'kick')) return embedResponse(langjson.commands.kick.cannt_kick(`**${this.client.unMarkdown(user.username)}**`), message.channel, this.client.color)
+    if (message.author.id !== message.guild.ownerID) {
+      if (getHighest(message.member).position <= getHighest(member).position) return embedResponse(langjson.commands.kick.user_cannt_kick(`**${this.client.unMarkdown(user.username)}**`), message.channel, this.client.color)
     }
 
-    async run({ args, message, langjson, embedResponse }: run): Promise<light.Message> {
+    const reason = (args.join(' ') || '').replace(member.mention, '').slice(0, 500) || null;
 
-        const user = message.mentions.filter(user => user.id != message.author.id)[0];
-        const member = user ?.member;
-        if (!member) return embedResponse(langjson.commands.kick.mention, message.channel, this.client.color);
-        if (!canMod(member, this.client, 'kick')) return embedResponse(langjson.commands.kick.cannt_kick(`**${this.client.unMarkdown(user.username)}**`), message.channel, this.client.color)
-        if (message.author.id !== message.guild.ownerID) {
-            if (getHighest(message.member).position <= getHighest(member).position) return embedResponse(langjson.commands.kick.user_cannt_kick(`**${this.client.unMarkdown(user.username)}**`), message.channel, this.client.color)
-        }
+    return member.kick(reason).then(() => {
 
-        const reason = args.join(' ') ?.replace(member.mention, '').slice(0, 500) || null;
+      const embed = new MessageEmbed()
+        .setColor(0x2ecc71)
+        .setDescription(langjson.commands.kick.kick(`**${this.client.unMarkdown(user.username)}**`, reason))
+        .setFooter(message.author.username, message.author.dynamicAvatarURL())
 
-        return member.kick(reason).then(() => {
+      return message.channel.createMessage({ embed })
 
-            const embed = new MessageEmbed()
-                .setColor(0x2ecc71)
-                .setDescription(langjson.commands.kick.kick(`**${this.client.unMarkdown(user.username)}**`, reason))
-                .setFooter(message.author.username, message.author.dynamicAvatarURL())
+    }).catch((error) => {
 
-            return message.channel.createMessage({ embed })
+      const embed = new MessageEmbed()
+        .setColor(0xff0000)
+        .setDescription(`Error: ${error ? (error.message || error) : error}`)
+        .setFooter(message.author.username, message.author.dynamicAvatarURL())
 
-        }).catch((error) => {
+      return message.channel.createMessage({ embed })
 
-            const embed = new MessageEmbed()
-                .setColor(0xff0000)
-                .setDescription(`Error: ${error ?.message || error ?.toString() || error}`)
-                .setFooter(message.author.username, message.author.dynamicAvatarURL())
-
-            return message.channel.createMessage({ embed })
-
-        })
-    }
+    })
+  }
 }

@@ -1,32 +1,32 @@
 class Collection<K, V> extends Map<K, V> {
 
-    find(fn: (i: V) => boolean): V | undefined {
+  find(fn: (i: V) => boolean): V | undefined {
 
-        for (const [, val] of this) {
+    for (const [, val] of this) {
 
-            if (fn(val))
-                return val;
-            else continue;
-
-        }
+      if (fn(val))
+        return val;
+      else continue;
 
     }
 
-    filter(fn: (i: V) => boolean): V[] {
+  }
 
-        const res: V[] = [];
+  filter(fn: (i: V) => boolean): V[] {
 
-        for (const [, val] of this) {
+    const res: V[] = [];
 
-            if (fn(val))
-                res.push(val);
-            else continue;
+    for (const [, val] of this) {
 
-        }
-
-        return res;
+      if (fn(val))
+        res.push(val);
+      else continue;
 
     }
+
+    return res;
+
+  }
 
 }
 

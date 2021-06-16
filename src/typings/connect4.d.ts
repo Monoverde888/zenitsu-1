@@ -1,44 +1,44 @@
 interface solution {
-    column: number;
-    spacesFromBottom: number;
+  column: number;
+  spacesFromBottom: number;
 }
 
 interface status {
-    movesPlayed: number
-    currentPlayer: number
-    gameOver: boolean
-    winner: number | void
-    solution: solution[];
+  movesPlayed: number
+  currentPlayer: number
+  gameOver: boolean
+  winner: number | void
+  solution: solution[];
 }
 
 interface player {
-    id: string;
-    turn: number;
+  id: string;
+  turn: number;
 }
 
 declare module 'connect4-ai' {
 
-    class Connect4 {
+  class Connect4 {
 
-        jugadores: player[];
-        play(play: number): void;
-        gameStatus(): status;
-        ascii(): string;
-        canPlay(number: number): boolean;
-        playAI(play: string): void;
-        solution: solution[] | null;
-        winner: number | null;
-        board: {
-            [x: string]: number[];
-        }
-
+    jugadores: player[];
+    play(play: number): void;
+    gameStatus(): status;
+    ascii(): string;
+    canPlay(number: number): boolean;
+    playAI(play: string): void;
+    solution: solution[] | null;
+    winner: number | null;
+    board: {
+      [x: string]: number[];
     }
 
-    class Connect4AI extends Connect4 {
+  }
 
-        playAI(play: string): void
+  class Connect4AI extends Connect4 {
 
-    }
+    playAI(play: string): void
+
+  }
 
 }
 

@@ -6,64 +6,64 @@ import lang from '../../models/lang.js';
 
 class Comando extends Command {
 
-    constructor() {
-        super();
-        this.name = "setlang"
-        this.alias = []
-        this.category = 'admin'
-        this.memberPermissions = { guild: ['manageGuild'], channel: [] }
-    }
+  constructor() {
+    super();
+    this.name = "setlang"
+    this.alias = []
+    this.category = 'admin'
+    this.memberPermissions = { guild: ['manageGuild'], channel: [] }
+  }
 
-    async run({ message, args, langjson, prefix }: command): Promise<light.Message> {
+  async run({ message, args, langjson, prefix }: command): Promise<light.Message> {
 
-        const selectLang = args[0] ? args[0].toLowerCase() : null;
+    const selectLang = args[0] ? args[0].toLowerCase() : null;
 
-        switch (selectLang) {
+    switch (selectLang) {
 
-            case 'es': {
+      case 'es': {
 
-                const data = await lang.findOneAndUpdate({ id: message.guild.id }, { lang: 'es' }, { new: true, upsert: true }).lean();
+        const data = await lang.findOneAndUpdate({ id: message.guild.id }, { lang: 'es' }, { new: true, upsert: true }).lean();
 
-                await this.client.redis.set(message.guildID, JSON.stringify(data), 'lang_');
+        await this.client.redis.set(message.guildID, JSON.stringify(data), 'lang_');
 
-                return message.channel.createMessage({
-                    embed:
-                        new MessageEmbed()
-                            .setColor(this.client.color)
-                            .setDescription(`🇪🇸 | Establecido al español :D.`)
-                            .setAuthor(message.author.username, message.author.dynamicAvatarURL())
-                });
-            }
+        return message.channel.createMessage({
+          embed:
+            new MessageEmbed()
+              .setColor(this.client.color)
+              .setDescription(`🇪🇸 | Establecido al español :D.`)
+              .setAuthor(message.author.username, message.author.dynamicAvatarURL())
+        });
+      }
 
-            case 'en': {
+      case 'en': {
 
-                const data = await lang.findOneAndUpdate({ id: message.guild.id }, { lang: 'en' }, { new: true, upsert: true }).lean();
+        const data = await lang.findOneAndUpdate({ id: message.guild.id }, { lang: 'en' }, { new: true, upsert: true }).lean();
 
-                await this.client.redis.set(message.guildID, JSON.stringify(data), 'lang_');
+        await this.client.redis.set(message.guildID, JSON.stringify(data), 'lang_');
 
-                return message.channel.createMessage({
-                    embed:
-                        new MessageEmbed()
-                            .setColor(this.client.color)
-                            .setDescription(`🇺🇸 | Established in English.`)
-                            .setAuthor(message.author.username, message.author.dynamicAvatarURL())
-                });
+        return message.channel.createMessage({
+          embed:
+            new MessageEmbed()
+              .setColor(this.client.color)
+              .setDescription(`🇺🇸 | Established in English.`)
+              .setAuthor(message.author.username, message.author.dynamicAvatarURL())
+        });
 
-            }
+      }
 
-            default:
-                return message.channel.createMessage({
-                    embed:
-                        new MessageEmbed()
-                            .setColor(this.client.color)
-                            .setDescription(langjson.commands.setlang.invalid)
-                            .setAuthor(`${prefix}setlang (es|en)`)
-                });
+      default:
+        return message.channel.createMessage({
+          embed:
+            new MessageEmbed()
+              .setColor(this.client.color)
+              .setDescription(langjson.commands.setlang.invalid)
+              .setAuthor(`${prefix}setlang (es|en)`)
+        });
 
-
-        }
 
     }
+
+  }
 
 }
 
