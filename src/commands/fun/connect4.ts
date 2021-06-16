@@ -52,7 +52,7 @@ export default class Comando extends Command {
       });
     }
 
-    const findTurn = (user: string) => games.get(message.guildID) ? games.get(message.guildID).jugadores.find(item => item.id == user) : null;
+    const findTurn = (user: string) => games.get(message.guildID) && games.get(message.guildID).jugadores ? games.get(message.guildID).jugadores.find(item => item.id == user) : null;
 
     if (usuario.id != client.user.id)
       if (findTurn(usuario.id)) {
