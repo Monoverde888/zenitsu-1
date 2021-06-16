@@ -50,7 +50,7 @@ export default class Comando extends Command {
       });
     }
 
-    const findTurn = (user: string) => (games.get(message.guildID).jugadores.find(item => item.id == user));
+    const findTurn = (user: string) => games.get(message.guildID) ? games.get(message.guildID).jugadores.find(item => item.id == user) : null;
 
     if (usuario.id != this.client.user.id)
       if (findTurn(usuario.id)) {
@@ -171,8 +171,9 @@ export default class Comando extends Command {
       channelID: message.channel.id,
       max: 0,
       code: 'user:' + message.author.id + 'guild:' + message.guild.id + 'date:' + Date.now() + 'random:' + Math.random(),
-      filter(msg) {
+      filter: (msg) => {
 
+        if (!findTurn(msg.author.id)) return;
         if (usuario.id != this.client.user.id) {
 
           if (!games.get(msg.guildID)) return false;
@@ -199,7 +200,7 @@ export default class Comando extends Command {
 
       },
       idle: TIME_IDLE,
-      async onStop(_, reason) {
+      onStop: async (_, reason) => {
 
         if (reason === 'surrender' && games.get(message.guild.id)) {
           if (usuario.id == this.client.user.id) await model.findOneAndUpdate({ id: message.author.id, difficulty: args[0] }, { $inc: { perdidas: 1 }, $set: { cacheName: message.author.username } }, { upsert: true });
@@ -241,7 +242,7 @@ export default class Comando extends Command {
         }
         else return games.delete(message.guildID)
       },
-      async onCollect(msg, colector) {
+      onCollect: async (msg, colector) => {
 
         if (msg.content === 'surrender')
           return this.client.listener.stop(colector, 'surrender');
