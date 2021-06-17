@@ -43,7 +43,7 @@ export default class Comando extends Command {
 
     }
 
-    catch (e) {
+    catch {
 
       return message.channel.createMessage('Error...');
 

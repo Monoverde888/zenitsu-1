@@ -18,7 +18,7 @@ export default class Comando extends Command {
     const options = ["stable", "master", "commando", "rpc", "akairo", "akairo-master", "collection"];
 
     if (args[0] && options.includes(args[0].toLowerCase())) {
-      type = args[0];
+      type = args[0].toLowerCase();
       search = args.slice(1).join(" ");
     } else {
       type = "stable";
