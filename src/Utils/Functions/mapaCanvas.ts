@@ -1,3 +1,4 @@
+/*
 import canvas from 'canvas';
 const { createCanvas } = canvas;
 import imagenesC from "../Interfaces/imagenes.js";
@@ -407,3 +408,4 @@ async function mapaCanvas(mapatest: string[], imagenes: imagenesC, win: boolean,
 
 
 export default mapaCanvas
+*/

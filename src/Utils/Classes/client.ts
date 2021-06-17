@@ -3,8 +3,6 @@ import common from '../Functions/commons.js';
 
 //Interfaces
 import imagenesC from '../Interfaces/imagenes.js';
-import Flag from '../Interfaces/profile/flag.js';
-import Achievement from '../Interfaces/profile/achievement.js';
 
 //Values
 import path from 'path';
@@ -35,7 +33,6 @@ import Redis from './Managers/RedisManager.js'
 class Zenitsu extends eris.Client {
 
   buttons: Buttons;
-  flags: Flag;
   listener: Listener;
   fileTOPGG: Buffer;
   dbl: dbla;
@@ -43,7 +40,6 @@ class Zenitsu extends eris.Client {
   imagenes: imagenesC;
   commands: Collection<string, Comando>;
   devs: string[];
-  achievements: Achievement;
   redis: Redis;
 
   constructor(token: string, options: eris.ClientOptions) {
@@ -77,43 +73,12 @@ class Zenitsu extends eris.Client {
 
   async loadImages(): Promise<imagenesC> {
     this.imagenes = {
-      porquelloras: {
-        chica: await loadImage(this.rutaImagen(`chica.png`)),
-        chico: await loadImage(this.rutaImagen('chico.jpg'))
-      },
-      nicememe: {
-        background: await loadImage(this.rutaImagen('nicememe.png'))
-      },
-      tictactoe: {
-        background: await loadImage(this.rutaImagen(`inicio_tictactoe.gif`)),
-        equis: await loadImage(this.rutaImagen(`x_tic.png`)),
-        circulo: await loadImage(this.rutaImagen(`o_tic.png`))
-      },
       connect4: {
         background: await loadImage(this.rutaImagen('4enraya.png')),
         win: await loadImage(this.rutaImagen('morado_de_4.png')),
         verde: await loadImage(this.rutaImagen('rojo_de_cuatro.png')),
         amarillo: await loadImage(this.rutaImagen('amarillo_de_cuatro.png'))
       },
-      empty: await loadImage(this.rutaImagen('empty.png'))
-    };
-
-    this.flags = {
-      booster: await loadImage(this.rutaProfile('booster.png', 'Flags')),
-      bug1: await loadImage(this.rutaProfile('bug1.png', 'Flags')),
-      bug2: await loadImage(this.rutaProfile('bug2.png', 'Flags')),
-      bug3: await loadImage(this.rutaProfile('bug3.png', 'Flags')),
-      staff: await loadImage(this.rutaProfile('staff.png', 'Flags')),
-      vip: await loadImage(this.rutaProfile('vip.png', 'Flags')),
-      hamburger: await loadImage(this.rutaProfile('hamburger.png', 'Flags')),
-      helper: await loadImage(this.rutaProfile('helper.png', 'Flags')),
-    };
-
-    this.achievements = {
-      c4level1: await loadImage(this.rutaProfile('c4level1.png', 'Achievements')),
-      c4level2: await loadImage(this.rutaProfile('c4level2.png', 'Achievements')),
-      c4level3: await loadImage(this.rutaProfile('c4level3.png', 'Achievements')),
-      c4top: await loadImage(this.rutaProfile('c4top.png', 'Achievements')),
     };
 
     const buffer = (await promisify(svg)(`https://top.gg/api/widget/721080193678311554.svg`, {}));
