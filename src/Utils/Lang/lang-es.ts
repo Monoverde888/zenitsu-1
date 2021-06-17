@@ -143,9 +143,8 @@ const obj = {
     },
     "djs": {
       "what": "<a:CatLoad:804368444526297109> | ¿Que quieres buscar en la documentación de discord.js?",
-
       "no_result": "<:cancel:804368628861763664> | Sin resultados.",
-
+      "query": "busqueda"
     },
     "setlogs": {
       invalid: `Uso incorrecto, por favor ingresa una webhook valida y tipo.`,

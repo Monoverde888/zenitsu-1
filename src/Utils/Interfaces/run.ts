@@ -5,7 +5,7 @@ import jsonEN from '../Lang/lang-en.js'
 interface run {
   message?: pkg.Message;
   args?: string[];
-  embedResponse?(descriptionhere: string, channel: pkg.TextChannel | pkg.NewsChannel | pkg.PrivateChannel, color: number): Promise<pkg.Message>;
+  embedResponse?(descriptionHere: string, option: pkg.TextChannel | pkg.NewsChannel | pkg.PrivateChannel, color: number, options?: pkg.AdvancedMessageContent, files?: pkg.MessageFile[]): Promise<pkg.Message>;
   lang?: 'es' | 'en';
   langjson?: typeof jsonEN | typeof jsonES
   prefix: string;

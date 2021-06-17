@@ -173,13 +173,16 @@ async function on(client: Zenitsu, message: Eris.Message): Promise<void | Eris.M
 
 export default on;
 
-function embedResponse(descriptionHere: string, option: Eris.TextChannel | Eris.NewsChannel | Eris.PrivateChannel, color: number): Promise<Eris.Message> {
+function embedResponse(descriptionHere: string, option: Eris.TextChannel | Eris.NewsChannel | Eris.PrivateChannel, color: number, options?: Eris.AdvancedMessageContent, files?: Eris.MessageFile[]): Promise<Eris.Message> {
 
   const embed = new MessageEmbed()
     .setDescription(descriptionHere)
     .setTimestamp()
     .setColor(color);
   const canal = option;
-  return canal.createMessage({ embed: embed })
+  options = options || {};
+  options.embed = { ...embed, ...options.embed }
+
+  return canal.createMessage(options, files || []);
 
 }
