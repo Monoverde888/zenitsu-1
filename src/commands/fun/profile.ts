@@ -29,8 +29,7 @@ export default class Comando extends Command {
     await this.client.redis.set(user.id, JSON.stringify(data), 'profile_');
 
     const { flags, achievements } = data;
-    const randomColor = Math.floor(Math.random() * (0xffffff + 1));
-    let color = data.color || randomColor.toString(16)
+    const color = data.color;
 
     try {
 
