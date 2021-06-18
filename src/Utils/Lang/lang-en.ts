@@ -18,6 +18,15 @@ const obj = {
   },
   "commands": {
 
+    "runcode": {
+
+      no_code: 'Missing code block.\n\n**Example**:\n\n\\`\\`\\`javascript\nthis.team = "poto";\nconsole.log(\\`Testing things with the ${this.team} team\\`)\n\\`\\`\\`',
+      invalid_lang: 'Invalid language, check https://github.com/engineer-man/piston#supported-languages',
+      no_output: 'Without output.',
+      error: 'Unknow error...'
+
+    },
+
     "connect4view": {
 
       "invalid": "Invalid ID."

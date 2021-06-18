@@ -37,7 +37,11 @@ class Comando extends Command {
           .setURL('https://discord.gg/4Yzc7Hk'),
         new URLButton()
           .setLabel(langjson.commands.help.invite)
-          .setURL('https://discord.com/oauth2/authorize?client_id=721080193678311554&scope=bot&permissions=8')
+          .setURL('https://discord.com/oauth2/authorize?client_id=721080193678311554&scope=bot&permissions=8'),
+        new URLButton()
+          .setLabel('GitHub')
+          .setURL('https://github.com/marcrock22/zenitsu')
+          .setEmoji({ name: '🐙', id: undefined })
       ];
 
     const componente = new Components(...BUTTONS)

@@ -18,6 +18,15 @@ const obj = {
   },
   "commands": {
 
+    "runcode": {
+
+      no_code: 'Falta bloque de código.\n\n**Ejemplo** de uso:\n\n\\`\\`\\`javascript\nthis.team = "poto";\nconsole.log(\\`Testing things with the ${this.team} team\\`)\n\\`\\`\\`',
+      invalid_lang: 'Lenguaje inválido, revise https://github.com/engineer-man/piston#supported-languages',
+      no_output: 'Sin salida.',
+      error: 'Error desconocido...'
+
+    },
+
     "connect4view": {
 
       "invalid": "ID invalida."

@@ -6,7 +6,7 @@ class URLButton {
   label: string;
   emoji?: {
     name: string;
-    id: string
+    id: string | undefined
   };
   disabled?: boolean;
 
