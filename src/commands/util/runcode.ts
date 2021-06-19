@@ -68,7 +68,7 @@ export default class Comando extends Command {
     if (res.run) {
 
       if (res.run.output) return message.channel.createMessage({
-        content: `\`\`\`\n${(res.run.output as string).slice(0, 1900)}\`\`\``, components: [
+        content: `${message.author.mention}\`\`\`\n${(res.run.output as string).slice(0, 1800)}\`\`\``, components: [
           new Component(
             new URLButton()
               .setURL(`https://github.com/engineer-man/piston`)
