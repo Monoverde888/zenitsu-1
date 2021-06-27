@@ -9,6 +9,7 @@
         "resolveJsonModule": true,
         "noImplicitAny": true,
         "moduleResolution": "Node",
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": false
     }
 }
