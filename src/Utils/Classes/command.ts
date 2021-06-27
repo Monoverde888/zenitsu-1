@@ -9,7 +9,7 @@ class RegisterCommand {
 
     options.onError = (ctx) => {
       ctx.reply('```' + ctx.command.metadata.usage(ctx.prefix).join('\n') + '```');
-    }
+    };
 
     options.onRunError = (ctx, _, error) => {
       console.log(error);
