@@ -1,14 +1,14 @@
-import BaseCommand from '../../Utils/Classes/command.js';
-import parseArgs from '../../Utils/Functions/parseargs.js';
+import BaseCommand from '../../utils/classes/command.js';
+import parseArgs from '../../utils/functions/parseargs.js';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
-import { Color, Flags } from '../../Utils/const.js';
+import { Color, Flags } from '../../utils/const.js';
 const regex = /((http|https):\/\/)((www|canary|ptb)\.)?(discordapp|discord)\.com\/api\/webhooks\/([0-9]){7,19}\/[-a-zA-Z0-9@:%._+~#=]{60,120}/gmi;
-import redis from '../../Utils/Managers/Redis.js';
-import guild, { GUILD } from '../../Database/models/guild.js';
-import json from '../../Utils/Lang/langs.js';
-import getGuild from '../../Utils/Functions/getguild.js';
+import redis from '../../utils/managers/redis.js';
+import guild, { GUILD } from '../../database/models/guild.js';
+import json from '../../utils/lang/langs.js';
+import getGuild from '../../utils/functions/getguild.js';
 import nodefetch from 'node-fetch';
-import unmarkdown from '../../Utils/Functions/unmarkdown.js';
+import unmarkdown from '../../utils/functions/unmarkdown.js';
 
 export default new BaseCommand({
   label: 'arg',

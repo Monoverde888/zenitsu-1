@@ -1,8 +1,8 @@
 import fs from 'fs/promises';
 import path from 'path';
-import commons from './Functions/commons.js';
+import commons from './functions/commons.js';
 import detritus from 'detritus-client';
-import CommandClient from './Classes/CommandClient.js';
+import CommandClient from './classes/commandclient.js';
 import connect from '../database/connect.js';
 
 export default async function Load({ token, mongo }: { token: string, mongo: string }) {

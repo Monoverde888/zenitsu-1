@@ -1,11 +1,11 @@
 import fetch from 'node-fetch';
-import BaseCommand from '../../Utils/Classes/command.js';
-import parseArgs from '../../Utils/Functions/parseargs.js';
-import json from '../../Utils/Lang/langs.js';
-import getGuild from '../../Utils/Functions/getguild.js';
+import BaseCommand from '../../utils/classes/command.js';
+import parseArgs from '../../utils/functions/parseargs.js';
+import json from '../../utils/lang/langs.js';
+import getGuild from '../../utils/functions/getguild.js';
 const regex = /```.*```/gsi;
-import Component from '../../Utils/Buttons/component.js';
-import URLButton from '../../Utils/Buttons/url.js';
+import Component from '../../utils/buttons/component.js';
+import URLButton from '../../utils/buttons/url.js';
 let avaliables: string[];
 
 export default new BaseCommand({

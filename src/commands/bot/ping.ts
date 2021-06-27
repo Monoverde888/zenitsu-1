@@ -1,7 +1,7 @@
-import BaseCommand from '../../Utils/Classes/command.js';
+import BaseCommand from '../../utils/classes/command.js';
 import mongoose from 'mongoose';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
-import { Color } from '../../Utils/const.js'
+import { Color } from '../../utils/const.js'
 
 export default new BaseCommand({
   metadata: {

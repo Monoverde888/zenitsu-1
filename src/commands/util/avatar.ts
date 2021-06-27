@@ -1,4 +1,4 @@
-import BaseCommand from '../../Utils/Classes/command.js';
+import BaseCommand from '../../utils/classes/command.js';
 
 export default new BaseCommand({
   metadata: {

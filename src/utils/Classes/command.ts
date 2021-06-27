@@ -1,8 +1,8 @@
-import BaseCommand from './BaseCommand.js';
-import { Flags } from '../Const.js';
+import BaseCommand from './basecommand.js';
+import { Flags } from '../const.js';
 const Arr = Object.entries(Flags);
-import getGuild from '../Functions/getGuild.js';
-import json from '../Lang/langs.js';
+import getGuild from '../functions/getguild.js';
+import json from '../lang/langs.js';
 
 class RegisterCommand {
   constructor(options: BaseCommand) {

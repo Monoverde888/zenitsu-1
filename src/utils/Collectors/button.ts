@@ -1,7 +1,9 @@
 import detritus from 'detritus-client';
+
 export interface Fixed extends detritus.Structures.Interaction {
   data: detritus.Structures.InteractionDataComponent
 }
+
 type CollectorFilter<T, R> = (param: T) => R;
 interface listenerType {
   filter: CollectorFilter<Fixed, boolean>;

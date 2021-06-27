@@ -1,17 +1,17 @@
-import redis from '../../Utils/Managers/Redis.js';
+import redis from '../../utils/managers/redis.js';
 import c4 from 'connect4-ai';
 const { Connect4AI } = c4
-import Collector from '../../Utils/Collectors/button.js';
+import Collector from '../../utils/collectors/button.js';
 const games: Map<string, c4.Connect4AI> = new Map();
-import BaseCommand from '../../Utils/Classes/command.js';
-import getUser from '../../Utils/Functions/getuser.js';
-import json from '../../Utils/Lang/langs.js';
+import BaseCommand from '../../utils/classes/command.js';
+import getUser from '../../utils/functions/getuser.js';
+import json from '../../utils/lang/langs.js';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
-import getGuild from '../../Utils/Functions/getguild.js';
-import parseArgs from '../../Utils/Functions/parseargs.js';
-import model from '../../Database/models/user.js';
-import Button from '../../Utils/Buttons/normal.js';
-import Component from '../../Utils/Buttons/component.js';
+import getGuild from '../../utils/functions/getguild.js';
+import parseArgs from '../../utils/functions/parseargs.js';
+import model from '../../database/models/user.js';
+import Button from '../../utils/buttons/normal.js';
+import Component from '../../utils/buttons/component.js';
 
 function generateButtons(partida: c4.Connect4AI, text: string) {
 

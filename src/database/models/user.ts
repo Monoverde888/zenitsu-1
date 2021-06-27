@@ -57,4 +57,4 @@ const User = new Schema({
   cacheName: String
 }, { timestamps: true })
 
-export default model<USER>('UserInfo', User);
+export default mongoose.models.UserInfo || model<USER>('UserInfo', User);

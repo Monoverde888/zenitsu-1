@@ -1,5 +1,5 @@
-import redis from '../Managers/Redis.js';
-import model, { GUILD } from '../../Database/models/guild.js';
+import redis from '../managers/redis.js';
+import model, { GUILD } from '../../database/models/guild.js';
 
 async function getGuild(id: string): Promise<GUILD> {
 

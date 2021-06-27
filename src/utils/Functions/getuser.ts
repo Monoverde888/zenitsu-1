@@ -1,5 +1,5 @@
-import redis from '../Managers/Redis.js';
-import model, { USER } from '../../Database/models/user.js';
+import redis from '../managers/redis.js';
+import model, { USER } from '../../database/models/user.js';
 
 async function getUser(id: string): Promise<USER> {
 

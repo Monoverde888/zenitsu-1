@@ -1,9 +1,9 @@
-import BaseCommand from '../../Utils/Classes/command.js';
-import getPrivate from '../../Utils/Functions/getprivate.js';
-import replace from '../../Utils/Functions/replace.js';
-import parseArgs from '../../Utils/Functions/parseargs.js';
+import BaseCommand from '../../utils/classes/command.js';
+import getPrivate from '../../utils/functions/getprivate.js';
+import replace from '../../utils/functions/replace.js';
+import parseArgs from '../../utils/functions/parseargs.js';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
-import { Color } from '../../Utils/const.js'
+import { Color } from '../../utils/const.js'
 import util from 'util';
 import child_process from 'child_process';
 const { exec: execC } = child_process;

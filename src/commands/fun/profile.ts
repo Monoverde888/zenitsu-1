@@ -1,8 +1,8 @@
-import BaseCommand from '../../Utils/Classes/command.js';
-import getUser from '../../Utils/Functions/getuser.js';
-import json from '../../Utils/Lang/langs.js';
+import BaseCommand from '../../utils/classes/command.js';
+import getUser from '../../utils/functions/getuser.js';
+import json from '../../utils/lang/langs.js';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
-import getGuild from '../../Utils/Functions/getguild.js';
+import getGuild from '../../utils/functions/getguild.js';
 import fetch from 'node-fetch';
 
 export default new BaseCommand({

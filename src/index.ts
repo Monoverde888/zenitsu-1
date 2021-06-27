@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import kufa from 'kufa';
-import load from './Utils/Load.js';
+import load from './utils/load.js';
 dotenv.config();
 load({ token: process.env.DISCORD_TOKEN, mongo: process.env.MONGODB });
 console = new kufa.KufaConsole({

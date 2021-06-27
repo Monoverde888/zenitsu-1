@@ -1,5 +1,5 @@
 import detritus from 'detritus-client';
-import { Flags } from '../Const.js';
+import { Flags } from '../const.js';
 
 function canMod(member: detritus.Structures.Member, client: detritus.ShardClient, mod: 'kick' | 'ban' | null): boolean {
   if (member.id === member.guild.ownerId) return false;

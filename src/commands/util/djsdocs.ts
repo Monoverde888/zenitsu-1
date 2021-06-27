@@ -1,8 +1,8 @@
 import fetch from 'node-fetch';
-import BaseCommand from '../../Utils/Classes/command.js';
-import parseArgs from '../../Utils/Functions/parseargs.js';
-import json from '../../Utils/Lang/langs.js';
-import getGuild from '../../Utils/Functions/getguild.js';
+import BaseCommand from '../../utils/classes/command.js';
+import parseArgs from '../../utils/functions/parseargs.js';
+import json from '../../utils/lang/langs.js';
+import getGuild from '../../utils/functions/getguild.js';
 
 export default new BaseCommand({
   label: 'arg',

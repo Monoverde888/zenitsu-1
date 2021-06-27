@@ -1,12 +1,11 @@
-import BaseCommand from '../../Utils/Classes/command.js';
-import json from '../../Utils/Lang/langs.js';
+import BaseCommand from '../../utils/classes/command.js';
+import json from '../../utils/lang/langs.js';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
-import getGuild from '../../Utils/Functions/getguild.js';
-import getHighest from '../../Utils/Functions/gethighest.js';
+import getGuild from '../../utils/functions/getguild.js';
+import getHighest from '../../utils/functions/gethighest.js';
 import detritus from 'detritus-client';
-import unmarkdown from '../../Utils/Functions/unmarkdown.js';
-import { Flags } from '../../Utils/const.js';
-import redis from '../../Utils/Managers/redis.js';
+import unmarkdown from '../../utils/functions/unmarkdown.js';
+import { Flags } from '../../utils/const.js';
 
 export default new BaseCommand({
   metadata: {
@@ -24,11 +23,7 @@ export default new BaseCommand({
   async run(ctx) {
 
     const langjson = json[(await getGuild(ctx.guildId)).lang]
-
     const data = await getGuild(ctx.guildId);
-
-    await redis.set(ctx.guildId, JSON.stringify(data));
-
     const ROLE_BOT = getHighest(ctx.guild.me);
     const role = ctx.guild.roles.get(data.muterole);
 

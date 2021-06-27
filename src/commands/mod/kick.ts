@@ -1,13 +1,13 @@
-import BaseCommand from '../../Utils/Classes/command.js';
-import json from '../../Utils/Lang/langs.js';
+import BaseCommand from '../../utils/classes/command.js';
+import json from '../../utils/lang/langs.js';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
-import getGuild from '../../Utils/Functions/getguild.js';
-import canMod from '../../Utils/Functions/canmod.js';
-import getHighest from '../../Utils/Functions/gethighest.js';
+import getGuild from '../../utils/functions/getguild.js';
+import canMod from '../../utils/functions/canmod.js';
+import getHighest from '../../utils/functions/gethighest.js';
 import detritus from 'detritus-client';
-import parseArgs from '../../Utils/Functions/parseargs.js';
-import { Flags } from '../../Utils/const.js';
-import unmarkdown from '../../Utils/Functions/unmarkdown.js';
+import parseArgs from '../../utils/functions/parseargs.js';
+import { Flags } from '../../utils/const.js';
+import unmarkdown from '../../utils/functions/unmarkdown.js';
 
 export default new BaseCommand({
   label: 'arg',
