@@ -1,34 +1,38 @@
-import MessageEmbed from '../../Utils/Classes/Embed.js'
-import Command from '../../Utils/Classes/command.js';
-import command from '../../Utils/Interfaces/run.js';
+import BaseCommand from '../../Utils/Classes/Command.js';
 import mongoose from 'mongoose';
-import * as  eris from '@lil_marcrock22/eris-light';
+import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
+import { Color } from '../../Utils/Const.js'
 
-class Comando extends Command {
+export default new BaseCommand({
+  metadata: {
+    usage(prefix: string) {
+      return [`${prefix}ping`]
+    },
+    category: 'bot'
+  },
+  name: 'ping',
+  aliases: ['pong'],
+  async run(ctx) {
 
-  constructor() {
-    super();
-    this.name = 'ping';
-    this.category = 'bot';
-  }
-
-  async run({ message }: command): Promise<eris.Message> {
-
+    const res = await ctx.client.ping();
     const date: number = Date.now();
     const ping_db: number = await new Promise((r, j) => {
       mongoose.connection.db.admin().ping((err, result) => (err || !result) ? j(err || result) : r(Date.now() - date))
     });
     const embed = new MessageEmbed()
-      .setDescription(`🏓 Bot: ${message.guild.shard.latency}ms [${getStatus(message.guild.shard.latency)}]\n🏃 Message: ${date - message.createdAt}ms [${getStatus(date - message.createdAt)}]\n🗃️ DB: ${ping_db}ms [${getStatus(ping_db)}]`)
+      .setDescription
+      (
+        `
+        🏓 Gateway: ${res.gateway}ms [${getStatus(res.gateway)}]\n🏃 Message: ${date - Number(ctx.message.createdAt)}ms [${getStatus(date - Number(ctx.message.createdAt))}]\n🗃️ DB: ${ping_db}ms [${getStatus(ping_db)}]
+        `
+      )
       .setTimestamp()
-      .setColor(this.client.color);
+      .setColor(Color);
 
-    return message.channel.createMessage({ embed });
+    return ctx.reply({ embed });
 
-  }
-}
-
-export default Comando;
+  },
+});
 
 function getStatus(number: number) {
 

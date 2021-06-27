@@ -3,7 +3,7 @@ import { STYLES, estilos } from './types.js';
 class Button {
 
   url: string;
-  custom_id: string;
+  customId: string;
   style: 1 | 2 | 3 | 4 | 5;
   type: 2;
   label: string;
@@ -19,7 +19,7 @@ class Button {
   }
 
   setCustomID(custom_id: string): Button {
-    this.custom_id = custom_id;
+    this.customId = custom_id;
     return this;
   }
 
@@ -39,6 +39,7 @@ class Button {
   }
 
   setStyle(style: estilos): Button {
+    if (!STYLES[style]) throw new Error('Invalid styles ' + style);
     this.style = STYLES[style];
     return this;
   }

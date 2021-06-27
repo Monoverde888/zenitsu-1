@@ -1,3 +1,16 @@
+import BaseCommand from '../../Utils/Classes/Command.js';
+import json from '../../Utils/Lang/langs.js';
+import getGuild from '../../Utils/Functions/getGuild.js';
+import Collector, { Fixed } from '../../Utils/Collectors/Button.js';
+import AI from 'ai-tic-tac-toe';
+import tresenraya from 'tresenraya';
+const users: Map<string, string> = new Map();
+import detritus from 'detritus-client';
+import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
+import Button from '../../Utils/Buttons/Normal.js';
+import Components from '../../Utils/Buttons/Component.js';
+import { estilos } from '../../Utils/Buttons/types.js';
+
 const pos = [
   [0, 1, 2],
   [3, 4, 5],
@@ -8,31 +21,28 @@ const pos = [
   [0, 4, 8],
   [2, 4, 6]
 ];
+
 const colors: {
   [x: string]: estilos
 } = {
   '❌': 'danger',
   '⭕': 'primary'
 };
-import AI from 'ai-tic-tac-toe';
-import tresenraya from 'tresenraya';
-import * as light from '@lil_marcrock22/eris-light';
-const users: Map<string, string> = new Map();
-import Command from '../../Utils/Classes/command.js'
-import run from '../../Utils/Interfaces/run.js';
-import MessageEmbed from '../../Utils/Classes/Embed.js';
-import Button from '../../Utils/Buttons/Normal.js';
-import Components from '../../Utils/Buttons/Component.js';
-import { estilos } from '../../Utils/Buttons/types.js';
-import Zenitsu from '../../Utils/Classes/client.js';
+
+const emojis: {
+  [x: string]: string
+} = {
+  '❌': '<:x_tic:849685084236021790>',
+  '⭕': '<:o_tic:849685083967586304>'
+}
 
 function AIplay(partida: tresenraya.partida) {
   return (AI.getmove(partida.tablero.array.map(item => item == '❌' ? 'x' : item == '⭕' ? 'o' : ''), partida.turno.ficha == '❌' ? 'x' : 'o')) + 1;
 }
 
-function resolveMarkdown(user: light.User, partida: tresenraya.partida) {
+function resolveMarkdown(user: detritus.Structures.User | detritus.Structures.Member, partida: tresenraya.partida) {
 
-  return partida.turno.jugador == user.id ? `**${user.username}**` : user.username
+  return partida.turno.jugador == user.id ? `**${user.username}** ${emojis[partida.turno.ficha]}` : user.username
 
 }
 
@@ -47,7 +57,7 @@ function generateButtons(partida: tresenraya.partida, forceDisable = false, empa
     const number = parseInt(i) + 1;
 
     const temp = new Button(colors[check] ? colors[check] : 'secondary')
-      .setCustomID(`${number}`)
+      .setCustomID(`tictactoe_${number}`)
       .setDisabled(forceDisable || !!check)
 
     if (check) temp.setEmoji({ id: but == '❌' ? '849685084236021790' : '849685083967586304', name: but == '❌' ? 'x_tic' : 'o_tic' });
@@ -63,9 +73,9 @@ function generateButtons(partida: tresenraya.partida, forceDisable = false, empa
 
   if (empate) buttons2.push(
     new Button('success')
-      .setCustomID('repeat')
+      .setCustomID('tictactoe_repeat')
       .setEmoji({ name: '🔁', id: undefined })
-      .setLabel('Revancha')
+      .setLabel(empate)
   );
 
   return [new Components(...buttons1), new Components(...buttons2), new Components(...buttons3)];
@@ -74,52 +84,69 @@ function generateButtons(partida: tresenraya.partida, forceDisable = false, empa
 
 const partidas: Set<string> = new Set();
 
-async function jugar(firstp: light.Member, secondp: light.Member, client: Zenitsu, channel: light.TextableChannel, run: run) {
+async function jugar(firstp: detritus.Structures.User | detritus.Structures.Member, secondp: detritus.Structures.User | detritus.Structures.Member, ctx: detritus.Command.Context, channel: detritus.Structures.Channel, langjson: typeof json.es | typeof json.en) {
 
-  const { embedResponse, langjson } = run;
+  if (partidas.has(channel.guildId))
+    return ctx.reply(langjson.commands.tictactoe.curso);
 
-  if (partidas.has(firstp.guild.id))
-    return embedResponse(langjson.commands.tictactoe.curso, channel, client.color);
+  let msgRepuesta: detritus.Structures.Message;
 
-  if (client.user.id != secondp.id) {
-    embedResponse(langjson.commands.tictactoe.wait_user(secondp.username), channel, client.color);
+  if (ctx.client.user.id != secondp.id) {
+    msgRepuesta = await ctx.reply({
+      content: langjson.commands.tictactoe.wait_user(secondp.username),
+      components: [{
+        type: 1,
+        components: [
+          new Button('primary')
+            .setCustomID('tictactoe_yes')
+            .setEmoji({ name: '✅', id: undefined }),
+          new Button('primary')
+            .setCustomID('tictactoe_no')
+            .setEmoji({ name: '❌', id: undefined })
+        ]
+      }]
+    });
   }
 
-  const code = 'user:' + firstp.id + 'guild:' + firstp.guild.id + 'date:' + Date.now() + 'random:' + Math.random();
   const partida = new tresenraya.partida({ jugadores: [firstp.id, secondp.id] });
 
-  partidas.add(firstp.guild.id);
+  partidas.add(channel.guildId);
 
-  if (client.user.id != secondp.id) {
+  if (ctx.client.user.id != secondp.id) {
+
     const res: string | undefined = await new Promise(resolve => {
-      client.listener.add({
-        channelID: channel.id,
-        max: 1,
-        code: 'user:' + firstp.id + 'guild:' + firstp.guild.id + 'date:' + Date.now() + 'random:' + Math.random(),
-        filter(m) {
-          return m.author.id == secondp.id && ['s', 'n'].some(item => item == m.content)
-        },
-        idle: ((1 * 60) * 1000) * 2,
+
+      Collector.add({
         async onStop() {
           resolve(undefined);
         },
-        async onCollect(msg) {
-          resolve(msg.content);
+        async onCollect(m) {
+          resolve(m.data.customId);
         },
-        timeLimit: (1 * 60) * 1000,
-      });
+      },
+        (m) => {
+          return m.userId == secondp.id && ['tictactoe_no', 'tictactoe_yes'].some(item => item == m.data.customId)
+        },
+        {
+          idle: 0, time: (1 * 60) * 1000, max: 0
+        }, {
+        channelID: channel.id,
+        messageID: msgRepuesta.id,
+        guildID: msgRepuesta.guildId
+      })
+
     });
 
     const respuesta = res;
 
     if (!respuesta) {
-      embedResponse(langjson.commands.tictactoe.dont_answer(secondp.username), channel, client.color)
-      return partidas.delete(firstp.guild.id)
+      ctx.reply(langjson.commands.tictactoe.dont_answer(secondp.username))
+      return partidas.delete(channel.guildId)
     }
 
-    if (respuesta == 'n') {
-      embedResponse(langjson.commands.tictactoe.deny(secondp.username), channel, client.color)
-      return partidas.delete(firstp.guild.id)
+    if (respuesta == 'tictactoe_no') {
+      ctx.reply(langjson.commands.tictactoe.deny(secondp.username))
+      return partidas.delete(channel.guildId)
     }
   }
 
@@ -129,9 +156,9 @@ async function jugar(firstp: light.Member, secondp: light.Member, client: Zenits
   partida.jugadores = [firstp.id, secondp.id]
 
   partida.on('ganador', async (jugador) => {
-    partidas.delete(firstp.guild.id);
+    partidas.delete(channel.guildId);
     const embed = new MessageEmbed()
-      .setColor(client.color)
+      .setColor(0xff0000)
       .setDescription(langjson.commands.tictactoe.win(users.get(jugador as string)))
 
     const positions = pos.find(p => p.every(x => partida.tablero.array[x] == '❌')) || pos.find(p => p.every(x => partida.tablero.array[x] == '⭕')),
@@ -154,149 +181,169 @@ async function jugar(firstp: light.Member, secondp: light.Member, client: Zenits
 
     }
 
-    client.buttons.stop(code, 'NO');
+    const col = Collector._listeners.find(item => item.messageID == msg.id);
+    Collector.stop('NO', col);
+
     channel.createMessage({ embed, components: botones });
     users.delete(firstp.id);
     users.delete(secondp.id);
+
   });
 
   partida.on('empate', async (jugadores) => {
-    partidas.delete(firstp.guild.id)
+    partidas.delete(channel.guildId)
     const embed = new MessageEmbed()
-      .setColor(client.color)
+      .setColor(0xff0000)
       .setDescription(langjson.commands.tictactoe.draw(users.get(jugadores[0]), users.get(jugadores[1])))
 
-    client.buttons.stop(code, 'NO');
+    const col = Collector._listeners.find(item => item.messageID == msg.id);
+    Collector.stop('NO', col);
+
     users.delete(firstp.id)
     users.delete(secondp.id)
 
     const empate = await channel.createMessage({ embed, components: generateButtons(partida, true, langjson.commands.tictactoe.rematch) })
 
-    const res: false | light.ButtonInteraction = await new Promise(resolve => {
-      client.buttons.add({
-        messageID: empate.id,
-        max: 1,
-        code: 'user:' + firstp.id + 'guild:' + firstp.guild.id + 'date:' + Date.now() + 'random:' + Math.random(),
-        filter(b) {
-          return (jugadores.includes(b.member.user.id) && b.customID == 'repeat');
-        },
-        idle: Infinity,
+    const res: Fixed | false = await new Promise(resolve => {
+
+      Collector.add({
         async onStop() {
           resolve(false);
         },
-        async onCollect(b) {
-          resolve(b);
+        async onCollect(m) {
+          resolve(m);
         },
-        timeLimit: (1 * 30) * 1000,
-      });
+      },
+        (m) => {
+          return jugadores.includes(m.userId) && 'tictactoe_repeat' == m.data.customId
+        },
+        {
+          idle: 0, time: (1 * 30) * 1000, max: 0
+        }, {
+        channelID: channel.id,
+        messageID: empate.id,
+        guildID: empate.guildId
+      })
+
     });
 
     if (res) {
       const temp = [res.member.id != firstp.id ? secondp : firstp, res.member.id == firstp.id ? secondp : firstp]
-      return jugar(temp[0], temp[1], client, channel, run);
+      return jugar(temp[0], temp[1], ctx, channel, langjson);
     }
 
   });
 
   partida.on('finalizado', async () => {
-    partidas.delete(firstp.guild.id)
+    partidas.delete(channel.guildId)
     const embed = new MessageEmbed()
-      .setColor(client.color)
+      .setColor(0xff0000)
       .setDescription(langjson.commands.tictactoe.game_over);
 
-    client.buttons.stop(code, 'NO');
+    const col = Collector._listeners.find(item => item.messageID == msg.id);
+    Collector.stop('NO', col);
+
     channel.createMessage({ embed, components: generateButtons(partida, true) })
     users.delete(firstp.id)
     users.delete(secondp.id)
   });
 
-  let msg: light.Message;
+  let msg: detritus.Structures.Message;
 
-  if (partida.turno.jugador != client.user.id) {
-    msg = await channel.createMessage({ content: `${resolveMarkdown(firstp.user, partida)} vs ${resolveMarkdown(secondp.user, partida)}\n\n${langjson.commands.tictactoe.start(partida.turno.jugador == firstp.id ? firstp.username : secondp.username, partida.turno.ficha)}`, components: generateButtons(partida) })
+  if (partida.turno.jugador != ctx.client.user.id) {
+    msg = await channel.createMessage({ content: `${resolveMarkdown(firstp, partida)} vs ${resolveMarkdown(secondp, partida)}\n\n${langjson.commands.tictactoe.start(partida.turno.jugador == firstp.id ? firstp.username : secondp.username, emojis[partida.turno.ficha])}`, components: generateButtons(partida) })
   }
 
   else {
     const disponibles = [1, 2, 3, 4, 5, 6, 7, 8, 9].filter(a => partida.disponible(a));
     const jugada = AIplay(partida) || disponibles[Math.floor(Math.random() * disponibles.length)]
     partida.elegir(jugada)
-    msg = await channel.createMessage({ content: `${resolveMarkdown(firstp.user, partida)} vs ${resolveMarkdown(secondp.user, partida)}`, components: generateButtons(partida) })
+    msg = await channel.createMessage({ content: `${resolveMarkdown(firstp, partida)} vs ${resolveMarkdown(secondp, partida)}`, components: generateButtons(partida) })
   }
 
-  client.buttons.add({
-    messageID: msg.id,
-    max: 0,
-    code,
-    filter(button) {
-      return partida
-        && partida.jugadores.includes(button.member.id)
-        && button.member.id === partida.turno.jugador
-        && partida.disponible(parseInt(button.customID) || 1)
-        && !partida.finalizado
-    },
-    idle: Infinity,
-    async onStop(_, r) {
+  Collector.add({
+    onStop(r) {
+      if (['channelDelete', 'messageDelete', 'guildDelete'].includes(r)) return partidas.delete(ctx.guildId);
       if ((r != 'NO')) {
         return !partida || partida.finalizado ? null : partida.emit('finalizado', partida.jugadores, partida.tablero, partida.paso);
       }
     },
-    async onCollect(button, colector) {
+    async onCollect(m) {
 
-      const res = await button.defer().then(() => true).catch(() => false);
+      const check = await m.respond({ data: { flags: 64 }, type: 5 }).catch(() => false).then(() => true);
 
-      if (!res) return res;
+      if (!check) return check;
 
-      partida.elegir(parseInt(button.customID));
+      partida.elegir(parseInt(m.data.customId.split('tictactoe_')[1]));
 
       if (partida.finalizado) {
-        client.buttons.stop(colector, '');
+        const col = Collector._listeners.find(item => item.messageID == msg.id);
+        Collector.stop('', col);
         return;
       }
 
-      if (partida.turno.jugador != client.user.id) {
-        await msg.edit({ content: `${resolveMarkdown(firstp.user, partida)} vs ${resolveMarkdown(secondp.user, partida)}`, components: generateButtons(partida) });
-      }
+      await msg.edit({ content: `${resolveMarkdown(firstp, partida)} vs ${resolveMarkdown(secondp, partida)}`, components: generateButtons(partida) });
 
-      if (!partida.finalizado && partida.turno.jugador == client.user.id) {
+      if (!partida.finalizado && partida.turno.jugador == ctx.client.user.id) {
+
+        await new Promise((r) => {
+          setTimeout(() => { r(true) }, 5000)
+        })
+
         const disponibles = [1, 2, 3, 4, 5, 6, 7, 8, 9].filter(a => partida.disponible(a));
         const jugada = AIplay(partida) || disponibles[Math.floor(Math.random() * disponibles.length)]
         partida.elegir(jugada)
         if (!partida.finalizado) {
 
-          await msg.edit({ content: `${resolveMarkdown(firstp.user, partida)} vs ${resolveMarkdown(secondp.user, partida)}`, components: generateButtons(partida) });
+          await msg.edit({ content: `${resolveMarkdown(firstp, partida)} vs ${resolveMarkdown(secondp, partida)}`, components: generateButtons(partida) });
 
         }
       }
     },
-    timeLimit: (10 * 60) * 1000
-  });
+  },
+    (m) => {
+      return partida
+        && partida.jugadores.includes(m.userId)
+        && m.userId === partida.turno.jugador
+        && partida.disponible(parseInt(m.data.customId.split('tictactoe_')[1]) || 1)
+        && !partida.finalizado
+    },
+    {
+      idle: 0, time: (10 * 60) * 1000, max: 0
+    }, {
+    channelID: msg.id,
+    messageID: msg.id,
+    guildID: msg.guildId
+  })
 
   return true;
 
 }
 
-export default class Comando extends Command {
-  constructor() {
-    super();
-    this.name = "tictactoe";
-    this.alias = ['ttt', 'tresenraya'];
-    this.category = 'fun';
-    this.botPermissions.channel = ['attachFiles'];
-  }
-  async run(RUN: run): Promise<light.Message | boolean> {
 
-    const { message, langjson, embedResponse } = RUN;
-    const usuario = message.mentions[0];
+export default new BaseCommand({
+  label: 'arg',
+  metadata: {
+    usage(prefix: string) {
+      return [
+        `${prefix}ttt @Zenitsu.`,
+        `${prefix}ttt @User`
+      ]
+    },
+    category: 'fun'
+  },
+  name: 'tictactoe',
+  aliases: ['ttt', 'tresenraya'],
+  onBeforeRun(ctx) {
+    return !!ctx.message.mentions.first();
+  },
+  async run(ctx) {
 
-    if ((!usuario) || (usuario.id == message.author.id) || (usuario.bot && usuario.id != this.client.user.id))
-      return embedResponse(langjson.commands.tictactoe.game, message.channel, this.client.color);
+    const langjson = await getGuild(ctx.guildId).then(x => json[x.lang]);
 
-    const miembro = usuario.member;
+    const usuario = ctx.message.mentions.first();
 
-    if ((!miembro) || (miembro.id == message.author.id) || (miembro.bot && miembro.id != this.client.user.id))
-      return embedResponse(langjson.commands.tictactoe.game, message.channel, this.client.color);
+    return jugar(ctx.message.member, usuario, ctx, ctx.channel, langjson);
 
-    return jugar(message.member, miembro, this.client, message.channel, RUN);
-
-  }
-}
+  },
+});

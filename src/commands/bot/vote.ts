@@ -1,32 +1,26 @@
-import * as light from '@lil_marcrock22/eris-light';
-import Command from '../../Utils/Classes/command.js';
-import MessageEmbed from '../../Utils/Classes/Embed.js';
-import command from '../../Utils/Interfaces/run.js';
+import BaseCommand from '../../Utils/Classes/Command.js';
+import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
+import { Color } from '../../Utils/Const.js';
 
-class Comando extends Command {
-
-  constructor() {
-    super();
-    this.name = "vote"
-    this.category = 'bot'
-    this.alias = ['topgg'];
-  }
-
-  async run({ message }: command): Promise<light.Message> {
+export default new BaseCommand({
+  metadata: {
+    usage(prefix: string) {
+      return [`${prefix}vote`]
+    },
+    category: 'bot'
+  },
+  name: 'vote',
+  aliases: ['topgg'],
+  async run(ctx) {
 
     const embed = new MessageEmbed()
-      .setThumbnail(this.client.user.dynamicAvatarURL())
+      .setThumbnail(ctx.client.user.avatarUrl)
       .setDescription(`https://top.gg/bot/721080193678311554`)
-      .setColor(this.client.color)
-      .setFooter(message.author.username, message.author.dynamicAvatarURL())
+      .setColor(Color)
+      .setFooter(ctx.message.author.username, ctx.message.author.avatarUrl)
       .setTimestamp();
 
-    if (message.guild.me.permissions.has('attachFiles'))
-      embed.setImage(`attachment://topgg.png`);
+    return ctx.reply({ embed: embed })
 
-    return message.channel.createMessage({ embed: embed }, message.guild.me.permissions.has('attachFiles') ? [{ file: this.client.fileTOPGG, name: 'topgg.png' }] : undefined)
-
-  }
-}
-
-export default Comando;
+  },
+});

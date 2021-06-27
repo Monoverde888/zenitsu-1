@@ -1,13 +1,44 @@
 const obj = {
+
+  "permissions": {
+    CREATE_INSTANT_INVITE: 'createInstantInvite',
+    KICK_MEMBERS: 'kickMembers',
+    BAN_MEMBERS: 'banMembers',
+    ADMINISTRATOR: 'administrator',
+    MANAGE_CHANNELS: 'manageChannels',
+    MANAGE_GUILD: 'manageGuild',
+    ADD_REACTIONS: 'addReactions',
+    VIEW_AUDIT_LOG: 'viewAuditLog',
+    PRIORITY_SPEAKER: 'prioritySpeaker',
+    STREAM: 'stream',
+    VIEW_CHANNEL: 'viewChannel',
+    SEND_MESSAGES: 'sendMessages',
+    SEND_TTS_MESSAGES: 'sendTTSMessages',
+    MANAGE_MESSAGES: 'manageMessages',
+    EMBED_LINKS: 'embedLinks',
+    ATTACH_FILES: 'attachFiles',
+    READ_MESSAGE_HISTORY: 'readMessageHistory',
+    MENTION_EVERYONE: 'mentionEveryone',
+    USE_EXTERNAL_EMOJIS: 'useExternalEmojis',
+    VIEW_GUILD_INSIGHTS: 'viewGuildInsights',
+    CONNECT: 'connect',
+    SPEAK: 'speak',
+    MUTE_MEMBERS: 'muteMembers',
+    DEAFEN_MEMBERS: 'deafenMembers',
+    MOVE_MEMBERS: 'moveMembers',
+    USE_VAD: 'useVad',
+    CHANGE_NICKNAME: 'changeNickname',
+    MANAGE_NICKNAMES: 'manageNicknames',
+    MANAGE_ROLES: 'manageRoles',
+    MANAGE_WEBHOOKS: 'manageWebhooks',
+    MANAGE_EMOJIS: 'manageEmojis',
+  },
+
   "messages": {
 
-    "permisos_bot_guild": (p: string): string => "<:cancel:804368628861763664> | Oops, I am missing some permissions on the guild: " + p,
+    "permisos_bot": (p: string): string => "<:cancel:804368628861763664> | Oops, I am missing some permissions " + p,
 
-    "permisos_bot_channel": (p: string): string => "<:cancel:804368628861763664> | Oops, I am missing some permissions on the channel: " + p,
-
-    "permisos_user_guild": (p: string): string => "<:cancel:804368628861763664> | Oops, You are missing some permissions on the guild: " + p,
-
-    "permisos_user_channel": (p: string): string => "<:cancel:804368628861763664> | Oops, You are missing some permissions on the channel: " + p,
+    "permisos_user": (p: string): string => "<:cancel:804368628861763664> | Oops, You are missing some permissions " + p,
 
     "error": (e: string): string => "Something happened, here's a debug: " + e,
 
@@ -34,18 +65,9 @@ const obj = {
     },
 
     "setprefix": {
-
-      "no_prefix": "<:cancel:804368628861763664> | You need to specify the new prefix.",
-
-      "prefix_length": "<:cancel:804368628861763664> | The prefix must have less than 3 characters.",
-
       "prefix_nice": (mod: string, prefix: string): string => "<:trustedAdmin:804368672520536104> | " + mod + " has established the prefix to: " + prefix,
 
       "prefix_error": "<:cancel:804368628861763664> | Error setting the prefix."
-    },
-    "setlang": {
-
-      "invalid": "<:cancel:804368628861763664> | Incorrect use of the command."
     },
     "guilds": {
       "message": (guilds: number): string => "I am currently on " + guilds + " servers."
@@ -66,6 +88,10 @@ const obj = {
       "send": "<:reason2:804368699887845376> | Suggestion sent!"
     },
     "connect4": {
+
+      "surrender": "Surrender.",
+
+      "wait": "Wait.",
 
       "curso": "<:cancel:804368628861763664> | There is an ongoing game on this server.",
 
@@ -95,7 +121,7 @@ const obj = {
 
       "game_over2": "<:wtdDud:829390621894508544> | Game over D:",
 
-      "time_over": "<:dislike1:369553357377110027> | You lasted three minutes without answering, game over!",
+      "time_over": "<a:baimefui:804368920361566268> | You lasted three minutes without answering, game over!",
 
       "save": "Save game?"
 
@@ -125,7 +151,6 @@ const obj = {
       ]
     },
     "tictactoe": {
-      "game": "<:cancel:804368628861763664> | Mention a server member to play.",
       "curso": "<:cancel:804368628861763664> | There is an ongoing game on this server.",
       "wait_user": (user: string): string => "<a:waiting:804396292793040987> | " + user + ", you have 1 minute to answer...\nDo you want to play?: answer `s`\nYou dont want?: answer `n`",
       "dont_answer": (user: string): string => "😔 | " + user + " did not answer...",
@@ -153,17 +178,15 @@ const obj = {
       "query": "query"
     },
     "setlogs": {
-      invalid: `Incorrect use, please provide a valid webhook and type.`,
+      invalid: `Incorrect use, please provide a valid webhook.`,
       correct: (webhook: string, type: string): string => `Now the webhook **${webhook}** is active in the **${type}** event.`
     },
     "ban": {
-      mention: `<:cancel:804368628861763664> | Mention a member.`,
       cannt_ban: (user: string): string => `<:cancel:804368628861763664> | **I can't** ban ${user}`,
       user_cannt_ban: (user: string): string => `<:cancel:804368628861763664> | **You can't** ban ${user}`,
       ban: (user: string, reason: string): string => `<:ban:804368686130397215> | **${user}** was banned${reason ? `, with the reason: ${reason}` : `.`}`
     },
     "kick": {
-      mention: `<:cancel:804368628861763664> | Mention a member.`,
       cannt_kick: (user: string): string => `<:cancel:804368628861763664> | **I can't** kick ${user}`,
       user_cannt_kick: (user: string): string => `<:cancel:804368628861763664> | **You can't** kick ${user}`,
       kick: (user: string, reason: string): string => `<:ban:804368686130397215> | **${user}** was kicked${reason ? `, with the reason: ${reason}` : `.`}`
@@ -173,7 +196,6 @@ const obj = {
       achievements: 'Achievements'
     },
     "editprofile": {
-      bad_usage: (prefix: string): string => `Usage: ${prefix || 'z!'}editprofile <(color|description)> <value>`,
       invalid: `Invalid use.`,
       new_color: `<-- New color.`,
       description_invalid: (prefix: string): string => `Invalid use.\nCorrect use: **${prefix || 'z!'}editprofile description New description**`,

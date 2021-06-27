@@ -1,115 +1,40 @@
-import inte from '../Interfaces/run.js';
-import * as Eris from '@lil_marcrock22/eris-light';
-import Zenitsu from './client.js';
+import BaseCommand from './BaseCommand.js';
+import { Flags } from '../Const.js';
+const Arr = Object.entries(Flags);
+import getGuild from '../Functions/getGuild.js';
+import json from '../Lang/langs.js';
 
-type permissions = 'createInstantInvite' |
-  'kickMembers' |
-  'banMembers' |
-  'administrator' |
-  'manageChannels' |
-  'manageGuild' |
-  'addReactions' |
-  'viewAuditLog' |
-  'viewAuditLogs' |
-  'voicePrioritySpeaker' |
-  'voiceStream' |
-  'stream' |
-  'viewChannel' |
-  'readMessages' |
-  'sendMessages' |
-  'sendTTSMessages' |
-  'manageMessages' |
-  'embedLinks' |
-  'attachFiles' |
-  'readMessageHistory' |
-  'mentionEveryone' |
-  'useExternalEmojis' |
-  'externalEmojis' |
-  'viewGuildInsights' |
-  'voiceConnect' |
-  'voiceSpeak' |
-  'voiceMuteMembers' |
-  'voiceDeafenMembers' |
-  'voiceMoveMembers' |
-  'voiceUseVAD' |
-  'changeNickname' |
-  'manageNicknames' |
-  'manageRoles' |
-  'manageWebhooks' |
-  'manageEmojis' |
-  'useSlashCommands' |
-  'voiceRequestToSpeak' |
-  'allGuild' |
-  'allText' |
-  'allVoice' |
-  'all';
+class RegisterCommand {
+  constructor(options: BaseCommand) {
 
-
-class Command {
-
-  dev: boolean
-  alias: string[]
-  name: string
-  category: string
-  botPermissions: {
-    guild: permissions[]
-    channel: permissions[]
-  }
-  cooldown: number
-  memberPermissions: {
-    guild: permissions[]
-    channel: permissions[]
-  }
-  client: Zenitsu;
-
-  constructor() {
-    this.dev = false;
-    this.alias = []
-    this.name = 'NO_NAME_COMMAND'
-    this.category = 'none'
-    this.botPermissions = {
-      guild: [],
-      channel: []
+    options.onError = (ctx) => {
+      ctx.reply('```' + ctx.command.metadata.usage(ctx.prefix).join('\n') + '```');
     }
-    this.cooldown = 4;
-    this.memberPermissions = {
-      guild: [],
-      channel: []
+
+    options.onRunError = (ctx, _, error) => {
+      console.log(error);
+      return ctx.reply('```' + (error.message || error) + '```');
+    };
+
+    options.onCancelRun = options.onCancelRun || ((ctx) => {
+      return ctx.reply('```' + ctx.command.metadata.usage(ctx.prefix).join('\n') + '```');
+    });
+
+    options.onPermissionsFail = async (ctx, perms) => {
+      const { lang } = await getGuild(ctx.guildId);
+      const langjson = json[lang];
+      const permsStr = '`' + Arr.filter(item => perms.map(Number).includes(item[1])).map(x => x[0]).map(perm => langjson.permissions[perm as 'SPEAK']).join(', ') + '`';
+      return ctx.reply(langjson.messages.permisos_user(permsStr));
+    };
+
+    options.onPermissionsFailClient = async (ctx, perms) => {
+      const { lang } = await getGuild(ctx.guildId);
+      const langjson = json[lang];
+      const permsStr = '`' + Arr.filter(item => perms.map(Number).includes(item[1])).map(x => x[0]).map(perm => langjson.permissions[perm as 'SPEAK']).join(', ') + '`';
+      return ctx.reply(langjson.messages.permisos_bot(permsStr));
     }
+    return options;
   }
-  run(runthis: inte): unknown {
-    return runthis;
-  }
-
-  init(bot: Zenitsu) {
-    this.client = bot;
-  }
-
-  cantRun(message: Eris.Message<Eris.TextChannel | Eris.TextableChannel>): { case: number; perms: permissions[] } {
-
-    const channel = message.channel as Eris.TextChannel;
-
-    const check_1 = this.botPermissions.channel.filter(perm => !((channel).permissionsOf(message.guild.me).has(perm)))
-
-    if (check_1.length) return { case: 1, perms: check_1 };
-
-    const check_2 = this.memberPermissions.channel.filter(perm => !((channel).permissionsOf(message.member).has(perm)))
-
-    if (check_2.length) return { case: 2, perms: check_2 };
-
-    const check_3 = this.botPermissions.guild.filter(perm => !((channel).guild.me.permissions.has(perm)));
-
-    if (check_3.length) return { case: 3, perms: check_3 };
-
-    const check_4 = this.memberPermissions.guild.filter(perm => !(message.member.permissions.has(perm)));
-
-    if (check_4.length) return { case: 4, perms: check_4 };
-
-    return { case: 5, perms: [] };
-
-
-  }
-
 }
 
-export default Command;
+export default RegisterCommand;

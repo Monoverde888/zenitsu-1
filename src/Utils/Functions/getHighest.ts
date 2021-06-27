@@ -1,8 +1,8 @@
-import * as light from '@lil_marcrock22/eris-light';
+import detritus from 'detritus-client';
 
-function getHighest(member: light.Member): light.Role {
+function getHighest(member: detritus.Structures.Member) {
 
-  const memberRole = member.roles.map(item => member.guild.roles.get(item)).filter(xd => xd);
+  const memberRole = member.roles.map(item => item && member.guild.roles.get(item.id)).filter(xd => xd);
 
   memberRole.push(member.guild.roles.get(member.guild.id));
 

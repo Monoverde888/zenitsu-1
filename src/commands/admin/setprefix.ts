@@ -1,62 +1,53 @@
-import Command from '../../Utils/Classes/command.js';
-import command from '../../Utils/Interfaces/run.js'
-import * as light from '@lil_marcrock22/eris-light';
-import MessageEmbed from '../../Utils/Classes/Embed.js';
-import prefix from '../../models/prefix.js';
+import BaseCommand from '../../Utils/Classes/Command.js';
+import parseArgs from '../../Utils/Functions/parseArgs.js';
+import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
+import { Color, Flags } from '../../Utils/Const.js'
+import redis from '../../Utils/Managers/Redis.js';
+import json from '../../Utils/Lang/langs.js';
+import getGuild from '../../Utils/Functions/getGuild.js';
+import guild from '../../Database/models/guild.js';
 
+export default new BaseCommand({
+  label: 'arg',
+  metadata: {
+    usage(prefix: string) {
+      return [`${prefix}setprefix <newPrefix>`]
+    },
+    category: 'admin'
+  },
+  permissions: [Flags.MANAGE_GUILD],
+  name: 'setprefix',
+  onBeforeRun(__ctx, { arg }) {
+    const args = parseArgs(arg);
+    return args[0] && args[0].length <= 3;
+  },
+  async run(ctx, { arg }) {
 
-class Comando extends Command {
+    const langjson = json[(await getGuild(ctx.guildId).then(x => x.lang))];
 
-  constructor() {
-    super();
-    this.name = "setprefix"
-    this.alias = []
-    this.category = 'admin'
-    this.memberPermissions = { guild: ['manageGuild'], channel: [] }
-  }
+    const args = parseArgs(arg);
 
-  async run({ message, args, langjson }: command): Promise<light.Message> {
+    return guild.findOneAndUpdate({ id: ctx.guildId }, { prefix: args[0] }, { new: true, upsert: true }).lean().then(async data => {
 
-    const embedErr = new MessageEmbed()
-      .setColor(this.client.color)
-      .setDescription(langjson.commands.setprefix.no_prefix)
-      .setTimestamp()
-
-    if (!args[0])
-      return message.channel.createMessage({ embed: embedErr })
-
-    const embedE = new MessageEmbed()
-      .setColor(this.client.color)
-      .setDescription(langjson.commands.setprefix.prefix_length)
-      .setTimestamp()
-
-    if (args[0].length >= 4)
-      return message.channel.createMessage({ embed: embedE })
-
-    return prefix.findOneAndUpdate({ id: message.guildID }, { prefix: args[0] }, { new: true, upsert: true }).lean().then(async data => {
-
-      await this.client.redis.set(message.guildID, JSON.stringify(data), 'prefix_')
+      await redis.set(ctx.guildId, JSON.stringify(data))
 
       const embed = new MessageEmbed()
-        .setColor(this.client.color)
-        .setDescription(langjson.commands.setprefix.prefix_nice(message.author.username, data.prefix))
+        .setColor(Color)
+        .setDescription(langjson.commands.setprefix.prefix_nice(ctx.message.author.username, data.prefix))
         .setTimestamp()
-      return message.channel.createMessage({ embed: embed })
+      return ctx.reply({ embed: embed })
 
     }).catch(err => {
 
       const embed = new MessageEmbed()
-        .setColor(this.client.color)
+        .setColor(Color)
         .setDescription(langjson.commands.setprefix.prefix_error)
         .setTimestamp()
         .setFooter(err.message || err)
 
-      return message.channel.createMessage({ embed: embed })
+      return ctx.reply({ embed: embed })
 
     })
 
-  }
-
-}
-
-export default Comando;
+  },
+});

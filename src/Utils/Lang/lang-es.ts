@@ -1,13 +1,44 @@
 const obj = {
+
+  "permissions": {
+    CREATE_INSTANT_INVITE: 'createInstantInvite',
+    KICK_MEMBERS: 'kickMembers',
+    BAN_MEMBERS: 'banMembers',
+    ADMINISTRATOR: 'administrator',
+    MANAGE_CHANNELS: 'manageChannels',
+    MANAGE_GUILD: 'manageGuild',
+    ADD_REACTIONS: 'addReactions',
+    VIEW_AUDIT_LOG: 'viewAuditLog',
+    PRIORITY_SPEAKER: 'prioritySpeaker',
+    STREAM: 'stream',
+    VIEW_CHANNEL: 'viewChannel',
+    SEND_MESSAGES: 'sendMessages',
+    SEND_TTS_MESSAGES: 'sendTTSMessages',
+    MANAGE_MESSAGES: 'manageMessages',
+    EMBED_LINKS: 'embedLinks',
+    ATTACH_FILES: 'attachFiles',
+    READ_MESSAGE_HISTORY: 'readMessageHistory',
+    MENTION_EVERYONE: 'mentionEveryone',
+    USE_EXTERNAL_EMOJIS: 'useExternalEmojis',
+    VIEW_GUILD_INSIGHTS: 'viewGuildInsights',
+    CONNECT: 'connect',
+    SPEAK: 'speak',
+    MUTE_MEMBERS: 'muteMembers',
+    DEAFEN_MEMBERS: 'deafenMembers',
+    MOVE_MEMBERS: 'moveMembers',
+    USE_VAD: 'useVad',
+    CHANGE_NICKNAME: 'changeNickname',
+    MANAGE_NICKNAMES: 'manageNicknames',
+    MANAGE_ROLES: 'manageRoles',
+    MANAGE_WEBHOOKS: 'manageWebhooks',
+    MANAGE_EMOJIS: 'manageEmojis',
+  },
+
   "messages": {
 
-    "permisos_bot_guild": (p: string): string => "<:cancel:804368628861763664> | Ups, me faltan algun/algunos permiso(s) en el servidor: " + p,
+    "permisos_bot": (p: string): string => "<:cancel:804368628861763664> | Ups, me faltan algun/algunos permiso(s): " + p,
 
-    "permisos_bot_channel": (p: string): string => "<:cancel:804368628861763664> | Ups, me faltan algun/algunos permiso(s) en el canal: " + p,
-
-    "permisos_user_guild": (p: string): string => "<:cancel:804368628861763664> | Ups, te faltan algun/algunos permiso(s) en el servidor: " + p,
-
-    "permisos_user_channel": (p: string): string => "<:cancel:804368628861763664> | Ups, te faltan algun/algunos permiso(s) en el canal: " + p,
+    "permisos_user": (p: string): string => "<:cancel:804368628861763664> | Ups, te faltan algun/algunos permiso(s): " + p,
 
     "error": (e: string): string => "Algo pasó, aquí un mensaje: " + e,
 
@@ -34,17 +65,10 @@ const obj = {
     },
 
     "setprefix": {
-      "no_prefix": "<:cancel:804368628861763664> | Necesitas especificar el prefijo nuevo.",
-
-      "prefix_length": "<:cancel:804368628861763664> | El prefijo debe tener menos de 3 caracteres.",
 
       "prefix_nice": (mod: string, prefix: string): string => "<:trustedAdmin:804368672520536104> | " + mod + " ha establecido el prefijo a: " + prefix,
 
       "prefix_error": "<:cancel:804368628861763664> | Error al establecer el prefijo.",
-
-    },
-    "setlang": {
-      "invalid": "<:cancel:804368628861763664> | Uso incorrecto del comando.",
 
     },
     "guilds": {
@@ -66,6 +90,11 @@ const obj = {
 
     },
     "connect4": {
+
+      "surrender": "Rendirse.",
+
+      "wait": "Espera.",
+
       "curso": "<:cancel:804368628861763664> | Hay una partida en curso en este servidor.",
 
       "mention": "<:cancel:804368628861763664> | Menciona a un miembro del servidor para jugar.",
@@ -94,7 +123,7 @@ const obj = {
 
       "game_over2": "<:wtdDud:829390621894508544> | Juego terminado D:",
 
-      "time_over": "<:dislike1:369553357377110027> | Duraste tres minutos sin responder, juego terminado!",
+      "time_over": "<a:baimefui:804368920361566268> | Duraste tres minutos sin responder, juego terminado!",
 
       "save": 'Guardar partida?'
 
@@ -128,7 +157,6 @@ const obj = {
 
     },
     "tictactoe": {
-      "game": "<:cancel:804368628861763664> | Menciona a un miembro del servidor para jugar.",
       "curso": "<:cancel:804368628861763664> | Hay una partida en curso en este servidor.",
       "wait_user": (user: string): string => "<a:waiting:804396292793040987> | " + user + ", tienes un minuto para responder...\n¿Quieres jugar?: responde `s`\n¿No quieres jugar?: responde `n`",
       "dont_answer": (user: string): string => "😔 | " + user + " no respondió...",
@@ -156,17 +184,15 @@ const obj = {
       "query": "busqueda"
     },
     "setlogs": {
-      invalid: `Uso incorrecto, por favor ingresa una webhook valida y tipo.`,
+      invalid: `Uso incorrecto, por favor ingresa una webhook valida.`,
       correct: (webhook: string, type: string): string => `Ahora la webhook **${webhook}** está registrando el evento **${type}**.`
     },
     "ban": {
-      mention: `<:cancel:804368628861763664> | Menciona a un miembro.`,
       cannt_ban: (user: string): string => `<:cancel:804368628861763664> | **No puedo** vetar a ${user}`,
       user_cannt_ban: (user: string): string => `<:cancel:804368628861763664> | **No puedes** vetar a ${user}`,
       ban: (user: string, reason: string): string => `<:ban:804368686130397215> | **${user}** ha sido vetado${reason ? `, con la razón: ${reason}` : `.`}`
     },
     "kick": {
-      mention: `<:cancel:804368628861763664> | Menciona a un miembro.`,
       cannt_kick: (user: string): string => `<:cancel:804368628861763664> | **No puedo** expulsar a ${user}`,
       user_cannt_kick: (user: string): string => `<:cancel:804368628861763664> | **No puedes** expulsar a ${user}`,
       kick: (user: string, reason: string): string => `<:ban:804368686130397215> | **${user}** ha sido expulsado${reason ? `, con la razón: ${reason}` : `.`}`
@@ -176,7 +202,6 @@ const obj = {
       achievements: 'Logros'
     },
     "editprofile": {
-      bad_usage: (prefix: string): string => `Uso: ${prefix || 'z!'}editprofile <(color|description)> <valor>`,
       invalid: `Uso invalido.`,
       new_color: `<-- Nuevo color.`,
       description_invalid: (prefix: string): string => `Uso invalido.\nUso correcto: **${prefix || 'z!'}editprofile description Nueva descripción**`,

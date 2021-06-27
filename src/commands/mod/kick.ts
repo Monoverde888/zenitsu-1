@@ -1,50 +1,60 @@
-import run from "../../Utils/Interfaces/run.js";
-import Command from '../../Utils/Classes/command.js';
-import * as light from '@lil_marcrock22/eris-light';
-import canMod from "../../Utils/Functions/canMod.js";
-import MessageEmbed from "../../Utils/Classes/Embed.js";
+import BaseCommand from '../../Utils/Classes/Command.js';
+import json from '../../Utils/Lang/langs.js';
+import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
+import getGuild from '../../Utils/Functions/getGuild.js';
+import canMod from '../../Utils/Functions/canMod.js';
 import getHighest from '../../Utils/Functions/getHighest.js';
+import detritus from 'detritus-client';
+import parseArgs from '../../Utils/Functions/parseArgs.js';
+import { Flags } from '../../Utils/Const.js';
+import unmarkdown from '../../Utils/Functions/unmarkdown.js';
 
-export default class Comando extends Command {
-  constructor() {
-    super()
-    this.name = "kick"
-    this.category = 'mod';
-    this.botPermissions.guild = ['kickMembers'];
-    this.cooldown = 6;
-    this.memberPermissions.guild = ['kickMembers'];
-  }
+export default new BaseCommand({
+  label: 'arg',
+  metadata: {
+    usage(prefix: string) {
+      return [`${prefix}kick <@Member> [reason]`]
+    },
+    category: 'mod'
+  },
+  name: 'kick',
+  permissions: [Flags.KICK_MEMBERS],
+  permissionsClient: [Flags.KICK_MEMBERS],
+  onBeforeRun(ctx) {
+    return ctx.message.mentions.first() && (ctx.message.mentions.first() instanceof detritus.Structures.Member) && (ctx.message.mentions.first().id != ctx.userId);
+  },
+  async run(ctx, { arg }) {
 
-  async run({ args, message, langjson, embedResponse }: run): Promise<light.Message> {
+    const args = parseArgs(arg);
+    const langjson = json[(await getGuild(ctx.guildId)).lang]
+    const member = ctx.message.mentions.first() as detritus.Structures.Member
 
-    const user = message.mentions.filter(user => user.id != message.author.id)[0];
-    const member = user ? user.member : null;
-    if (!member) return embedResponse(langjson.commands.kick.mention, message.channel, this.client.color);
-    if (!canMod(member, this.client, 'kick')) return embedResponse(langjson.commands.kick.cannt_kick(`**${this.client.unMarkdown(user.username)}**`), message.channel, this.client.color)
-    if (message.author.id !== message.guild.ownerID) {
-      if (getHighest(message.member).position <= getHighest(member).position) return embedResponse(langjson.commands.kick.user_cannt_kick(`**${this.client.unMarkdown(user.username)}**`), message.channel, this.client.color)
+    if (!canMod(member, ctx.client, 'kick')) return ctx.reply(langjson.commands.kick.cannt_kick(`**${unmarkdown(member.username)}**`))
+    if (ctx.message.author.id !== ctx.message.guild.ownerId) {
+      if (getHighest(ctx.message.member).position <= getHighest(member).position) return ctx.reply(langjson.commands.kick.user_cannt_kick(`**${unmarkdown(member.username)}**`))
     }
 
     const reason = (args.join(' ') || '').replace(member.mention, '').slice(0, 500) || null;
 
-    return member.kick(reason).then(() => {
+    return member.remove({ reason }).then(() => {
 
       const embed = new MessageEmbed()
         .setColor(0x2ecc71)
-        .setDescription(langjson.commands.kick.kick(`**${this.client.unMarkdown(user.username)}**`, reason))
-        .setFooter(message.author.username, message.author.dynamicAvatarURL())
+        .setDescription(langjson.commands.kick.kick(`**${unmarkdown(member.username)}**`, reason))
+        .setFooter(ctx.message.author.username, ctx.message.author.avatarUrl)
 
-      return message.channel.createMessage({ embed })
+      return ctx.reply({ embed })
 
     }).catch((error) => {
 
       const embed = new MessageEmbed()
         .setColor(0xff0000)
         .setDescription(`Error: ${error ? (error.message || error) : error}`)
-        .setFooter(message.author.username, message.author.dynamicAvatarURL())
+        .setFooter(ctx.message.author.username, ctx.message.author.avatarUrl)
 
-      return message.channel.createMessage({ embed })
+      return ctx.reply({ embed })
 
     })
-  }
-}
+
+  },
+});

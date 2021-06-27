@@ -1,8 +1,15 @@
+import { KufaConsole } from 'kufa';
+
 declare global {
 
   namespace NodeJS {
 
+    interface Global {
+      Console: KufaConsole
+    }
+
     interface ProcessEnv {
+
       APIPROFILE: string;
       APICONNECTFOUR: string;
       APIKEY: string;

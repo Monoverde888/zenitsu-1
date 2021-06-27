@@ -1,34 +1,34 @@
-import Command from '../../Utils/Classes/command.js';
-import command from '../../Utils/Interfaces/run.js'
-import * as light from '@lil_marcrock22/eris-light';
-import MessageEmbed from '../../Utils/Classes/Embed.js';
+import BaseCommand from '../../Utils/Classes/Command.js';
+import json from '../../Utils/Lang/langs.js';
+import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
 import URLButton from '../../Utils/Buttons/URL.js';
+import Button from '../../Utils/Buttons/Normal.js';
 import Components from '../../Utils/Buttons/Component.js';
+import getGuild from '../../Utils/Functions/getGuild.js';
+import { Color } from '../../Utils/Const.js'
 
-class Comando extends Command {
+export default new BaseCommand({
+  metadata: {
+    usage(prefix: string) {
+      return [`${prefix}help`]
+    },
+    category: 'bot'
+  },
+  name: 'help',
+  aliases: ['h'],
+  async run(ctx) {
 
-  constructor() {
-    super()
-    this.name = "help"
-    this.alias = ['h']
-    this.category = 'bot'
-
-  }
-  run({ message, langjson }: command): Promise<light.Message> {
-
+    const langjson = json[(await getGuild(ctx.guildId)).lang]
     const categories: string[] = langjson.commands.help.categories;
 
     const embedHelp = new MessageEmbed()
-      .setColor(this.client.color)
+      .setColor(Color)
       .setTimestamp()
-      .addField(categories[0], this.client.commands.filter(a => a.category === 'utils').map(a => `\`${a.name}\``).join(', '))
-      .addField(categories[1], this.client.commands.filter(a => a.category === 'fun').map(a => `\`${a.name}\``).join(', '))
-      .addField(categories[2], this.client.commands.filter(a => a.category === 'mod').map(a => `\`${a.name}\``).join(', '))
-      .addField(categories[3], this.client.commands.filter(a => a.category === 'bot').map(a => `\`${a.name}\``).join(', '))
-      .addField(categories[4], this.client.commands.filter(a => a.category === 'admin').map(a => `\`${a.name}\``).join(', '));
-
-    if (message.guild.me.permissions.has('attachFiles'))
-      embedHelp.setImage(`attachment://topgg.png`);
+      .addField(categories[0], ctx.client.commandClient.commands.filter(a => a.metadata.category === 'util').map(a => `\`${a.name}\``).join(', ') || 'weird')
+      .addField(categories[1], ctx.client.commandClient.commands.filter(a => a.metadata.category === 'fun').map(a => `\`${a.name}\``).join(', ') || 'weird')
+      .addField(categories[2], ctx.client.commandClient.commands.filter(a => a.metadata.category === 'mod').map(a => `\`${a.name}\``).join(', ') || 'weird')
+      .addField(categories[3], ctx.client.commandClient.commands.filter(a => a.metadata.category === 'bot').map(a => `\`${a.name}\``).join(', ') || 'weird')
+      .addField(categories[4], ctx.client.commandClient.commands.filter(a => a.metadata.category === 'admin').map(a => `\`${a.name}\``).join(', ') || 'weird');
 
     const BUTTONS =
       [
@@ -46,11 +46,9 @@ class Comando extends Command {
 
     const componente = new Components(...BUTTONS)
 
-    return message.channel.createMessage({
+    return ctx.reply({
       embed: embedHelp, components: [componente]
-    }, message.guild.me.permissions.has('attachFiles') ? [{ file: this.client.fileTOPGG, name: 'topgg.png' }] : undefined);
+    })
 
-  }
-}
-
-export default Comando;
+  },
+});

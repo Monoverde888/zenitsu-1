@@ -1,70 +1,62 @@
-import Command from '../../Utils/Classes/command.js';
-import command from '../../Utils/Interfaces/run.js'
-import * as light from '@lil_marcrock22/eris-light';
-import MessageEmbed from '../../Utils/Classes/Embed.js';
-import lang from '../../models/lang.js';
+import BaseCommand from '../../Utils/Classes/Command.js';
+import parseArgs from '../../Utils/Functions/parseArgs.js';
+import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
+import { Color, Flags } from '../../Utils/Const.js'
+import redis from '../../Utils/Managers/Redis.js';
+import guild from '../../Database/models/guild.js';
 
-class Comando extends Command {
+export default new BaseCommand({
+  label: 'arg',
+  metadata: {
+    usage(prefix: string) {
+      return [`${prefix}setlang <es|en>`]
+    },
+    category: 'admin'
+  },
+  permissions: [Flags.MANAGE_GUILD],
+  name: 'setlang',
+  onBeforeRun(__ctx, { arg }) {
+    const args = parseArgs(arg);
+    return ['es', 'en'].includes(args[0]);
+  },
+  async run(ctx, { arg }) {
 
-  constructor() {
-    super();
-    this.name = "setlang"
-    this.alias = []
-    this.category = 'admin'
-    this.memberPermissions = { guild: ['manageGuild'], channel: [] }
-  }
-
-  async run({ message, args, langjson, prefix }: command): Promise<light.Message> {
-
-    const selectLang = args[0] ? args[0].toLowerCase() : null;
+    const args = parseArgs(arg);
+    const selectLang = args[0].toLowerCase()
 
     switch (selectLang) {
 
       case 'es': {
 
-        const data = await lang.findOneAndUpdate({ id: message.guild.id }, { lang: 'es' }, { new: true, upsert: true }).lean();
+        const data = await guild.findOneAndUpdate({ id: ctx.guildId }, { lang: 'es' }, { new: true, upsert: true }).lean();
 
-        await this.client.redis.set(message.guildID, JSON.stringify(data), 'lang_');
+        await redis.set(ctx.guildId, JSON.stringify(data));
 
-        return message.channel.createMessage({
+        return ctx.reply({
           embed:
             new MessageEmbed()
-              .setColor(this.client.color)
+              .setColor(Color)
               .setDescription(`🇪🇸 | Establecido al español :D.`)
-              .setAuthor(message.author.username, message.author.dynamicAvatarURL())
+              .setAuthor(ctx.message.author.username, ctx.message.author.avatarUrl)
         });
+
       }
 
       case 'en': {
 
-        const data = await lang.findOneAndUpdate({ id: message.guild.id }, { lang: 'en' }, { new: true, upsert: true }).lean();
+        const data = await guild.findOneAndUpdate({ id: ctx.guildId }, { lang: 'en' }, { new: true, upsert: true }).lean();
 
-        await this.client.redis.set(message.guildID, JSON.stringify(data), 'lang_');
+        await redis.set(ctx.guildId, JSON.stringify(data));
 
-        return message.channel.createMessage({
+        return ctx.reply({
           embed:
             new MessageEmbed()
-              .setColor(this.client.color)
+              .setColor(Color)
               .setDescription(`🇺🇸 | Established in English.`)
-              .setAuthor(message.author.username, message.author.dynamicAvatarURL())
+              .setAuthor(ctx.message.author.username, ctx.message.author.avatarUrl)
         });
 
       }
-
-      default:
-        return message.channel.createMessage({
-          embed:
-            new MessageEmbed()
-              .setColor(this.client.color)
-              .setDescription(langjson.commands.setlang.invalid)
-              .setAuthor(`${prefix}setlang (es|en)`)
-        });
-
-
     }
-
-  }
-
-}
-
-export default Comando;
+  },
+});

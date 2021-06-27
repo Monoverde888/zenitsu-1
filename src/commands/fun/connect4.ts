@@ -1,120 +1,176 @@
+import redis from '../../Utils/Managers/Redis.js';
 import c4 from 'connect4-ai';
 const { Connect4AI } = c4
-import * as light from '@lil_marcrock22/eris-light';
-import run from '../../Utils/Interfaces/run.js';
-import displayConnectFourBoard from '../../Utils/Functions/displayConnectFourBoard.js'
-import Command from '../../Utils/Classes/command.js';
+import Collector from '../../Utils/Collectors/Button.js';
 const games: Map<string, c4.Connect4AI> = new Map();
-import model from '../../models/c4top.js';
-import MessageEmbed from '../../Utils/Classes/Embed.js';
-import MODEL from '../../models/c4maps.js';
-import canvas from 'canvas';
-import profile, { Profile as PROFILE } from '../../models/profile.js';
+import BaseCommand from '../../Utils/Classes/Command.js';
+import getUser from '../../Utils/Functions/getUser.js';
+import json from '../../Utils/Lang/langs.js';
+import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
+import getGuild from '../../Utils/Functions/getGuild.js';
+import parseArgs from '../../Utils/Functions/parseArgs.js';
+import model from '../../Database/models/user.js';
+import Button from '../../Utils/Buttons/Normal.js';
+import Component from '../../Utils/Buttons/Component.js';
 
-export default class Comando extends Command {
+function generateButtons(partida: c4.Connect4AI, text: string) {
 
-  constructor() {
-    super()
-    this.name = "connect4"
-    this.alias = [`conecta4`, 'fourinrow', '4enlinea', 'c4']
-    this.category = 'fun'
-    this.botPermissions.channel = ['attachFiles']
+  const buttons = [
+    new Button('primary')
+      .setCustomID('c4_0')
+      .setLabel('1'),
+    new Button('primary')
+      .setCustomID('c4_1')
+      .setLabel('2'),
+    new Button('primary')
+      .setCustomID('c4_2')
+      .setLabel('3'),
+    new Button('primary')
+      .setCustomID('c4_3')
+      .setLabel('4'),
+    new Button('primary')
+      .setCustomID('c4_4')
+      .setLabel('5'),
+    new Button('primary')
+      .setCustomID('c4_5')
+      .setLabel('6'),
+    new Button('primary')
+      .setCustomID('c4_6')
+      .setLabel('7'),
+    new Button('danger')
+      .setCustomID('c4_surrender')
+      .setLabel(text)
+  ]
+
+  for (let i = 0; i < 7; i++) {
+    if (!partida) {
+      buttons[i].setDisabled(true);
+      continue;
+    }
+    if (!partida.canPlay(i))
+      buttons[i].setDisabled(true);
   }
 
-  async run({ message, args, langjson, embedResponse, prefix }: run): Promise<light.Message> {
+  if (!partida) buttons[7].setDisabled(true);
 
-    const client = this.client;
+  return [
+    new Component(...buttons.slice(0, 5)),
+    new Component(...buttons.slice(5))
+  ];
 
-    const ArrayOfArrayOfNumbers: [number, number, canvas.Image][] = [];
-    const DATAPROFILE: PROFILE = await client.redis.get(message.author.id, 'profile_').then(x => typeof x == 'string' ? JSON.parse(x) : null) || await profile.findOne({ id: message.author.id }) || await profile.create({ id: message.author.id });
+}
 
-    if (games.get(message.guild.id)) {
+export default new BaseCommand({
+  label: 'arg',
+  metadata: {
+    usage(prefix: string) {
+      return [
+        `${prefix}connect4 <easy/medium/hard>`,
+        `${prefix}connect4 @User`
+      ]
+    },
+    category: 'fun'
+  },
+  name: 'connect4',
+  aliases: ['fourinrow', '4enlinea', 'c4'],
+  async run(ctx, { arg }) {
+
+    const ArrayOfArrayOfNumbers: [number, number, string][] = [];
+    const DATAPROFILE = await getUser(ctx.message.author.id);
+    const langjson = await getGuild(ctx.guildId).then(x => json[x.lang]);
+    const args = parseArgs(arg);
+
+    if (games.get(ctx.guildId)) {
       const embed = new MessageEmbed()
-        .setColor(client.color)
+        .setColor(0xff0000)
         .setDescription(langjson.commands.connect4.curso)
-      return message.channel.createMessage({
+      return ctx.reply({
         embed
       });
     }
 
     args[0] = args[0] ? args[0].toLowerCase() : null;
 
-    const usuario = ['easy', 'medium', 'hard'].includes(args[0]) ? client.user : message.mentions.filter(user => !user.bot)[0];
+    const usuario = ['easy', 'medium', 'hard'].includes(args[0]) ? ctx.client.user : ctx.message.mentions.filter(user => !user.bot)[0];
 
-    if ((!usuario) || (usuario.id == message.author.id) || (usuario.bot && usuario.id != client.user.id)) {
+    if ((!usuario) || (usuario.id == ctx.message.author.id) || (usuario.bot && usuario.id != ctx.client.user.id)) {
       const embed = new MessageEmbed()
         .setDescription(langjson.commands.connect4.mention)
         .setFooter(langjson.commands.connect4.footer)
-        .setColor(client.color)
+        .setColor(0xff0000)
 
-      return message.channel.createMessage({
+      return ctx.reply({
         embed
       });
     }
 
-    const findTurn = (user: string) => games.get(message.guildID) && games.get(message.guildID).jugadores ? games.get(message.guildID).jugadores.find(item => item.id == user) : null;
+    const findTurn = (user: string) => games.get(ctx.message.guildId) && games.get(ctx.message.guildId).jugadores ? games.get(ctx.message.guildId).jugadores.find(item => item.id == user) : null;
 
-    if (usuario.id != client.user.id)
+    if (usuario.id != ctx.client.user.id)
       if (findTurn(usuario.id)) {
-        return embedResponse(langjson.commands.connect4.user_active(usuario.username), message.channel, client.color);
+        return ctx.reply(langjson.commands.connect4.user_active(usuario.username));
       }
 
-    if (findTurn(message.author.id)) {
-      return embedResponse(langjson.commands.connect4.author_active, message.channel, client.color);
+    if (findTurn(ctx.message.author.id)) {
+      return ctx.reply(langjson.commands.connect4.author_active);
     }
 
     const poto = new Connect4AI();
 
-    games.set(message.guild.id, poto)
+    games.set(ctx.guildId, poto)
 
-    if (usuario.id != client.user.id) {
+    if (usuario.id != ctx.client.user.id) {
 
-      await embedResponse(langjson.commands.connect4.wait_user(usuario.username), message.channel, client.color);
+      const Buttons = [
+        new Button('primary')
+          .setCustomID('c4_yes')
+          .setLabel('Yes'),
+        new Button('danger')
+          .setCustomID('c4_no')
+          .setLabel('No')
+      ];
+
+      const wait = await ctx.reply({ content: langjson.commands.connect4.wait_user(usuario.username), components: [new Component(...Buttons)] });
 
       const res: string | undefined = await new Promise(resolve => {
-        client.listener.add({
-          channelID: message.channel.id,
-          max: 1,
-          code: 'user:' + message.author.id + 'guild:' + message.guild.id + 'date:' + Date.now() + 'random:' + Math.random(),
-          filter(m) {
-            return m.author.id == usuario.id && ['s', 'n'].some(item => item == m.content)
+        Collector.add({
+          onCollect(interaction) {
+            resolve(interaction.data.customId);
           },
-          idle: ((1 * 60) * 1000) * 2,
-          async onStop() {
+          onStop() {
             resolve(undefined);
-          },
-          async onCollect(msg) {
-            resolve(msg.content);
-          },
-          timeLimit: (1 * 60) * 1000,
-        });
+          }
+        },
+          (interaction) => interaction.userId == usuario.id && ['c4_yes', 'c4_no'].some(item => item == interaction.data.customId),
+          { time: (1 * 60) * 1000, max: 2, idle: 0 },
+          { channelID: ctx.channelId, messageID: wait.id, guildID: ctx.guildId });
       });
 
       const respuesta = res;
 
       if (!respuesta) {
-        games.delete(message.guild.id)
-        return embedResponse(langjson.commands.connect4.dont_answer(usuario.username), message.channel, client.color)
+        games.delete(ctx.guildId)
+        return ctx.reply(langjson.commands.connect4.dont_answer(usuario.username))
       }
 
-      if (respuesta == 'n') {
-        games.delete(message.guild.id)
-        return embedResponse(langjson.commands.connect4.deny(usuario.username), message.channel, client.color)
+      if (respuesta == 'c4_no') {
+        games.delete(ctx.guildId)
+        return ctx.reply(langjson.commands.connect4.deny(usuario.username))
       }
 
       if (findTurn(usuario.id)) {
-        games.delete(message.guild.id)
-        return embedResponse(langjson.commands.connect4.user_active(usuario.username), message.channel, client.color);
+        games.delete(ctx.guildId)
+        return ctx.reply(langjson.commands.connect4.user_active(usuario.username));
       }
 
-      if (findTurn(message.author.id)) {
-        games.delete(message.guild.id)
-        return embedResponse(langjson.commands.connect4.author_active, message.channel, client.color);
+      if (findTurn(ctx.message.author.id)) {
+        games.delete(ctx.guildId)
+        return ctx.reply(langjson.commands.connect4.author_active);
       }
 
     }
 
-    if (usuario.id != client.user.id) {
+    if (usuario.id != ctx.client.user.id) {
 
       const user1 = Math.floor(Math.random() * 2) + 1 == 2 ? 2 : 1
       const user2 = user1 == 2 ? 1 : 2
@@ -124,7 +180,7 @@ export default class Comando extends Command {
         turn: user1
       },
       {
-        id: message.author.id,
+        id: ctx.message.author.id,
         turn: user2
       }]
 
@@ -140,260 +196,239 @@ export default class Comando extends Command {
         turn: user1
       },
       {
-        id: message.author.id,
+        id: ctx.message.author.id,
         turn: user2
       }]
 
     }
 
-    const res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes);
 
     const embedStart = new MessageEmbed()
-      .setDescription(langjson.commands.connect4.start(findTurn(message.author.id).turn == 1 ? message.author.username : usuario.username))
-      .setColor(client.color)
-      .setImage('attachment://4enraya.gif')
-    message.channel.createMessage({ embed: embedStart }, [{ name: '4enraya.gif', file: res }]);
-    const TIME_IDLE = ((3 * 60) * 1000);
+      .setDescription(langjson.commands.connect4.start(findTurn(ctx.message.author.id).turn == 1 ? ctx.message.author.username : usuario.username))
+      .setColor(0xff0000)
+      .setImage(displayConnectFourBoard(games.get(ctx.guildId).ascii(), games.get(ctx.guildId)))
 
-    async function sendCoso(embed: MessageEmbed, ress: Buffer) {
+    const messageParty = await ctx.reply({ embed: embedStart, components: generateButtons(games.get(ctx.guildId), langjson.commands.connect4.surrender) });
+
+    async function sendCoso(embed: MessageEmbed) {
 
       if (ArrayOfArrayOfNumbers.length) {
-        const temp = ArrayOfArrayOfNumbers.map(item => item.map(coso => coso == client.imagenes.connect4.verde ? 'red' : coso == client.imagenes.connect4.amarillo ? 'yellow' : coso));
-        const data = await MODEL.create({ maps: temp, users: [message.author.id, usuario.id], dif: args[0] });
-        embed.setFooter(prefix + 'connect4view ' + JSON.parse(JSON.stringify(data))._id);
+
+        const data = await model.findOneAndUpdate({ id: ctx.userId }, { $push: { c4Maps: { maps: ArrayOfArrayOfNumbers, users: [ctx.userId, usuario.id], dif: args[0] } } }, { new: true });
+        await redis.set(ctx.userId, JSON.stringify(data));
+
+        const data_user = await model.findOneAndUpdate({ id: usuario.id }, { $push: { c4Maps: { maps: ArrayOfArrayOfNumbers, users: [ctx.userId, usuario.id], dif: args[0] } } }, { new: true });
+        await redis.set(usuario.id, JSON.stringify(data_user));
+
+        embed.setFooter(ctx.prefix + 'connect4view ' + JSON.parse(JSON.stringify(data.c4Maps[data.c4Maps.length - 1]))._id);
+
       }
 
-      return message.channel.createMessage({
-        embed
-      }, [{ name: '4enraya.gif', file: ress }]);
+      return messageParty.edit({
+        embed, components: generateButtons(games.get(ctx.guildId), langjson.commands.connect4.surrender)
+      });
 
     }
 
-    client.listener.add({
-      channelID: message.channel.id,
-      max: 0,
-      code: 'user:' + message.author.id + 'guild:' + message.guild.id + 'date:' + Date.now() + 'random:' + Math.random(),
-      filter: (msg) => {
+    Collector.add({
+      async onCollect(interaction) {
 
-        if (!findTurn(msg.author.id)) return;
-        if (usuario.id != client.user.id) {
+        const collector = Collector.listeners.find(item => item.messageID == messageParty.id);
 
-          if (!games.get(msg.guildID)) return false;
+        if (interaction.data.customId === 'c4_surrender')
+          return Collector.stop('surrender', collector);
 
-          return games.get(msg.guild.id).jugadores.some(item => item.id == msg.author.id)
-            && findTurn(msg.author.id).turn === games.get(msg.guild.id).gameStatus().currentPlayer
-            && !isNaN(Number(msg.content))
-            && (Number(msg.content) >= 1
-              && Number(msg.content) <= 7)
-            && games.get(msg.guild.id).canPlay(parseInt(msg.content) - 1)
-            && !games.get(msg.guild.id).gameStatus().gameOver || games.get(msg.guild.id).jugadores.some(item => item.id == msg.author.id)
-            && msg.content == 'surrender'
+        games.get(ctx.guildId).play(parseInt(interaction.data.customId.split('c4_')[1]))
 
-        }
+        const game = games.get(ctx.message.guildId);
+        const board = game.board[(parseInt(interaction.data.customId.split('c4_')[1]))];
+        let temp = findTurn(interaction.userId).turn == 1 ? 'red' : 'yellow';
+        ArrayOfArrayOfNumbers.push([board.length - 1, parseInt(interaction.data.customId.split('c4_')[1]), temp]);
 
-        else return msg.author.id == message.author.id
-          && findTurn(msg.author.id).turn === games.get(message.guild.id).gameStatus().currentPlayer
-          && !isNaN(Number(msg.content))
-          && (Number(msg.content) >= 1
-            && Number(msg.content) <= 7)
-          && games.get(message.guild.id).canPlay(parseInt(msg.content) - 1)
-          && !games.get(message.guild.id).gameStatus().gameOver
-          || (games.get(message.guild.id).jugadores.some(item => item.id == msg.author.id) && msg.content == 'surrender')
-
-      },
-      idle: TIME_IDLE,
-      onStop: async (_, reason) => {
-
-        if (reason === 'surrender' && games.get(message.guild.id)) {
-          if (usuario.id == client.user.id) await model.findOneAndUpdate({ id: message.author.id, difficulty: args[0] }, { $inc: { perdidas: 1 }, $set: { cacheName: message.author.username } }, { upsert: true });
+        if (games.get(interaction.guildId).gameStatus().gameOver && games.get(ctx.guildId).gameStatus().solution) {
           const embed = new MessageEmbed()
-            .setDescription(langjson.commands.connect4.game_over)
-            .setColor(client.color)
-            .setImage(`attachment://4enraya.gif`)
-          const res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes);
-          sendCoso(embed, res);
+            .setDescription(langjson.commands.connect4.win(interaction.user.username))
+            .setColor(0xff0000)
+            .setImage(displayConnectFourBoard(games.get(ctx.guildId).ascii(), games.get(ctx.guildId)))
+          sendCoso(embed);
 
-          return games.delete(message.guild.id);
+          if (usuario.id == ctx.client.user.id) {
+            const a = await model.findOneAndUpdate({ id: ctx.message.author.id }, { $inc: { [`c4${args[0]}.ganadas`]: 1 }, $set: { cacheName: ctx.message.author.username } }, { upsert: true, new: true });
 
-        }
+            if (args[0] == 'hard' && a.c4hard) {
 
-        else if (reason === 'idle' && games.get(message.guild.id)) {
-          if (usuario.id == client.user.id) await model.findOneAndUpdate({ id: message.author.id, difficulty: args[0] }, { $inc: { perdidas: 1 }, $set: { cacheName: message.author.username } }, { upsert: true });
-          const embed = new MessageEmbed()
-            .setDescription(langjson.commands.connect4.time_over)
-            .setColor(client.color)
-            .setImage(`attachment://4enraya.gif`)
-          const res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes);
-          sendCoso(embed, res);
+              if ((a.c4hard.ganadas >= 10) && !(DATAPROFILE.achievements.includes('c4level1'))) {
 
-          return games.delete(message.guild.id);
-
-        }
-
-        else if (reason == 'time' && games.get(message.guild.id)) {
-          if (usuario.id == client.user.id) await model.findOneAndUpdate({ id: message.author.id, difficulty: args[0] }, { $inc: { perdidas: 1 }, $set: { cacheName: message.author.username } }, { upsert: true });
-          const embed = new MessageEmbed()
-            .setDescription(langjson.commands.connect4.game_over2)
-            .setColor(client.color)
-            .setImage(`attachment://4enraya.gif`)
-          const res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes);
-          sendCoso(embed, res);
-
-          return games.delete(message.guild.id);
-
-        }
-        else return games.delete(message.guildID)
-      },
-      onCollect: async (msg, colector) => {
-
-        if (msg.content === 'surrender')
-          return client.listener.stop(colector, 'surrender');
-
-        games.get(message.guild.id).play(parseInt(msg.content) - 1)
-
-        const game = games.get(message.guildID);
-        const board = game.board[(parseInt(msg.content) - 1)];
-        let temp = findTurn(msg.author.id).turn == 1 ? client.imagenes.connect4.verde : client.imagenes.connect4.amarillo;
-        ArrayOfArrayOfNumbers.push([board.length - 1, parseInt(msg.content) - 1, temp]);
-
-        if (games.get(msg.guild.id).gameStatus().gameOver && games.get(msg.guild.id).gameStatus().solution) {
-          const res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes);
-          const embed = new MessageEmbed()
-            .setDescription(langjson.commands.connect4.win(msg.author.username))
-            .setColor(client.color)
-            .setImage('attachment://4enraya.gif')
-          sendCoso(embed, res);
-
-          if (usuario.id == client.user.id) {
-            const data = await model.findOneAndUpdate({ id: message.author.id, difficulty: args[0] }, { $inc: { ganadas: 1 }, $set: { cacheName: message.author.username } }, { upsert: true, new: true });
-
-            if (args[0] == 'hard') {
-
-              if ((data.ganadas >= 10) && !(DATAPROFILE.achievements.includes('c4level1'))) {
-
-                const data = await profile.findOneAndUpdate({ id: message.author.id }, { $addToSet: { achievements: 'c4level1' } }, { new: true }).lean();
-                await client.redis.set(message.author.id, JSON.stringify(data), 'profile_');
+                const data = await model.findOneAndUpdate({ id: ctx.message.author.id }, { $addToSet: { achievements: 'c4level1' } }, { new: true }).lean();
+                await redis.set(ctx.message.author.id, JSON.stringify(data));
 
               }
 
-              if ((data.ganadas >= 25) && !(DATAPROFILE.achievements.includes('c4level2'))) {
+              if ((a.c4hard.ganadas >= 25) && !(DATAPROFILE.achievements.includes('c4level2'))) {
 
-                const data = await profile.findOneAndUpdate({ id: message.author.id }, { $addToSet: { achievements: 'c4level2' } }, { new: true }).lean();
-                await client.redis.set(message.author.id, JSON.stringify(data), 'profile_');
-
-              }
-
-              if ((data.ganadas >= 50) && !(DATAPROFILE.achievements.includes('c4level3'))) {
-
-                const data = await profile.findOneAndUpdate({ id: message.author.id }, { $addToSet: { achievements: 'c4level3' } }, { new: true }).lean();
-                await client.redis.set(message.author.id, JSON.stringify(data), 'profile_');
+                const data = await model.findOneAndUpdate({ id: ctx.message.author.id }, { $addToSet: { achievements: 'c4level2' } }, { new: true }).lean();
+                await redis.set(ctx.message.author.id, JSON.stringify(data));
 
               }
 
-              if ((data.ganadas >= 100) && !(DATAPROFILE.achievements.includes('c4top'))) {
+              if ((a.c4hard.ganadas >= 50) && !(DATAPROFILE.achievements.includes('c4level3'))) {
 
-                const data = await profile.findOneAndUpdate({ id: message.author.id }, { $addToSet: { achievements: 'c4top' } }, { new: true }).lean();
-                await client.redis.set(message.author.id, JSON.stringify(data), 'profile_');
+                const data = await model.findOneAndUpdate({ id: ctx.message.author.id }, { $addToSet: { achievements: 'c4level3' } }, { new: true }).lean();
+                await redis.set(ctx.message.author.id, JSON.stringify(data));
+
+              }
+
+              if ((a.c4hard.ganadas >= 100) && !(DATAPROFILE.achievements.includes('c4top'))) {
+
+                const data = await model.findOneAndUpdate({ id: ctx.message.author.id }, { $addToSet: { achievements: 'c4top' } }, { new: true }).lean();
+                await redis.set(ctx.message.author.id, JSON.stringify(data));
 
               }
 
             }
 
           }
-          return client.listener.stop(colector, 'win');
+          return Collector.stop('win', collector);
         }
 
-        else if (games.get(msg.guild.id).gameStatus().gameOver) {
-          const res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes);
+        else if (games.get(interaction.guildId).gameStatus().gameOver) {
           const embed = new MessageEmbed()
-            .setDescription(langjson.commands.connect4.draw(usuario.username, message.author.username))
-            .setColor(client.color)
+            .setDescription(langjson.commands.connect4.draw(usuario.username, ctx.message.author.username))
+            .setColor(0xff0000)
             .setImage('attachment://4enraya.gif')
+            .setImage(displayConnectFourBoard(games.get(interaction.guildId).ascii(), games.get(ctx.guildId)))
 
-          message.channel.createMessage({ embed }, [{ file: res, name: '4enraya.gif' }])
-          if (usuario.id == client.user.id) await model.findOneAndUpdate({ id: message.author.id, difficulty: args[0] }, { $inc: { empates: 1 }, $set: { cacheName: message.author.username } }, { upsert: true });
-          return client.listener.stop(colector, 'win');
+          messageParty.edit({ embed, components: generateButtons(games.get(ctx.guildId), langjson.commands.connect4.surrender) })
+          if (usuario.id == ctx.client.user.id) await model.findOneAndUpdate({ id: ctx.message.author.id }, { $inc: { [`c4${args[0]}.empates`]: 1 }, $set: { cacheName: ctx.message.author.username } }, { upsert: true });
+          return Collector.stop('win', collector);
         }
 
-        if (usuario.id == client.user.id) {
-          const old = games.get(message.guild.id);
+        if (usuario.id == ctx.client.user.id) {
+          const old = games.get(ctx.guildId);
           const oldBoard = JSON.parse(JSON.stringify(old.board)) as { [x: string]: number[] };
           old.playAI(args[0]);
-
-          const board = games.get(message.guild.id).board;
+          const board = games.get(ctx.guildId).board;
           const index = Object.values(board).findIndex((arr, y) => arr.find((item, i) => item != Object.values(oldBoard)[y][i]))
-          temp = findTurn(client.user.id).turn == 1 ? client.imagenes.connect4.verde : client.imagenes.connect4.amarillo;
+          temp = findTurn(ctx.client.user.id).turn == 1 ? 'red' : 'yellow';
           ArrayOfArrayOfNumbers.push([board[index].length - 1, index, temp]);
 
-          if (games.get(message.guild.id).gameStatus().gameOver && games.get(message.guild.id).gameStatus().solution) {
-            const res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes);
+          if (games.get(ctx.guildId).gameStatus().gameOver && games.get(ctx.guildId).gameStatus().solution) {
             const embed = new MessageEmbed()
               .setDescription(langjson.commands.connect4.win(usuario.username))
-              .setColor(client.color)
-              .setImage('attachment://4enraya.gif')
-            sendCoso(embed, res);
-            await model.findOneAndUpdate({ id: message.author.id, difficulty: args[0] }, { $inc: { perdidas: 1 }, $set: { cacheName: message.author.username } }, { upsert: true });
-            return client.listener.stop(colector, 'win');
+              .setColor(0xff0000)
+              .setImage(displayConnectFourBoard(games.get(interaction.guildId).ascii(), games.get(ctx.guildId)))
+            sendCoso(embed);
+            await model.findOneAndUpdate({ id: ctx.message.author.id }, { $inc: { [`c4${args[0]}.perdidas`]: 1 }, $set: { cacheName: ctx.message.author.username } }, { upsert: true });
+            return Collector.stop('win', collector);
           }
 
-          else if ((games.get(message.guild.id)).gameStatus().gameOver) {
-            const res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes);
+          else if ((games.get(ctx.guildId)).gameStatus().gameOver) {
             const embed = new MessageEmbed()
-              .setDescription(langjson.commands.connect4.draw(usuario.username, message.author.username))
-              .setColor(client.color)
-              .setImage('attachment://4enraya.gif')
+              .setDescription(langjson.commands.connect4.draw(usuario.username, ctx.message.author.username))
+              .setColor(0xff0000)
+              .setImage(displayConnectFourBoard(games.get(interaction.guildId).ascii(), games.get(ctx.guildId)))
 
-            sendCoso(embed, res);
-            await model.findOneAndUpdate({ id: message.author.id, difficulty: args[0] }, { $inc: { empates: 1 }, $set: { cacheName: message.author.username } }, { upsert: true });
-            return client.listener.stop(colector, 'win');
+            sendCoso(embed);
+            await model.findOneAndUpdate({ id: ctx.message.author.id }, { $inc: { [`c4${args[0]}.empates`]: 1 }, $set: { cacheName: ctx.message.author.username } }, { upsert: true });
+            return Collector.stop('win', collector);
           }
 
-          const res = await displayConnectFourBoard(displayBoard(games.get(message.guild.id).ascii()), games.get(message.guild.id), client.imagenes);
           const embed = new MessageEmbed()
-            .setDescription(langjson.commands.connect4.turn(message.author.username, '🔴'))
-            .setColor(client.color)
-            .setImage('attachment://4enraya.gif')
+            .setDescription(langjson.commands.connect4.turn(ctx.message.author.username, '🔴'))
+            .setColor(0xff0000)
+            .setImage(displayConnectFourBoard(games.get(interaction.guildId).ascii(), games.get(ctx.guildId)))
             .setFooter(args[0])
 
-          message.channel.createMessage({ embed }, [{ file: res, name: '4enraya.gif' }])
+          messageParty.edit({ embed, components: generateButtons(games.get(ctx.guildId), langjson.commands.connect4.surrender) })
 
         }
 
-        if ((usuario.id != client.user.id) && (games.get(message.guild.id))) {
-          const res = await displayConnectFourBoard(displayBoard(games.get(msg.guild.id).ascii()), games.get(msg.guild.id), client.imagenes);
+        if ((usuario.id != ctx.client.user.id) && (games.get(ctx.guildId))) {
           const embed = new MessageEmbed()
             .setDescription(langjson.commands.connect4.turn(
-              findTurn(message.author.id).turn == findTurn(msg.author.id).turn ? usuario.username : message.author.username,
-              findTurn(msg.author.id).turn == 2 ? `🔴` : `🟡`
+              findTurn(ctx.message.author.id).turn == findTurn(interaction.userId).turn ? usuario.username : ctx.message.author.username,
+              findTurn(interaction.userId).turn == 2 ? `🔴` : `🟡`
             ))
-            .setImage(`attachment://4enraya.gif`)
-            .setColor(client.color);
+            .setImage(displayConnectFourBoard(games.get(interaction.guildId).ascii(), games.get(ctx.guildId)))
+            .setColor(0xff0000);
 
-          await message.channel.createMessage({ embed }, [{ file: res, name: '4enraya.gif' }])
+          await messageParty.edit({ embed, components: generateButtons(games.get(ctx.guildId), langjson.commands.connect4.surrender) })
 
         }
       },
-      timeLimit: ((30 * 60) * 1000)
-    });
-  }
-}
+      async onStop(reason) {
 
-function displayBoard(board: string) {
-  /*
-      RegEx: https://portalmybot.com/code/D519u4BFb0
-  */
-  const regex = /(?:[\u2700-\u27bf]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff]|[\u0023-\u0039]\ufe0f?\u20e3|\u3299|\u3297|\u303d|\u3030|\u24c2|\ud83c[\udd70-\udd71]|\ud83c[\udd7e-\udd7f]|\ud83c\udd8e|\ud83c[\udd91-\udd9a]|\ud83c[\udde6-\uddff]|\ud83c[\ude01-\ude02]|\ud83c\ude1a|\ud83c\ude2f|\ud83c[\ude32-\ude3a]|\ud83c[\ude50-\ude51]|\u203c|\u2049|[\u25aa-\u25ab]|\u25b6|\u25c0|[\u25fb-\u25fe]|\u00a9|\u00ae|\u2122|\u2139|\ud83c\udc04|[\u2600-\u26FF]|\u2b05|\u2b06|\u2b07|\u2b1b|\u2b1c|\u2b50|\u2b55|\u231a|\u231b|\u2328|\u23cf|[\u23e9-\u23f3]|[\u23f8-\u23fa]|\ud83c\udccf|\u2934|\u2935|[\u2190-\u21ff])/g;
-  const res = board
-    .split('1').join('🟢')
-    .split('2').join('🟡')
-    .split(' - ').join('⬛')
-    .split('---------------------')
-    .join('')
-    .split('[0]')[0]
-    .split(' ').join('')
-    .split('\n')
-    .filter(item => item.length)
-    .map(a => a.match(regex))
-  return res;
+        if (reason === 'surrender' && games.get(ctx.guildId)) {
+          if (usuario.id == ctx.client.user.id) await model.findOneAndUpdate({ id: ctx.message.author.id }, { $inc: { [`c4${args[0]}.perdidas`]: 1 }, $set: { cacheName: ctx.message.author.username } }, { upsert: true });
+          const embed = new MessageEmbed()
+            .setDescription(langjson.commands.connect4.game_over)
+            .setColor(0xff0000)
+            .setImage(`attachment://4enraya.gif`)
+            .setImage(displayConnectFourBoard(games.get(ctx.guildId).ascii(), games.get(ctx.guildId)))
 
+          sendCoso(embed);
+
+          return games.delete(ctx.guildId);
+        }
+
+        else if (reason === 'idle' && games.get(ctx.guildId)) {
+          if (usuario.id == ctx.client.user.id) await model.findOneAndUpdate({ id: ctx.message.author.id }, { $inc: { [`c4${args[0]}.perdidas`]: 1 }, $set: { cacheName: ctx.message.author.username } }, { upsert: true });
+          const embed = new MessageEmbed()
+            .setDescription(langjson.commands.connect4.time_over)
+            .setColor(0xff0000)
+            .setImage(`attachment://4enraya.gif`)
+            .setImage(displayConnectFourBoard(games.get(ctx.guildId).ascii(), games.get(ctx.guildId)))
+
+          sendCoso(embed);
+
+          return games.delete(ctx.guildId);
+
+        }
+
+        else if (reason == 'time' && games.get(ctx.guildId)) {
+          if (usuario.id == ctx.client.user.id) await model.findOneAndUpdate({ id: ctx.message.author.id }, { $inc: { [`c4${args[0]}.perdidas`]: 1 }, $set: { cacheName: ctx.message.author.username } }, { upsert: true });
+          const embed = new MessageEmbed()
+            .setDescription(langjson.commands.connect4.game_over2)
+            .setColor(0xff0000)
+            .setImage(displayConnectFourBoard(games.get(ctx.guildId).ascii(), games.get(ctx.guildId)));
+
+          sendCoso(embed);
+
+          return games.delete(ctx.guildId);
+        }
+        else return games.delete(ctx.message.guildId)
+
+      }
+    }, (interaction) => {
+
+      if (!games.get(interaction.guildId).jugadores.some(item => item.id == interaction.userId)) {
+        interaction.createResponse({ data: { content: langjson.commands.connect4.wait, flags: 64 }, type: 4 });
+        return false;
+      }
+      if (!findTurn(interaction.userId)) return;
+      if (usuario.id != ctx.client.user.id) {
+
+        if (!games.get(interaction.guildId)) return false;
+
+        return ['c4_1', 'c4_2', 'c4_3', 'c4_4', 'c4_5', 'c4_6', 'c4_0', 'c4_surrender'].includes(interaction.data.customId)
+          && findTurn(interaction.userId).turn === games.get(interaction.guildId).gameStatus().currentPlayer
+          && !games.get(ctx.guildId).gameStatus().gameOver
+          || ((games.get(ctx.guildId).jugadores.some(item => item.id == interaction.userId) && interaction.data.customId == 'c4_surrender'))
+
+      }
+
+      else return interaction.userId == ctx.message.author.id
+        && findTurn(interaction.userId).turn === games.get(interaction.guildId).gameStatus().currentPlayer
+        && ['c4_1', 'c4_2', 'c4_3', 'c4_4', 'c4_5', 'c4_6', 'c4_0', 'c4_surrender'].includes(interaction.data.customId)
+        && !games.get(ctx.guildId).gameStatus().gameOver
+        || ((games.get(ctx.guildId).jugadores.some(item => item.id == interaction.userId) && interaction.data.customId == 'c4_surrender'))
+
+    }, { idle: ((3 * 60) * 1000), time: ((30 * 60) * 1000), max: 0 }, { channelID: ctx.channelId, messageID: messageParty.id, guildID: ctx.guildId });
+
+  },
+});
+
+function displayConnectFourBoard(ascii: string, game: { solution: any; winner: number }) {
+  let str = `https://zenitsu.eastus.cloudapp.azure.com/generateembed/${encodeURIComponent(JSON.stringify({ ascii, solutionAndWinner: game }))}.gif`
+  return str;
 }

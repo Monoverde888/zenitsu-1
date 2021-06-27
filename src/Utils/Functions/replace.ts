@@ -1,9 +1,9 @@
-function replace(string: string, array: string[]): string {
+function replace(string: string, array: string[], Private: string): string {
 
   let res = string;
 
   for (const i of array) {
-    res = res.split(i).join('[PRIVATE]')
+    res = res.split(i).join(Private);
   }
 
   return res;

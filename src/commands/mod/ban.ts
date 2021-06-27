@@ -1,40 +1,56 @@
-import run from "../../Utils/Interfaces/run.js";
-import Command from '../../Utils/Classes/command.js';
-import * as light from '@lil_marcrock22/eris-light';
-import canMod from "../../Utils/Functions/canMod.js";
-import MessageEmbed from "../../Utils/Classes/Embed.js";
+import BaseCommand from '../../Utils/Classes/Command.js';
+import json from '../../Utils/Lang/langs.js';
+import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
+import getGuild from '../../Utils/Functions/getGuild.js';
+import canMod from '../../Utils/Functions/canMod.js';
 import getHighest from '../../Utils/Functions/getHighest.js';
+import detritus from 'detritus-client';
+import parseArgs from '../../Utils/Functions/parseArgs.js';
+import { Flags } from '../../Utils/Const.js';
+import unmarkdown from '../../Utils/Functions/unmarkdown.js';
 
-export default class Comando extends Command {
-  constructor() {
-    super()
-    this.name = "ban"
-    this.category = 'mod';
-    this.botPermissions.guild = ['banMembers'];
-    this.cooldown = 6;
-    this.memberPermissions.guild = ['banMembers'];
-  }
+export default new BaseCommand({
+  label: 'arg',
+  metadata: {
+    usage(prefix: string) {
+      return [`${prefix}ban <@Member> [reason] [-deletedays 1-7]`]
+    },
+    category: 'mod'
+  },
+  name: 'ban',
+  permissions: [Flags.BAN_MEMBERS],
+  permissionsClient: [Flags.BAN_MEMBERS],
+  args: [{
+    name: 'deletedays',
+    required: false,
+    type: Number,
+    choices: [0, 1, 2, 3, 4, 5, 6, 7],
+    default: 0
+  }],
+  onBeforeRun(ctx) {
+    return ctx.message.mentions.first() && (ctx.message.mentions.first() instanceof detritus.Structures.Member) && (ctx.message.mentions.first().id != ctx.userId);
+  },
+  async run(ctx, { arg, deletedays }) {
 
-  async run({ args, message, langjson, embedResponse }: run): Promise<light.Message> {
+    const args = parseArgs(arg);
+    const langjson = json[(await getGuild(ctx.guildId)).lang]
+    const member = ctx.message.mentions.first() as detritus.Structures.Member
 
-    const user = message.mentions.filter(user => user.id != message.author.id)[0];
-    const member = user ? user.member : null;
-    if (!member) return embedResponse(langjson.commands.ban.mention, message.channel, this.client.color);
-    if (!canMod(member, this.client, 'ban')) return embedResponse(langjson.commands.ban.cannt_ban(`**${this.client.unMarkdown(user.username)}**`), message.channel, this.client.color)
-    if (message.author.id !== message.guild.ownerID) {
-      if (getHighest(message.member).position <= getHighest(member).position) return embedResponse(langjson.commands.ban.user_cannt_ban(`**${this.client.unMarkdown(user.username)}**`), message.channel, this.client.color)
+    if (!canMod(member, ctx.client, 'ban')) return ctx.reply(langjson.commands.ban.cannt_ban(`**${unmarkdown(member.username)}**`))
+    if (ctx.message.author.id !== ctx.guild.ownerId) {
+      if (getHighest(ctx.message.member).position <= getHighest(member).position) return ctx.reply(langjson.commands.ban.user_cannt_ban(`**${unmarkdown(member.username)}**`));
     }
 
-    const reason = (args.join(' ') || '').replace(member.mention, '').slice(0, 500) || null;
+    const reason = (args.join(' ') || '').replace(`<@!${member.id}>`, '').slice(0, 500) || null;
 
-    return member.ban(7, reason).then(() => {
+    return member.ban({ reason, deleteMessageDays: deletedays }).then(() => {
 
       const embed = new MessageEmbed()
         .setColor(0x2ecc71)
-        .setDescription(langjson.commands.ban.ban(`**${this.client.unMarkdown(user.username)}**`, reason))
-        .setFooter(message.author.username, message.author.dynamicAvatarURL())
+        .setDescription(langjson.commands.ban.ban(`**${unmarkdown(member.username)}**`, reason))
+        .setFooter(ctx.message.author.username, ctx.message.author.avatarUrl)
 
-      return message.channel.createMessage({ embed })
+      return ctx.reply({ embed })
 
     })
       .catch((error) => {
@@ -42,10 +58,11 @@ export default class Comando extends Command {
         const embed = new MessageEmbed()
           .setColor(0xff000)
           .setDescription(`Error: ${error ? (error.message || error) : error}`)
-          .setFooter(message.author.username, message.author.dynamicAvatarURL())
+          .setFooter(ctx.message.author.username, ctx.message.author.avatarUrl)
 
-        return message.channel.createMessage({ embed })
+        return ctx.reply({ embed })
 
       })
-  }
-}
+
+  },
+});

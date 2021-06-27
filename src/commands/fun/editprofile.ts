@@ -1,31 +1,36 @@
-import * as  light from '@lil_marcrock22/eris-light';
-import run from '../../Utils/Interfaces/run.js';
-import Command from '../../Utils/Classes/command.js';
-import MessageEmbed from '../../Utils/Classes/Embed.js';
-import profile from '../../models/profile.js';
+import BaseCommand from '../../Utils/Classes/Command.js';
+import getUser from '../../Utils/Functions/getUser.js';
+import json from '../../Utils/Lang/langs.js';
+import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
+import getGuild from '../../Utils/Functions/getGuild.js';
+import redis from '../../Utils/Managers/Redis.js';
+import model from '../../Database/models/user.js';
+import parseArgs from '../../Utils/Functions/parseArgs.js';
 
-export default class Comando extends Command {
+export default new BaseCommand({
+  label: 'arg',
+  metadata: {
+    usage(prefix: string) {
+      return [
+        `${prefix}editprofile <color|description> value`
+      ]
+    },
+    category: 'fun'
+  },
+  name: 'editprofile',
+  onBeforeRun(_ctx, { arg }) {
+    const args = parseArgs(arg)
+    if (!args[0] || !['color', 'description'].includes(args[0].toLowerCase()) || !args[1]) return false;
+    return true;
+  },
+  async run(ctx, { arg: XDDDDDDDDD }) {
 
-  constructor() {
-    super()
-    this.name = "editprofile";
-    this.category = 'fun';
-  }
+    const langjson = json[(await getGuild(ctx.guildId)).lang];
+    await getUser(ctx.userId);
+    const args = parseArgs(XDDDDDDDDD)
+    const [what, ...value] = args;
 
-  async run({ message, langjson, args, prefix }: run): Promise<light.Message> {
-
-    const [what, ...value] = args
-
-    if (!what) {
-
-      const embed = new MessageEmbed()
-        .setColor(this.client.color)
-        .setDescription(langjson.commands.editprofile.bad_usage(prefix))
-      return message.channel.createMessage({ embed });
-
-    }
-
-    switch (what) {
+    switch (what.toLowerCase()) {
 
       case 'color': {
 
@@ -36,19 +41,19 @@ export default class Comando extends Command {
           const embed = new MessageEmbed()
             .setImage(`https://cdn.discordapp.com/attachments/842090973311270914/843166076673327134/G64ZYWcv.gif`)
             .setDescription(langjson.commands.editprofile.invalid)
-            .setColor(this.client.color);
-          return message.channel.createMessage({ embed });
+            .setColor(0xff0000);
+          return ctx.reply({ embed });
 
         }
 
-        return profile.findOneAndUpdate({ id: message.author.id }, { color: newColor.toString(16) }, { new: true, upsert: true }).then(async (d) => {
+        return model.findOneAndUpdate({ id: ctx.userId }, { color: newColor.toString(16) }, { new: true, upsert: true }).then(async (d) => {
 
-          await this.client.redis.set(message.author.id, JSON.stringify(d), 'profile_');
+          await redis.set(ctx.userId, JSON.stringify(d));
 
           const embed = new MessageEmbed()
             .setColor(newColor)
             .setDescription(langjson.commands.editprofile.new_color)
-          return message.channel.createMessage({ embed });
+          return ctx.reply({ embed });
 
         });
 
@@ -59,35 +64,25 @@ export default class Comando extends Command {
         if (!value.join(' ')) {
 
           const embed = new MessageEmbed()
-            .setDescription(langjson.commands.editprofile.description_invalid(prefix))
-            .setColor(this.client.color);
-          return message.channel.createMessage({ embed });
+            .setDescription(langjson.commands.editprofile.description_invalid(ctx.prefix))
+            .setColor(0xff0000);
+          return ctx.reply({ embed });
 
         }
 
-        return profile.findOneAndUpdate({ id: message.author.id }, { description: value.join(' ') }, { new: true, upsert: true }).then(async (d) => {
+        return model.findOneAndUpdate({ id: ctx.userId }, { description: value.join(' ') }, { new: true, upsert: true }).then(async (d) => {
 
-          await this.client.redis.set(message.author.id, JSON.stringify(d), 'profile_');
+          await redis.set(ctx.userId, JSON.stringify(d));
 
           const embed = new MessageEmbed()
-            .setColor(this.client.color)
-            .setDescription(langjson.commands.editprofile.description_nice(prefix));
-          return message.channel.createMessage({ embed });
+            .setColor(0xff0000)
+            .setDescription(langjson.commands.editprofile.description_nice(ctx.prefix));
+          return ctx.reply({ embed });
 
         });
 
       }
 
-      default: {
-
-        const embed = new MessageEmbed()
-          .setColor(this.client.color)
-          .setDescription(langjson.commands.editprofile.bad_usage(prefix))
-        return message.channel.createMessage({ embed });
-
-      }
-
     }
-
-  }
-}
+  },
+});

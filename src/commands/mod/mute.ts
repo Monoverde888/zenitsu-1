@@ -1,45 +1,49 @@
-import run from "../../Utils/Interfaces/run.js";
-import Command from '../../Utils/Classes/command.js';
-import * as light from '@lil_marcrock22/eris-light';
-import MessageEmbed from "../../Utils/Classes/Embed.js";
+import BaseCommand from '../../Utils/Classes/Command.js';
+import json from '../../Utils/Lang/langs.js';
+import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
+import getGuild from '../../Utils/Functions/getGuild.js';
 import getHighest from '../../Utils/Functions/getHighest.js';
-import settings, { Settings as SETTINGS } from "../../models/settings.js";
+import detritus from 'detritus-client';
+import unmarkdown from '../../Utils/Functions/unmarkdown.js';
+import { Flags } from '../../Utils/Const.js';
+import redis from '../../Utils/Managers/Redis.js';
 
-export default class Comando extends Command {
-  constructor() {
-    super()
-    this.name = "mute"
-    this.category = 'mod';
-    this.botPermissions.guild = ['manageRoles'];
-    this.cooldown = 6;
-    this.memberPermissions.guild = ['kickMembers'];
-  }
+export default new BaseCommand({
+  metadata: {
+    usage(prefix: string) {
+      return [`${prefix}mute <@Member>`]
+    },
+    category: 'mod'
+  },
+  name: 'mute',
+  permissions: [Flags.KICK_MEMBERS],
+  permissionsClient: [Flags.MANAGE_ROLES],
+  onBeforeRun(ctx) {
+    return ctx.message.mentions.first() && (ctx.message.mentions.first() instanceof detritus.Structures.Member) && (ctx.message.mentions.first().id != ctx.userId);
+  },
+  async run(ctx) {
 
-  async run({ message, langjson, embedResponse, prefix }: run): Promise<light.Message> {
+    const langjson = json[(await getGuild(ctx.guildId)).lang]
 
-    const data: SETTINGS = await this.client.redis.get(message.guildID, 'settings_').then(x => typeof x == 'string' ? JSON.parse(x) : null) || await settings.findOne({ id: message.guildID }) || await settings.create({
-      id: message.guildID,
-      muterole: '1'
-    });
+    const data = await getGuild(ctx.guildId);
 
-    await this.client.redis.set(message.guildID, JSON.stringify(data), 'settings_');
+    await redis.set(ctx.guildId, JSON.stringify(data));
 
-    const ROLE_BOT = getHighest(message.guild.me);
-    const role = message.guild.roles.get(data.muterole);
+    const ROLE_BOT = getHighest(ctx.guild.me);
+    const role = ctx.guild.roles.get(data.muterole);
 
     if (!role)
-      return embedResponse(langjson.commands.mute.no_role(prefix), message.channel, this.client.color);
+      return ctx.reply(langjson.commands.mute.no_role(ctx.prefix))
 
     if (role.position >= ROLE_BOT.position)
-      return embedResponse(langjson.commands.mute.cant_role(role.mentionable ? role.name : role.mention), message.channel, this.client.color)
+      return ctx.reply(langjson.commands.mute.cant_role(role.mentionable ? role.name : role.mention))
 
-    const user = message.mentions.filter(user => user.id != message.author.id)[0];
-    const member = user ? user.member : null;
+    const member = ctx.message.mentions.first() as detritus.Structures.Member
 
-    if (!member) return embedResponse(langjson.commands.mute.mention, message.channel, this.client.color);
-    if (member.roles.includes(role.id)) return embedResponse(langjson.commands.mute.already_muted(this.client.unMarkdown(user.username)), message.channel, this.client.color);
-    if (message.author.id != message.guild.ownerID) {
-      if (getHighest(message.member).position <= getHighest(member).position) return embedResponse(langjson.commands.mute.user_cannt_mute(`**${this.client.unMarkdown(user.username)}**`), message.channel, this.client.color)
+    if (!member) return ctx.reply(langjson.commands.mute.mention);
+    if (member.roles.has(role.id)) return ctx.reply(langjson.commands.mute.already_muted(unmarkdown(member.username)));
+    if (ctx.userId != ctx.guild.ownerId) {
+      if (getHighest(ctx.message.member).position <= getHighest(member).position) return ctx.reply(langjson.commands.mute.user_cannt_mute(`**${unmarkdown(member.username)}**`))
     }
 
     return member.addRole(role.id)
@@ -47,10 +51,10 @@ export default class Comando extends Command {
 
         const embed = new MessageEmbed()
           .setColor(0x2ecc71)
-          .setDescription(langjson.commands.mute.mute(this.client.unMarkdown(user.username)))
-          .setFooter(message.author.username, message.author.dynamicAvatarURL())
+          .setDescription(langjson.commands.mute.mute(unmarkdown(member.username)))
+          .setFooter(ctx.message.author.username, ctx.message.author.avatarUrl)
 
-        return message.channel.createMessage({ embed })
+        return ctx.reply({ embed })
 
       })
       .catch((error) => {
@@ -58,10 +62,11 @@ export default class Comando extends Command {
         const embed = new MessageEmbed()
           .setColor(0xff0000)
           .setDescription(`Error: ${error ? (error.message || error) : error}`)
-          .setFooter(message.author.username, message.author.dynamicAvatarURL())
+          .setFooter(ctx.message.author.username, ctx.message.author.avatarUrl)
 
-        return message.channel.createMessage({ embed })
+        return ctx.reply({ embed })
 
       });
-  }
-}
+
+  },
+});

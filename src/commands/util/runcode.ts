@@ -1,56 +1,85 @@
-import Command from '../../Utils/Classes/command.js'
 import fetch from 'node-fetch';
-import run from '../../Utils/Interfaces/run.js';
-import * as  light from '@lil_marcrock22/eris-light';
+import BaseCommand from '../../Utils/Classes/Command.js';
+import parseArgs from '../../Utils/Functions/parseArgs.js';
+import json from '../../Utils/Lang/langs.js';
+import getGuild from '../../Utils/Functions/getGuild.js';
 const regex = /```.*```/gsi;
-import Zenitsu from '../../Utils/Classes/client.js';
 import Component from '../../Utils/Buttons/Component.js';
 import URLButton from '../../Utils/Buttons/URL.js';
-//https://github.com/engineer-man/piston
-export default class Comando extends Command {
-  avaliables: string[];
-  constructor() {
-    super()
-    this.name = 'runcode';
-    this.category = 'utils';
-    this.alias = ['publiceval'];
-    this.cooldown = 6;
-  }
-  async run({ message, args, embedResponse, langjson }: run): Promise<light.Message> {
+let avaliables: string[];
+
+export default new BaseCommand({
+  label: 'arg',
+  metadata: {
+    usage(prefix: string) {
+      return [
+        prefix + 'runcode \\`\\`\\`javascript\nconsole.log("Hello world");\n\\`\\`\\`',
+      ]
+    },
+    category: 'util'
+  },
+  name: 'runcode',
+  aliases: ['publiceval'],
+  onCancelRun(ctx) {
+    return ctx.reply('>>> ' + ctx.command.metadata.usage(ctx.prefix))
+  },
+  onBeforeRun(_, { arg }) {
+    const args = parseArgs(arg);
+
+    if (!args[0]) return false;
+    return true;
+
+  },
+  async run(ctx, { arg }) {
+
+    if (!avaliables) {
+
+      const arr: { language: string; aliases: string[] }[] = await fetch(`https://emkc.org/api/v2/piston/runtimes`).then(x => x.json());
+      const res = arr.map(x => [x.language, ...x.aliases]);
+      const temp = [];
+      for (const i of res) {
+        temp.push(...i)
+      }
+      avaliables = temp;
+
+    }
+
+    const args = parseArgs(arg);
+    const langjson = json[(await getGuild(ctx.guildId).then(x => x.lang))];
 
     let final_code = '';
     let final_lang = '';
 
-    if (!message.attachments[0]) {
+    if (!ctx.message.attachments.first()) {
 
       const pre_code = args.join(' ');
 
-      if (!pre_code) return embedResponse(langjson.commands.runcode.no_code, message.channel, this.client.color);
+      if (!pre_code) return ctx.reply(langjson.commands.runcode.no_code);
 
       const res_regex = pre_code.match(regex);
       const code = res_regex ? (res_regex[0].split('```').slice(0, 2).join('```').slice(3).split('\n').slice(1).join('\n') || '').trim() : null;
 
-      if (!code) return embedResponse(langjson.commands.runcode.no_code, message.channel, this.client.color);
+      if (!code) return ctx.reply(langjson.commands.runcode.no_code);
 
       final_code = code;
       final_lang = res_regex[0].slice(3).split('\n')[0].trim().toLowerCase();
 
-      if (!this.avaliables.includes(final_lang)) return embedResponse(langjson.commands.runcode.invalid_lang, message.channel, this.client.color);
+      if (!avaliables.includes(final_lang)) return ctx.reply(langjson.commands.runcode.invalid_lang)
 
     }
 
     else {
 
-      if (!args[0]) return embedResponse(langjson.commands.runcode.invalid_lang, message.channel, this.client.color);
+      if (!args[0]) return ctx.reply(langjson.commands.runcode.invalid_lang);
 
-      const code = await fetch(message.attachments[0].url).then(x => x.text());
+      const code = await fetch(ctx.message.attachments.first().url).then(x => x.text());
 
-      if (!code || !code.trim()) return embedResponse(langjson.commands.runcode.no_code, message.channel, this.client.color);
+      if (!code || !code.trim()) return ctx.reply(langjson.commands.runcode.no_code);
 
       final_code = code;
       final_lang = args[0].toLowerCase();
 
-      if (!this.avaliables.includes(final_lang)) return embedResponse(langjson.commands.runcode.invalid_lang, message.channel, this.client.color);
+      if (!avaliables.includes(final_lang)) return ctx.reply(langjson.commands.runcode.invalid_lang);
 
     };
 
@@ -67,8 +96,8 @@ export default class Comando extends Command {
 
     if (res.run) {
 
-      if (res.run.output) return message.channel.createMessage({
-        content: `${message.author.mention}\`\`\`\n${(res.run.output as string).slice(0, 1800)}\`\`\``, components: [
+      if (res.run.output) return ctx.reply({
+        content: `${ctx.message.author.mention}\`\`\`\n${(res.run.output as string).slice(0, 1800)}\`\`\``, components: [
           new Component(
             new URLButton()
               .setURL(`https://github.com/engineer-man/piston`)
@@ -76,28 +105,14 @@ export default class Comando extends Command {
           )
         ]
       });
-      else return message.channel.createMessage(langjson.commands.runcode.no_output);
+      else return ctx.reply(langjson.commands.runcode.no_output);
 
     }
 
-    console.log(res, message.content);
+    console.log(res, ctx.message.content);
 
-    return message.channel.createMessage(res.message || langjson.commands.runcode.error);
+    return ctx.reply(res.message || langjson.commands.runcode.error);
 
-  }
 
-  async init(bot: Zenitsu) {
-
-    super.init(bot);
-    const arr: { language: string; aliases: string[] }[] = await fetch(`https://emkc.org/api/v2/piston/runtimes`).then(x => x.json());
-    const res = arr.map(x => [x.language, ...x.aliases]);
-    const temp = [];
-    for (const i of res) {
-      temp.push(...i)
-    }
-    this.avaliables = temp;
-    return this;
-
-  }
-
-}
+  },
+});

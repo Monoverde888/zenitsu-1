@@ -1,16 +1,18 @@
-import Command from '../../Utils/Classes/command.js';
-import run from '../../Utils/Interfaces/run.js';
-import * as light from '@lil_marcrock22/eris-light';
-export default class Comando extends Command {
-  constructor() {
-    super()
-    this.name = "avatar"
-    this.category = "utils"
-    this.alias = ["av"]
-  }
-  run({ message }: run): Promise<light.Message> {
-    const user = message.mentions[0] || message.author,
-      avatar = user.dynamicAvatarURL();
-    return message.channel.createMessage(`> ${avatar}`);
-  }
-}
+import BaseCommand from '../../Utils/Classes/Command.js';
+
+export default new BaseCommand({
+  metadata: {
+    usage(prefix: string) {
+      return [`${prefix}avatar [user]`]
+    },
+    category: 'util'
+  },
+  name: 'avatar',
+  async run(ctx) {
+
+    const user = ctx.message.mentions.first() || ctx.message.author,
+      avatar = user.avatarUrl;
+    return ctx.reply(`> ${avatar}`);
+
+  },
+});

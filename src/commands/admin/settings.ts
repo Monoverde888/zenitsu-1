@@ -1,210 +1,219 @@
+import detritus from 'detritus-client';
 const cooldown: Set<string> = new Set();
-import Command from '../../Utils/Classes/command.js';
-import command from '../../Utils/Interfaces/run.js'
-import * as  eris from '@lil_marcrock22/eris-light';
-import FLAGS from '../../Utils/Const/FLAGS.js';
-import MessageEmbed from '../../Utils/Classes/Embed.js';
+import BaseCommand from '../../Utils/Classes/Command.js';
+import parseArgs from '../../Utils/Functions/parseArgs.js';
+import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
+import { Flags } from '../../Utils/Const.js'
+import redis from '../../Utils/Managers/Redis.js';
+import json from '../../Utils/Lang/langs.js';
+import getGuild from '../../Utils/Functions/getGuild.js';
 import getHighest from '../../Utils/Functions/getHighest.js';
-import settingsMODEL, { Settings as SETTINGS } from '../../models/settings.js';
+import guild from '../../Database/models/guild.js';
 
+export default new BaseCommand({
+  label: 'arg',
+  metadata: {
+    usage(prefix: string) {
+      return [
+        prefix + "settings (view|muterole|reset)",
+        prefix + "settings view",
+        prefix + "settings muterole init [role]",
+        prefix + "settings muterole refresh",
+        prefix + "settings reset"
+      ]
+    },
+    category: 'admin'
+  },
+  permissions: [Flags.MANAGE_GUILD],
+  name: 'settings',
+  onBeforeRun(__ctx, { arg }) {
+    const args = parseArgs(arg);
+    if (!['muterole', 'view', 'reset'].includes(args[0])) return false;
+    if (args[0] == 'muterole')
+      if (!['init', 'refresh'].includes(args[1])) return false;
+    return true;
+  },
+  async run(ctx, { arg }) {
 
-class Comando extends Command {
-
-  constructor() {
-    super();
-    this.cooldown = 20;
-    this.name = "settings"
-    this.alias = []
-    this.category = 'admin'
-    this.botPermissions = { guild: ['manageGuild', 'manageRoles', 'manageChannels'], channel: [] }
-    this.memberPermissions = { guild: ['manageGuild'], channel: [] }
-  }
-
-  async run({ message, args, embedResponse, langjson, prefix }: command): Promise<eris.Message> {
-
+    const langjson = json[(await getGuild(ctx.guildId).then(x => x.lang))];
+    const args = parseArgs(arg);
     const settings = langjson.commands.settings;
     const { muterole, cooldown: cooldownMessage } = settings;
-    const data: SETTINGS = await this.client.redis.get(message.guildID, 'settings_').then(x => typeof x == 'string' ? JSON.parse(x) : null) || await settingsMODEL.findOne({ id: message.guildID }).lean() || await settingsMODEL.create({ id: message.guildID });
-    const GUILDME = message.guild.me;
+    const data = await getGuild(ctx.guildId)
+    const GUILDME = ctx.guild.me;
 
-    if (cooldown.has(message.guildID))
-      return embedResponse(cooldownMessage, message.channel, this.client.color);
+    if (cooldown.has(ctx.guildId))
+      return ctx.reply(cooldownMessage);
 
     switch (args[0]) {
 
       case 'muterole': {
 
+        if (!ctx.guild.me.can([Flags.MANAGE_GUILD, Flags.MANAGE_ROLES, Flags.MANAGE_CHANNELS]))
+          return this.onPermissionsFailClient(ctx, [Flags.MANAGE_GUILD, Flags.MANAGE_ROLES, Flags.MANAGE_CHANNELS].filter(perm => (Number(ctx.guild.me.permissions) & perm) != perm));
+
         switch (args[1]) {
 
           case 'init': {
 
-            if (message.guild.roles.get(data.muterole)) return embedResponse(
-              muterole.init.use_refresh(prefix), message.channel, this.client.color
+            if (ctx.guild.roles.get(data.muterole)) return ctx.reply(
+              muterole.init.use_refresh(ctx.prefix)
             );
 
-            const role = message.guild.roles.get(args[2]) || message.guild.roles.find(item => item.name == args.slice(2).join(' ')) || message.guild.roles.get(message.roleMentions[0]);
+            const role = ctx.guild.roles.get(args[2]) || ctx.guild.roles.find(item => item.name == args.slice(2).join(' ')) || ctx.message.mentionRoles.first();
 
-            if (!role)
-              return embedResponse(
-                muterole.refresh.use_init(prefix), message.channel, this.client.color
+            if (!role || !(role.guildId == ctx.guildId))
+              return ctx.reply(
+                muterole.refresh.use_init(ctx.prefix)
               );
 
-            const canales = message.guild.channels.filter(item => item.type == 0 || item.type == 4 || item.type == 5 || item.type == 2 || item.type == 13).filter(canal => filter(canal, role.id));
+            const canales = ctx.message.guild.channels.filter(item => item.type == 0 || item.type == 4 || item.type == 5 || item.type == 2 || item.type == 13).filter(canal => filter(canal, role.id));
 
             if (!canales.length) {
               if (data.muterole != role.id) {
-                const temp = await settingsMODEL.findOneAndUpdate({ id: message.guildID }, { muterole: role.id }, { new: true }).lean();
-                await this.client.redis.set(message.guildID, JSON.stringify(temp), 'settings_');
+                const temp = await guild.findOneAndUpdate({ id: ctx.guildId }, { muterole: role.id }, { new: true }).lean();
+                await redis.set(ctx.guildId, JSON.stringify(temp));
               }
-              return embedResponse(muterole.refresh.already, message.channel, this.client.color);
+              return ctx.reply(muterole.refresh.already);
             }
 
             if ((getHighest(GUILDME).position < role.position) || role.managed)
-              return embedResponse(muterole.init.cannt_edit(role.mention), message.channel, this.client.color);
+              return ctx.reply(muterole.init.cannt_edit(role.mention));
 
-            await embedResponse(muterole.init.editando, message.channel, this.client.color);
-            cooldown.add(message.guildID);
-            const { success, error } = await Edit({ canales, id: role.id, message })
+            await ctx.reply(muterole.init.editando);
+            cooldown.add(ctx.guildId);
+            const { success, error } = await Edit({ canales, id: role.id, message: ctx.message })
 
             if (success) {
               //Todo bien, todo correcto...
-              cooldown.delete(message.guildID);
-              const temp = await settingsMODEL.findOneAndUpdate({ id: message.guildID }, { muterole: role.id }, { new: true }).lean();
-              await this.client.redis.set(message.guildID, JSON.stringify(temp), 'settings_');
-              return embedResponse(muterole.init.success, message.channel, this.client.color);
+              cooldown.delete(ctx.guildId);
+              const temp = await guild.findOneAndUpdate({ id: ctx.guildId }, { muterole: role.id }, { new: true }).lean();
+              await redis.set(ctx.guildId, JSON.stringify(temp));
+              return ctx.reply(muterole.init.success);
             }
             else if (error) {
               //Error al editar un canal...
-              cooldown.delete(message.guildID);
-              return embedResponse(`Error: ${error.name || error}`, message.channel, this.client.color);
+              cooldown.delete(ctx.guildId);
+              return ctx.reply(`Error: ${error.name || error}`);
             }
             else {
               //El usuario le quito permisos al bot...
-              cooldown.delete(message.guildID);
-              return embedResponse(muterole.init.else, message.channel, this.client.color);
+              cooldown.delete(ctx.guildId);
+              return ctx.reply(muterole.init.else);
             }
           }
 
           case 'refresh': {
 
-            const role = message.guild.roles.get(data.muterole);
+            const role = ctx.message.guild.roles.get(data.muterole);
 
-            if (!role) return embedResponse(
-              muterole.refresh.use_init(prefix), message.channel, this.client.color
+            if (!role) return ctx.reply(
+              muterole.refresh.use_init(ctx.prefix),
             );
 
             if ((getHighest(GUILDME).position < role.position) || role.managed) {
-              cooldown.delete(message.guildID);
-              return embedResponse(muterole.refresh.cannt_edit(role.mention), message.channel, this.client.color);
+              cooldown.delete(ctx.guildId);
+              return ctx.reply(muterole.refresh.cannt_edit(role.mention));
             };
 
-            const canales = message.guild.channels.filter(item => filter(item, role.id))
+            const canales = ctx.message.guild.channels.filter(item => filter(item, role.id))
 
             if (!canales.length)
-              return embedResponse(muterole.refresh.already, message.channel, this.client.color);
+              return ctx.reply(muterole.refresh.already);
 
-            cooldown.add(message.guildID);
+            cooldown.add(ctx.guildId);
 
-            await embedResponse(muterole.refresh.editando, message.channel, this.client.color);
+            await ctx.reply(muterole.refresh.editando);
 
-            const { success, error } = await Edit({ canales, message, id: role.id })
+            const { success, error } = await Edit({ canales, message: ctx.message, id: role.id })
 
             if (success) {
               //Todo bien, todo correcto...
-              cooldown.delete(message.guildID);
-              const temp = await settingsMODEL.findOneAndUpdate({ id: message.guildID }, { muterole: role.id }, { new: true }).lean();
-              await this.client.redis.set(message.guildID, JSON.stringify(temp), 'settings_');
-              return embedResponse(muterole.refresh.success, message.channel, this.client.color);
+              cooldown.delete(ctx.guildId);
+              const temp = await guild.findOneAndUpdate({ id: ctx.guildId }, { muterole: role.id }, { new: true }).lean();
+              await redis.set(ctx.guildId, JSON.stringify(temp));
+              return ctx.reply(muterole.refresh.success);
             }
             else if (error) {
               //Error al editar un canal...
-              cooldown.delete(message.guildID);
-              return embedResponse(`Error: ${error.name || error}`, message.channel, this.client.color);
+              cooldown.delete(ctx.guildId);
+              return ctx.reply(`Error: ${error.name || error}`);
             }
             else {
               //El usuario le quito permisos al bot...
-              cooldown.delete(message.guildID);
-              return embedResponse(muterole.refresh.else, message.channel, this.client.color);
+              cooldown.delete(ctx.guildId);
+              return ctx.reply(muterole.refresh.else);
             }
           }
 
           default: {
-            return embedResponse(
-              `
-                            ${prefix}settings (view|muterole|reset)
-                            ${prefix}settings view
-                            ${prefix}settings muterole init [role]
-                            ${prefix}settings muterole refresh
-                            ${prefix}settings reset
-                            `, message.channel, this.client.color
+            return ctx.reply(">>> " +
+              ctx.prefix + "settings (view|muterole|reset)\n" +
+              ctx.prefix + "settings view\n" +
+              ctx.prefix + "settings muterole init [role]\n" +
+              ctx.prefix + "settings muterole refresh\n" +
+              ctx.prefix + "settings reset"
             )
           }
         }
       }
 
       case 'view': {
-        const rol = message.guild.roles.get(data.muterole);
+        const rol = ctx.message.guild.roles.get(data.muterole);
         const embed = new MessageEmbed()
-          .setColor(this.client.color)
+          .setColor(0xff0000)
           .addField('Muterole', rol ? `${rol.mention}  \`[${rol.id}]\`` : '❌')
           .setTimestamp();
-        return message.channel.createMessage({ embed });
+        return ctx.reply({ embed });
       }
 
       case 'reset': {
 
-        await settingsMODEL.deleteOne({ id: message.guildID });
-        await this.client.redis.del(message.guildID, 'settings_');
+        const data = await guild.findOneAndUpdate({ id: ctx.guildId }, { muterole: '1' }, { new: true });
+        await redis.set(ctx.guildId, JSON.stringify(data));
 
         const embed = new MessageEmbed()
-          .setColor(this.client.color)
+          .setColor(0xff0000)
           .setDescription(langjson.commands.settings.reset.message)
           .setTimestamp();
-        return message.channel.createMessage({ embed });
+        return ctx.reply({ embed });
 
 
       }
 
       default: {
 
-        return embedResponse(
-          `
-                    ${prefix}settings (view|muterole|reset)
-                    ${prefix}settings view
-                    ${prefix}settings muterole init [role]
-                    ${prefix}settings muterole refresh
-                    ${prefix}settings reset
-                    `, message.channel, this.client.color
+        return ctx.reply(">>> " +
+          ctx.prefix + "settings (view|muterole|reset)\n" +
+          ctx.prefix + "settings view\n" +
+          ctx.prefix + "settings muterole init [role]\n" +
+          ctx.prefix + "settings muterole refresh\n" +
+          ctx.prefix + "settings reset"
         )
 
       }
     }
-  }
-}
 
-export default Comando;
+  },
+});
 
-type el_canal = eris.AnyGuildChannel
-
-async function Edit(all: { canales: el_canal[], id: string, message: eris.Message }): Promise<{ error: Error, success: boolean }> {
+async function Edit(all: { canales: detritus.Structures.Channel[], id: string, message: detritus.Structures.Message }): Promise<{ error: Error, success: boolean }> {
 
   const { canales, id, message } = all;
   let success = true;
   let error: Error = null;
   const GUILDME = message.guild.me;
 
-  type permisitos = 'manageGuild' | 'manageRoles' | 'manageChannels';
-  const permisos: permisitos[] = ['manageGuild', 'manageRoles', 'manageChannels'];
+  const permisos = [Flags.MANAGE_GUILD];
 
   for (const canal of canales) {
-
-    const permisosBit = FLAGS.SEND_MESSAGES + FLAGS.ADD_REACTIONS;
-    const permisosVoice = FLAGS.CONNECT + FLAGS.SPEAK + FLAGS.STREAM;
+    const permisosBit = Flags.SEND_MESSAGES + Flags.ADD_REACTIONS;
+    const permisosVoice = Flags.CONNECT + Flags.SPEAK + Flags.STREAM;
     const role = message.guild.roles.get(id);
-    const check = permisos.every(item => GUILDME.permissions.has(item)) && role && !((getHighest(GUILDME).position < role.position) || role.managed);
+    const check = permisos.every(item => ((Number(GUILDME.permissions) & item) == item) && role && !((getHighest(GUILDME).position < role.position) || role.managed));
 
     if (check && success) {
-      await canal.editPermission(id, 0, (canal.type == 2 || canal.type == 13) ? permisosVoice : permisosBit, 'role')
+      await canal.editOverwrite(id, { allow: 0, deny: (canal.type == 2 || canal.type == 13) ? permisosVoice : permisosBit })
         .then(() => {
           success = true;
         })
@@ -223,10 +232,10 @@ async function Edit(all: { canales: el_canal[], id: string, message: eris.Messag
 
 }
 
-function filter(item: eris.AnyGuildChannel, id: string) {
+function filter(item: detritus.Structures.Channel, id: string) {
 
-  const TEXT = FLAGS.SEND_MESSAGES + FLAGS.ADD_REACTIONS;
-  const VOICE = FLAGS.CONNECT + FLAGS.SPEAK + FLAGS.STREAM;
+  const TEXT = Flags.SEND_MESSAGES + Flags.ADD_REACTIONS;
+  const VOICE = Flags.CONNECT + Flags.SPEAK + Flags.STREAM;
 
   if ([13, 2].includes(item.type)) {
     if (!item.permissionOverwrites.has(id)) return true;

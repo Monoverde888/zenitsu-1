@@ -1,30 +1,40 @@
-import Command from '../../Utils/Classes/command.js';
-import command from '../../Utils/Interfaces/run.js'
-import * as  eris from '@lil_marcrock22/eris-light';
-import MessageEmbed from '../../Utils/Classes/Embed.js';
-const regex = /((http|https):\/\/)((www|canary|ptb)\.)?(discordapp|discord)\.com\/api\/webhooks\/([0-9]){7,19}\/[-a-zA-Z0-9@:%._+~#=]{60,120}/gmi
+import BaseCommand from '../../Utils/Classes/Command.js';
+import parseArgs from '../../Utils/Functions/parseArgs.js';
+import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
+import { Color, Flags } from '../../Utils/Const.js';
+const regex = /((http|https):\/\/)((www|canary|ptb)\.)?(discordapp|discord)\.com\/api\/webhooks\/([0-9]){7,19}\/[-a-zA-Z0-9@:%._+~#=]{60,120}/gmi;
+import redis from '../../Utils/Managers/Redis.js';
+import guild, { GUILD } from '../../Database/models/guild.js';
+import json from '../../Utils/Lang/langs.js';
+import getGuild from '../../Utils/Functions/getGuild.js';
 import nodefetch from 'node-fetch';
-import logs from '../../models/logs.js';
-import { Logs as LOGS } from '../../models/logs.js'
+import unmarkdown from '../../Utils/Functions/unmarkdown.js';
 
-class Comando extends Command {
+export default new BaseCommand({
+  label: 'arg',
+  metadata: {
+    usage(prefix: string) {
+      return [`${prefix}setlogs <webhookURL> <messageUpdate|messageDelete>`]
+    },
+    category: 'admin'
+  },
+  permissions: [Flags.MANAGE_GUILD],
+  name: 'setlogs',
+  onBeforeRun(__ctx, { arg }) {
+    const args = parseArgs(arg);
+    return ['messageUpdate', 'messageUpdate'].includes(args[1]);
+  },
+  async run(ctx, { arg }) {
 
-  constructor() {
-    super();
-    this.name = "setlogs"
-    this.alias = []
-    this.category = 'admin'
-    this.botPermissions = { guild: [], channel: ['attachFiles'] }
-    this.memberPermissions = { guild: ['manageGuild'], channel: [] }
-  }
+    const args = parseArgs(arg);
 
-  async run({ message, args, langjson, prefix }: command): Promise<eris.Message> {
+    const langjson = json[(await getGuild(ctx.guildId).then(x => x.lang))];
 
     const invalidUse = new MessageEmbed()
       .setTimestamp()
-      .setColor(this.client.color)
+      .setColor(Color)
       .setDescription(langjson.commands.setlogs.invalid)
-      .setFooter(`${prefix}setlogs (WebhookURL) (messageUpdate|messageDelete)`)
+      .setFooter(`${ctx.prefix}setlogs (WebhookURL) (messageUpdate|messageUpdate)`)
       .setImage(`https://i.imgur.com/2WZ1ctQ.gif`)
       .setThumbnail(`https://i.imgur.com/7DdnGh5.png`)
 
@@ -33,27 +43,26 @@ class Comando extends Command {
     const events = ['messageDelete', 'messageUpdate'];
 
     if (!events.includes(type) || !url)
-      return message.channel.createMessage({ embed: invalidUse })
+      return ctx.reply({ embed: invalidUse })
 
     const match = url.match(regex);
 
-    if (!match) return message.channel.createMessage({ embed: invalidUse });
+    if (!match) return ctx.reply({ embed: invalidUse });
 
     const [token, id] = match[0].split('/').reverse();
 
-    const webhook: eris.Webhook = await nodefetch(`https://canary.discord.com/api/webhooks/${id.trim()}/${token.trim()}`).then((data) => data.json()).catch(() => undefined);
+    const webhook = await nodefetch(`https://canary.discord.com/api/webhooks/${id.trim()}/${token.trim()}`).then((data) => data.json()).catch(() => undefined);
 
-    if (!webhook || (webhook.guild_id != message.guild.id)) return message.channel.createMessage({ embed: invalidUse });
+    if (!webhook || (webhook.guild_id != ctx.guildId)) return ctx.reply({ embed: invalidUse });
 
-    const pre_fetch = await this.client.redis.get(message.guildID, 'logs_') || await logs.findOne({ id: message.guildID }).lean() || await logs.create({ id: message.guildID, logs: [] }),
-      fetch: LOGS = typeof pre_fetch == 'string' ? JSON.parse(pre_fetch) : pre_fetch,
+    const fetch = await getGuild(ctx.guildId),
       check = (fetch.logs.find(item => (item.TYPE == type)))
 
-    let data: LOGS;
+    let data: GUILD;
 
     if (!check) {
 
-      data = await logs.findOneAndUpdate({ id: message.guildID },
+      data = await guild.findOneAndUpdate({ id: ctx.guildId },
         {
           $addToSet: {
             logs: {
@@ -68,13 +77,13 @@ class Comando extends Command {
 
     else {
 
-      await logs.findOneAndUpdate({ id: message.guildID }, {
+      await guild.findOneAndUpdate({ id: ctx.guildId }, {
         $pull: {
           logs: check
         }
-      }, { new: true }).lean()
+      }, { new: true }).lean();
 
-      data = await logs.findOneAndUpdate({ id: message.guildID },
+      data = await guild.findOneAndUpdate({ id: ctx.guildId },
         {
           $addToSet: {
             logs: {
@@ -87,20 +96,18 @@ class Comando extends Command {
 
     }
 
-    return this.client.redis.set(message.guildID, JSON.stringify(data), 'logs_')
+    return redis.set(ctx.guildId, JSON.stringify(data))
       .then(() => {
 
         const embed = new MessageEmbed()
           .setAuthor(webhook.name, webhook.avatar
             ? `https://cdn.discordapp.com/avatars/${webhook.id}/${webhook.avatar}.png`
             : `https://cdn.discordapp.com/embed/avatars/0.png`)
-          .setDescription(langjson.commands.setlogs.correct(this.client.unMarkdown(webhook.name), type))
-          .setColor(this.client.color);
+          .setDescription(langjson.commands.setlogs.correct(unmarkdown(webhook.name), type))
+          .setColor(Color);
 
-        return message.channel.createMessage({ embed });
+        return ctx.reply({ embed });
 
       })
-  }
-}
-
-export default Comando;
+  },
+});
