@@ -1,5 +1,5 @@
-import Button from "./Normal.js";
-import URLButton from "./URL.js";
+import Button from "./normal.js";
+import URLButton from "./url.js";
 
 class Components {
 
