@@ -58,8 +58,7 @@ async function loadEvents(client: detritus.ShardClient, commandClient: CommandCl
   const load = async (file: string, listener: detritus.ShardClient | CommandClient) => {
 
     const { default: RES } = await import("file:///" + ruta('events', listener.constructor.name.toLowerCase(), file));
-
-    listener.on(RES.name + '.js', RES.bind(null, client).bind(null, commandClient));
+    listener.on(RES.name, RES.bind(null, client).bind(null, commandClient));
 
   }
 
