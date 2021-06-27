@@ -1,14 +1,14 @@
-import BaseCommand from '../../Utils/Classes/Command.js';
+import BaseCommand from '../../Utils/Classes/command.js';
 import json from '../../Utils/Lang/langs.js';
-import getGuild from '../../Utils/Functions/getGuild.js';
-import Collector, { Fixed } from '../../Utils/Collectors/Button.js';
+import getGuild from '../../Utils/Functions/getguild.js';
+import Collector, { Fixed } from '../../Utils/Collectors/button.js';
 import AI from 'ai-tic-tac-toe';
 import tresenraya from 'tresenraya';
 const users: Map<string, string> = new Map();
 import detritus from 'detritus-client';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
-import Button from '../../Utils/Buttons/Normal.js';
-import Components from '../../Utils/Buttons/Component.js';
+import Button from '../../Utils/Buttons/normal.js';
+import Components from '../../Utils/Buttons/component.js';
 import { estilos } from '../../Utils/Buttons/types.js';
 
 const pos = [

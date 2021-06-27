@@ -1,12 +1,12 @@
-import BaseCommand from '../../Utils/Classes/Command.js';
-import parseArgs from '../../Utils/Functions/parseArgs.js';
+import BaseCommand from '../../Utils/Classes/command.js';
+import parseArgs from '../../Utils/Functions/parseargs.js';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
-import { Color, Flags } from '../../Utils/Const.js';
+import { Color, Flags } from '../../Utils/const.js';
 const regex = /((http|https):\/\/)((www|canary|ptb)\.)?(discordapp|discord)\.com\/api\/webhooks\/([0-9]){7,19}\/[-a-zA-Z0-9@:%._+~#=]{60,120}/gmi;
 import redis from '../../Utils/Managers/Redis.js';
 import guild, { GUILD } from '../../Database/models/guild.js';
 import json from '../../Utils/Lang/langs.js';
-import getGuild from '../../Utils/Functions/getGuild.js';
+import getGuild from '../../Utils/Functions/getguild.js';
 import nodefetch from 'node-fetch';
 import unmarkdown from '../../Utils/Functions/unmarkdown.js';
 

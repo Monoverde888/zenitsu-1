@@ -1,13 +1,13 @@
 import detritus from 'detritus-client';
 const cooldown: Set<string> = new Set();
-import BaseCommand from '../../Utils/Classes/Command.js';
-import parseArgs from '../../Utils/Functions/parseArgs.js';
+import BaseCommand from '../../Utils/Classes/command.js';
+import parseArgs from '../../Utils/Functions/parseargs.js';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
-import { Flags } from '../../Utils/Const.js'
+import { Flags } from '../../Utils/const.js'
 import redis from '../../Utils/Managers/Redis.js';
 import json from '../../Utils/Lang/langs.js';
-import getGuild from '../../Utils/Functions/getGuild.js';
-import getHighest from '../../Utils/Functions/getHighest.js';
+import getGuild from '../../Utils/Functions/getguild.js';
+import getHighest from '../../Utils/Functions/gethighest.js';
 import guild from '../../Database/models/guild.js';
 
 export default new BaseCommand({

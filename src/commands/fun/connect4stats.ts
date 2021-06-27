@@ -1,8 +1,8 @@
-import BaseCommand from '../../Utils/Classes/Command.js';
-import getUser from '../../Utils/Functions/getUser.js';
+import BaseCommand from '../../Utils/Classes/command.js';
+import getUser from '../../Utils/Functions/getuser.js';
 import jsonLANG from '../../Utils/Lang/langs.js';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
-import getGuild from '../../Utils/Functions/getGuild.js';
+import getGuild from '../../Utils/Functions/getguild.js';
 
 export default new BaseCommand({
   metadata: {

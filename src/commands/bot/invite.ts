@@ -1,8 +1,8 @@
-import BaseCommand from '../../Utils/Classes/Command.js';
+import BaseCommand from '../../Utils/Classes/command.js';
 import json from '../../Utils/Lang/langs.js';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
-import { Color } from '../../Utils/Const.js';
-import getGuild from '../../Utils/Functions/getGuild.js';
+import { Color } from '../../Utils/const.js';
+import getGuild from '../../Utils/Functions/getguild.js';
 
 export default new BaseCommand({
   metadata: {

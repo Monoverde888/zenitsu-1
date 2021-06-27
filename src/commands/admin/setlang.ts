@@ -1,7 +1,7 @@
-import BaseCommand from '../../Utils/Classes/Command.js';
-import parseArgs from '../../Utils/Functions/parseArgs.js';
+import BaseCommand from '../../Utils/Classes/command.js';
+import parseArgs from '../../Utils/Functions/parseargs.js';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
-import { Color, Flags } from '../../Utils/Const.js'
+import { Color, Flags } from '../../Utils/const.js'
 import redis from '../../Utils/Managers/Redis.js';
 import guild from '../../Database/models/guild.js';
 
