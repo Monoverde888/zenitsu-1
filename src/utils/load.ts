@@ -63,13 +63,13 @@ async function loadEvents(client: detritus.ShardClient, commandClient: CommandCl
 
   }
 
-  const eventos = await fs.readdir(ruta('events', 'shardClient'));
+  const eventos = await fs.readdir(ruta('events', 'shardclient'));
 
   for (const i of eventos)
     await load(i, client);
 
 
-  const eventosC = await fs.readdir(ruta('events', 'commandClient'));
+  const eventosC = await fs.readdir(ruta('events', 'commandclient'));
 
   for (const i of eventosC)
     await load(i, commandClient);
