@@ -57,4 +57,4 @@ const User = new Schema({
   cacheName: String
 }, { timestamps: true })
 
-export default model<USER>('User', User);
+export default model<USER>('UserInfo', User);

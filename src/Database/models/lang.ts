@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 const { Schema, model } = mongoose;
 
-const Guild = new Schema({
+const lang = new Schema({
   id: { type: String, unique: true },
   lang: {
     default: 'es',
@@ -14,4 +14,4 @@ export interface Lang extends mongoose.Document {
   lang: 'es' | 'en'
 }
 
-export default model<Lang>('Lang', Guild)
+export default model<Lang>('Lang', lang)

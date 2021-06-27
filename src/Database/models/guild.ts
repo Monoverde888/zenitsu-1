@@ -26,5 +26,5 @@ const Guild = new Schema({
   }],
   muterole: { type: String, default: '1' }
 }, { timestamps: true });
-
-export default model<GUILD>('Guild', Guild);
+console.log(mongoose.models.GuildInfo)
+export default mongoose.models.GuildInfo || model<GUILD>('GuildInfo', Guild);

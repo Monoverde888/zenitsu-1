@@ -10,7 +10,7 @@ export interface Connect4 extends mongoose.Document {
   cacheName: string | '?'
 }
 
-const Guild = new Schema({
+const top = new Schema({
   id: { type: String, required: true },
   difficulty: { type: String, default: 'medium' },
   perdidas: { type: Number, default: 0 },
@@ -19,4 +19,4 @@ const Guild = new Schema({
   cacheName: { type: String, default: '?' }
 });
 
-export default model<Connect4>('c4top', Guild);
+export default model<Connect4>('c4top', top);

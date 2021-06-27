@@ -7,7 +7,7 @@ export interface Connect4Map extends mongoose.Document {
   dif: string;
 }
 
-const Guild = new Schema({
+const map = new Schema({
   maps: {
     type: Array,
     default: []
@@ -19,4 +19,4 @@ const Guild = new Schema({
   dif: String
 }, { timestamps: true });
 
-export default model<Connect4Map>('c4maps', Guild);
+export default model<Connect4Map>('c4maps', map);

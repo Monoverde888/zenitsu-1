@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 const { Schema, model } = mongoose;
 
-const Guild = new Schema({
+const profile = new Schema({
 
   id: { type: String, unique: true },
   description: {
@@ -34,4 +34,4 @@ export interface Profile extends mongoose.Document {
   color: string;
 }
 
-export default model<Profile>('profile', Guild)
+export default model<Profile>('profile', profile)
