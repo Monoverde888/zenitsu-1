@@ -10,6 +10,6 @@
         "noImplicitAny": true,
         "moduleResolution": "Node",
         "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": false
+        "forceConsistentCasingInFileNames": false,
     }
 }
