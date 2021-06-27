@@ -7,8 +7,6 @@ import redis from '../../utils/managers/redis.js';
 
 async function messageUpdate(client: detritus.ShardClient, _commandClient: CommandClientType, { message: newMessage, old: oldMessage }: detritus.GatewayClientEvents.MessageUpdate) {
 
-  console.log(oldMessage, newMessage)
-
   if (!oldMessage || !newMessage) return;
 
   const guild = newMessage.guild;
