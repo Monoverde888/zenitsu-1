@@ -36,6 +36,8 @@ const obj = {
 
   "messages": {
 
+    "ratelimit": (remaining: number) => `Intenta despues de ${remaining / 1000} segundos (${remaining}ms).`,
+
     "permisos_bot": (p: string): string => "<:cancel:804368628861763664> | Ups, me faltan algun/algunos permiso(s): " + p,
 
     "permisos_user": (p: string): string => "<:cancel:804368628861763664> | Ups, te faltan algun/algunos permiso(s): " + p,
@@ -43,8 +45,6 @@ const obj = {
     "error": (e: string): string => "Algo pasó, aquí un mensaje: " + e,
 
     "cooldown": (time: string, command: string): string => `Por favor espera ${time} antes de usar \`${command}\``,
-
-    "abuz": 'Fuiste demasiado rápido, ahora tendrás que esperar un minuto :).',
 
   },
   "commands": {

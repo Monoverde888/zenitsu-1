@@ -36,6 +36,8 @@ const obj = {
 
   "messages": {
 
+    "ratelimit": (remaining: number) => `Try after ${remaining / 1000} seconds (${remaining}ms).`,
+
     "permisos_bot": (p: string): string => "<:cancel:804368628861763664> | Oops, I am missing some permissions " + p,
 
     "permisos_user": (p: string): string => "<:cancel:804368628861763664> | Oops, You are missing some permissions " + p,
@@ -43,8 +45,6 @@ const obj = {
     "error": (e: string): string => "Something happened, here's a debug: " + e,
 
     "cooldown": (time: string, command: string): string => `Please wait ${time} before use \`${command}\``,
-
-    "abuz": 'You were too fast, now you\'ll have to wait a minute :).',
 
   },
   "commands": {
