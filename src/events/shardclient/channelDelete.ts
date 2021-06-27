@@ -1,9 +1,9 @@
 import detritus from 'detritus-client';
-import CommandClientType from '../../Utils/Classes/CommandClient.js';
-import Collector from '../../Utils/Collectors/Button.js';
+import CommandClientType from '../../utils/classes/commandclient.js';
+import Collector from '../../utils/collectors/button.js';
 
-function poto(_client: detritus.ShardClient, _commandClient: CommandClientType, data: detritus.GatewayClientEvents.ChannelDelete) {
+function channelDelete(_client: detritus.ShardClient, _commandClient: CommandClientType, data: detritus.GatewayClientEvents.ChannelDelete) {
   Collector.handleChannelDelete(data);
 }
 
-export default poto;
+export default channelDelete

@@ -2,8 +2,8 @@ import BaseCommand from '../../utils/classes/command.js';
 import model, { USER } from '../../database/models/user.js';
 import jsonLANG from '../../utils/lang/langs.js';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
-import getGuild from '../../utils/Functions/getguild.js';
-import parseArgs from '../../utils/Functions/parseargs.js';
+import getGuild from '../../utils/functions/getguild.js';
+import parseArgs from '../../utils/functions/parseargs.js';
 
 export default new BaseCommand({
   label: 'arg',
