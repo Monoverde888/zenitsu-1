@@ -3,7 +3,7 @@ import path from 'path';
 import commons from './Functions/commons.js';
 import detritus from 'detritus-client';
 import CommandClient from './Classes/CommandClient.js';
-import connect from '../Database/connect.js';
+import connect from '../database/connect.js';
 
 export default async function Load({ token, mongo }: { token: string, mongo: string }) {
 
