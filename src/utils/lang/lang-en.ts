@@ -73,7 +73,7 @@ const obj = {
       "message": (guilds: number): string => "I am currently on " + guilds + " servers."
     },
     "invite": {
-      "message": (bot: string, support: string): string => "Bot invitation link: [Link](" + bot + " \"Invite the bot\")🤖\nSupport link: [Link](" + support + " \"You will receive help\")<:zStaffZenitsu:766436216966217729>"
+      "message": (bot: string, support: string): string => "Bot invitation link: [Link](" + bot + " \"Invite the bot\") 🤖\nSupport link: [Link](" + support + " \"You will receive help\") <:zStaffZenitsu:766436216966217729>"
     },
     "reportbug": {
 

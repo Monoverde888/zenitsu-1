@@ -75,7 +75,7 @@ const obj = {
       "message": (guilds: number): string => "Actualmente estoy en " + guilds + " servidores.",
     },
     "invite": {
-      "message": (bot: string, support: string): string => "Link de invitación del bot: [Link](" + bot + " \"Invitarás al bot\")🤖\nLink de invitación al servidor de soporte: [Link](" + support + " \"Recibirás ayuda\")<:zStaffZenitsu:766436216966217729>",
+      "message": (bot: string, support: string): string => "Link de invitación del bot: [Link](" + bot + " \"Invitarás al bot\") 🤖\nLink de invitación al servidor de soporte: [Link](" + support + " \"Recibirás ayuda\") <:zStaffZenitsu:766436216966217729>",
     },
     "reportbug": {
       "need": "<:cancel:804368628861763664> | Necesitas especificar el error.",
