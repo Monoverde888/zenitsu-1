@@ -1,11 +1,11 @@
-import BaseCommand from './basecommand.js';
+import detritus from 'detritus-client'
 import { Flags } from '../const.js';
 const Arr = Object.entries(Flags);
 import getGuild from '../functions/getguild.js';
 import json from '../lang/langs.js';
 
 class RegisterCommand {
-  constructor(options: BaseCommand) {
+  constructor(options: detritus.CommandClientAdd) {
 
     options.onError = (ctx) => {
       ctx.reply('```' + ctx.command.metadata.usage(ctx.prefix).join('\n') + '```');

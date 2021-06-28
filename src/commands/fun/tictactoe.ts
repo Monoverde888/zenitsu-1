@@ -270,10 +270,6 @@ async function jugar(firstp: detritus.Structures.User | detritus.Structures.Memb
     },
     async onCollect(m) {
 
-      const check = await m.respond({ data: { flags: 64 }, type: 5 }).catch(() => false).then(() => true);
-
-      if (!check) return check;
-
       partida.elegir(parseInt(m.data.customId.split('tictactoe_')[1]));
 
       if (partida.finalizado) {
@@ -285,6 +281,8 @@ async function jugar(firstp: detritus.Structures.User | detritus.Structures.Memb
       await msg.edit({ content: `${resolveMarkdown(firstp, partida)} vs ${resolveMarkdown(secondp, partida)}`, components: generateButtons(partida) });
 
       if (!partida.finalizado && partida.turno.jugador == ctx.client.user.id) {
+
+        await m.respond({ data: { flags: 64 }, type: 5 });
 
         await new Promise((r) => {
           setTimeout(() => { r(true) }, 5000)

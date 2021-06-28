@@ -31,12 +31,14 @@ export default new BaseCommand({
     const _id = args[0];
     const embed = new MessageEmbed()
       .setColor(0xff0000)
-      .setImage('https://i.imgur.com/qcek7Ll.gif')
+      .setImage('https://is.gd/6KTM2e')
       .setDescription(langjson.commands.connect4view.invalid);
 
     const data = (dataUser.c4Maps || []).find(item => JSON.parse(JSON.stringify(item))._id == _id);
 
-    if (!data) return ctx.reply({ embed });
+    if (!data) return ctx.reply({
+      embed
+    });
 
     try {
 
@@ -47,7 +49,14 @@ export default new BaseCommand({
 
       const buffer = await response.buffer();
 
-      return ctx.reply({ files: [{ value: buffer, filename: 'ggez.gif' }] });
+      return ctx.reply({
+        files: [{ value: buffer, filename: 'ggez.gif' }], messageReference: {
+          channelId: ctx.channelId,
+          failIfNotExists: false,
+          messageId: ctx.messageId,
+          guildId: ctx.guildId,
+        }
+      });
 
     }
 
