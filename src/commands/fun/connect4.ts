@@ -224,9 +224,7 @@ export default new BaseCommand({
 
       }
 
-      return messageParty.edit({
-        embed, components: generateButtons(games.get(ctx.guildId), langjson.commands.connect4.surrender)
-      });
+      return messageParty.edit({ embed, components: generateButtons(games.get(ctx.guildId), langjson.commands.connect4.surrender) });
 
     }
 
@@ -253,7 +251,10 @@ export default new BaseCommand({
           sendCoso(embed);
 
           if (usuario.id == ctx.client.user.id) {
+
             const a = await model.findOneAndUpdate({ id: ctx.message.author.id }, { $inc: { [`c4${args[0]}.ganadas`]: 1 }, $set: { cacheName: ctx.message.author.username } }, { upsert: true, new: true });
+
+            await redis.set(ctx.message.author.id, JSON.stringify(a));
 
             if (args[0] == 'hard' && a.c4hard) {
 
@@ -264,21 +265,21 @@ export default new BaseCommand({
 
               }
 
-              if ((a.c4hard.ganadas >= 25) && !(DATAPROFILE.achievements.includes('c4level2'))) {
+              else if ((a.c4hard.ganadas >= 25) && !(DATAPROFILE.achievements.includes('c4level2'))) {
 
                 const data = await model.findOneAndUpdate({ id: ctx.message.author.id }, { $addToSet: { achievements: 'c4level2' } }, { new: true }).lean();
                 await redis.set(ctx.message.author.id, JSON.stringify(data));
 
               }
 
-              if ((a.c4hard.ganadas >= 50) && !(DATAPROFILE.achievements.includes('c4level3'))) {
+              else if ((a.c4hard.ganadas >= 50) && !(DATAPROFILE.achievements.includes('c4level3'))) {
 
                 const data = await model.findOneAndUpdate({ id: ctx.message.author.id }, { $addToSet: { achievements: 'c4level3' } }, { new: true }).lean();
                 await redis.set(ctx.message.author.id, JSON.stringify(data));
 
               }
 
-              if ((a.c4hard.ganadas >= 100) && !(DATAPROFILE.achievements.includes('c4top'))) {
+              else if ((a.c4hard.ganadas >= 100) && !(DATAPROFILE.achievements.includes('c4top'))) {
 
                 const data = await model.findOneAndUpdate({ id: ctx.message.author.id }, { $addToSet: { achievements: 'c4top' } }, { new: true }).lean();
                 await redis.set(ctx.message.author.id, JSON.stringify(data));
