@@ -13,7 +13,7 @@ const Map = new Schema({
   dif: String
 }, { timestamps: true });
 
-export interface USER {
+export interface USER extends mongoose.Document {
   id: string;
   description: string;
   flags: string[];
@@ -26,6 +26,7 @@ export interface USER {
     maps: (string | number)[][]
     users: string[];
     dif: string;
+    _id: any;
   }[];
   background: string;
   cacheName: string;

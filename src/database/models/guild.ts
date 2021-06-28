@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 const { Schema, model } = mongoose;
 
-export interface GUILD {
+export interface GUILD extends mongoose.Document {
   id: string;
   lang: 'es' | 'en';
   prefix: string;

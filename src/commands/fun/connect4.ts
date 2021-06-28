@@ -252,9 +252,9 @@ export default new BaseCommand({
 
           if (usuario.id == ctx.client.user.id) {
 
-            const a = await model.findOneAndUpdate({ id: ctx.message.author.id }, { $inc: { [`c4${args[0]}.ganadas`]: 1 }, $set: { cacheName: ctx.message.author.username } }, { upsert: true, new: true });
-
-            await redis.set(ctx.message.author.id, JSON.stringify(a));
+            const a = await model.findOne({ id: ctx.message.author.id });
+            const res = await modificar(a, args[0].toLowerCase(), 'ganadas', ctx.user.username);
+            await redis.set(ctx.message.author.id, JSON.stringify(res));
 
             if (args[0] == 'hard' && a.c4hard) {
 
@@ -300,7 +300,11 @@ export default new BaseCommand({
             .setImage(displayConnectFourBoard(games.get(interaction.guildId).ascii(), games.get(ctx.guildId)))
 
           messageParty.edit({ embed, components: generateButtons(games.get(ctx.guildId), langjson.commands.connect4.surrender) })
-          if (usuario.id == ctx.client.user.id) await model.findOneAndUpdate({ id: ctx.message.author.id }, { $inc: { [`c4${args[0]}.empates`]: 1 }, $set: { cacheName: ctx.message.author.username } }, { upsert: true });
+          if (usuario.id == ctx.client.user.id) {
+            const da = await model.findOne({ id: ctx.message.author.id });
+            const res = await modificar(da, args[0].toLowerCase(), 'empates', ctx.user.username);
+            await redis.set(ctx.userId, JSON.stringify(res));
+          }
           return Collector.stop('win', collector);
         }
 
@@ -319,7 +323,9 @@ export default new BaseCommand({
               .setColor(0xff0000)
               .setImage(displayConnectFourBoard(games.get(interaction.guildId).ascii(), games.get(ctx.guildId)))
             sendCoso(embed);
-            await model.findOneAndUpdate({ id: ctx.message.author.id }, { $inc: { [`c4${args[0]}.perdidas`]: 1 }, $set: { cacheName: ctx.message.author.username } }, { upsert: true });
+            const da = await model.findOne({ id: ctx.message.author.id });
+            const res = await modificar(da, args[0].toLowerCase(), 'perdidas', ctx.user.username);
+            await redis.set(ctx.userId, JSON.stringify(res));
             return Collector.stop('win', collector);
           }
 
@@ -330,7 +336,9 @@ export default new BaseCommand({
               .setImage(displayConnectFourBoard(games.get(interaction.guildId).ascii(), games.get(ctx.guildId)))
 
             sendCoso(embed);
-            await model.findOneAndUpdate({ id: ctx.message.author.id }, { $inc: { [`c4${args[0]}.empates`]: 1 }, $set: { cacheName: ctx.message.author.username } }, { upsert: true });
+            const da = await model.findOne({ id: ctx.message.author.id });
+            const res = await modificar(da, args[0].toLowerCase(), 'empates', ctx.user.username);
+            await redis.set(ctx.userId, JSON.stringify(res));
             return Collector.stop('win', collector);
           }
 
@@ -360,7 +368,11 @@ export default new BaseCommand({
       async onStop(reason) {
 
         if (reason === 'surrender' && games.get(ctx.guildId)) {
-          if (usuario.id == ctx.client.user.id) await model.findOneAndUpdate({ id: ctx.message.author.id }, { $inc: { [`c4${args[0]}.perdidas`]: 1 }, $set: { cacheName: ctx.message.author.username } }, { upsert: true });
+          if (usuario.id == ctx.client.user.id) {
+            const da = await model.findOne({ id: ctx.message.author.id });
+            const res = await modificar(da, args[0].toLowerCase(), 'perdidas', ctx.user.username);
+            await redis.set(ctx.userId, JSON.stringify(res));
+          }
           const embed = new MessageEmbed()
             .setDescription(langjson.commands.connect4.game_over)
             .setColor(0xff0000)
@@ -373,7 +385,11 @@ export default new BaseCommand({
         }
 
         else if (reason === 'idle' && games.get(ctx.guildId)) {
-          if (usuario.id == ctx.client.user.id) await model.findOneAndUpdate({ id: ctx.message.author.id }, { $inc: { [`c4${args[0]}.perdidas`]: 1 }, $set: { cacheName: ctx.message.author.username } }, { upsert: true });
+          if (usuario.id == ctx.client.user.id) {
+            const da = await model.findOne({ id: ctx.message.author.id });
+            const res = await modificar(da, args[0].toLowerCase(), 'perdidas', ctx.user.username);
+            await redis.set(ctx.userId, JSON.stringify(res));
+          }
           const embed = new MessageEmbed()
             .setDescription(langjson.commands.connect4.time_over)
             .setColor(0xff0000)
@@ -387,7 +403,11 @@ export default new BaseCommand({
         }
 
         else if (reason == 'time' && games.get(ctx.guildId)) {
-          if (usuario.id == ctx.client.user.id) await model.findOneAndUpdate({ id: ctx.message.author.id }, { $inc: { [`c4${args[0]}.perdidas`]: 1 }, $set: { cacheName: ctx.message.author.username } }, { upsert: true });
+          if (usuario.id == ctx.client.user.id) {
+            const da = await model.findOne({ id: ctx.message.author.id });
+            const res = await modificar(da, args[0].toLowerCase(), 'perdidas', ctx.user.username);
+            await redis.set(ctx.userId, JSON.stringify(res));
+          }
           const embed = new MessageEmbed()
             .setDescription(langjson.commands.connect4.game_over2)
             .setColor(0xff0000)
@@ -432,4 +452,15 @@ export default new BaseCommand({
 function displayConnectFourBoard(ascii: string, game: { solution: any; winner: number }) {
   let str = `https://zenitsu.eastus.cloudapp.azure.com/generateembed/${encodeURIComponent(JSON.stringify({ ascii, solutionAndWinner: game }))}.gif`
   return str;
+}
+
+async function modificar(data: any, dif: string, tipo: 'ganadas' | 'empates' | 'perdidas', nombre: string) {
+
+  const coso = `c4${dif}`
+  data[coso] = data[coso] || { ganadas: 0, empates: 0, perdidas: 0 };
+  data[coso][tipo] = data[coso][tipo] + 1;
+  data.cacheName = nombre;
+  const res = await model.findOneAndUpdate({ id: data.id }, data, { new: true });
+  return res;
+
 }
