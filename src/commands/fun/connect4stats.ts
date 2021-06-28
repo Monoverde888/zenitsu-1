@@ -39,9 +39,9 @@ export default new BaseCommand({
       .setColor(0xff0000)
       .setAuthor(user.username, user.avatarUrl)
 
-    if (easy) embed.addField(difi[0], `${states[0]}: ${easy.ganadas} ${states[1]}: ${easy.perdidas} ${states[2]}: ${easy.empates}`)
-    if (medium) embed.addField(difi[1], `${states[0]}: ${medium.ganadas} ${states[1]}: ${medium.perdidas} ${states[2]}: ${medium.empates}`)
-    if (hard) embed.addField(difi[2], `${states[0]}: ${hard.ganadas} ${states[1]}: ${hard.perdidas} ${states[2]}: ${hard.empates}`)
+    if (easy) embed.addField(difi[0], `${states[0]}: ${easy.ganadas || 0} ${states[1]}: ${easy.perdidas || 0} ${states[2]}: ${easy.empates || 0}`)
+    if (medium) embed.addField(difi[1], `${states[0]}: ${medium.ganadas || 0} ${states[1]}: ${medium.perdidas || 0} ${states[2]}: ${medium.empates || 0}`)
+    if (hard) embed.addField(difi[2], `${states[0]}: ${hard.ganadas || 0} ${states[1]}: ${hard.perdidas || 0} ${states[2]}: ${hard.empates || 0}`)
 
     return ctx.reply({ embed: embed });
 
