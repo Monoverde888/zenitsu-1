@@ -9,7 +9,7 @@ import json from '../../utils/lang/langs.js';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
 import getGuild from '../../utils/functions/getguild.js';
 import parseArgs from '../../utils/functions/parseargs.js';
-import model from '../../database/models/user.js';
+import model, { USER } from '../../database/models/user.js';
 import Button from '../../utils/buttons/normal.js';
 import Component from '../../utils/buttons/component.js';
 
@@ -252,7 +252,7 @@ export default new BaseCommand({
 
           if (usuario.id == ctx.client.user.id) {
 
-            const a = await model.findOne({ id: ctx.message.author.id });
+            const a = await model.findOne({ id: ctx.message.author.id }).lean();
             const res = await modificar(a, args[0].toLowerCase(), 'ganadas', ctx.user.username);
             await redis.set(ctx.message.author.id, JSON.stringify(res));
 
@@ -301,7 +301,7 @@ export default new BaseCommand({
 
           messageParty.edit({ embed, components: generateButtons(games.get(ctx.guildId), langjson.commands.connect4.surrender) })
           if (usuario.id == ctx.client.user.id) {
-            const da = await model.findOne({ id: ctx.message.author.id });
+            const da = await model.findOne({ id: ctx.message.author.id }).lean();
             const res = await modificar(da, args[0].toLowerCase(), 'empates', ctx.user.username);
             await redis.set(ctx.userId, JSON.stringify(res));
           }
@@ -323,7 +323,7 @@ export default new BaseCommand({
               .setColor(0xff0000)
               .setImage(displayConnectFourBoard(games.get(interaction.guildId).ascii(), games.get(ctx.guildId)))
             sendCoso(embed);
-            const da = await model.findOne({ id: ctx.message.author.id });
+            const da = await model.findOne({ id: ctx.message.author.id }).lean();
             const res = await modificar(da, args[0].toLowerCase(), 'perdidas', ctx.user.username);
             await redis.set(ctx.userId, JSON.stringify(res));
             return Collector.stop('win', collector);
@@ -336,7 +336,7 @@ export default new BaseCommand({
               .setImage(displayConnectFourBoard(games.get(interaction.guildId).ascii(), games.get(ctx.guildId)))
 
             sendCoso(embed);
-            const da = await model.findOne({ id: ctx.message.author.id });
+            const da = await model.findOne({ id: ctx.message.author.id }).lean();
             const res = await modificar(da, args[0].toLowerCase(), 'empates', ctx.user.username);
             await redis.set(ctx.userId, JSON.stringify(res));
             return Collector.stop('win', collector);
@@ -369,7 +369,7 @@ export default new BaseCommand({
 
         if (reason === 'surrender' && games.get(ctx.guildId)) {
           if (usuario.id == ctx.client.user.id) {
-            const da = await model.findOne({ id: ctx.message.author.id });
+            const da = await model.findOne({ id: ctx.message.author.id }).lean();
             const res = await modificar(da, args[0].toLowerCase(), 'perdidas', ctx.user.username);
             await redis.set(ctx.userId, JSON.stringify(res));
           }
@@ -386,7 +386,7 @@ export default new BaseCommand({
 
         else if (reason === 'idle' && games.get(ctx.guildId)) {
           if (usuario.id == ctx.client.user.id) {
-            const da = await model.findOne({ id: ctx.message.author.id });
+            const da = await model.findOne({ id: ctx.message.author.id }).lean();
             const res = await modificar(da, args[0].toLowerCase(), 'perdidas', ctx.user.username);
             await redis.set(ctx.userId, JSON.stringify(res));
           }
@@ -404,7 +404,7 @@ export default new BaseCommand({
 
         else if (reason == 'time' && games.get(ctx.guildId)) {
           if (usuario.id == ctx.client.user.id) {
-            const da = await model.findOne({ id: ctx.message.author.id });
+            const da = await model.findOne({ id: ctx.message.author.id }).lean();
             const res = await modificar(da, args[0].toLowerCase(), 'perdidas', ctx.user.username);
             await redis.set(ctx.userId, JSON.stringify(res));
           }
@@ -454,9 +454,9 @@ function displayConnectFourBoard(ascii: string, game: { solution: any; winner: n
   return str;
 }
 
-async function modificar(data: any, dif: string, tipo: 'ganadas' | 'empates' | 'perdidas', nombre: string) {
+async function modificar(data: USER, dif: string, tipo: 'ganadas' | 'empates' | 'perdidas', nombre: string) {
 
-  const coso = `c4${dif}`
+  const coso = `c4${dif}` as 'c4easy' | 'c4medium' | 'c4hard';
   data[coso] = data[coso] || { ganadas: 0, empates: 0, perdidas: 0 };
   data[coso][tipo] = data[coso][tipo] ? data[coso][tipo] + 1 : 1;
   data.cacheName = nombre;

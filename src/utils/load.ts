@@ -36,8 +36,9 @@ export default async function Load({ token, mongo }: { token: string, mongo: str
       { duration: 120000, limit: 40, type: 'guild' },
       { duration: 10000, limit: 5, type: 'channel' },
     ],
-    mentionsEnabled: true,
-    activateOnEdits: false
+    mentionsEnabled: false,
+    activateOnEdits: false,
+    prefixes: ['z!']
   });
 
   await commandClient.run();

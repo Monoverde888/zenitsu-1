@@ -36,7 +36,7 @@ export default new BaseCommand({
       .setDescription(langjson.commands.setlogs.invalid)
       .setFooter(`${ctx.prefix}setlogs (WebhookURL) (messageUpdate|messageUpdate)`)
       .setImage(`https://i.imgur.com/2WZ1ctQ.gif`)
-      .setThumbnail(`https://i.imgur.com/7DdnGh5.png`)
+      .setThumbnail(`https://is.gd/G6VSKC`)
 
     const [url, type] = args;
 
