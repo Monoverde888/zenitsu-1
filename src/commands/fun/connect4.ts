@@ -458,7 +458,7 @@ async function modificar(data: any, dif: string, tipo: 'ganadas' | 'empates' | '
 
   const coso = `c4${dif}`
   data[coso] = data[coso] || { ganadas: 0, empates: 0, perdidas: 0 };
-  data[coso][tipo] = data[coso][tipo] + 1;
+  data[coso][tipo] = data[coso][tipo] ? data[coso][tipo] + 1 : 1;
   data.cacheName = nombre;
   const res = await model.findOneAndUpdate({ id: data.id }, data, { new: true });
   return res;
