@@ -15,6 +15,7 @@ function getPrivate() {
     mongoose.connection.user,
     mongoose.connection.host,
     process.env.APIKEY,
+    process.env.RUNCODEKEY,
   ].filter(item => item);
 }
 

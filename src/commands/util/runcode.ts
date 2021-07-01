@@ -89,7 +89,10 @@ export default new BaseCommand({
         language: final_lang,//lenguaje
         version: '*',//ultima versión (?)
         files: [{ content: final_code }],//código
-      })
+      }),
+      headers: {
+        Authorization: process.env.RUNCODEKEY,
+      }
     });
 
     const res = await response.json();

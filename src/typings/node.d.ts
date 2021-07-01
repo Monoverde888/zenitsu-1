@@ -23,6 +23,8 @@ declare global {
       YOUTUBE_COOKIE: string;
       SHARD_ID: string;
       SHARD_TOKEN: string;
+      RUNCODEKEY: string;
+
     }
 
   }
