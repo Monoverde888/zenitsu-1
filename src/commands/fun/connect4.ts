@@ -124,10 +124,10 @@ export default new BaseCommand({
       const Buttons = [
         new Button('primary')
           .setCustomID('c4_yes')
-          .setLabel('Yes'),
+          .setEmoji({ name: '✅', id: undefined }),
         new Button('danger')
           .setCustomID('c4_no')
-          .setLabel('No')
+          .setEmoji({ name: '❌', id: undefined })
       ];
 
       const wait = await ctx.reply({ content: langjson.commands.connect4.wait_user(usuario.username), components: [new Component(...Buttons)] });

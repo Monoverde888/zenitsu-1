@@ -103,7 +103,7 @@ const obj = {
 
       "author_active": "You are active in another game.",
 
-      "wait_user": (user: string): string => "<a:waiting:804396292793040987> | " + user + ", you have 1 minute to answer...\nDo you want to play?: answer `s`\nYou dont want?: answer `n`",
+      "wait_user": (user: string): string => "<a:waiting:804396292793040987> | " + user + ", you have 1 minute to answer...\nDo you want to play?: answer `✅`\nYou dont want?: answer `❌`",
 
       "dont_answer": (user: string): string => "😔 | " + user + " did not answer...",
 
@@ -152,7 +152,7 @@ const obj = {
     },
     "tictactoe": {
       "curso": "<:cancel:804368628861763664> | There is an ongoing game on this server.",
-      "wait_user": (user: string): string => "<a:waiting:804396292793040987> | " + user + ", you have 1 minute to answer...\nDo you want to play?: answer `s`\nYou dont want?: answer `n`",
+      "wait_user": (user: string): string => "<a:waiting:804396292793040987> | " + user + ", you have 1 minute to answer...\nDo you want to play?: answer `✅`\nYou dont want?: answer `❌`",
       "dont_answer": (user: string): string => "😔 | " + user + " did not answer...",
       "deny": (user: string): string => "😔 | " + user + " rejected the invitation...",
       "win": (user: string): string => "<:uh:829390140832874506> | " + user + " win the game!",
