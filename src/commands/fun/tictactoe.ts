@@ -128,7 +128,7 @@ async function jugar(firstp: detritus.Structures.User | detritus.Structures.Memb
           return m.userId == secondp.id && ['tictactoe_no', 'tictactoe_yes'].some(item => item == m.data.customId)
         },
         {
-          idle: 0, time: (1 * 60) * 1000, max: 0
+          idle: 0, time: 60 * 1000, max: 0
         }, {
         channelID: channel.id,
         messageID: msgRepuesta.id,
@@ -218,7 +218,7 @@ async function jugar(firstp: detritus.Structures.User | detritus.Structures.Memb
           return jugadores.includes(m.userId) && 'tictactoe_repeat' == m.data.customId
         },
         {
-          idle: 0, time: (1 * 30) * 1000, max: 0
+          idle: 0, time: 30 * 1000, max: 0
         }, {
         channelID: channel.id,
         messageID: empate.id,
@@ -307,7 +307,7 @@ async function jugar(firstp: detritus.Structures.User | detritus.Structures.Memb
         && !partida.finalizado
     },
     {
-      idle: 0, time: (10 * 60) * 1000, max: 0
+      idle: (2 * 60) * 1000, time: (5 * 60) * 1000, max: 0
     }, {
     channelID: msg.id,
     messageID: msg.id,
