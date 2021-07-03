@@ -341,6 +341,14 @@ export default new BaseCommand({
 
     const usuario = ctx.message.mentions.first();
 
+    if (usuario.id == ctx.userId)
+      return this.onCancelRun(ctx);
+
+    if (usuario.bot) {
+      if (usuario.id != ctx.client.user.id)
+        return this.onCancelRun(ctx);
+    }
+
     return jugar(ctx.message.member, usuario, ctx, ctx.channel, langjson);
 
   },
