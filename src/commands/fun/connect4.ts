@@ -214,11 +214,8 @@ export default new BaseCommand({
 
       if (ArrayOfArrayOfNumbers.length) {
 
-        const data = await model.findOneAndUpdate({ id: ctx.userId }, { $push: { c4Maps: { maps: ArrayOfArrayOfNumbers, users: [ctx.userId, usuario.id], dif: args[0] } } }, { new: true });
-        await redis.set(ctx.userId, JSON.stringify(data));
-
-        const data_user = await model.findOneAndUpdate({ id: usuario.id }, { $push: { c4Maps: { maps: ArrayOfArrayOfNumbers, users: [ctx.userId, usuario.id], dif: args[0] } } }, { new: true });
-        await redis.set(usuario.id, JSON.stringify(data_user));
+        const data = await model.findOneAndUpdate({ id: ctx.client.userId }, { $push: { c4Maps: { maps: ArrayOfArrayOfNumbers, users: [ctx.userId, usuario.id], dif: args[0] } } }, { new: true, upsert: true });
+        await redis.set(ctx.client.userId, JSON.stringify(data));
 
         embed.setFooter(ctx.prefix + 'connect4view ' + JSON.parse(JSON.stringify(data.c4Maps[data.c4Maps.length - 1]))._id);
 

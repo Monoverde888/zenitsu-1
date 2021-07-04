@@ -24,7 +24,7 @@ export default new BaseCommand({
   },
   async run(ctx, { arg }) {
 
-    const dataUser = await getUser(ctx.message.author.id);
+    const DATA = await getUser(ctx.client.userId);
     const langjson = await getGuild(ctx.guildId).then(x => json[x.lang]);
     const args = parseArgs(arg);
 
@@ -34,7 +34,7 @@ export default new BaseCommand({
       .setImage('https://is.gd/6KTM2e')
       .setDescription(langjson.commands.connect4view.invalid);
 
-    const data = (dataUser.c4Maps || []).find(item => JSON.parse(JSON.stringify(item))._id == _id);
+    const data = (DATA.c4Maps || []).find(item => JSON.parse(JSON.stringify(item))._id == _id);
 
     if (!data) return ctx.reply({
       embed
