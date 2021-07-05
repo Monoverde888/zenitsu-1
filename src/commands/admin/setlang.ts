@@ -52,7 +52,7 @@ export default new BaseCommand({
           embed:
             new MessageEmbed()
               .setColor(Color)
-              .setDescription(`🇺🇸 | Established in English.`)
+              .setDescription(`🇺🇸 | Set to English :D.`)
               .setAuthor(ctx.message.author.username, ctx.message.author.avatarUrl)
         });
 
