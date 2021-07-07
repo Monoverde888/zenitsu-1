@@ -17,7 +17,7 @@ export default new BaseCommand({
   aliases: ['fourinrowstats', '4enlineastats', 'c4stats'],
   async run(ctx) {
 
-    const user = ctx.message.mentions.first() || ctx.message.author
+    const user = ctx.message.mentions.first() || ctx.message.author;
     const langjson = await getGuild(ctx.guildId).then(x => jsonLANG[x.lang]);
     const data = await getUser(user.id);
     const easy = data.c4easy,
