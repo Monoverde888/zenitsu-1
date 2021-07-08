@@ -21,7 +21,7 @@ export default new BaseCommand({
       .setColor(Color)
       .setDescription(langjson.commands.guilds.message(ctx.client.guilds.size))
       .setTimestamp()
-      .setAuthor(`${ctx.client.guilds.size} shards`)
+      .setAuthor(`${ctx.shardCount} shards`)
       .setFooter(`Shard #${ctx.shardId}`);
 
     return ctx.reply({ embed });
