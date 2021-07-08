@@ -13,7 +13,7 @@ import model, { USER } from '../../database/models/user.js';
 import Button from '../../utils/buttons/normal.js';
 import Component from '../../utils/buttons/component.js';
 
-function generateButtons(partida: c4.Connect4AI, text: string) {
+function generateButtons(partida: c4.Connect4AI, text: string, forceDisable: boolean) {
 
   const buttons = [
     new Button('primary')
@@ -42,16 +42,26 @@ function generateButtons(partida: c4.Connect4AI, text: string) {
       .setLabel(text)
   ]
 
-  for (let i = 0; i < 7; i++) {
-    if (!partida) {
-      buttons[i].setDisabled(true);
-      continue;
-    }
-    if (!partida.canPlay(i))
-      buttons[i].setDisabled(true);
-  }
+  if (!forceDisable) {
 
-  if (!partida) buttons[7].setDisabled(true);
+    for (let i = 0; i < 7; i++) {
+      if (!partida) {
+        buttons[i].setDisabled(true);
+        continue;
+      }
+      if (!partida.canPlay(i))
+        buttons[i].setDisabled(true);
+    }
+
+    if (!partida) buttons[7].setDisabled(true);
+
+  } else {
+
+    for (const i of buttons) {
+      i.setDisabled(true);
+    }
+
+  }
 
   return [
     new Component(...buttons.slice(0, 5)),
@@ -208,7 +218,7 @@ export default new BaseCommand({
       .setColor(0xff0000)
       .setImage(displayConnectFourBoard(games.get(ctx.guildId).ascii(), games.get(ctx.guildId)))
 
-    const messageParty = await ctx.reply({ embed: embedStart, components: generateButtons(games.get(ctx.guildId), langjson.commands.connect4.surrender) });
+    const messageParty = await ctx.reply({ embed: embedStart, components: generateButtons(games.get(ctx.guildId), langjson.commands.connect4.surrender, false) });
 
     async function sendCoso(embed: MessageEmbed) {
 
@@ -221,7 +231,7 @@ export default new BaseCommand({
 
       }
 
-      return messageParty.edit({ embed, components: generateButtons(games.get(ctx.guildId), langjson.commands.connect4.surrender) });
+      return messageParty.edit({ embed, components: generateButtons(games.get(ctx.guildId), langjson.commands.connect4.surrender, true) });
 
     }
 
@@ -296,7 +306,7 @@ export default new BaseCommand({
             .setImage('attachment://4enraya.gif')
             .setImage(displayConnectFourBoard(games.get(interaction.guildId).ascii(), games.get(ctx.guildId)))
 
-          messageParty.edit({ embed, components: generateButtons(games.get(ctx.guildId), langjson.commands.connect4.surrender) })
+          messageParty.edit({ embed, components: generateButtons(games.get(ctx.guildId), langjson.commands.connect4.surrender, true) })
           if (usuario.id == ctx.client.user.id) {
             const da = await model.findOne({ id: ctx.message.author.id }).lean();
             const res = await modificar(da, args[0].toLowerCase(), 'empates', ctx.user.username);
@@ -345,7 +355,7 @@ export default new BaseCommand({
             .setImage(displayConnectFourBoard(games.get(interaction.guildId).ascii(), games.get(ctx.guildId)))
             .setFooter(args[0])
 
-          messageParty.edit({ embed, components: generateButtons(games.get(ctx.guildId), langjson.commands.connect4.surrender) })
+          messageParty.edit({ embed, components: generateButtons(games.get(ctx.guildId), langjson.commands.connect4.surrender, false) })
 
         }
 
@@ -358,7 +368,7 @@ export default new BaseCommand({
             .setImage(displayConnectFourBoard(games.get(interaction.guildId).ascii(), games.get(ctx.guildId)))
             .setColor(0xff0000);
 
-          await messageParty.edit({ embed, components: generateButtons(games.get(ctx.guildId), langjson.commands.connect4.surrender) })
+          await messageParty.edit({ embed, components: generateButtons(games.get(ctx.guildId), langjson.commands.connect4.surrender, false) })
 
         }
       },
