@@ -306,7 +306,7 @@ export default new BaseCommand({
             .setImage('attachment://4enraya.gif')
             .setImage(displayConnectFourBoard(games.get(interaction.guildId).ascii(), games.get(ctx.guildId)))
 
-          messageParty.edit({ embed, components: generateButtons(games.get(ctx.guildId), langjson.commands.connect4.surrender, true) })
+          sendCoso(embed);
           if (usuario.id == ctx.client.user.id) {
             const da = await model.findOne({ id: ctx.message.author.id }).lean();
             const res = await modificar(da, args[0].toLowerCase(), 'empates', ctx.user.username);
