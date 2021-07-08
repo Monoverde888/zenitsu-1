@@ -125,8 +125,6 @@ const obj = {
 
       "time_over": "<a:baimefui:804368920361566268> | Duraste tres minutos sin responder, juego terminado!",
 
-      "save": 'Guardar partida?'
-
     },
     "connect4stats": {
       "no_data": (user: string): string => "<:cancel:804368628861763664> | Sin datos sobre " + user + " aún.",
@@ -211,14 +209,13 @@ const obj = {
       no_role: (prefix: string): string => `Usa **${prefix || 'z!'}settings muterole init** antes de usar este comando.`,
       cant_role: (role: string): string => `No puedo gestionar el rol **${role}**.`,
       already_muted: (member: string): string => `**${member}** ya estaba silenciado.`,
-      mention: `<:cancel:804368628861763664> | Menciona a un miembro.`, user_cannt_mute: (user: string): string => `<:cancel:804368628861763664> | **No puedes** silenciar a ${user}`,
+      user_cannt_mute: (user: string): string => `<:cancel:804368628861763664> | **No puedes** silenciar a ${user}`,
       mute: (user: string): string => `<:MUTE:807729858649391105> | **${user}** ha sido silenciado.`
     },
     "unmute": {
       no_role: (prefix: string): string => `Usa **${prefix || 'z!'}settings muterole init** antes de usar este comando.`,
       cant_role: (role: string): string => `No puedo gestionar el rol **${role}**.`,
       already_unmuted: (member: string): string => `**${member}** no está silenciado.`,
-      mention: `<:cancel:804368628861763664> | Menciona a un miembro.`,
       user_cannt_unmute: (user: string): string => `<:cancel:804368628861763664> | **No puedes** quitar el silencio a ${user}`,
       unmute: (user: string): string => `<:UNMUTE:807729857693876224> | **${user}** ya no está silenciado.`
     },

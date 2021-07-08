@@ -123,8 +123,6 @@ const obj = {
 
       "time_over": "<a:baimefui:804368920361566268> | You lasted three minutes without answering, game over!",
 
-      "save": "Save game?"
-
     },
     "connect4stats": {
 
@@ -205,7 +203,6 @@ const obj = {
       no_role: (prefix: string): string => `Use **${prefix || 'z!'}settings muterole init** before using this command.`,
       cant_role: (role: string): string => `I can't manage the role **${role}**.`,
       already_muted: (member: string): string => `**${member}** is already muted.`,
-      mention: `<:cancel:804368628861763664> | Mention a member.`,
       user_cannt_mute: (user: string): string => `<:cancel:804368628861763664> | **You can't** mute ${user}`,
       mute: (user: string): string => `<:MUTE:807729858649391105> | **${user}** was muted.`
     },
@@ -213,7 +210,6 @@ const obj = {
       no_role: (prefix: string): string => `Use **${prefix || 'z!'}settings muterole init** before using this command.`,
       cant_role: (role: string): string => `I can't manage the role **${role}**.`,
       already_unmuted: (member: string): string => `**${member}** is already unmuted.`,
-      mention: `<:cancel:804368628861763664> | Mention a member.`,
       user_cannt_unmute: (user: string): string => `<:cancel:804368628861763664> | **You can't** unmute ${user}`,
       unmute: (user: string): string => `<:UNMUTE:807729857693876224> | **${user}** was unmuted.`
     },

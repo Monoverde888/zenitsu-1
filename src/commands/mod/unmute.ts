@@ -36,7 +36,6 @@ export default new BaseCommand({
 
     const member = ctx.message.mentions.first() as detritus.Structures.Member
 
-    if (!member) return ctx.reply(langjson.commands.unmute.mention);
     if (!member.roles.has(role.id)) return ctx.reply(langjson.commands.unmute.already_unmuted(unmarkdown(member.username)));
     if (ctx.userId != ctx.guild.ownerId) {
       if (getHighest(ctx.message.member).position <= getHighest(member).position) return ctx.reply(langjson.commands.unmute.user_cannt_unmute(`**${unmarkdown(member.username)}**`))
