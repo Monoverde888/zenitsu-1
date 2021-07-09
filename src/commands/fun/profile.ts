@@ -30,7 +30,8 @@ export default new BaseCommand({
         flags: data.flags,
         flagsTEXT: langjson.commands.profile.flags,
         achievementsTEXT: langjson.commands.profile.achievements,
-        background: data.background
+        background: data.background,
+        beta: data.beta
       }))}`, {
         headers:
           { 'authorization': process.env.APIKEY }

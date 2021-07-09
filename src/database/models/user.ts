@@ -30,6 +30,7 @@ export interface USER extends mongoose.Document {
   }[];
   background: string;
   cacheName: string;
+  beta: boolean;
 }
 
 const User = new Schema({
@@ -55,7 +56,8 @@ const User = new Schema({
   c4medium: Object,
   c4hard: Object,
   c4Maps: [Map],
-  cacheName: String
+  cacheName: String,
+  beta: Boolean
 }, { timestamps: true })
 
 export default mongoose.models.UserInfo || model<USER>('UserInfo', User);
