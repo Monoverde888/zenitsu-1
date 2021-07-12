@@ -12,7 +12,8 @@ export default new BaseCommand({
   metadata: {
     usage(prefix: string) {
       return [
-        `${prefix}editprofile <color|description> value`
+        `${prefix}editprofile color FF0000`,
+        `${prefix}editprofile description Hi :d.`
       ]
     },
     category: 'fun'

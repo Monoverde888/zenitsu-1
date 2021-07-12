@@ -14,7 +14,7 @@ export default new BaseCommand({
   label: 'arg',
   metadata: {
     usage(prefix: string) {
-      return [`${prefix}setlogs <webhookURL> <messageUpdate|messageDelete>`]
+      return [`${prefix}setlogs webhookURL messageUpdate`, `${prefix}setlogs webhookURL messageDelete`]
     },
     category: 'admin'
   },
@@ -22,7 +22,7 @@ export default new BaseCommand({
   name: 'setlogs',
   onBeforeRun(__ctx, { arg }) {
     const args = parseArgs(arg);
-    return ['messageUpdate', 'messageUpdate'].includes(args[1]);
+    return ['messageUpdate', 'messageDelete'].includes(args[1]);
   },
   async run(ctx, { arg }) {
 
