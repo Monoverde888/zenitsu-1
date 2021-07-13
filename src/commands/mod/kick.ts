@@ -21,7 +21,8 @@ export default new BaseCommand({
   permissions: [Flags.KICK_MEMBERS],
   permissionsClient: [Flags.KICK_MEMBERS],
   onBeforeRun(ctx) {
-    return ctx.message.mentions.first() && (ctx.message.mentions.first() instanceof detritus.Structures.Member) && (ctx.message.mentions.first().id != ctx.userId);
+    const mention = ctx.message.mentions.first();
+    return mention && (mention instanceof detritus.Structures.Member) && (mention.id != ctx.userId) && (mention.id != ctx.client.userId);
   },
   async run(ctx, { arg }) {
 

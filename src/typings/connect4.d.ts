@@ -1,4 +1,4 @@
-interface solution {
+/*interface solution {
   column: number;
   spacesFromBottom: number;
 }
@@ -40,7 +40,7 @@ declare module 'connect4-ai' {
 
   }
 
-}
+}*/
 
 /*
  {

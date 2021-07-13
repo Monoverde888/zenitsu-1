@@ -28,7 +28,8 @@ export default new BaseCommand({
     default: 0
   }],
   onBeforeRun(ctx) {
-    return ctx.message.mentions.first() && (ctx.message.mentions.first() instanceof detritus.Structures.Member) && (ctx.message.mentions.first().id != ctx.userId);
+    const mention = ctx.message.mentions.first();
+    return mention && (mention instanceof detritus.Structures.Member) && (mention.id != ctx.userId) && (mention.id != ctx.client.userId);
   },
   async run(ctx, { arg, deletedays }) {
 

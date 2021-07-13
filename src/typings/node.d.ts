@@ -24,6 +24,7 @@ declare global {
       SHARD_ID: string;
       SHARD_TOKEN: string;
       RUNCODEKEY: string;
+      DISPLAYCONNECT4: string;
 
     }
 
