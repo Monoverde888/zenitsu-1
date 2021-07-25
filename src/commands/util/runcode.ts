@@ -100,7 +100,7 @@ export default new BaseCommand({
     if (res.run) {
 
       if (res.run.output) return ctx.reply({
-        content: `${ctx.message.author.mention}\`\`\`\n${(res.run.output as string).slice(0, 1800)}\`\`\``, components: [
+        content: `${ctx.message.author.mention}\`\`\`${final_lang}\n${(res.run.output as string).slice(0, 1800)}\`\`\``, components: [
           new Component(
             new URLButton()
               .setURL(`https://github.com/engineer-man/piston`)

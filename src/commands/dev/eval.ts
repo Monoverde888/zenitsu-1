@@ -42,7 +42,7 @@ export default new BaseCommand({
 
           const res_evalued = await eval(`${type == 'async' ? '(async() => {' : ''}${code} ${type == 'async' ? '})()' : ''}`);
           const TYPE = typeof (res_evalued)
-          let evalued = util.inspect(res_evalued, { depth: 0 });
+          let evalued = typeof res_evalued == 'string' ? res_evalued : util.inspect(res_evalued, { depth: 0 });
           evalued = replace(evalued, getPrivate(), '☹️')
           const embed = new MessageEmbed()
             .setColor(Color)

@@ -34,7 +34,9 @@ export default new BaseCommand({
       if (getHighest(ctx.message.member).position <= getHighest(member).position) return ctx.reply(langjson.commands.kick.user_cannt_kick(`**${unmarkdown(member.username)}**`))
     }
 
-    const reason = (args.join(' ') || '').replace(member.mention, '').slice(0, 500) || null;
+    const regex = new RegExp(`\<(@|@!)${member.id}\>`, 'gmi');
+    const PostReason = args.join(' ') || '';
+    const reason = PostReason.replace(PostReason.match(regex)[0], '').slice(0, 500) || null;
 
     return member.remove({ reason }).then(() => {
 
