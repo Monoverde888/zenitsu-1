@@ -24,8 +24,9 @@ client.on("error", (...errors) => {
 class RedisManager {
 
   set(key: string, value: string): Promise<string> {
-
-    return setPromise(key, value);
+    //Expira en 120 segundos. (Dos minutos)
+    //https://redis.io/commands/set
+    return setPromise(key, value, 'EX', 60 * 2);
 
   }
 
@@ -49,5 +50,4 @@ class RedisManager {
 
 }
 const manager = new RedisManager();
-manager.default.flushall();
-export default manager
+export default manager;

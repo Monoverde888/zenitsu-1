@@ -33,3 +33,19 @@ export const Flags = {
 };
 
 export const Color = 14720566;
+
+export const IDS = {
+  ACHIEVEMENTS: {
+    C4LEVEL1: '1',
+    C4LEVEL2: '2',
+    C4LEVEL3: '3',
+    C4LEVEL4: '4',
+  },
+  FLAGS: {
+    BUG_HUNTER: '5',
+    BOOSTER: '6',
+    SUGGEST: '7',
+    STAFF: '8',
+    HELPER: '9',
+  }
+};

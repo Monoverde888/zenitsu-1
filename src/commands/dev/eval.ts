@@ -55,9 +55,11 @@ export default new BaseCommand({
           return await ctx.reply({ embed })
 
         }
+
         catch (err) {
           return ctx.reply('```js\n' + err.toString().slice(0, 1500) + '```')
         }
+
       }
 
       case 'exec':

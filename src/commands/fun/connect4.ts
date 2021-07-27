@@ -1,5 +1,6 @@
 import redis from '../../utils/managers/redis.js';
 import c4 from 'connect4-ai';
+import { IDS } from '../../utils/const.js';
 const { Connect4AI } = c4
 import Collector from '../../utils/collectors/button.js';
 const games: Map<string, c4.Connect4AI> = new Map();
@@ -265,30 +266,30 @@ export default new BaseCommand({
 
             if (args[0] == 'hard' && a.c4hard) {
 
-              if ((a.c4hard.ganadas >= 10) && !(DATAPROFILE.achievements.includes('c4level1'))) {
+              if ((a.c4hard.ganadas >= 10) && !(DATAPROFILE.achievements.includes(IDS.ACHIEVEMENTS.C4LEVEL1))) {
 
-                const data = await model.findOneAndUpdate({ id: ctx.message.author.id }, { $addToSet: { achievements: 'c4level1' } }, { new: true }).lean();
+                const data = await model.findOneAndUpdate({ id: ctx.message.author.id }, { $addToSet: { achievements: IDS.ACHIEVEMENTS.C4LEVEL1 } }, { new: true }).lean();
                 await redis.set(ctx.message.author.id, JSON.stringify(data));
 
               }
 
-              else if ((a.c4hard.ganadas >= 15) && !(DATAPROFILE.achievements.includes('c4level2'))) {
+              else if ((a.c4hard.ganadas >= 15) && !(DATAPROFILE.achievements.includes(IDS.ACHIEVEMENTS.C4LEVEL2))) {
 
-                const data = await model.findOneAndUpdate({ id: ctx.message.author.id }, { $addToSet: { achievements: 'c4level2' } }, { new: true }).lean();
+                const data = await model.findOneAndUpdate({ id: ctx.message.author.id }, { $addToSet: { achievements: IDS.ACHIEVEMENTS.C4LEVEL2 } }, { new: true }).lean();
                 await redis.set(ctx.message.author.id, JSON.stringify(data));
 
               }
 
-              else if ((a.c4hard.ganadas >= 25) && !(DATAPROFILE.achievements.includes('c4level3'))) {
+              else if ((a.c4hard.ganadas >= 25) && !(DATAPROFILE.achievements.includes(IDS.ACHIEVEMENTS.C4LEVEL3))) {
 
-                const data = await model.findOneAndUpdate({ id: ctx.message.author.id }, { $addToSet: { achievements: 'c4level3' } }, { new: true }).lean();
+                const data = await model.findOneAndUpdate({ id: ctx.message.author.id }, { $addToSet: { achievements: IDS.ACHIEVEMENTS.C4LEVEL3 } }, { new: true }).lean();
                 await redis.set(ctx.message.author.id, JSON.stringify(data));
 
               }
 
-              else if ((a.c4hard.ganadas >= 50) && !(DATAPROFILE.achievements.includes('c4top'))) {
+              else if ((a.c4hard.ganadas >= 50) && !(DATAPROFILE.achievements.includes(IDS.ACHIEVEMENTS.C4LEVEL4))) {
 
-                const data = await model.findOneAndUpdate({ id: ctx.message.author.id }, { $addToSet: { achievements: 'c4top' } }, { new: true }).lean();
+                const data = await model.findOneAndUpdate({ id: ctx.message.author.id }, { $addToSet: { achievements: IDS.ACHIEVEMENTS.C4LEVEL4 } }, { new: true }).lean();
                 await redis.set(ctx.message.author.id, JSON.stringify(data));
 
               }
