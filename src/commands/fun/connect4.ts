@@ -16,6 +16,7 @@ import Button from '../../utils/buttons/normal.js';
 import Component from '../../utils/buttons/component.js';
 import fetch from 'node-fetch';
 import { Flags } from '../../utils/const.js';
+const zenitsuGif = `https://media1.tenor.com/images/07622a68b0145d04d1fa5536aa62faee/tenor.gif?itemid=17636946`
 
 interface Player {
   id: string;
@@ -92,22 +93,33 @@ export default new BaseCommand({
   },
   name: 'connect4',
   aliases: ['fourinrow', '4enlinea', 'c4'],
+  ratelimits: [
+    { duration: 10 * 1000, limit: 1, type: 'user' },
+  ],
+  permissionsClient: [Flags.ATTACH_FILES, Flags.EMBED_LINKS],
   async run(ctx, { arg }) {
 
     const ArrayOfArrayOfNumbers: [number, number, string][] = [];
     const DATAPROFILE = await getUser(ctx.message.author.id);
-    const langjson = await getGuild(ctx.guildId).then(x => json[x.lang]);
+    const DATAGUILD = await getGuild(ctx.guildId)
+    const langjson = json[DATAGUILD.lang];
     const args = parseArgs(arg);
 
-    const CHANNEL = ctx.guild.features.has("THREADS_ENABLED") && ctx.guild.me.can(Flags.MANAGE_THREADS) ? await ctx.message.createThread({ name: `Game of ${ctx.user.tag}`, autoArchiveDuration: 1440 }) : ctx.channel;
+    const CHANNEL = (ctx.channel.type != 11) && ctx.guild.features.has("THREADS_ENABLED") && ctx.guild.me.can(Flags.MANAGE_THREADS) ? await ctx.message.createThread({ name: `Game of ${ctx.user.tag}`, autoArchiveDuration: 1440 }) : ctx.channel;
+
+    if (CHANNEL.type != 11 && DATAGUILD.onlythreads) {
+      const embed = new MessageEmbed()
+        .setColor(0xff0000)
+        .setDescription(langjson.commands.connect4.enable_threads(ctx.prefix))
+        .setThumbnail(zenitsuGif);
+      return ctx.reply({ embed });
+    }
 
     if (games.get(CHANNEL.id)) {
       const embed = new MessageEmbed()
         .setColor(0xff0000)
         .setDescription(langjson.commands.connect4.curso)
-      return ctx.reply({
-        embed
-      });
+      return ctx.reply({ embed });
     }
 
     args[0] = args[0] ? args[0].toLowerCase() : null;
@@ -121,9 +133,7 @@ export default new BaseCommand({
         .setFooter(langjson.commands.connect4.footer)
         .setColor(0xff0000)
 
-      return ctx.reply({
-        embed
-      });
+      return ctx.reply({ embed });
     }
 
     const findTurn = (user: string) => games.get(CHANNEL.id) && games.get(CHANNEL.id).players ? games.get(CHANNEL.id).players.find(item => item.id == user) : null;
@@ -215,15 +225,15 @@ export default new BaseCommand({
 
       }
 
-      return await ctx.client.rest.createMessage(CHANNEL.id, { embed, file: { filename: 'party.gif', value }, components: generateButtons(games.get(CHANNEL.id), langjson.commands.connect4.surrender, true) });
+      return ctx.client.rest.createMessage(CHANNEL.id, { embed, file: { filename: 'party.gif', value }, components: generateButtons(games.get(CHANNEL.id), langjson.commands.connect4.surrender, true) });
 
     }
-
-    easyAwaitAnswer(messageParty.id);
 
     function easyAwaitAnswer(MESSAGEID: string) {
       awaitAnswer(MESSAGEID, sendCoso, ctx, findTurn, ArrayOfArrayOfNumbers, args, DATAPROFILE, usuario, langjson, difficulty, easyAwaitAnswer, CHANNEL);
     }
+
+    return easyAwaitAnswer(messageParty.id);
 
   },
 });
@@ -287,16 +297,16 @@ function awaitAnswer(MESSAGEID: string,
   langjson: typeof json.es | typeof json.en,
   difficulty: 'easy' | 'medium' | 'hard',
   easyAnswer: (id: string) => any,
-  CHANNEL: { id: string }
+  CHANNEL: { id: string },
 ) {
 
   Collector.add({
     async onCollect(interaction) {
 
-      const collector = Collector.listeners.find(item => item.messageID == MESSAGEID);
+      const collector = Collector._listeners.find(item => item.messageID == MESSAGEID);
 
       if (interaction.data.customId === 'c4_surrender')
-        return Collector.stop('surrender', collector);
+        return Collector.stop('surrender', collector, true);
 
       games.get(CHANNEL.id).play(parseInt(interaction.data.customId.split('c4_')[1]))
 
@@ -442,8 +452,10 @@ function awaitAnswer(MESSAGEID: string,
     },
     async onStop(reason, x) {
 
-      if (x.running) Collector.stop('max', x);
-      if (reason == 'max') return;
+      if (reason != 'surrender') {
+        if (x && x.running) Collector.stop('max', x);
+        if (reason == 'max') return;
+      };
 
       if (reason === 'surrender' && games.get(CHANNEL.id)) {
         if (usuario.id == ctx.client.user.id) {

@@ -5,33 +5,37 @@ import detritus from 'detritus-client';
 import CommandClient from './classes/commandclient.js';
 import connect from '../database/connect.js';
 
+const cache: detritus.ShardClientCacheOptions = {
+  messages: { expire: 60 * 60 * 1000 },
+  emojis: false,
+  applications: false,
+  connectedAccounts: false,
+  interactions: false,
+  members: false,
+  notes: false,
+  presences: false,
+  relationships: false,
+  roles: true,
+  sessions: false,
+  stageInstances: false,
+  typings: false,
+  users: false,
+  voiceCalls: false,
+  voiceConnections: false,
+  voiceStates: false,
+  channels: true,
+};
+
 export default async function Load({ token, mongo }: { token: string, mongo: string }) {
 
   await connect(mongo);
 
   const shardClient = new detritus.ShardClient(token, {
-    cache: {
-      messages: { expire: 60 * 60 * 1000 },
-      emojis: false,
-      applications: false,
-      connectedAccounts: false,
-      interactions: false,
-      members: false,
-      notes: false,
-      presences: false,
-      relationships: false,
-      roles: true,
-      sessions: false,
-      stageInstances: false,
-      typings: false,
-      users: false,
-      voiceCalls: false,
-      voiceConnections: false,
-      voiceStates: false
-    },
+    cache
   });
 
   const commandClient = new CommandClient(shardClient, {
+    cache,
     ratelimits: [
       { duration: 120000, limit: 40, type: 'guild' },
       { duration: 10000, limit: 5, type: 'channel' },

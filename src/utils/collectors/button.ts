@@ -139,8 +139,8 @@ class ButtonCollector {
 
   }
 
-  stop(reason: string, listener: listenerType) {
-    if (!listener.running) return null;
+  stop(reason: string, listener: listenerType, bypass: boolean = false) {
+    if (!listener.running && !bypass) return null;
     listener.running = false;
     listener.listen.onStop(reason, listener);
     if (listener.options.idle) {

@@ -10,6 +10,10 @@ import getGuild from '../../utils/functions/getguild.js';
 import getHighest from '../../utils/functions/gethighest.js';
 import guild from '../../database/models/guild.js';
 
+function parseMentions(content: string): string[] {
+  return (content.match(/<#[0-9]+>/g) || []).map((mention) => mention.substring(2, mention.length - 1));
+}
+
 export default new BaseCommand({
   label: 'arg',
   metadata: {
@@ -17,6 +21,8 @@ export default new BaseCommand({
       return [
         prefix + "settings (view|muterole|reset)",
         prefix + "settings view",
+        prefix + "settings ignorechannels #ChannelMention",
+        prefix + "settings onlythreads",
         prefix + "settings muterole init [role]",
         prefix + "settings muterole refresh",
         prefix + "settings reset"
@@ -26,19 +32,25 @@ export default new BaseCommand({
   },
   permissions: [Flags.MANAGE_GUILD],
   name: 'settings',
-  onBeforeRun(__ctx, { arg }) {
+  onBeforeRun(ctx, { arg }) {
+
+    const mentions = parseMentions(ctx.content).map(id => ctx.guild.channels.get(id));
     const args = parseArgs(arg);
-    if (!['muterole', 'view', 'reset'].includes(args[0])) return false;
+
+    if (!['muterole', 'view', 'reset', 'ignorechannels', 'onlythreads'].includes(args[0])) return false;
     if (args[0] == 'muterole')
       if (!['init', 'refresh'].includes(args[1])) return false;
+    if (args[0] == 'ignorechannels')
+      if (!mentions[0]) return false;
     return true;
+
   },
   async run(ctx, { arg }) {
 
     const langjson = json[(await getGuild(ctx.guildId).then(x => x.lang))];
     const args = parseArgs(arg);
     const settings = langjson.commands.settings;
-    const { muterole, cooldown: cooldownMessage } = settings;
+    const { muterole, cooldown: cooldownMessage, ignorechannels, onlythreads } = settings;
     const data = await getGuild(ctx.guildId)
     const GUILDME = ctx.guild.me;
 
@@ -46,6 +58,37 @@ export default new BaseCommand({
       return ctx.reply(cooldownMessage);
 
     switch (args[0]) {
+
+      case 'ignorechannels': {
+
+        const mentions = parseMentions(ctx.content).map(id => ctx.guild.channels.get(id));
+        const channelMention = mentions[0];
+
+        if (channelMention.isText && !channelMention.isGuildThread) {
+
+          if (!data.ignorechannels || !data.ignorechannels.includes(channelMention.id)) {
+            const temp = await guild.findOneAndUpdate({ id: ctx.guildId }, { $addToSet: { ignorechannels: channelMention.id } }, { new: true }).lean();
+            await redis.set(ctx.guildId, JSON.stringify(temp));
+            return ctx.reply(ignorechannels.add(channelMention.mention + ' ' + channelMention.name));
+          }
+
+          const temp = await guild.findOneAndUpdate({ id: ctx.guildId }, { $pull: { ignorechannels: channelMention.id } }, { new: true }).lean();
+          await redis.set(ctx.guildId, JSON.stringify(temp));
+          return ctx.reply(ignorechannels.remove(channelMention.mention + ' ' + channelMention.name));
+
+        }
+
+        return this.onCancelRun(ctx);
+
+      };
+
+      case 'onlythreads': {
+
+        const temp = await guild.findOneAndUpdate({ id: ctx.guildId }, { onlythreads: !data.onlythreads }, { new: true }).lean();
+        await redis.set(ctx.guildId, JSON.stringify(temp));
+        return ctx.reply(temp.onlythreads ? onlythreads.true : onlythreads.false);
+
+      };
 
       case 'muterole': {
 
@@ -150,6 +193,8 @@ export default new BaseCommand({
             return ctx.reply(">>> " +
               ctx.prefix + "settings (view|muterole|reset)\n" +
               ctx.prefix + "settings view\n" +
+              ctx.prefix + "settings ignorechannels #ChannelMention\n" +
+              ctx.prefix + "settings onlythreads\n" +
               ctx.prefix + "settings muterole init [role]\n" +
               ctx.prefix + "settings muterole refresh\n" +
               ctx.prefix + "settings reset"
@@ -160,9 +205,14 @@ export default new BaseCommand({
 
       case 'view': {
         const rol = ctx.message.guild.roles.get(data.muterole);
+        const canales = data.ignorechannels ? data.ignorechannels.filter(x => ctx.client.channels.has(x)).map(item => {
+          const channel = ctx.client.channels.get(item);
+          return `${channel.mention} - (${channel.name})`
+        }) : [];
         const embed = new MessageEmbed()
           .setColor(0xff0000)
           .addField('Muterole', rol ? `${rol.mention}  \`[${rol.id}]\`` : '❌')
+          .addField('Ignore channels', canales.join(', ') || '❌')
           .setTimestamp();
         return ctx.reply({ embed });
       }
@@ -186,6 +236,8 @@ export default new BaseCommand({
         return ctx.reply(">>> " +
           ctx.prefix + "settings (view|muterole|reset)\n" +
           ctx.prefix + "settings view\n" +
+          ctx.prefix + "settings ignorechannels #ChannelMention\n" +
+          ctx.prefix + "settings onlythreads\n" +
           ctx.prefix + "settings muterole init [role]\n" +
           ctx.prefix + "settings muterole refresh\n" +
           ctx.prefix + "settings reset"

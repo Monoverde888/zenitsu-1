@@ -33,6 +33,7 @@ class RegisterCommand {
       const permsStr = '`' + Arr.filter(item => perms.map(Number).includes(item[1])).map(x => x[0]).map(perm => langjson.permissions[perm as 'SPEAK']).join(', ') + '`';
       return ctx.reply(langjson.messages.permisos_bot(permsStr));
     }
+
     return options;
   }
 }

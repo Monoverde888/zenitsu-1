@@ -91,6 +91,8 @@ const obj = {
     },
     "connect4": {
 
+      enable_threads: (prefix: string) => "Necesitas desactivar la opción `onlythreads => " + prefix + "settings onlythreads` para poder jugar en canales de texto. ~~No puedo crear threads.~~",
+
       "surrender": "Rendirse.",
 
       "wait": "Espera.",
@@ -240,6 +242,14 @@ const obj = {
       },
       reset: {
         message: `Configuración borrada.`
+      },
+      ignorechannels: {
+        remove: (canal: string) => `Removido ${canal}.`,
+        add: (canal: string) => `Añadido ${canal}.`
+      },
+      onlythreads: {
+        false: `Ahora los comandos \`connect4, ...\` funcionaran en cualquier canal.`,
+        true: `Ahora los comandos \`connect4, ...\` solo funcionaran en threads.`,
       }
     }
   }

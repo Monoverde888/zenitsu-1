@@ -89,6 +89,8 @@ const obj = {
     },
     "connect4": {
 
+      enable_threads: (prefix: string) => "You need to disable the option `onlythreads => " + prefix + "settings onlythreads` to play in text channels. ~~I can't create threads.~~",
+
       "surrender": "Surrender.",
 
       "wait": "Wait.",
@@ -234,6 +236,14 @@ const obj = {
       },
       reset: {
         message: 'Erased configuration.'
+      },
+      ignorechannels: {
+        remove: (canal: string) => `Removed ${canal}.`,
+        add: (canal: string) => `Added ${canal}.`
+      },
+      onlythreads: {
+        false: `Now the \`connect4, ...\` commands will work on any channel.`,
+        true: `Now the \`connect4, ...\` commands will work on threads.`,
       }
     }
   }

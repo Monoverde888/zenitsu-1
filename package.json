@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "npx tsc",
-    "start": "node --expose-gc ./dist/index.js",
+    "start": "node --expose-gc --optimize_for_size --max_old_space_size=200 ./dist/index.js",
     "test": "npm run build && npm run start"
   },
   "author": "MARCROCK22",
