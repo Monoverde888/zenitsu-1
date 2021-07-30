@@ -1,6 +1,8 @@
 import dotenv from 'dotenv';
 import kufa from 'kufa';
 import load from './utils/load.js';
+import path from 'path';
+
 dotenv.config();
 load({ token: process.env.DISCORD_TOKEN, mongo: process.env.MONGODB });
 console = new kufa.KufaConsole({
@@ -9,6 +11,8 @@ console = new kufa.KufaConsole({
   warn_prefix: `§6WARN`,
   error_prefix: `§4ERROR`,
   traceFun: true,
+  save: true,
+  dir: path.join(process.cwd(), 'logs'),
   parser(ctx) {
 
     switch (ctx.type) {

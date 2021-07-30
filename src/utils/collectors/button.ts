@@ -4,7 +4,7 @@ export interface Fixed extends detritus.Structures.Interaction {
   data: detritus.Structures.InteractionDataComponent
 }
 
-type CollectorFilter<T, R> = (param: T) => R;
+type CollectorFilter<T, R, Y = any> = (param: T, param2?: Y) => R;
 interface listenerType {
   filter: CollectorFilter<Fixed, boolean>;
   channelID: string;
@@ -16,7 +16,7 @@ interface listenerType {
   usages: number;
   listen: {
     onCollect: CollectorFilter<Fixed, any>;
-    onStop: CollectorFilter<string, any>;
+    onStop: CollectorFilter<string, any, listenerType>;
   };
   running: boolean;
 };
@@ -31,7 +31,7 @@ class ButtonCollector {
 
   add(listen: {
     onCollect: CollectorFilter<Fixed, any>;
-    onStop: CollectorFilter<string, any>;
+    onStop: CollectorFilter<string, any, listenerType>;
   }, filter: CollectorFilter<Fixed, boolean>, options: { idle: number, time: number, max: number }, data: { channelID: string; guildID: string; messageID: string; }) {
     this._listeners.push({
       running: true,
@@ -54,12 +54,14 @@ class ButtonCollector {
 
       if (data.messageID != interaction.message.id) continue;
 
-      if (!data.filter(interaction)) return false;
+      const resFilter = data.filter(interaction);
+
+      if (!resFilter) continue;
 
       if (++data.usages == data.options.max) {
 
-        data.listen.onCollect(interaction);
-        data.listen.onStop('max');
+        data.listen.onCollect(interaction, data);
+        data.listen.onStop('max', data);
 
       }
 
@@ -74,7 +76,7 @@ class ButtonCollector {
           data._timeTimeout = setTimeout(() => this.stop('time', data), data.options.time);
         }
 
-        data.listen.onCollect(interaction);
+        data.listen.onCollect(interaction, data);
 
       }
 
@@ -87,8 +89,7 @@ class ButtonCollector {
     for (const data of this.listeners) {
 
       if (message.messageId == data.messageID)
-        return this.stop('messageDelete', data);
-      return false;
+        this.stop('messageDelete', data);
 
     }
 
@@ -99,8 +100,7 @@ class ButtonCollector {
     for (const data of this.listeners) {
 
       if (message.messages.find(item => item && item.id == data.messageID))
-        return this.stop('messageDelete', data)
-      return false;
+        this.stop('messageDelete', data)
 
     }
 
@@ -111,8 +111,7 @@ class ButtonCollector {
     for (const data of this.listeners) {
 
       if (guild.guildId == data.guildID)
-        return this.stop('guildDelete', data);
-      return false;
+        this.stop('guildDelete', data);
 
     }
 
@@ -123,17 +122,27 @@ class ButtonCollector {
     for (const data of this.listeners) {
 
       if (channel.channel.id == data.channelID)
-        return this.stop('channelDelete', data);
-      return false;
+        this.stop('channelDelete', data);
+
+    }
+
+  }
+
+  handleThreadDelete(thread: detritus.GatewayClientEvents.ThreadDelete) {
+
+    for (const data of this.listeners) {
+
+      if (thread.thread.id == data.channelID)
+        this.stop('threadDelete', data);
 
     }
 
   }
 
   stop(reason: string, listener: listenerType) {
-
+    if (!listener.running) return null;
     listener.running = false;
-    listener.listen.onStop(reason);
+    listener.listen.onStop(reason, listener);
     if (listener.options.idle) {
       clearTimeout(listener._idleTimeout);
       listener._idleTimeout = null;

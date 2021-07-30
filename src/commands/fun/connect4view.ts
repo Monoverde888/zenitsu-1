@@ -18,6 +18,9 @@ export default new BaseCommand({
   },
   name: 'connect4view',
   aliases: [`conecta4view`, 'fourinrowview', '4enlineaview', 'c4view'],
+  ratelimits: [
+    { duration: 10 * 1000, limit: 1, type: 'user' },
+  ],
   onBeforeRun(_ctx, { arg }) {
     const args = parseArgs(arg);
     return !!args[0];

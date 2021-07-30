@@ -93,7 +93,7 @@ const obj = {
 
       "wait": "Wait.",
 
-      "curso": "<:cancel:804368628861763664> | There is an ongoing game on this server.",
+      "curso": "<:cancel:804368628861763664> | There is an ongoing game on this channel.",
 
       "mention": "<:cancel:804368628861763664> | Mention a server member to play.",
 

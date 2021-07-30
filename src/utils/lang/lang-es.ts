@@ -95,7 +95,7 @@ const obj = {
 
       "wait": "Espera.",
 
-      "curso": "<:cancel:804368628861763664> | Hay una partida en curso en este servidor.",
+      "curso": "<:cancel:804368628861763664> | Hay una partida en curso en este canal.",
 
       "mention": "<:cancel:804368628861763664> | Menciona a un miembro del servidor para jugar.",
 

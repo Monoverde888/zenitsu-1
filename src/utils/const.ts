@@ -30,6 +30,9 @@ export const Flags = {
   MANAGE_ROLES: 1 << 28,
   MANAGE_WEBHOOKS: 1 << 29,
   MANAGE_EMOJIS: 1 << 30,
+  MANAGE_THREADS: 1 << 34,
+  USE_PUBLIC_THREADS: 1 << 35,
+  USE_PRIVATE_THREADS: 1 << 36,
 };
 
 export const Color = 14720566;
