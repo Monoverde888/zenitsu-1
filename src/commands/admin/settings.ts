@@ -212,6 +212,7 @@ export default new BaseCommand({
         const embed = new MessageEmbed()
           .setColor(0xff0000)
           .addField('Muterole', rol ? `${rol.mention}  \`[${rol.id}]\`` : '❌')
+          .addField('Onlythreads', data.onlythreads ? `✅` : '❌')
           .addField('Ignore channels', canales.join(', ') || '❌')
           .setTimestamp();
         return ctx.reply({ embed });
