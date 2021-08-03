@@ -19,7 +19,7 @@ export async function runcode() {
   class RunCode extends BaseCommandOption {
 
     name = 'runcode';
-    description = 'run a code';
+    description = '.';
 
     constructor() {
       super({
@@ -38,6 +38,14 @@ export async function runcode() {
           },
         ]
       });
+      this.metadata = {
+        usage(prefix: string) {
+          return [
+            prefix + 'runcode \\`\\`\\`javascript\nconsole.log("Hello world");\n\\`\\`\\`',
+          ]
+        },
+        category: 'util'
+      };
     };
 
     async run(ctx: detritus.Slash.SlashContext, args: { code: string; language: string }) {

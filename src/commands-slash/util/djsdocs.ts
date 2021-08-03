@@ -32,6 +32,13 @@ export function DjsDocs() {
           },
         ]
       });
+
+      this.metadata = {
+        usage(prefix: string) {
+          return options.map(x => `${prefix}djsdocs query [${x}]`)
+        },
+        category: 'util'
+      }
     };
 
     async run(ctx: detritus.Slash.SlashContext, args: { query: string; type?: string }) {
