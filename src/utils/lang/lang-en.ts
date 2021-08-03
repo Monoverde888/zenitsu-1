@@ -32,11 +32,14 @@ const obj = {
     MANAGE_ROLES: 'manageRoles',
     MANAGE_WEBHOOKS: 'manageWebhooks',
     MANAGE_EMOJIS: 'manageEmojis',
+    MANAGE_THREADS: 'manageThreads',
+    USE_PUBLIC_THREADS: 'usePublicThreads',
+    USE_PRIVATE_THREADS: 'usePrivateThreads',
   },
 
   "messages": {
 
-    "ratelimit": (remaining: number) => `Try after ${remaining / 1000} seconds (${remaining}ms).`,
+    "ratelimit": (remaining: number) => `Try after ${remaining / 1000} seconds.`,
 
     "permisos_bot": (p: string): string => "<:cancel:804368628861763664> | Oops, I am missing some permissions " + p,
 
@@ -45,6 +48,8 @@ const obj = {
     "error": (e: string): string => "Something happened, here's a debug: " + e,
 
     "cooldown": (time: string, command: string): string => `Please wait ${time} before use \`${command}\``,
+
+    use_slash: "Soon `Zenitsu.` will use `slash commands`, Discord's new command method, and that's why we need you to invite him again! [Re-invite Zenitsu. for slash commands](https://discord.com/oauth2/authorize?client_id=721080193678311554&scope=bot%2Bapplications.commands&permissions=8)"
 
   },
   "commands": {
@@ -75,18 +80,6 @@ const obj = {
     "invite": {
       "message": (bot: string, support: string): string => "Bot invitation link: [Link](" + bot + " \"Invite the bot\") 🤖\nSupport link: [Link](" + support + " \"You will receive help\") <:zStaffZenitsu:766436216966217729>"
     },
-    "reportbug": {
-
-      "need": "<:cancel:804368628861763664> | You need to specify the error.",
-
-      "send": "📢 | Report sent!"
-    },
-    "suggest": {
-
-      "need": "<:cancel:804368628861763664> | You need to specify the suggestion.",
-
-      "send": "<:reason2:804368699887845376> | Suggestion sent!"
-    },
     "connect4": {
 
       enable_threads: (prefix: string) => "You need to disable the option `onlythreads => " + prefix + "settings onlythreads` to play in text channels. ~~I can't create threads.~~",
@@ -101,9 +94,9 @@ const obj = {
 
       "footer": "You can also play with Zenitsu putting z!connect4 easy/medium/hard",
 
-      "user_active": (user: string): string => user + " is active in another game.",
+      //"user_active": (user: string): string => user + " is active in another game.",
 
-      "author_active": "You are active in another game.",
+      //"author_active": "You are active in another game.",
 
       "wait_user": (user: string): string => "<a:waiting:804396292793040987> | " + user + ", you have 1 minute to answer...\nDo you want to play?: answer `✅`\nYou dont want?: answer `❌`",
 

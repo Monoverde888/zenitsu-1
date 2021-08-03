@@ -14,9 +14,8 @@ export default new BaseCommand({
   name: 'invite',
   async run(ctx) {
 
-    const langjson = json[(await getGuild(ctx.guildId)).lang]
-
-    const link = 'https://discord.com/oauth2/authorize?client_id=721080193678311554&scope=bot&permissions=8';
+    const langjson = json[(await getGuild(ctx.guildId)).lang];
+    const link = 'https://discord.com/oauth2/authorize?client_id=721080193678311554&scope=bot%2Bapplications.commands&permissions=8';
     const invitacionLink = 'https://discord.gg/4Yzc7Hk';
     const embed = new MessageEmbed()
       .setThumbnail(ctx.client.user.avatarUrl)

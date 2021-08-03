@@ -39,9 +39,7 @@ export default new BaseCommand({
 
     const data = (DATA.c4Maps || []).find(item => JSON.parse(JSON.stringify(item))._id == _id);
 
-    if (!data) return ctx.reply({
-      embed
-    });
+    if (!data) return ctx.reply({ embed });
 
     try {
 
@@ -65,7 +63,8 @@ export default new BaseCommand({
 
     catch {
 
-      return ctx.reply('Error...');
+      if (ctx.canReply) return ctx.reply('Error...');
+      return null;
 
     }
 

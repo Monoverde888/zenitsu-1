@@ -50,7 +50,8 @@ export default new BaseCommand({
 
     catch{
 
-      return ctx.reply('Error...');
+      if (ctx.canReply) return ctx.reply('Error...');
+      return null;
 
     };
 

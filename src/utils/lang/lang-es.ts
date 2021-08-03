@@ -32,11 +32,14 @@ const obj = {
     MANAGE_ROLES: 'manageRoles',
     MANAGE_WEBHOOKS: 'manageWebhooks',
     MANAGE_EMOJIS: 'manageEmojis',
+    MANAGE_THREADS: 'manageThreads',
+    USE_PUBLIC_THREADS: 'usePublicThreads',
+    USE_PRIVATE_THREADS: 'usePrivateThreads',
   },
 
   "messages": {
 
-    "ratelimit": (remaining: number) => `Intenta despues de ${remaining / 1000} segundos (${remaining}ms).`,
+    "ratelimit": (remaining: number) => `Intenta despues de ${remaining / 1000} segundos.`,
 
     "permisos_bot": (p: string): string => "<:cancel:804368628861763664> | Ups, me faltan algun/algunos permiso(s): " + p,
 
@@ -45,6 +48,8 @@ const obj = {
     "error": (e: string): string => "Algo pasó, aquí un mensaje: " + e,
 
     "cooldown": (time: string, command: string): string => `Por favor espera ${time} antes de usar \`${command}\``,
+
+    use_slash: "Proximamente Zenitsu. usara `slash commands` el nuevo metodo de Discord, y por eso necesitamos que lo invites otra vez! [Re invitar a Zenitsu. para los slash commands](https://discord.com/oauth2/authorize?client_id=721080193678311554&scope=bot%2Bapplications.commands&permissions=8)"
 
   },
   "commands": {
@@ -77,18 +82,6 @@ const obj = {
     "invite": {
       "message": (bot: string, support: string): string => "Link de invitación del bot: [Link](" + bot + " \"Invitarás al bot\") 🤖\nLink de invitación al servidor de soporte: [Link](" + support + " \"Recibirás ayuda\") <:zStaffZenitsu:766436216966217729>",
     },
-    "reportbug": {
-      "need": "<:cancel:804368628861763664> | Necesitas especificar el error.",
-
-      "send": "📢 | Reporte enviado!",
-
-    },
-    "suggest": {
-      "need": "<:cancel:804368628861763664> | Necesitas especificar la sugerencia.",
-
-      "send": "<:reason2:804368699887845376> | Sugerencia enviado!",
-
-    },
     "connect4": {
 
       enable_threads: (prefix: string) => "Necesitas desactivar la opción `onlythreads => " + prefix + "settings onlythreads` para poder jugar en canales de texto. ~~No puedo crear threads.~~",
@@ -103,9 +96,9 @@ const obj = {
 
       "footer": "Tambien puedes jugar con Zenitsu poniendo z!connect4 easy/medium/hard",
 
-      "user_active": (user: string): string => user + " está activo en otra partida.",
+      //"user_active": (user: string): string => user + " está activo en otra partida.",
 
-      "author_active": "Estas activo en otra partida.",
+      //"author_active": "Estas activo en otra partida.",
 
       "wait_user": (user: string): string => "<a:waiting:804396292793040987> | " + user + ", tienes un minuto para responder...\n¿Quieres jugar?: responde `✅`\n¿No quieres jugar?: responde `❌`",
 

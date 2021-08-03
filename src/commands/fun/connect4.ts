@@ -105,17 +105,7 @@ export default new BaseCommand({
     const langjson = json[DATAGUILD.lang];
     const args = parseArgs(arg);
 
-    const CHANNEL = (ctx.channel.type != 11) && ctx.guild.features.has("THREADS_ENABLED") && ctx.guild.me.can(Flags.MANAGE_THREADS) ? await ctx.message.createThread({ name: `Game of ${ctx.user.tag}`, autoArchiveDuration: 1440 }) : ctx.channel;
-
-    if (CHANNEL.type != 11 && DATAGUILD.onlythreads) {
-      const embed = new MessageEmbed()
-        .setColor(0xff0000)
-        .setDescription(langjson.commands.connect4.enable_threads(ctx.prefix))
-        .setThumbnail(zenitsuGif);
-      return ctx.reply({ embed });
-    }
-
-    if (games.get(CHANNEL.id)) {
+    if (games.get(ctx.channel.id)) {
       const embed = new MessageEmbed()
         .setColor(0xff0000)
         .setDescription(langjson.commands.connect4.curso)
@@ -136,22 +126,23 @@ export default new BaseCommand({
       return ctx.reply({ embed });
     }
 
-    const findTurn = (user: string) => games.get(CHANNEL.id) && games.get(CHANNEL.id).players ? games.get(CHANNEL.id).players.find(item => item.id == user) : null;
-
-    if (usuario.id != ctx.client.user.id)
-      if (findTurn(usuario.id)) {
-        return ctx.reply(langjson.commands.connect4.user_active(usuario.username));
-      }
-
-    if (findTurn(ctx.message.author.id)) {
-      return ctx.reply(langjson.commands.connect4.author_active);
-    }
+    const findTurn = (user: string, CHANNEL: string) => games.get(CHANNEL) && games.get(CHANNEL).players ? games.get(CHANNEL).players.find(item => item.id == user) : null;
 
     const poto = new Connect4AI<Player>({
       lengthArr: 6,
       columns: 7
     }, getTURNS(ctx.userId, usuario.id, ctx.client.userId));
     poto.createBoard();
+
+    const CHANNEL = (ctx.channel.type != 11) && ctx.guild.features.has("THREADS_ENABLED") && ctx.guild.me.can(Flags.MANAGE_THREADS) ? await ctx.message.createThread({ name: `Game of ${ctx.user.tag}`, autoArchiveDuration: 1440 }) : ctx.channel;
+
+    if (CHANNEL.type != 11 && DATAGUILD.onlythreads) {
+      const embed = new MessageEmbed()
+        .setColor(0xff0000)
+        .setDescription(langjson.commands.connect4.enable_threads(ctx.prefix))
+        .setThumbnail(zenitsuGif);
+      return ctx.reply({ embed });
+    }
 
     games.set(CHANNEL.id, poto)
 
@@ -194,20 +185,10 @@ export default new BaseCommand({
         return ctx.reply(langjson.commands.connect4.deny(usuario.username))
       }
 
-      if (findTurn(usuario.id)) {
-        games.delete(CHANNEL.id)
-        return ctx.reply(langjson.commands.connect4.user_active(usuario.username));
-      }
-
-      if (findTurn(ctx.message.author.id)) {
-        games.delete(CHANNEL.id)
-        return ctx.reply(langjson.commands.connect4.author_active);
-      }
-
     }
 
     const embedStart = new MessageEmbed()
-      .setDescription(langjson.commands.connect4.start(findTurn(ctx.message.author.id).turn == 1 ? ctx.message.author.username : usuario.username))
+      .setDescription(langjson.commands.connect4.start(findTurn(ctx.message.author.id, CHANNEL.id).turn == 1 ? ctx.message.author.username : usuario.username))
       .setColor(0xff0000)
       .setImage('attachment://party.gif');
     const bufParty = await displayConnectFourBoard(games.get(CHANNEL.id))
@@ -289,7 +270,7 @@ function getTURNS(author: string, mention: string, clientID: string): [Player, P
 function awaitAnswer(MESSAGEID: string,
   sendCoso: (embed: MessageEmbed, value: Buffer) => Promise<detritus.Structures.Message>,
   ctx: detritus.Command.Context,
-  findTurn: (user: string) => Player,
+  findTurn: (user: string, CHANNEL: string) => Player,
   ArrayOfArrayOfNumbers: [number, number, string][],
   args: string[],
   DATAPROFILE: USER,
@@ -312,7 +293,7 @@ function awaitAnswer(MESSAGEID: string,
 
       const game = games.get(CHANNEL.id);
       const board = game.map[(parseInt(interaction.data.customId.split('c4_')[1]))];
-      let temp = findTurn(interaction.userId).turn == 1 ? 'red' : 'yellow';
+      let temp = findTurn(interaction.userId, CHANNEL.id).turn == 1 ? 'red' : 'yellow';
       ArrayOfArrayOfNumbers.push([board.filter(x => x.key).length - 1, parseInt(interaction.data.customId.split('c4_')[1]), temp]);
 
       if (games.get(CHANNEL.id).solution) {
@@ -389,7 +370,7 @@ function awaitAnswer(MESSAGEID: string,
         const old = games.get(CHANNEL.id);
         const played = old.playAI(difficulty);
         const board = games.get(CHANNEL.id).map;
-        temp = findTurn(ctx.client.user.id).turn == 1 ? 'red' : 'yellow';
+        temp = findTurn(ctx.client.user.id, CHANNEL.id).turn == 1 ? 'red' : 'yellow';
         ArrayOfArrayOfNumbers.push([board[played].filter(x => x.key).length - 1, played, temp]);
 
         if (games.get(CHANNEL.id).solution) {
@@ -437,8 +418,8 @@ function awaitAnswer(MESSAGEID: string,
       if ((usuario.id != ctx.client.user.id) && (games.get(CHANNEL.id))) {
         const embed = new MessageEmbed()
           .setDescription(langjson.commands.connect4.turn(
-            findTurn(ctx.message.author.id).turn == findTurn(interaction.userId).turn ? usuario.username : ctx.message.author.username,
-            findTurn(interaction.userId).turn == 2 ? `🔴` : `🟡`
+            findTurn(ctx.message.author.id, CHANNEL.id).turn == findTurn(interaction.userId, CHANNEL.id).turn ? usuario.username : ctx.message.author.username,
+            findTurn(interaction.userId, CHANNEL.id).turn == 2 ? `🔴` : `🟡`
           ))
           .setFooter(args[0])
           .setColor(0xff0000)
@@ -516,13 +497,13 @@ function awaitAnswer(MESSAGEID: string,
       interaction.createResponse({ data: { content: langjson.commands.connect4.wait, flags: 64 }, type: 4 });
       return false;
     }
-    if (!findTurn(interaction.userId)) return;
+    if (!findTurn(interaction.userId, CHANNEL.id)) return;
     if (usuario.id != ctx.client.user.id) {
 
       if (!games.get(CHANNEL.id)) return false;
 
       return ['c4_1', 'c4_2', 'c4_3', 'c4_4', 'c4_5', 'c4_6', 'c4_0', 'c4_surrender'].includes(interaction.data.customId)
-        && findTurn(interaction.userId).turn === games.get(CHANNEL.id).turn
+        && findTurn(interaction.userId, CHANNEL.id).turn === games.get(CHANNEL.id).turn
         && !games.get(CHANNEL.id).finished
         || ((games.get(CHANNEL.id).players.some(item => item.id == interaction.userId) && interaction.data.customId == 'c4_surrender'))
 
@@ -530,7 +511,7 @@ function awaitAnswer(MESSAGEID: string,
 
     else {
       return interaction.userId == ctx.message.author.id
-        && findTurn(interaction.userId).turn === games.get(CHANNEL.id).turn
+        && findTurn(interaction.userId, CHANNEL.id).turn === games.get(CHANNEL.id).turn
         && ['c4_1', 'c4_2', 'c4_3', 'c4_4', 'c4_5', 'c4_6', 'c4_0', 'c4_surrender'].includes(interaction.data.customId)
         && !games.get(CHANNEL.id).finished
         || ((games.get(CHANNEL.id).players.some(item => item.id == interaction.userId) && interaction.data.customId == 'c4_surrender'))

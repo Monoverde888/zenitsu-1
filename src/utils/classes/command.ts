@@ -7,13 +7,14 @@ import json from '../lang/langs.js';
 class RegisterCommand {
   constructor(options: detritus.CommandClientAdd) {
 
-    options.onError = (ctx) => {
-      ctx.reply('```' + ctx.command.metadata.usage(ctx.prefix).join('\n') + '```');
+    options.onError = (ctx, __args, error) => {
+      console.error(error);
+      return ctx.reply('```' + (error ? (error.message || error) : 'ERROR') + '```');
     };
 
     options.onRunError = (ctx, _, error) => {
-      console.log(error);
-      return ctx.reply('```' + (error.message || error) + '```');
+      console.error(error);
+      return ctx.reply('```' + (error ? (error.message || error) : 'ERROR') + '```');
     };
 
     options.onCancelRun = options.onCancelRun || ((ctx) => {
@@ -35,7 +36,8 @@ class RegisterCommand {
     }
 
     return options;
-  }
+  };
+
 }
 
 export default RegisterCommand;

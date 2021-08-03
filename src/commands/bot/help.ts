@@ -16,13 +16,14 @@ export default new BaseCommand({
   name: 'help',
   aliases: ['h'],
   async run(ctx) {
-
-    const langjson = json[(await getGuild(ctx.guildId)).lang]
-    const categories: string[] = langjson.commands.help.categories;
+    const { lang } = await getGuild(ctx.guildId);
+    const langjson = json[lang]
+    const categories = langjson.commands.help.categories;
 
     const embedHelp = new MessageEmbed()
       .setColor(Color)
       .setTimestamp()
+      .setTitle(json[lang].messages.use_slash)
       .addField(categories[0], ctx.client.commandClient.commands.filter(a => a.metadata.category === 'util').map(a => `\`${a.name}\``).join(', ') || 'weird')
       .addField(categories[1], ctx.client.commandClient.commands.filter(a => a.metadata.category === 'fun').map(a => `\`${a.name}\``).join(', ') || 'weird')
       .addField(categories[2], ctx.client.commandClient.commands.filter(a => a.metadata.category === 'mod').map(a => `\`${a.name}\``).join(', ') || 'weird')

@@ -1,0 +1,15 @@
+import SLASH from '../../utils/classes/slash.js';
+import detritus from 'detritus-client';
+const { InteractionCallbackTypes } = detritus.Constants;
+
+export default new SLASH({
+  name: 'ping',
+  description: 'Pong',
+  async run(ctx) {
+    await ctx.respond(InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);//Thinking
+    await new Promise((r) => {
+      setTimeout(r, 3000, true);
+    });
+    await ctx.editOrRespond({ content: 'Hola tres segundos despues.' });//Not thinking 🧠n't
+  }
+});

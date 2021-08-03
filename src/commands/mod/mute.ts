@@ -22,8 +22,8 @@ export default new BaseCommand({
   },
   async run(ctx) {
 
-    const langjson = json[(await getGuild(ctx.guildId)).lang]
     const data = await getGuild(ctx.guildId);
+    const langjson = json[data.lang];
     const ROLE_BOT = getHighest(ctx.guild.me);
     const role = ctx.guild.roles.get(data.muterole);
 

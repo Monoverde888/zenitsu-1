@@ -4,6 +4,37 @@ import commons from './functions/commons.js';
 import detritus from 'detritus-client';
 import CommandClient from './classes/commandclient.js';
 import connect from '../database/connect.js';
+import kufa from 'kufa';
+
+console = new kufa.KufaConsole({
+  format: `[§a%time%§r] [%prefix%§r] %message% %trace% %memory%`,
+  log_prefix: `§2LOG`,
+  warn_prefix: `§6WARN`,
+  error_prefix: `§4ERROR`,
+  traceFun: true,
+  save: true,
+  dir: path.join(process.cwd(), 'logs'),
+  parser(ctx) {
+
+    switch (ctx.type) {
+
+      case 'error':
+        ctx.format = `[§4%time%§r] [%prefix%§r] %message% %trace% %memory%`;
+        break;
+
+      case 'warn':
+        ctx.format = `[§6%time%§r] [%prefix%§r] %message% %trace% %memory%`;
+        break;
+
+      case 'log':
+      default:
+        ctx.format = `[§a%time%§r] [%prefix%§r] %message% %trace% %memory%`;
+        break;
+
+    }
+  },
+  depth: 10
+});
 
 const cache: detritus.ShardClientCacheOptions = {
   messages: { expire: 60 * 60 * 1000 },
@@ -34,6 +65,8 @@ export default async function Load({ token, mongo }: { token: string, mongo: str
     cache
   });
 
+  await shardClient.run();
+
   const commandClient = new CommandClient(shardClient, {
     cache,
     ratelimits: [
@@ -46,6 +79,12 @@ export default async function Load({ token, mongo }: { token: string, mongo: str
   });
 
   await commandClient.run();
+
+  const slashClient = new detritus.SlashCommandClient(shardClient, { cache, checkCommands: false });
+  await addMultipleIn(slashClient, './dist/commands-slash').catch(console.warn);
+  await slashClient.checkAndUploadCommands();
+  await slashClient.run();
+
   console.log(`[DETRITUS] ${shardClient.user.username} dice hola al mundo :):):):)`);
 
   await loadCommands(commandClient);
@@ -62,8 +101,13 @@ async function loadEvents(client: detritus.ShardClient, commandClient: CommandCl
   const ruta = (...str: string[]) => path.join(__dirname, '..', ...str)
   const load = async (file: string, listener: detritus.ShardClient | CommandClient) => {
 
-    const { default: RES } = await import("file:///" + ruta('events', listener.constructor.name.toLowerCase(), file));
-    listener.on(RES.name, RES.bind(null, client).bind(null, commandClient));
+    try {
+      const { default: RES } = await import("file:///" + ruta('events', listener.constructor.name.toLowerCase(), file));
+      listener.on(RES.name, RES.bind(null, client).bind(null, commandClient));
+    }
+    catch (e) {
+      console.error(e, file);
+    }
 
   }
 
@@ -95,7 +139,7 @@ async function loadCommands(commandClient: CommandClient) {
         const { default: archivo } = await import(`file:///` + ruta('commands', dirs, file));
         commandClient.add(archivo);
       } catch (e) {
-        console.log(e, file);
+        console.error(e, file);
         break;
       }
     }
@@ -107,4 +151,84 @@ async function loadCommands(commandClient: CommandClient) {
     await load(i);
   }
 
+}
+
+
+
+
+
+//EDITED FROM detritus-client
+async function addMultipleIn(slashClient: detritus.SlashCommandClient, directory: string, options: { isAbsolute?: boolean, subdirectories?: boolean } = {}) {
+
+  options = Object.assign({ subdirectories: true }, options);
+  if (!options.isAbsolute) {
+    directory = path.join(process.cwd(), directory);
+  }
+  slashClient.directories.set(directory, { subdirectories: !!options.subdirectories });
+
+  const files: Array<string> = await getFiles(directory, options.subdirectories);
+  const errors: Record<string, Error> = {};
+
+  const addCommand = (imported: any, filepath: string): void => {
+    if (!imported) {
+      return;
+    }
+    if (typeof (imported) === 'function') {
+      slashClient.add({ _file: filepath, _class: imported, name: '' });
+    } else if (imported instanceof detritus.Slash.SlashCommand) {
+      Object.defineProperty(imported, '_file', { value: filepath });
+      slashClient.add(imported)
+    } else if (typeof (imported) === 'object' && Object.keys(imported).length) {
+      if (Array.isArray(imported)) {
+        for (let child of imported) {
+          addCommand(child, filepath);
+        }
+      } else {
+        if ('name' in imported) {
+          slashClient.add({ ...imported, _file: filepath });
+        }
+      }
+    }
+  };
+  for (let file of files) {
+    if (!file.endsWith('.js')) {
+      continue;
+    }
+    const filepath = path.resolve(directory, file);
+    try {
+      let importedCommand: any = await import('file:///' + filepath);
+      if (typeof (importedCommand) === 'object' && importedCommand.default) {
+        importedCommand = await importedCommand.default();
+      }
+      addCommand(importedCommand, filepath);
+    } catch (error) {
+      errors[filepath] = error;
+    }
+  }
+
+  if (Object.keys(errors).length) {
+    throw errors;
+  }
+
+  return slashClient;
+}
+
+async function getFiles(directory: string, subdirectories?: boolean): Promise<Array<string>> {
+  if (subdirectories) {
+    const dirents = await fs.readdir(directory, { withFileTypes: true });
+    const names: Array<string> = [];
+    for (let folder of dirents.filter((dirent) => dirent.isDirectory())) {
+      const files = await getFiles(`${directory}/${folder.name}`, subdirectories);
+      for (let name of files) {
+        names.push(`${folder.name}/${name}`);
+      }
+    }
+    for (let file of dirents.filter((dirent) => dirent.isFile())) {
+      names.push(file.name);
+    }
+    return names;
+  } else {
+    const names = await fs.readdir(directory);
+    return names;
+  }
 }
