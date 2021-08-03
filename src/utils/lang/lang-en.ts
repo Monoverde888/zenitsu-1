@@ -49,7 +49,7 @@ const obj = {
 
     "cooldown": (time: string, command: string): string => `Please wait ${time} before use \`${command}\``,
 
-    use_slash: "Soon `Zenitsu.` will use `slash commands`, Discord's new command method, and that's why we need you to invite him again! [Re-invite Zenitsu. for slash commands](https://discord.com/oauth2/authorize?client_id=721080193678311554&scope=bot%2Bapplications.commands&permissions=8)"
+    use_slash: "Soon `Zenitsu.` will use `slash commands`, Discord's new command method, and that's why we need you to invite him again! `Re-invite Zenitsu. for slash commands` => https://discord.com/oauth2/authorize?client_id=721080193678311554&scope=bot%2Bapplications.commands&permissions=8"
 
   },
   "commands": {
