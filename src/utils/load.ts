@@ -81,7 +81,7 @@ export default async function Load({ token, mongo }: { token: string, mongo: str
   await commandClient.run();
 
   const slashClient = new detritus.SlashCommandClient(shardClient, { cache, checkCommands: true });
-  await addMultipleIn(slashClient, './dist/commands-slash').catch(console.warn);
+  await addMultipleIn(slashClient, './dist/commands-slash');
   await slashClient.run();
 
   console.log(`[DETRITUS] ${shardClient.user.username} dice hola al mundo :):):):)`);
