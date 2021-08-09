@@ -1,4 +1,4 @@
-import {BaseCommandOptionGroup} from "../../../utils/classes/slash.js";
+import {BaseCommandOptionGroup} from "../../../../utils/classes/slash.js";
 import {init}                   from './init.js';
 import {refresh}                from './refresh.js';
 import detritus                 from 'detritus-client';
@@ -15,6 +15,15 @@ export function muterole() {
             this.description = ".";
             this.permissions = [Flags.MANAGE_GUILD].map(BigInt);
             this.permissionsClient = [Flags.MANAGE_GUILD, Flags.MANAGE_ROLES, Flags.MANAGE_CHANNELS].map(BigInt);
+            this.metadata = {
+                usage(prefix : string) {
+                    return [
+                        prefix + "settings muterole init [role]",
+                        prefix + "settings muterole refresh",
+                    ];
+                },
+                category : "admin",
+            }
         }
     }
 

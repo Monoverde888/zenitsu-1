@@ -1,9 +1,9 @@
 import detritus            from "detritus-client";
-import {BaseCommandOption} from "../../utils/classes/slash.js";
-import guild               from "../../database/models/guild.js";
-import redis               from "../../utils/managers/redis.js";
-import getGuild            from "../../utils/functions/getguild.js";
-import json                from '../../utils/lang/langs.js';
+import {BaseCommandOption} from "../../../utils/classes/slash.js";
+import guild               from "../../../database/models/guild.js";
+import redis               from "../../../utils/managers/redis.js";
+import getGuild            from "../../../utils/functions/getguild.js";
+import json                from '../../../utils/lang/langs.js';
 
 const {Constants : {Permissions : Flags}} = detritus;
 const {Constants : {ApplicationCommandOptionTypes}} = detritus;
@@ -39,9 +39,10 @@ export function ignorechannels() {
             args : { channel : detritus.Structures.Channel }
         ) {
 
+            await ctx.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
+
             const data = await getGuild(ctx.guildId);
             const langjson = json[data.lang];
-
             const channelMention = args.channel;
 
             if (channelMention.isText && !channelMention.isGuildThread) {

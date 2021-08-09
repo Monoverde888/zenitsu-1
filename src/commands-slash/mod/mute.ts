@@ -70,7 +70,7 @@ export default function () {
                 if (getHighest(ctx.member).position <= getHighest(member).position) return ctx.editOrRespond(langjson.commands.mute.user_cannt_mute(`**${unmarkdown(member.username)}**`))
             }
 
-            return member.addRole(role.id, {reason : args.reason || null})
+            return member.addRole(role.id, args.reason ? {reason : args.reason} : {})
                          .then(() => {
 
                              const embed = new MessageEmbed()

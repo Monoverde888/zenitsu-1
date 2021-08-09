@@ -10,17 +10,27 @@ export default function () {
         constructor() {
             super();
             this.name = 'ping'
-            this.description = 'Pong'
+            this.description = '.';
+            this.metadata = {
+                usage(prefix : string) {
+                    return [`${prefix}ping`];
+                },
+                category : "bot",
+            };
         }
 
         async run(ctx : detritus.Slash.SlashContext, __args : Record<string, any>) {
 
-            const res = await ctx.client.ping();
-            const date : number = Date.now();
-            const ping_db : number = await new Promise((r, j) => {
+            await ctx.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
+
+            const date = Date.now();
+            const Promise_res = ctx.client.ping();
+            const Promise_ping_db : Promise<number> = new Promise((r, j) => {
                 mongoose.connection.db.admin().ping((err, result) => (err || !result) ? j(err || result) : r(Date.now() - date))
             });
+            const [res, ping_db] = await Promise.all([Promise_res, Promise_ping_db])
             const embed = new MessageEmbed()
+
                 .setDescription(`
         🏓 Gateway: ${res.gateway}ms [${getStatus(res.gateway)}]\n🏃 Message: ${date - Number(ctx.interaction.createdAt)}ms [${getStatus(date - Number(ctx.interaction.createdAt))}]\n🗃️ DB: ${ping_db}ms [${getStatus(ping_db)}]
         `)

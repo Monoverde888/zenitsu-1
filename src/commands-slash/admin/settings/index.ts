@@ -1,13 +1,13 @@
-import {BaseSlash}      from "../../utils/classes/slash.js";
-import {muterole}       from "./muterole/index.js";
-import {view}           from './view.js';
-import {onlythreads}    from './onlythreads.js';
+import {BaseSlash}      from "../../../utils/classes/slash.js";
+import {muterole}    from "./muterole/index.js";
+import {view}        from './view.js';
+import {onlythreads} from './onlythreads.js';
 import {reset}          from './reset.js';
 import {ignorechannels} from './ignorechannels.js';
-import detritus from 'detritus-client';
+import detritus         from 'detritus-client';
 const {Constants : {Permissions : Flags}} = detritus;
 export default function () {
-    class Tools extends BaseSlash {
+    class Settings extends BaseSlash {
         constructor() {
             super();
             this.name = "settings";
@@ -33,5 +33,5 @@ export default function () {
         }
     }
 
-    return new Tools();
+    return new Settings();
 }

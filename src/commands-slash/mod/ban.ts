@@ -71,7 +71,10 @@ export default function () {
                 if (getHighest(ctx.member).position <= getHighest(member).position) return ctx.editOrRespond(langjson.commands.ban.user_cannt_ban(`**${unmarkdown(member.username)}**`));
             }
 
-            return member.ban({reason : args.reason || null, deleteMessageDays : args.deletedays || '0'})
+            return member.ban(args.reason ? {
+                reason : args.reason,
+                deleteMessageDays : args.deletedays || '0'
+            } : {deleteMessageDays : args.deletedays || '0'})
                          .then(() => {
 
                              const embed = new MessageEmbed()

@@ -12,6 +12,16 @@ export default async function () {
             this.name = "util";
             this.description = "Utils";
             this.options = [runCode, DjsDocs(), avatar()];
+            this.metadata = {
+                usage(prefix : string) {
+                    return [
+                        `${prefix}util avatar [Member]`,
+                        `${prefix}util djsdocs Query`,
+                        `${prefix}util runcode Code Language`,
+                    ];
+                },
+                category : "util",
+            };
         }
     }
 

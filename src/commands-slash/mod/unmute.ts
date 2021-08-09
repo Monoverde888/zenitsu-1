@@ -70,7 +70,7 @@ export default function () {
                 if (getHighest(ctx.member).position <= getHighest(member).position) return ctx.editOrRespond(langjson.commands.unmute.user_cannt_unmute(`**${unmarkdown(member.username)}**`))
             }
 
-            return member.removeRole(role.id, {reason : args.reason || null})
+            return member.removeRole(role.id, args.reason ? {reason : args.reason} : {})
                          .then(() => {
 
                              const embed = new MessageEmbed()

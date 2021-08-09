@@ -1,12 +1,12 @@
 import detritus            from "detritus-client";
-import {Edit, filter}      from "../../../utils/functions/edit.js";
-import json                from "../../../utils/lang/langs.js";
-import getGuild            from "../../../utils/functions/getguild.js";
-import {BaseCommandOption} from "../../../utils/classes/slash.js";
-import guild               from "../../../database/models/guild.js";
-import redis               from "../../../utils/managers/redis.js";
-import getHighest          from "../../../utils/functions/gethighest.js";
-import {cooldown}          from '../../../utils/maps.js';
+import {Edit, filter}      from "../../../../utils/functions/edit.js";
+import json                from "../../../../utils/lang/langs.js";
+import getGuild            from "../../../../utils/functions/getguild.js";
+import {BaseCommandOption} from "../../../../utils/classes/slash.js";
+import guild               from "../../../../database/models/guild.js";
+import redis               from "../../../../utils/managers/redis.js";
+import getHighest          from "../../../../utils/functions/gethighest.js";
+import {cooldown}          from '../../../../utils/maps.js';
 
 const {Constants : {Permissions : Flags}} = detritus;
 const {Constants : {ApplicationCommandOptionTypes}} = detritus;

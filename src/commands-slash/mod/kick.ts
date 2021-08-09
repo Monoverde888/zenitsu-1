@@ -62,7 +62,7 @@ export default function () {
                 if (getHighest(ctx.member).position <= getHighest(member).position) return ctx.editOrRespond(langjson.commands.kick.user_cannt_kick(`**${unmarkdown(member.username)}**`))
             }
 
-            return member.remove({reason : args.reason || 'null'})
+            return member.remove(args.reason ? {reason : args.reason} : {})
                          .then(() => {
 
                              const embed = new MessageEmbed()
