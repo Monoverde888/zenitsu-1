@@ -48,14 +48,12 @@ export function filter(item : detritus.Structures.Channel, id : string) {
 
     if ([13, 2].includes(item.type)) {
         if (!item.permissionOverwrites.has(id)) return true;
-        if ((Number(item.permissionOverwrites.get(id).deny) & VOICE) == VOICE) return false;
-        else return true;
+        return (Number(item.permissionOverwrites.get(id).deny) & VOICE) != VOICE;
     }
 
     else if ([4, 0, 5].includes(item.type)) {
         if (!item.permissionOverwrites.has(id)) return true;
-        if (((Number(item.permissionOverwrites.get(id).deny) & TEXT) == TEXT)) return false;
-        else return true;
+        return ((Number(item.permissionOverwrites.get(id).deny) & TEXT) != TEXT);
     }
 
     return false;
