@@ -15,7 +15,7 @@ import model, { USER } from '../../database/models/user.js';
 import Button from '../../utils/buttons/normal.js';
 import Component from '../../utils/buttons/component.js';
 import fetch from 'node-fetch';
-import { Flags } from '../../utils/const.js';
+const {Constants : {Permissions : Flags}} = detritus;
 const zenitsuGif = `https://media1.tenor.com/images/07622a68b0145d04d1fa5536aa62faee/tenor.gif?itemid=17636946`
 
 interface Player {

@@ -25,9 +25,9 @@ export default new BaseCommand({
       .setTimestamp()
       .setTitle(json[lang].messages.use_slash)
       .setUrl(`https://discord.com/api/oauth2/authorize?client_id=721080193678311554&scope=bot+applications.commands&permissions=8`)
-      .addField(categories[0], ctx.client.commandClient.commands.filter(a => a.metadata.category === 'util').map(a => `\`${a.name}\``).join(', ') || 'weird')
+      .addField(categories[0], ctx.client.commandClient.commands.filter(a => a.metadata.category === 'util').map(a => `\`${a.name}\``).join(', ') || 'on slash commands.')
       .addField(categories[1], ctx.client.commandClient.commands.filter(a => a.metadata.category === 'fun').map(a => `\`${a.name}\``).join(', ') || 'weird')
-      .addField(categories[2], ctx.client.commandClient.commands.filter(a => a.metadata.category === 'mod').map(a => `\`${a.name}\``).join(', ') || 'weird')
+      .addField(categories[2], ctx.client.commandClient.commands.filter(a => a.metadata.category === 'mod').map(a => `\`${a.name}\``).join(', ') || 'on slash commands.')
       .addField(categories[3], ctx.client.commandClient.commands.filter(a => a.metadata.category === 'bot').map(a => `\`${a.name}\``).join(', ') || 'weird')
       .addField(categories[4], ctx.client.commandClient.commands.filter(a => a.metadata.category === 'admin').map(a => `\`${a.name}\``).join(', ') || 'weird');
 
