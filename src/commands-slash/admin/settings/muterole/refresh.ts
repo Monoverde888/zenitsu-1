@@ -29,7 +29,7 @@ export function refresh() {
         }
 
         async run(
-            ctx : detritus.Slash.SlashContext,
+            ctx : detritus.Interaction.InteractionContext,
             args : { muterole : detritus.Structures.Role }
         ) {
             await ctx.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);

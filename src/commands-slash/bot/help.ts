@@ -22,7 +22,7 @@ export default function () {
             };
         }
 
-        async run(ctx : detritus.Slash.SlashContext) {
+        async run(ctx : detritus.Interaction.InteractionContext) {
 
             const {lang} = await getGuild(ctx.guildId);
             const langjson = json[lang]
@@ -31,11 +31,11 @@ export default function () {
             const embedHelp = new MessageEmbed()
                 .setColor(Color)
                 .setTimestamp()
-                .addField(categories[0], ctx.client.slashCommandClient.commands.filter(a => a.metadata.category === 'util').map(a => `\`${a.name}\``).join(', ') || 'weird')
-                .addField(categories[1], ctx.client.slashCommandClient.commands.filter(a => a.metadata.category === 'fun').map(a => `\`${a.name}\``).join(', ') || 'weird')
-                .addField(categories[2], ctx.client.slashCommandClient.commands.filter(a => a.metadata.category === 'mod').map(a => `\`${a.name}\``).join(', ') || 'weird')
-                .addField(categories[3], ctx.client.slashCommandClient.commands.filter(a => a.metadata.category === 'bot').map(a => `\`${a.name}\``).join(', ') || 'weird')
-                .addField(categories[4], ctx.client.slashCommandClient.commands.filter(a => a.metadata.category === 'admin').map(a => `\`${a.name}\``).join(', ') || 'weird');
+                .addField(categories[0], ctx.client.interactionCommandClient.commands.filter(a => a.metadata.category === 'util').map(a => `\`${a.name}\``).join(', ') || 'weird')
+                .addField(categories[1], ctx.client.interactionCommandClient.commands.filter(a => a.metadata.category === 'fun').map(a => `\`${a.name}\``).join(', ') || 'weird')
+                .addField(categories[2], ctx.client.interactionCommandClient.commands.filter(a => a.metadata.category === 'mod').map(a => `\`${a.name}\``).join(', ') || 'weird')
+                .addField(categories[3], ctx.client.interactionCommandClient.commands.filter(a => a.metadata.category === 'bot').map(a => `\`${a.name}\``).join(', ') || 'weird')
+                .addField(categories[4], ctx.client.interactionCommandClient.commands.filter(a => a.metadata.category === 'admin').map(a => `\`${a.name}\``).join(', ') || 'weird');
 
             const BUTTONS =
                       [

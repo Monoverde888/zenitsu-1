@@ -19,7 +19,7 @@ export default function () {
             };
         }
 
-        async run(ctx : detritus.Slash.SlashContext, __args : Record<string, any>) {
+        async run(ctx : detritus.Interaction.InteractionContext, __args : Record<string, any>) {
 
             await ctx.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
 

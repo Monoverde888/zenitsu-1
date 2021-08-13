@@ -82,9 +82,13 @@ export default async function Load(options : {
 
     await commandClient.run();
 
-    const slashClient = new detritus.SlashCommandClient(shardClient, {
+    const slashClient = new detritus.InteractionCommandClient(shardClient, {
         cache,
         checkCommands: true,
+        ratelimits : [
+            {duration : 120000, limit : 40, type : "guild"},
+            {duration : 10000, limit : 5, type : "channel"},
+        ],
     });
     await addMultipleIn(slashClient, "./dist/commands-slash");
     await slashClient.run();
@@ -162,7 +166,7 @@ async function loadCommands(commandClient : CommandClient) {
 
 //EDITED FROM detritus-client
 async function addMultipleIn(
-    slashClient : detritus.SlashCommandClient,
+    slashClient : detritus.InteractionCommandClient,
     directory : string,
     options : { isAbsolute? : boolean; subdirectories? : boolean } = {}
 ) {
@@ -187,7 +191,7 @@ async function addMultipleIn(
         if (typeof imported === "function") {
             slashClient.add({_file : filepath, _class : imported, name : ""});
         }
-        else if (imported instanceof detritus.Slash.SlashCommand) {
+        else if (imported instanceof detritus.Interaction.InteractionCommand) {
             Object.defineProperty(imported, "_file", {value : filepath});
             slashClient.add(imported);
         }

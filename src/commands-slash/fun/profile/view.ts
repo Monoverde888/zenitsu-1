@@ -1,9 +1,9 @@
-import detritus                from "detritus-client";
-import {BaseCommandOption}     from "../../utils/classes/slash.js";
-import json                    from "../../utils/lang/langs.js";
-import getGuild                from "../../utils/functions/getguild.js";
-import getUser                 from "../../utils/functions/getuser.js";
-import fetch                   from "node-fetch";
+import detritus            from "detritus-client";
+import {BaseCommandOption} from "../../../utils/classes/slash.js";
+import json                from "../../../utils/lang/langs.js";
+import getGuild            from "../../../utils/functions/getguild.js";
+import getUser             from "../../../utils/functions/getuser.js";
+import fetch               from "node-fetch";
 import {Embed as MessageEmbed} from "detritus-client/lib/utils/embed.js";
 
 const {Constants : {ApplicationCommandOptionTypes}} = detritus;
@@ -32,13 +32,13 @@ export function view() {
         }
 
         async run(
-            ctx : detritus.Slash.SlashContext,
+            ctx : detritus.Interaction.InteractionContext,
             args : { user : detritus.Structures.MemberOrUser }
         ) {
 
             await ctx.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
 
-            const langjson = json[(await getGuild(ctx.guildId)).lang];
+            const langjson = ctx.guildId ? json[(await getGuild(ctx.guildId)).lang] : json.en;
             const user = (args.user ? args.user.bot ? ctx.user : args.user : ctx.user) || ctx.user;
             const data = await getUser(user.id)
 

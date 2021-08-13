@@ -36,7 +36,7 @@ export function onlythreads() {
         };
 
         async run(
-            ctx : detritus.Slash.SlashContext,
+            ctx : detritus.Interaction.InteractionContext,
             args : { value : boolean }
         ) {
 

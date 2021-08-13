@@ -39,7 +39,7 @@ export default function () {
         }
 
         async run(
-            ctx : detritus.Slash.SlashContext,
+            ctx : detritus.Interaction.InteractionContext,
             args : { lang : 'es' | 'en'; }
         ) {
 
@@ -84,5 +84,6 @@ export default function () {
             }
         }
     }
+
     return new Setlang();
 }

@@ -1,7 +1,7 @@
 import {Embed as MessageEmbed} from "detritus-client/lib/utils/embed.js";
-import detritus            from "detritus-client";
-import getGuild            from "../../../utils/functions/getguild.js";
-import {BaseCommandOption} from "../../../utils/classes/slash.js";
+import detritus                from "detritus-client";
+import getGuild                from "../../../utils/functions/getguild.js";
+import {BaseCommandOption}     from "../../../utils/classes/slash.js";
 
 const {Constants : {Permissions : Flags}} = detritus;
 
@@ -23,7 +23,7 @@ export function view() {
         }
 
         async run(
-            ctx : detritus.Slash.SlashContext,
+            ctx : detritus.Interaction.InteractionContext,
         ) {
 
             await ctx.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);

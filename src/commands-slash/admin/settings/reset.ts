@@ -1,9 +1,9 @@
 import {Embed as MessageEmbed} from "detritus-client/lib/utils/embed.js";
-import detritus            from "detritus-client";
-import {BaseCommandOption} from "../../../utils/classes/slash.js";
-import json                from "../../../utils/lang/langs.js";
-import guild, {GUILD}      from "../../../database/models/guild.js";
-import redis               from "../../../utils/managers/redis.js";
+import detritus                from "detritus-client";
+import {BaseCommandOption}     from "../../../utils/classes/slash.js";
+import json                    from "../../../utils/lang/langs.js";
+import guild, {GUILD}          from "../../../database/models/guild.js";
+import redis                   from "../../../utils/managers/redis.js";
 
 const {Constants : {ApplicationCommandOptionTypes}} = detritus;
 const {Constants : {Permissions : Flags}} = detritus;
@@ -20,7 +20,7 @@ export function reset() {
                         return {name : x, value : x}
                     }),
                     required : true,
-                    type: ApplicationCommandOptionTypes.STRING
+                    type : ApplicationCommandOptionTypes.STRING
                 }]
             });
             this.name = "reset";
@@ -41,7 +41,7 @@ export function reset() {
         }
 
         async run(
-            ctx : detritus.Slash.SlashContext,
+            ctx : detritus.Interaction.InteractionContext,
             args : { field : 'ignorechannels' | 'onlythreads' | 'muterole' | 'all' }
         ) {
 

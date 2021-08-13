@@ -1,10 +1,10 @@
 import detritus                from "detritus-client";
-import {BaseCommandOption}     from "../../utils/classes/slash.js";
-import json                    from '../../utils/lang/langs.js';
+import {BaseCommandOption}     from "../../../utils/classes/slash.js";
+import json                    from '../../../utils/lang/langs.js';
 import {Embed as MessageEmbed} from 'detritus-client/lib/utils/embed.js';
-import getGuild                from '../../utils/functions/getguild.js';
-import redis                   from '../../utils/managers/redis.js';
-import model                   from '../../database/models/user.js';
+import getGuild                from '../../../utils/functions/getguild.js';
+import redis                   from '../../../utils/managers/redis.js';
+import model                   from '../../../database/models/user.js';
 import pkgvalidURL             from 'image-url-validator';
 
 const validURL = pkgvalidURL.default;
@@ -48,13 +48,13 @@ export function edit() {
         }
 
         async run(
-            ctx : detritus.Slash.SlashContext,
+            ctx : detritus.Interaction.InteractionContext,
             args : { type : 'color' | 'description' | 'background'; data : string }
         ) {
 
             await ctx.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
 
-            const langjson = json[(await getGuild(ctx.guildId)).lang];
+            const langjson = ctx.guildId ? json[(await getGuild(ctx.guildId)).lang] : json.en;
 
             switch (args.type) {
 

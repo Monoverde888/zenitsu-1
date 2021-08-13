@@ -20,7 +20,7 @@ export default function () {
             };
         }
 
-        async run(ctx : detritus.Slash.SlashContext) {
+        async run(ctx : detritus.Interaction.InteractionContext) {
 
             const langjson = json[(await getGuild(ctx.guildId).then(x => x.lang))];
 

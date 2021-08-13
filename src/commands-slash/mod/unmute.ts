@@ -41,12 +41,12 @@ export default function () {
             this.permissionsClient = [Flags.MANAGE_ROLES].map(BigInt);
         }
 
-        onBeforeRun(ctx : detritus.Slash.SlashContext, args : { member : detritus.Structures.MemberOrUser }) {
+        onBeforeRun(ctx : detritus.Interaction.InteractionContext, args : { member : detritus.Structures.MemberOrUser }) {
             return args.member && (args.member instanceof detritus.Structures.Member) && (args.member.id != ctx.userId);
         };
 
         async run(
-            ctx : detritus.Slash.SlashContext,
+            ctx : detritus.Interaction.InteractionContext,
             args : { member : detritus.Structures.MemberOrUser; reason? : string }
         ) {
 

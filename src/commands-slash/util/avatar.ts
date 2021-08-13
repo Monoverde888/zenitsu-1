@@ -27,7 +27,7 @@ export function avatar() {
         }
 
         async run(
-            ctx : detritus.Slash.SlashContext,
+            ctx : detritus.Interaction.InteractionContext,
             args : { user : detritus.Structures.MemberOrUser }
         ) {
             const user   = args.user || ctx.user,

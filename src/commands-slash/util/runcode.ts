@@ -54,12 +54,12 @@ export async function runcode() {
         }
 
         async run(
-            ctx : detritus.Slash.SlashContext,
+            ctx : detritus.Interaction.InteractionContext,
             args : { code : string; language : string }
         ) {
             const langjson = ctx.guildId
                 ? json[await getGuild(ctx.guildId).then((x) => x.lang)]
-                : json["en"];
+                : json.en;
 
             // const pre_code = args.join(' ');
             //

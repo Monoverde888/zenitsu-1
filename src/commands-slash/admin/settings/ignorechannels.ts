@@ -35,7 +35,7 @@ export function ignorechannels() {
         };
 
         async run(
-            ctx : detritus.Slash.SlashContext,
+            ctx : detritus.Interaction.InteractionContext,
             args : { channel : detritus.Structures.Channel }
         ) {
 

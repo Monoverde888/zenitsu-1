@@ -49,13 +49,13 @@ export function DjsDocs() {
         }
 
         async run(
-            ctx : detritus.Slash.SlashContext,
+            ctx : detritus.Interaction.InteractionContext,
             args : { query : string; type? : string }
         ) {
             await ctx.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
             const langjson = ctx.guildId
                 ? json[await getGuild(ctx.guildId).then((x) => x.lang)]
-                : json["en"];
+                : json.en;
             const type = args.type ? args.type : "stable";
             const response = await fetch(
                 `https://djsdocs.sorta.moe/v2/embed?src=${encodeURIComponent(

@@ -1,10 +1,10 @@
-import {BaseSlash} from "../../utils/classes/slash.js";
+import {BaseSlash} from "../../../utils/classes/slash.js";
 import { view }    from './view.js';
 import { edit }    from './edit.js';
 
 export default function () {
 
-    class Tools extends BaseSlash {
+    class Profile extends BaseSlash {
         constructor() {
             super();
             this.name = "profile";
@@ -25,5 +25,5 @@ export default function () {
         }
     }
 
-    return new Tools();
+    return new Profile();
 }
