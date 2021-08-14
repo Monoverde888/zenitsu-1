@@ -18,6 +18,7 @@ export function bot() {
                         description: '.'
                     }]
             });
+            this.disableDm = true;
             this.name = "bot";
             this.description = ".";
             this.metadata = {

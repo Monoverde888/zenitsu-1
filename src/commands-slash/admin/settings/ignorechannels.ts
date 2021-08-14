@@ -32,6 +32,7 @@ export function ignorechannels() {
                 category : "admin",
             };
             this.permissions = [Flags.MANAGE_GUILD].map(BigInt);
+            this.permissionsClient = [];
         };
 
         async run(

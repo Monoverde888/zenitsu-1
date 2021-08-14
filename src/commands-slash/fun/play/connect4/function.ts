@@ -435,7 +435,7 @@ export async function FUNCTION(
     }, getTURNS(ctx.userId, usuario.id, ctx.client.userId));
     poto.createBoard();
 
-    const CHANNEL = (ctx.channel.type != 11) && ctx.guild.features.has("THREADS_ENABLED") && ctx.guild.me.can(Flags.MANAGE_THREADS) ? await ctx.channel.createThread({
+    const CHANNEL = (ctx.channel.type != 11) && ctx.guild.features.has("THREADS_ENABLED") && ctx.channel.can(Flags.MANAGE_THREADS) ? await ctx.channel.createThread({
         name : `Game of ${ctx.user.tag} vs ${usuario.tag}`,
         autoArchiveDuration : 1440,
         type : 11,

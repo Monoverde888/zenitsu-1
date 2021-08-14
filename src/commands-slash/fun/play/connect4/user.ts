@@ -18,6 +18,7 @@ export function user() {
             });
             this.name = "user";
             this.description = ".";
+            this.disableDm = true;
             this.metadata = {
                 usage(prefix : string) {
                     return [
