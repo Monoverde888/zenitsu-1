@@ -279,7 +279,7 @@ async function jugar(firstp : detritus.Structures.MemberOrUser, secondp : detrit
         await ctx.editOrRespond({
             content : `${resolveMarkdown(firstp, partida)} vs ${resolveMarkdown(secondp, partida)}\n\n${langjson.commands.tictactoe.start(partida.player == firstp.id ? firstp.username : secondp.username, emojis[partida.ficha])}`,
             components : generateButtons(partida),
-            embed : null,
+            embed : {color : 0xff0000, description : '\u200b'},
         });
         msg = await ctx.fetchResponse();
     }
@@ -289,7 +289,7 @@ async function jugar(firstp : detritus.Structures.MemberOrUser, secondp : detrit
         await ctx.editOrRespond({
             content : `${resolveMarkdown(firstp, partida)} vs ${resolveMarkdown(secondp, partida)}`,
             components : generateButtons(partida),
-            embed : null,
+            embed : {color : 0xff0000, description : '\u200b'},
         });
         msg = await ctx.fetchResponse();
     }

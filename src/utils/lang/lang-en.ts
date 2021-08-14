@@ -92,7 +92,7 @@ const obj = {
 
             "mention" : "<:cancel:804368628861763664> | Mention a server member to play.",
 
-            "footer" : "You can also play with Zenitsu putting /connect4 easy/medium/hard",
+            "footer" : "You can also play with Zenitsu putting /play connect4 bot easy/medium/hard",
 
             //"user_active": (user: string): string => user + " is active in another game.",
 

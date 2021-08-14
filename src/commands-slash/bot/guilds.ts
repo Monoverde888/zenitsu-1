@@ -22,7 +22,7 @@ export default function () {
 
         async run(ctx : detritus.Interaction.InteractionContext) {
 
-            const langjson = json[(await getGuild(ctx.guildId).then(x => x.lang))];
+            const langjson = ctx.guildId ? json[(await getGuild(ctx.guildId).then(x => x.lang))] : json.en;
 
             const embed = new MessageEmbed()
                 .setColor(Color)
