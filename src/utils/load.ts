@@ -84,7 +84,7 @@ export default async function Load(options : {
 
     const slashClient = new detritus.InteractionCommandClient(shardClient, {
         cache,
-        checkCommands: true,
+        checkCommands : true,
         ratelimits : [
             {duration : 120000, limit : 40, type : "guild"},
             {duration : 10000, limit : 5, type : "channel"},

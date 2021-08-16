@@ -10,7 +10,7 @@ export default async function () {
         constructor() {
             super();
             this.name = "util";
-            this.description = "Utils";
+            this.description = ".";
             this.options = [runCode, DjsDocs(), avatar()];
             this.metadata = {
                 usage(prefix : string) {

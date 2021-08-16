@@ -69,14 +69,15 @@ class TheGame extends EVENTS.EventEmitter {
             this.emit('winner');
             this.winner = this.player;
             this.draw = false;
-            return;
+            return played;
         }
-        if (this.map.every(x => x)) {
+        else if (this.map.every(x => x)) {
             this.emit('draw');
             this.draw = true;
-            return;
+            return played;
         }
         this.__lastTurn = this.turn;
+        return played;
     }
 
     canPlay(played : number) {
