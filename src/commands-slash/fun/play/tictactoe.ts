@@ -45,7 +45,7 @@ function AIplay(partida : TheGame) {
     return instance.play(partida.map);
 }
 
-function resolveMarkdown(user : detritus.Structures.User | detritus.Structures.Member, partida : TheGame) {
+function resolveMarkdown(user : detritus.Structures.MemberOrUser, partida : TheGame) {
 
     return partida.player == user.id ? `**${user.username}** ${emojis[partida.ficha]}` : user.username
 
