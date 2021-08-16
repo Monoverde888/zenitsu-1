@@ -35,8 +35,8 @@ const emojis = {
 
 function AIplay(partida : TheGame) {
     const instance = AI.createAI({
-        ai : 'X',
-        player : 'O',
+        ai : partida.ficha,
+        player : partida.ficha === 'X' ? 'O' : 'X',
         minResponseTime : 1000,
         maxResponseTime : 3000,
         empty : '',
