@@ -432,7 +432,7 @@ export async function FUNCTION(
     const poto = new Connect4AI<Player>({
         lengthArr : 6,
         columns : 7
-    }, getTURNS(ctx.userId, usuario.id, ctx.client.userId));
+    }, getTURNS(ctx.userId, usuario.id, ctx.client.userId), 10);
     poto.createBoard();
 
     const CHANNEL = ctx.channel && ctx.guild && (ctx.channel.type != 11) && ctx.guild.features.has("THREADS_ENABLED") && ctx.channel.can(Flags.MANAGE_THREADS) ? await ctx.channel.createThread({
