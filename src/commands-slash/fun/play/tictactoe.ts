@@ -286,7 +286,7 @@ async function jugar(firstp : detritus.Structures.MemberOrUser, secondp : detrit
 
     Collector.add({
             onStop(r) {
-                if (['channelDelete', 'messageDelete', 'guildDelete'].includes(r)) return partidas.delete(ctx.id);
+                if (['channelDelete', 'messageDelete', 'guildDelete', 'threadDelete'].includes(r)) return partidas.delete(ctx.id);
                 if ((r != 'NO')) {
                     return !partida || partida.finished ? null : partida.emit('end');
                 }
