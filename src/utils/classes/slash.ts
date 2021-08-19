@@ -14,9 +14,9 @@ export class BaseSlash<ParsedArgsFinished = detritus.Interaction.ParsedArgs> ext
 
     onError(ctx : detritus.Interaction.InteractionContext, args : Record<string, any>, error : any) {
         console.error(error);
-        return ctx.editOrRespond(
-            "```" + (error ? error.message || error : "ERROR") + "```"
-        );
+        // return ctx.editOrRespond(
+        //     "```" + (error ? error.message || error : "ERROR") + "```"
+        // );
     };
 
     onRunError(ctx : detritus.Interaction.InteractionContext, args : Record<string, any>, error : any) {
@@ -84,9 +84,9 @@ export class BaseCommandOption<ParsedArgsFinished = detritus.Interaction.ParsedA
 
     onError(ctx : detritus.Interaction.InteractionContext, args : Record<string, any>, error : any) {
         console.error(error);
-        return ctx.editOrRespond(
-            "```" + (error ? error.message || error : "ERROR") + "```"
-        );
+        // return ctx.editOrRespond(
+        //     "```" + (error ? error.message || error : "ERROR") + "```"
+        // );
     };
 
     onRunError(ctx : detritus.Interaction.InteractionContext, args : Record<string, any>, error : any) {

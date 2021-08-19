@@ -1,11 +1,10 @@
-import detritus                from 'detritus-client';
-import {Embed as MessageEmbed} from 'detritus-client/lib/utils/embed.js';
-import {Color}                 from '../../utils/const.js'
-import {BaseSlash}             from '../../utils/classes/slash.js';
-import json                    from '../../utils/lang/langs.js';
-import getGuild                from '../../utils/functions/getguild.js';
-import URLButton               from "../../utils/buttons/url.js";
-import Components              from "../../utils/buttons/component.js";
+import detritus    from 'detritus-client';
+import {Color}     from '../../utils/const.js'
+import {BaseSlash} from '../../utils/classes/slash.js';
+import json        from '../../utils/lang/langs.js';
+import getGuild    from '../../utils/functions/getguild.js';
+import URLButton   from "../../utils/buttons/url.js";
+import Components  from "../../utils/buttons/component.js";
 
 export default function () {
 
@@ -27,7 +26,7 @@ export default function () {
             const langjson = ctx.guildId ? json[(await getGuild(ctx.guildId).then(x => x.lang))] : json.en;
             const {categories} = langjson.commands.help;
 
-            const embedHelp = new MessageEmbed()
+            const embedHelp = new detritus.Utils.Embed()
                 .setColor(Color)
                 .setTimestamp()
                 .addField(categories[0], ctx.client.interactionCommandClient.commands.filter(a => a.metadata.category === 'util').map(a => `\`${a.name}\``).join(', ') || 'weird')
@@ -50,10 +49,10 @@ export default function () {
                               .setEmoji({name : '🐙', id : undefined})
                       ];
 
-            const componente = new Components(...BUTTONS)
-
-            return ctx.editOrRespond({
-                embed : embedHelp, components : [componente]
+            const componente = new Components(...BUTTONS);
+            return ctx.respond(detritus.Constants.InteractionCallbackTypes.CHANNEL_MESSAGE_WITH_SOURCE, {
+                embed : embedHelp, components : [componente],
+                flags : detritus.Constants.MessageFlags.EPHEMERAL
             });
 
         }
