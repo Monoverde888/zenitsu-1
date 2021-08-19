@@ -148,7 +148,7 @@ const obj = {
 
         },
         "tictactoe" : {
-            "curso" : "<:cancel:804368628861763664> | Hay una partida en curso en este servidor.",
+            "curso" : "<:cancel:804368628861763664> | Hay una partida en curso en este canal.",
             "wait_user" : (user : string) : string => "<a:waiting:804396292793040987> | " + user + ", tienes un minuto para responder...\n¿Quieres jugar?: responde `✅`\n¿No quieres jugar?: responde `❌`",
             "dont_answer" : (user : string) : string => "😔 | " + user + " no respondió...",
             "deny" : (user : string) : string => "😔 | " + user + " rechazó la invitación...",

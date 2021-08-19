@@ -21,7 +21,7 @@ export default function () {
         }
 
         async run(ctx : detritus.Interaction.InteractionContext) {
-            
+
             const langjson = ctx.guildId ? json[(await getGuild(ctx.guildId).then(x => x.lang))] : json.en;
             const link = 'https://discord.com/api/oauth2/authorize?client_id=721080193678311554&scope=bot+applications.commands&permissions=8';
             const invitacionLink = 'https://discord.gg/4Yzc7Hk';
@@ -30,7 +30,10 @@ export default function () {
                 .setDescription(langjson.commands.invite.message(link, invitacionLink))
                 .setColor(Color)
                 .setTimestamp()
-            return ctx.editOrRespond({embed : embed})
+            return ctx.respond(detritus.Constants.InteractionCallbackTypes.CHANNEL_MESSAGE_WITH_SOURCE, {
+                embed,
+                flags : detritus.Constants.MessageFlags.EPHEMERAL
+            });
 
         }
     }

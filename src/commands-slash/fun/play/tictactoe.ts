@@ -92,16 +92,15 @@ function generateButtons(partida : TheGame, forceDisable = false, empate = '') {
 
 const partidas : Set<string> = new Set();
 
-async function jugar(firstp : detritus.Structures.MemberOrUser, secondp : detritus.Structures.MemberOrUser, ctx : detritus.Interaction.InteractionContext, channel : detritus.Structures.Channel, langjson : typeof json.es | typeof json.en) {
+async function jugar(firstp : detritus.Structures.MemberOrUser, secondp : detritus.Structures.MemberOrUser, ctx : detritus.Interaction.InteractionContext, langjson : typeof json.es | typeof json.en) {
 
-    if (partidas.has(channel.guildId))
+    if (partidas.has(ctx.channelId))
         return ctx.editOrRespond({content : langjson.commands.tictactoe.curso, embeds : []});
 
     let msgRepuesta : detritus.Structures.Message;
-    let partida : TheGame
+    let partida = new TheGame([firstp.id, secondp.id], true);
 
     if (ctx.client.user.id != secondp.id) {
-        partida = new TheGame([firstp.id, secondp.id], true);
         msgRepuesta = await ctx.editOrRespond({
             embeds : [],
             content : langjson.commands.tictactoe.wait_user(secondp.mention),
@@ -118,11 +117,8 @@ async function jugar(firstp : detritus.Structures.MemberOrUser, secondp : detrit
             }]
         });
     }
-    else {
-        partida = new TheGame([firstp.id, secondp.id], true);
-    }
 
-    partidas.add(channel.guildId);
+    partidas.add(ctx.channelId);
 
     if (ctx.client.user.id != secondp.id) {
 
@@ -142,7 +138,7 @@ async function jugar(firstp : detritus.Structures.MemberOrUser, secondp : detrit
                 {
                     idle : 0, time : 60 * 1000, max : 0
                 }, {
-                    channelID : channel.id,
+                    channelID : ctx.channelId,
                     messageID : msgRepuesta.id,
                     guildID : msgRepuesta.guildId
                 })
@@ -163,12 +159,12 @@ async function jugar(firstp : detritus.Structures.MemberOrUser, secondp : detrit
                         .setDisabled(true)
                 ]
             })
-            return partidas.delete(channel.guildId)
+            return partidas.delete(ctx.channelId)
         }
 
         if (respuesta == 'tictactoe_no') {
             await ctx.editOrRespond({content : langjson.commands.tictactoe.deny(secondp.username), embeds : [],})
-            return partidas.delete(channel.guildId)
+            return partidas.delete(ctx.channelId)
         }
     }
 
@@ -177,7 +173,7 @@ async function jugar(firstp : detritus.Structures.MemberOrUser, secondp : detrit
 
     partida.on('winner', async () => {
         const jugador = partida.player;
-        partidas.delete(channel.guildId);
+        partidas.delete(ctx.channelId);
         const embed = new MessageEmbed()
             .setColor(0xff0000)
             .setDescription(langjson.commands.tictactoe.win(users.get(jugador)))
@@ -206,23 +202,18 @@ async function jugar(firstp : detritus.Structures.MemberOrUser, secondp : detrit
         Collector.stop('NO', col);
 
         await ctx.editOrRespond({embed, components : botones});
-        users.delete(firstp.id);
-        users.delete(secondp.id);
 
     });
 
     partida.on('draw', async () => {
         const jugadores = partida.players;
-        partidas.delete(channel.guildId);
+        partidas.delete(ctx.channelId);
         const embed = new MessageEmbed()
             .setColor(0xff0000)
             .setDescription(langjson.commands.tictactoe.draw(users.get(jugadores[0]), users.get(jugadores[1])))
 
         const col = Collector._listeners.find(item => item.messageID == msg.id);
         Collector.stop('NO', col);
-
-        users.delete(firstp.id)
-        users.delete(secondp.id)
 
         const empate = await ctx.editOrRespond({
             embed,
@@ -245,7 +236,7 @@ async function jugar(firstp : detritus.Structures.MemberOrUser, secondp : detrit
                 {
                     idle : 0, time : 30 * 1000, max : 0
                 }, {
-                    channelID : channel.id,
+                    channelID : ctx.channelId,
                     messageID : empate.id,
                     guildID : empate.guildId
                 })
@@ -254,13 +245,13 @@ async function jugar(firstp : detritus.Structures.MemberOrUser, secondp : detrit
 
         if (res) {
             const temp = [res.member.id != firstp.id ? secondp : firstp, res.member.id == firstp.id ? secondp : firstp];
-            return jugar(temp[0], temp[1], ctx, channel, langjson);
+            return jugar(temp[0], temp[1], ctx, langjson);
         }
 
     });
 
     partida.on('end', async () => {
-        partidas.delete(channel.guildId)
+        partidas.delete(ctx.channelId)
         const embed = new MessageEmbed()
             .setColor(0xff0000)
             .setDescription(langjson.commands.tictactoe.game_over);
@@ -268,9 +259,8 @@ async function jugar(firstp : detritus.Structures.MemberOrUser, secondp : detrit
         const col = Collector._listeners.find(item => item.messageID == msg.id);
         Collector.stop('NO', col);
 
-        await ctx.editOrRespond({embed, components : generateButtons(partida, true)})
-        users.delete(firstp.id)
-        users.delete(secondp.id)
+        await ctx.editOrRespond({embed, components : generateButtons(partida, true)});
+
     });
 
     let msg : detritus.Structures.Message;
@@ -296,7 +286,7 @@ async function jugar(firstp : detritus.Structures.MemberOrUser, secondp : detrit
 
     Collector.add({
             onStop(r) {
-                if (['channelDelete', 'messageDelete', 'guildDelete'].includes(r)) return partidas.delete(ctx.guildId);
+                if (['channelDelete', 'messageDelete', 'guildDelete'].includes(r)) return partidas.delete(ctx.id);
                 if ((r != 'NO')) {
                     return !partida || partida.finished ? null : partida.emit('end');
                 }
@@ -364,7 +354,6 @@ export function tictactoe() {
             });
             this.name = "tictactoe";
             this.description = ".";
-            this.disableDm = true;
             this.metadata = {
                 usage(prefix : string) {
                     return [
@@ -383,7 +372,7 @@ export function tictactoe() {
 
             await ctx.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
 
-            const langjson = await getGuild(ctx.guildId).then(x => json[x.lang]);
+            const langjson = ctx.guildId ? await getGuild(ctx.guildId).then(x => json[x.lang]) : json.en;
 
             const usuario = args.user;
 
@@ -395,7 +384,7 @@ export function tictactoe() {
                     return this.onCancelRun(ctx, args);
             }
 
-            return jugar(ctx.member, usuario, ctx, ctx.channel, langjson);
+            return jugar(ctx.user, usuario, ctx, langjson);
 
         }
     }

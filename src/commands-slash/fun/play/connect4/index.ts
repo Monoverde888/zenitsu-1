@@ -9,7 +9,6 @@ export function C4() {
                 options : [user(), bot()]
             });
             this.name = "connect4";
-            this.disableDm = true;
             this.description = ".";
             this.metadata = {
                 usage(prefix : string) {

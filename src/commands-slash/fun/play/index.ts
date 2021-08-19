@@ -9,7 +9,6 @@ export default function () {
             super();
             this.name = "play";
             this.description = ".";
-            this.disableDm = true;
             this.options = [tictactoe(), C4()];
             this.metadata = {
                 usage(prefix : string) {

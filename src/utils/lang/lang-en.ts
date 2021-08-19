@@ -144,7 +144,7 @@ const obj = {
             ]
         },
         "tictactoe" : {
-            "curso" : "<:cancel:804368628861763664> | There is an ongoing game on this server.",
+            "curso" : "<:cancel:804368628861763664> | There is an ongoing game on this channel.",
             "wait_user" : (user : string) : string => "<a:waiting:804396292793040987> | " + user + ", you have 1 minute to answer...\nDo you want to play?: answer `✅`\nYou dont want?: answer `❌`",
             "dont_answer" : (user : string) : string => "😔 | " + user + " did not answer...",
             "deny" : (user : string) : string => "😔 | " + user + " rejected the invitation...",

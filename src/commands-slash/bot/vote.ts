@@ -27,7 +27,10 @@ export default function () {
                 .setFooter(ctx.user.username, ctx.user.avatarUrl)
                 .setTimestamp();
 
-            return ctx.editOrRespond({embed : embed})
+            return ctx.respond(detritus.Constants.InteractionCallbackTypes.CHANNEL_MESSAGE_WITH_SOURCE, {
+                embed,
+                flags : detritus.Constants.MessageFlags.EPHEMERAL
+            });
         }
     }
 

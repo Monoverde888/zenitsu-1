@@ -18,7 +18,6 @@ export function user() {
             });
             this.name = "user";
             this.description = ".";
-            this.disableDm = true;
             this.metadata = {
                 usage(prefix : string) {
                     return [
@@ -29,9 +28,8 @@ export function user() {
             };
         }
 
-        run
-        (ctx : detritus.Interaction.InteractionContext,
-         args : { difficulty : null; user : detritus.Structures.MemberOrUser }) {
+        run(ctx : detritus.Interaction.InteractionContext,
+            args : { difficulty : null; user : detritus.Structures.MemberOrUser }) {
             return FUNCTION(ctx, args)
         }
 

@@ -403,10 +403,10 @@ export async function FUNCTION(
     await ctx.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
     const ArrayOfArrayOfNumbers : [number, number, string][] = [];
     const DATAPROFILE = await getUser(ctx.user.id);
-    const DATAGUILD = await getGuild(ctx.guildId)
+    const DATAGUILD = ctx.guildId ? await getGuild(ctx.guildId) : {lang : 'en' as 'en' | 'es', onlythreads : false}
     const langjson = json[DATAGUILD.lang];
 
-    if (games.get(ctx.channel.id)) {
+    if (games.get(ctx.channelId)) {
         const embed = new MessageEmbed()
             .setColor(0xff0000)
             .setDescription(langjson.commands.connect4.curso)
@@ -435,12 +435,12 @@ export async function FUNCTION(
     }, getTURNS(ctx.userId, usuario.id, ctx.client.userId));
     poto.createBoard();
 
-    const CHANNEL = (ctx.channel.type != 11) && ctx.guild.features.has("THREADS_ENABLED") && ctx.channel.can(Flags.MANAGE_THREADS) ? await ctx.channel.createThread({
+    const CHANNEL = ctx.channel && ctx.guild && (ctx.channel.type != 11) && ctx.guild.features.has("THREADS_ENABLED") && ctx.channel.can(Flags.MANAGE_THREADS) ? await ctx.channel.createThread({
         name : `Game of ${ctx.user.tag} vs ${usuario.tag}`,
         autoArchiveDuration : 1440,
         type : 11,
         reason : `Game of ${ctx.user.tag} vs ${usuario.tag}`
-    }) : ctx.channel;
+    }) : {id : ctx.channelId};
 
     if (CHANNEL.type != 11 && DATAGUILD.onlythreads) {
         const embed = new MessageEmbed()

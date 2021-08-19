@@ -31,8 +31,11 @@ export default function () {
                 .setAuthor(`${ctx.shardCount} shards`)
                 .setFooter(`Shard #${ctx.shardId}`);
 
-            return ctx.editOrRespond({embed});
-
+            return ctx.respond(detritus.Constants.InteractionCallbackTypes.CHANNEL_MESSAGE_WITH_SOURCE, {
+                embed,
+                flags : detritus.Constants.MessageFlags.EPHEMERAL
+            });
+            
         }
     }
 
