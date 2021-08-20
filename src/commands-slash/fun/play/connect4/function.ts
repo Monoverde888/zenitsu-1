@@ -3,7 +3,7 @@ import {Embed as MessageEmbed} from 'detritus-client/lib/utils/embed.js';
 import redis                   from '../../../../utils/managers/redis.js';
 import c4                      from '@lil_marcrock22/connect4-ai';
 import {IDS}                   from '../../../../utils/const.js';
-import Collector               from '../../../../utils/collectors/button.js';
+import Collector, {Fixed}      from '../../../../utils/collectors/button.js';
 import getUser                 from '../../../../utils/functions/getuser.js';
 import json                    from '../../../../utils/lang/langs.js';
 import getGuild                from '../../../../utils/functions/getguild.js';
@@ -126,7 +126,7 @@ function getTURNS(author : string, mention : string, clientID : string) : [Playe
 }
 
 function awaitAnswer(MESSAGEID : string,
-                     sendCoso : (embed : MessageEmbed, value : Buffer) => Promise<detritus.Structures.Message>,
+                     sendCoso : (embed : MessageEmbed, value : Buffer, interaction? : Fixed) => Promise<detritus.Structures.Message>,
                      ctx : detritus.Interaction.InteractionContext,
                      findTurn : (user : string, CHANNEL : string) => Player,
                      ArrayOfArrayOfNumbers : [number, number, string][],
@@ -159,8 +159,9 @@ function awaitAnswer(MESSAGEID : string,
                     .setDescription(langjson.commands.connect4.win(interaction.user.username))
                     .setColor(0xff0000)
                     .setImage('attachment://party.gif');
+                await interaction.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
                 const buf = await displayConnectFourBoard(games.get(CHANNEL.id))
-                await sendCoso(embed, buf);
+                await sendCoso(embed, buf, interaction);
 
                 if (usuario.id == ctx.client.user.id) {
 
@@ -213,7 +214,8 @@ function awaitAnswer(MESSAGEID : string,
                     .setColor(0xff0000)
                     .setImage('attachment://party.gif');
                 const buf = await displayConnectFourBoard(games.get(CHANNEL.id))
-                await sendCoso(embed, buf);
+                await interaction.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
+                await sendCoso(embed, buf, interaction);
 
                 if (usuario.id == ctx.client.user.id) {
                     const da = await model.findOne({id : ctx.user.id}).lean();
@@ -236,8 +238,9 @@ function awaitAnswer(MESSAGEID : string,
                         .setDescription(langjson.commands.connect4.win(usuario.username))
                         .setColor(0xff0000)
                         .setImage('attachment://party.gif');
+                    await interaction.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
                     const buf = await displayConnectFourBoard(games.get(CHANNEL.id))
-                    await sendCoso(embed, buf);
+                    await sendCoso(embed, buf, interaction);
 
                     const da = await model.findOne({id : ctx.user.id}).lean();
                     const res = await modificar(da, args.difficulty, 'perdidas', ctx.user.username);
@@ -251,8 +254,9 @@ function awaitAnswer(MESSAGEID : string,
                         .setDescription(langjson.commands.connect4.draw(usuario.username, ctx.user.username))
                         .setColor(0xff0000)
                         .setImage('attachment://party.gif');
+                    await interaction.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
                     const buf = await displayConnectFourBoard(games.get(CHANNEL.id))
-                    await sendCoso(embed, buf);
+                    await sendCoso(embed, buf, interaction);
 
                     const da = await model.findOne({id : ctx.user.id}).lean();
                     const res = await modificar(da, args.difficulty, 'empates', ctx.user.username);
@@ -266,9 +270,10 @@ function awaitAnswer(MESSAGEID : string,
                     .setFooter(args.difficulty)
                     .setColor(0xff0000)
                     .setImage('attachment://party.gif');
+                await interaction.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
                 const buf = await displayConnectFourBoard(games.get(CHANNEL.id))
 
-                const {id} = await ctx.client.rest.createMessage(CHANNEL.id, {
+                const {id} = await interaction.editOrRespond({
                     file : {
                         value : buf,
                         filename : 'party.gif'
@@ -276,6 +281,7 @@ function awaitAnswer(MESSAGEID : string,
                     embed,
                     components : generateButtons(games.get(CHANNEL.id), langjson.commands.connect4.surrender, false)
                 })
+
                 return easyAnswer(id);
 
             }
@@ -289,9 +295,10 @@ function awaitAnswer(MESSAGEID : string,
                     .setFooter(args.difficulty)
                     .setColor(0xff0000)
                     .setImage('attachment://party.gif');
+                await interaction.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
                 const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
 
-                const {id} = await ctx.client.rest.createMessage(CHANNEL.id, {
+                const {id} = await interaction.editOrRespond({
                     file : {
                         value : buf,
                         filename : 'party.gif'
@@ -403,7 +410,10 @@ export async function FUNCTION(
     await ctx.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
     const ArrayOfArrayOfNumbers : [number, number, string][] = [];
     const DATAPROFILE = await getUser(ctx.user.id);
-    const DATAGUILD = ctx.guildId ? await getGuild(ctx.guildId) : {lang : 'en' as 'en' | 'es', onlythreads : false}
+    const DATAGUILD : { lang : 'es' | 'en'; onlythreads : boolean } = ctx.guildId ? await getGuild(ctx.guildId) : {
+        lang : 'en',
+        onlythreads : false
+    }
     const langjson = json[DATAGUILD.lang];
 
     if (games.get(ctx.channelId)) {
@@ -435,14 +445,14 @@ export async function FUNCTION(
     }, getTURNS(ctx.userId, usuario.id, ctx.client.userId), 10);
     poto.createBoard();
 
-    const CHANNEL = ctx.channel && ctx.guild && (ctx.channel.type != 11) && ctx.guild.features.has("THREADS_ENABLED") && ctx.channel.can(Flags.MANAGE_THREADS) ? await ctx.channel.createThread({
+    const CHANNEL : { id : string; type? : number } = ctx.channel && ctx.guild && !ctx.channel.isGuildThread && ctx.guild.features.has("THREADS_ENABLED") && ctx.channel.can(Flags.MANAGE_THREADS) ? await ctx.channel.createThread({
         name : `Game of ${ctx.user.tag} vs ${usuario.tag}`,
         autoArchiveDuration : 1440,
         type : 11,
         reason : `Game of ${ctx.user.tag} vs ${usuario.tag}`
     }) : {id : ctx.channelId};
 
-    if (CHANNEL.type != 11 && DATAGUILD.onlythreads) {
+    if (CHANNEL.type != 11 && DATAGUILD.onlythreads && !ctx.channel?.isGuildThread) {
         const embed = new MessageEmbed()
             .setColor(0xff0000)
             .setDescription(langjson.commands.connect4.enable_threads('/'))
@@ -509,7 +519,7 @@ export async function FUNCTION(
         components : generateButtons(games.get(CHANNEL.id), langjson.commands.connect4.surrender, false)
     });
 
-    async function sendCoso(embed : MessageEmbed, value : Buffer) {
+    async function sendCoso(embed : MessageEmbed, value : Buffer, interaction? : Fixed) {
 
         if (ArrayOfArrayOfNumbers.length) {
 
@@ -528,7 +538,11 @@ export async function FUNCTION(
 
         }
 
-        return ctx.client.rest.createMessage(CHANNEL.id, {
+        return interaction ? interaction.editOrRespond({
+            embed,
+            file : {filename : 'party.gif', value},
+            components : generateButtons(games.get(CHANNEL.id), langjson.commands.connect4.surrender, true)
+        }) : ctx.client.rest.createMessage(CHANNEL.id, {
             embed,
             file : {filename : 'party.gif', value},
             components : generateButtons(games.get(CHANNEL.id), langjson.commands.connect4.surrender, true)

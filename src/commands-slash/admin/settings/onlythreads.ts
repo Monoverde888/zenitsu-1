@@ -45,7 +45,7 @@ export function onlythreads() {
 
             const data = await getGuild(ctx.guildId);
             const langjson = json[data.lang];
-            const temp = await guild.findOneAndUpdate({id : ctx.guildId}, {onlythreads : !args.value}, {new : true}).lean();
+            const temp = await guild.findOneAndUpdate({id : ctx.guildId}, {onlythreads : args.value}, {new : true}).lean();
             await redis.set(ctx.guildId, JSON.stringify(temp));
             return ctx.editOrRespond(temp.onlythreads ? langjson.commands.settings.onlythreads.true : langjson.commands.settings.onlythreads.false);
 
