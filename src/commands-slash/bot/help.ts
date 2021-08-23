@@ -43,7 +43,8 @@ export default function () {
                               .setEmoji({name : '🤖', id : undefined}),
                           new URLButton()
                               .setLabel(langjson.commands.help.invite)
-                              .setURL('https://discord.com/api/oauth2/authorize?client_id=721080193678311554&scope=bot+applications.commands&permissions=8'),
+                              .setURL('https://discord.com/api/oauth2/authorize?client_id=721080193678311554&scope=bot+applications.commands&permissions=8')
+                              .setEmoji({name : '🤖', id : undefined}),
                           new URLButton()
                               .setLabel('GitHub')
                               .setURL('https://github.com/marcrock22/zenitsu')
