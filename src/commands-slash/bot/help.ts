@@ -39,14 +39,19 @@ export default function () {
                       [
                           new URLButton()
                               .setLabel(langjson.commands.help.support)
-                              .setURL('https://discord.gg/4Yzc7Hk'),
+                              .setURL('https://discord.gg/4Yzc7Hk')
+                              .setEmoji({name : '🤖', id : undefined}),
                           new URLButton()
                               .setLabel(langjson.commands.help.invite)
                               .setURL('https://discord.com/api/oauth2/authorize?client_id=721080193678311554&scope=bot+applications.commands&permissions=8'),
                           new URLButton()
                               .setLabel('GitHub')
                               .setURL('https://github.com/marcrock22/zenitsu')
-                              .setEmoji({name : '🐙', id : undefined})
+                              .setEmoji({name : '🐙', id : undefined}),
+                          new URLButton()
+                              .setURL(`https://zenitsu.eastus.cloudapp.azure.com/runcode`)
+                              .setLabel("Run code")
+                              .setEmoji({name : '💻', id : undefined}),
                       ];
 
             const componente = new Components(...BUTTONS);
