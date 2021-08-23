@@ -15,14 +15,14 @@ export function ignorechannels() {
             super({
                 options : [{
                     name : 'channel',
-                    description : '.',
+                    description : 'Channel to ignore or remove',
                     required : true,
                     type : ApplicationCommandOptionTypes.CHANNEL
                 }]
             });
             this.name = "ignorechannels";
             this.disableDm = true;
-            this.description = ".";
+            this.description = "Add or remove channels to ignore";
             this.metadata = {
                 usage(prefix : string) {
                     return [

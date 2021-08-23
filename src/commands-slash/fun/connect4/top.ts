@@ -16,7 +16,7 @@ export function top() {
                         name : "difficulty",
                         type : ApplicationCommandOptionTypes.STRING,
                         required : true,
-                        description : ".",
+                        description : "Difficulty to look for",
                         choices : ['easy', 'medium', 'hard'].map(item => {
                             return {name : item, value : item}
                         })
@@ -24,7 +24,7 @@ export function top() {
                 ],
             });
             this.name = "top";
-            this.description = ".";
+            this.description = "List of best players";
             this.metadata = {
                 usage(prefix : string) {
                     return [`${prefix}connect4 top easy/medium/hard`];

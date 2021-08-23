@@ -19,19 +19,19 @@ export default function () {
                         name : "member",
                         type : ApplicationCommandOptionTypes.USER,
                         required : true,
-                        description : ".",
+                        description : "Member to ban",
                     },
                     {
                         name : "reason",
                         type : ApplicationCommandOptionTypes.STRING,
                         required : false,
-                        description : ".",
+                        description : "Reason",
                     },
                     {
                         name : "deletedays",
                         type : ApplicationCommandOptionTypes.STRING,
                         required : false,
-                        description : ".",
+                        description : "Delete messages days ago",
                         choices : [0, 1, 2, 3, 4, 5, 6, 7].map(x => {
                             return {name : x.toString(), value : x.toString()}
                         })
@@ -40,7 +40,7 @@ export default function () {
             });
             this.disableDm = true;
             this.name = "ban";
-            this.description = ".";
+            this.description = "Ban a member";
             this.metadata = {
                 usage(prefix : string) {
                     return [`${prefix}ban [Member]`];

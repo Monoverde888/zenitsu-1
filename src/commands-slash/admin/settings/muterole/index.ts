@@ -12,7 +12,7 @@ export function muterole() {
                 options : [init(), refresh()]
             });
             this.name = "muterole";
-            this.description = ".";
+            this.description = "Configure mute role";
             this.permissions = [Flags.MANAGE_GUILD].map(BigInt);
             this.permissionsClient = [Flags.MANAGE_GUILD, Flags.MANAGE_ROLES, Flags.MANAGE_CHANNELS].map(BigInt);
             this.metadata = {

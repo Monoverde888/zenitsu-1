@@ -11,7 +11,7 @@ export default function () {
         constructor() {
             super();
             this.name = "settings";
-            this.description = ".";
+            this.description = "Configurations";
             this.metadata = {
                 usage(prefix : string) {
                     return [

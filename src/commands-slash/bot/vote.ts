@@ -9,7 +9,7 @@ export default function () {
         constructor() {
             super();
             this.name = 'vote'
-            this.description = '.'
+            this.description = 'Vote for Zenitsu.'
             this.metadata = {
                 usage(prefix : string) {
                     return [`${prefix}vote`];

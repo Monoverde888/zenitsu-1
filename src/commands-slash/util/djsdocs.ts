@@ -24,13 +24,13 @@ export function DjsDocs() {
                     {
                         name : "query",
                         required : true,
-                        description : ".",
+                        description : "To search",
                         type : ApplicationCommandOptionTypes.STRING,
                     },
                     {
                         name : "type",
                         required : false,
-                        description : ".",
+                        description : "Type of documentation",
                         type : ApplicationCommandOptionTypes.STRING,
                         choices : options.map((x) => {
                             return {name : x, value : x};
@@ -39,7 +39,7 @@ export function DjsDocs() {
                 ],
             });
             this.name = "djsdocs";
-            this.description = ".";
+            this.description = "Search the desired documentation";
             this.metadata = {
                 usage(prefix : string) {
                     return options.map((x) => `${prefix}djsdocs query [${x}]`);

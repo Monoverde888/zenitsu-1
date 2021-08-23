@@ -12,7 +12,7 @@ export default function () {
         constructor() {
             super();
             this.name = 'help'
-            this.description = '.'
+            this.description = 'List of commands'
             this.metadata = {
                 usage(prefix : string) {
                     return [`${prefix}help`];

@@ -9,7 +9,7 @@ export default function () {
         constructor() {
             super();
             this.name = "connect4";
-            this.description = ".";
+            this.description = "Things related to connect4";
             this.options = [stats(), view(), top()];
             this.metadata = {
                 usage(prefix : string) {

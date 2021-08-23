@@ -17,12 +17,12 @@ export function view() {
                         name : "id",
                         type : ApplicationCommandOptionTypes.STRING,
                         required : true,
-                        description : ".",
+                        description : "Game ID",
                     },
                 ],
             });
             this.name = "view";
-            this.description = ".";
+            this.description = "View a connect4 game";
             this.metadata = {
                 usage(prefix : string) {
                     return [`${prefix}connect4 view ID`];

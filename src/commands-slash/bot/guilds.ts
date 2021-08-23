@@ -11,7 +11,7 @@ export default function () {
         constructor() {
             super();
             this.name = 'guilds'
-            this.description = '.'
+            this.description = 'Number of servers'
             this.metadata = {
                 usage(prefix : string) {
                     return [`${prefix}guilds`];

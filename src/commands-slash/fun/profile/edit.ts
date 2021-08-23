@@ -19,7 +19,7 @@ export function edit() {
                         name : "type",
                         type : ApplicationCommandOptionTypes.STRING,
                         required : true,
-                        description : ".",
+                        description : "Value to edit",
                         choices : ['color', 'description', 'background'].map(x => {
                             return {name : x, value : x}
                         })
@@ -28,12 +28,12 @@ export function edit() {
                         name : "data",
                         type : ApplicationCommandOptionTypes.STRING,
                         required : true,
-                        description : ".",
+                        description : "Value",
                     },
                 ],
             });
             this.name = "edit";
-            this.description = ".";
+            this.description = "Edit your profile";
             this.metadata = {
                 usage(prefix : string) {
                     return [

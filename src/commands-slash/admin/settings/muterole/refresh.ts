@@ -17,7 +17,7 @@ export function refresh() {
         constructor() {
             super();
             this.name = "refresh";
-            this.description = ".";
+            this.description = "Refresh configured role";
             this.metadata = {
                 usage(prefix : string) {
                     return [prefix + "settings muterole refresh"];

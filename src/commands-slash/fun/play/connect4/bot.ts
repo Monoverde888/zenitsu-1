@@ -15,11 +15,11 @@ export function bot() {
                         choices : ['easy', 'medium', 'hard'].map(x => {
                             return {name : x, value : x}
                         }),
-                        description: '.'
+                        description: 'Difficulty'
                     }]
             });
             this.name = "bot";
-            this.description = ".";
+            this.description = "Play against Zenitsu.";
             this.metadata = {
                 usage(prefix : string) {
                     return [

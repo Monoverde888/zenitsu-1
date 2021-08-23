@@ -12,12 +12,12 @@ export function user() {
                         name : 'user',
                         required : true,
                         type : detritus.Constants.ApplicationCommandOptionTypes.USER,
-                        description : '.'
+                        description : 'User'
                     }
                 ]
             });
             this.name = "user";
-            this.description = ".";
+            this.description = "Plays against a user";
             this.metadata = {
                 usage(prefix : string) {
                     return [

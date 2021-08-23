@@ -18,19 +18,19 @@ export default function () {
                         name : "member",
                         type : ApplicationCommandOptionTypes.USER,
                         required : true,
-                        description : ".",
+                        description : "Member to mute",
                     },
                     {
                         name : "reason",
                         type : ApplicationCommandOptionTypes.STRING,
                         required : false,
-                        description : ".",
+                        description : "Reason",
                     },
                 ],
             });
             this.disableDm = true;
             this.name = "mute";
-            this.description = ".";
+            this.description = "Mute a member";
             this.metadata = {
                 usage(prefix : string) {
                     return [`${prefix}mute [Member]`];

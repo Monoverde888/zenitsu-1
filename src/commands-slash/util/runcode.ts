@@ -29,19 +29,19 @@ export async function runcode() {
                     {
                         name : "code",
                         required : true,
-                        description : ".",
+                        description : "Code to run",
                         type : ApplicationCommandOptionTypes.STRING,
                     },
                     {
                         name : "language",
                         required : true,
-                        description : ".",
+                        description : "Language to use",
                         type : ApplicationCommandOptionTypes.STRING,
                     },
                 ],
             });
             this.name = "runcode";
-            this.description = ".";
+            this.description = "Run code in a programming language";
             this.metadata = {
                 usage(prefix : string) {
                     return [
@@ -74,7 +74,11 @@ export async function runcode() {
             // final_lang = res_regex[0].slice(3).split('\n')[0].trim().toLowerCase();
 
             if (!avaliables.includes(args.language))
-                return ctx.editOrRespond(langjson.commands.runcode.invalid_lang);
+                return ctx.editOrRespond({
+                    content : langjson.commands.runcode.invalid_lang, components : [new Component(
+                        new URLButton().setURL(`https://zenitsu.eastus.cloudapp.azure.com/runcode`).setLabel("Run code")
+                    ),]
+                });
 
             await ctx.respond(
                 detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE
@@ -102,13 +106,28 @@ export async function runcode() {
                         ).slice(0, 1800)}\`\`\``,
                         components : [
                             new Component(
-                                new URLButton().setURL(`https://github.com/engineer-man/piston`).setLabel("Piston GitHub")
+                                new URLButton().setURL(`https://github.com/engineer-man/piston`).setLabel("Piston GitHub"),
+                                new URLButton().setURL(`https://zenitsu.eastus.cloudapp.azure.com/runcode`).setLabel("Run code")
                             ),
                         ],
                     });
-                else return ctx.editOrRespond(langjson.commands.runcode.no_output);
+                else return ctx.editOrRespond({
+                    content : langjson.commands.runcode.no_output, components : [
+                        new Component(
+                            new URLButton().setURL(`https://github.com/engineer-man/piston`).setLabel("Piston GitHub"),
+                            new URLButton().setURL(`https://zenitsu.eastus.cloudapp.azure.com/runcode`).setLabel("Run code")
+                        ),
+                    ],
+                });
             }
-            return ctx.editOrRespond(res.message || langjson.commands.runcode.error);
+            return ctx.editOrRespond({
+                content :(res.message || langjson.commands.runcode.error), components : [
+                    new Component(
+                        new URLButton().setURL(`https://github.com/engineer-man/piston`).setLabel("Piston GitHub"),
+                        new URLButton().setURL(`https://zenitsu.eastus.cloudapp.azure.com/runcode`).setLabel("Run code")
+                    ),
+                ],
+            });
         }
     }
 

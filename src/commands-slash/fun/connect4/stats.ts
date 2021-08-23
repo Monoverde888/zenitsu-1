@@ -16,12 +16,12 @@ export function stats() {
                         name : "user",
                         type : ApplicationCommandOptionTypes.USER,
                         required : false,
-                        description : ".",
+                        description : "User",
                     },
                 ],
             });
             this.name = "stats";
-            this.description = ".";
+            this.description = "Statistics";
             this.metadata = {
                 usage(prefix : string) {
                     return [`${prefix}connect4 stats User`];

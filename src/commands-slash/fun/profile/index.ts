@@ -8,7 +8,7 @@ export default function () {
         constructor() {
             super();
             this.name = "profile";
-            this.description = ".";
+            this.description = "Manage profiles";
             this.options = [view(), edit()];
             this.metadata = {
                 usage(prefix : string) {

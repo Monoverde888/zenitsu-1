@@ -18,6 +18,7 @@
     "@types/mongoose": "^5.11.97",
     "@types/redis": "^2.8.29",
     "detritus-client": "^0.16.1",
+    "dotenv": "^10.0.0",
     "image-url-validator": "^1.0.4",
     "kufa": "^1.5.8",
     "mongoose": "^5.12.15",

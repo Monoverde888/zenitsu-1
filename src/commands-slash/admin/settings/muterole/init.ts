@@ -20,13 +20,13 @@ export function init() {
                     {
                         name : "muterole",
                         required : true,
-                        description : ".",
+                        description : "Role to configure",
                         type : ApplicationCommandOptionTypes.ROLE,
                     }
                 ],
             });
             this.name = "init";
-            this.description = ".";
+            this.description = "Start Configuration";
             this.metadata = {
                 usage(prefix : string) {
                     return [prefix + "settings muterole init [role]"];

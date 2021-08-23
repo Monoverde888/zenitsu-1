@@ -15,7 +15,7 @@ export function reset() {
             super({
                 options : [{
                     name : 'field',
-                    description : '.',
+                    description : 'Configuration to restart',
                     choices : ['ignorechannels', 'onlythreads', 'muterole', 'all'].map(x => {
                         return {name : x, value : x}
                     }),
@@ -25,7 +25,7 @@ export function reset() {
             });
             this.name = "reset";
             this.disableDm = true;
-            this.description = ".";
+            this.description = "Restart configuration";
             this.metadata = {
                 usage(prefix : string) {
                     return [

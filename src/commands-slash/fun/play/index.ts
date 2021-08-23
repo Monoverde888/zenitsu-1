@@ -8,7 +8,7 @@ export default function () {
         constructor() {
             super();
             this.name = "play";
-            this.description = ".";
+            this.description = "Play games";
             this.options = [tictactoe(), C4()];
             this.metadata = {
                 usage(prefix : string) {

@@ -348,12 +348,12 @@ export function tictactoe() {
                         name : "user",
                         type : ApplicationCommandOptionTypes.USER,
                         required : true,
-                        description : ".",
+                        description : "User to be re-reached",
                     },
                 ],
             });
             this.name = "tictactoe";
-            this.description = ".";
+            this.description = "Play tictactoe";
             this.metadata = {
                 usage(prefix : string) {
                     return [

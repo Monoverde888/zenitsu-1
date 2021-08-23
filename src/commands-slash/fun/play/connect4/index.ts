@@ -9,7 +9,7 @@ export function C4() {
                 options : [user(), bot()]
             });
             this.name = "connect4";
-            this.description = ".";
+            this.description = "Play connect4";
             this.metadata = {
                 usage(prefix : string) {
                     return [

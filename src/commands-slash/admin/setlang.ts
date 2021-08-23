@@ -19,7 +19,7 @@ export default function () {
                         name : "lang",
                         type : ApplicationCommandOptionTypes.STRING,
                         required : true,
-                        description : ".",
+                        description : "Language",
                         choices : langs.map(x => {
                             return {name : x, value : x}
                         })
@@ -28,7 +28,7 @@ export default function () {
             });
             this.disableDm = true;
             this.name = "setlang";
-            this.description = ".";
+            this.description = "Change the language of the server";
             this.metadata = {
                 usage(prefix : string) {
                     return langs.map(lang => `${prefix}setlang ${lang}`)

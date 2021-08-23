@@ -15,14 +15,14 @@ export function onlythreads() {
             super({
                 options : [{
                     name : 'value',
-                    description : '.',
+                    description : 'Limit or not limit',
                     required : true,
                     type : ApplicationCommandOptionTypes.BOOLEAN
                 }]
             });
             this.name = "onlythreads";
             this.disableDm = true;
-            this.description = ".";
+            this.description = "Limit certain commands to threads";
             this.metadata = {
                 usage(prefix : string) {
                     return [

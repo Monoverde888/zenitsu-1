@@ -10,7 +10,7 @@ export default function () {
         constructor() {
             super();
             this.name = 'ping'
-            this.description = '.';
+            this.description = 'Bot latency';
             this.metadata = {
                 usage(prefix : string) {
                     return [`${prefix}ping`];

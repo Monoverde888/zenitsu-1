@@ -11,7 +11,7 @@ export default function () {
         constructor() {
             super();
             this.name = 'invite'
-            this.description = '.'
+            this.description = 'Invite the bot'
             this.metadata = {
                 usage(prefix : string) {
                     return [`${prefix}invite`];

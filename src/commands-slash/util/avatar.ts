@@ -12,12 +12,12 @@ export function avatar() {
                         name : "user",
                         type : ApplicationCommandOptionTypes.USER,
                         required : false,
-                        description : ".",
+                        description : "User",
                     },
                 ],
             });
             this.name = "avatar";
-            this.description = ".";
+            this.description = "User avatar";
             this.metadata = {
                 usage(prefix : string) {
                     return [`${prefix}avatar [Member]`];

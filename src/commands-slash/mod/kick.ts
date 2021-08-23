@@ -19,19 +19,19 @@ export default function () {
                         name : "member",
                         type : ApplicationCommandOptionTypes.USER,
                         required : true,
-                        description : ".",
+                        description : "Member to kick",
                     },
                     {
                         name : "reason",
                         type : ApplicationCommandOptionTypes.STRING,
                         required : false,
-                        description : ".",
+                        description : "Reason",
                     }
                 ],
             });
             this.disableDm = true;
             this.name = "kick";
-            this.description = ".";
+            this.description = "Kick a member";
             this.metadata = {
                 usage(prefix : string) {
                     return [`${prefix}kick [Member]`];

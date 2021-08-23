@@ -17,12 +17,12 @@ export function view() {
                         name : "user",
                         type : ApplicationCommandOptionTypes.USER,
                         required : false,
-                        description : ".",
+                        description : "User",
                     },
                 ],
             });
             this.name = "view";
-            this.description = ".";
+            this.description = "View your profile";
             this.metadata = {
                 usage(prefix : string) {
                     return [`${prefix}profile view [Member]`];

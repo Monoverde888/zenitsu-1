@@ -1,53 +1,54 @@
 import redis from 'redis';
-import util from 'util';
+import util  from 'util';
 
-const client = redis.createClient(),
-  { promisify } = util,
-  setPromise = promisify(client.set).bind(client),
-  getPromise = promisify(client.get).bind(client),
-  delPromise = promisify(client.del).bind(client);
+const client      = redis.createClient(),
+      {promisify} = util,
+      setPromise  = promisify(client.set).bind(client),
+      getPromise  = promisify(client.get).bind(client),
+      delPromise  = promisify(client.del).bind(client);
 
 client.on("error", (...errors) => {
-  console.error(...errors);
+    console.error(...errors);
 }).on('ready', (...xd) => {
-  console.log('[REDIS] Ready', ...xd);
+    console.log('[REDIS] Ready', ...xd);
 }).on('connect', (...xd) => {
-  console.log('[REDIS] Connected', ...xd);
+    console.log('[REDIS] Connected', ...xd);
 }).on('reconnecting', (...xd) => {
-  console.log('[REDIS] Reconnecting', ...xd);
+    console.log('[REDIS] Reconnecting', ...xd);
 }).on('end', (...xd) => {
-  console.log('[REDIS] Ended', ...xd);
+    console.log('[REDIS] Ended', ...xd);
 }).on('warning', (...xd) => {
-  console.warn(`[REDIS] Warning`, ...xd);
+    console.warn(`[REDIS] Warning`, ...xd);
 });
 
 class RedisManager {
 
-  set(key: string, value: string): Promise<string> {
-    //Expira en 120 segundos. (Dos minutos)
-    //https://redis.io/commands/set
-    return setPromise(key, value, 'EX', 60 * 2);
+    set(key : string, value : string) : Promise<string> {
+        //Expira en 120 segundos. (Dos minutos)
+        //https://redis.io/commands/set
+        return setPromise(key, value, 'EX', 60 * 2);
 
-  }
+    }
 
-  get(key: string): Promise<string> {
+    get(key : string) : Promise<string> {
 
-    return getPromise(key);
+        return getPromise(key);
 
-  }
+    }
 
-  del(key: string): Promise<number> {
+    del(key : string) : Promise<number> {
 
-    return delPromise(key);
+        return delPromise(key);
 
-  }
+    }
 
-  get default() {
+    get default() {
 
-    return client;
+        return client;
 
-  }
+    }
 
 }
+
 const manager = new RedisManager();
 export default manager;

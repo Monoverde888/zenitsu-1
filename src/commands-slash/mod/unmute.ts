@@ -18,19 +18,19 @@ export default function () {
                         name : "member",
                         type : ApplicationCommandOptionTypes.USER,
                         required : true,
-                        description : ".",
+                        description : "Member to unmute",
                     },
                     {
                         name : "reason",
                         type : ApplicationCommandOptionTypes.STRING,
                         required : false,
-                        description : ".",
+                        description : "Reason",
                     },
                 ],
             });
             this.disableDm = true;
             this.name = "unmute";
-            this.description = ".";
+            this.description = "Unmute a member";
             this.metadata = {
                 usage(prefix : string) {
                     return [`${prefix}unmute [Member]`];

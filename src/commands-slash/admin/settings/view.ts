@@ -12,7 +12,7 @@ export function view() {
             super();
             this.name = "view";
             this.disableDm = true;
-            this.description = ".";
+            this.description = "View settings";
             this.metadata = {
                 usage(prefix : string) {
                     return [prefix + "settings view"];
