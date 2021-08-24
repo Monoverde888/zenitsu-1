@@ -404,7 +404,7 @@ function awaitAnswer(MESSAGEID : string,
 
 export async function FUNCTION(
     ctx : detritus.Interaction.InteractionContext,
-    args : { user : detritus.Structures.MemberOrUser; difficulty : 'easy' | 'medium' | 'hard' }
+    args : { user : detritus.Structures.MemberOrUser; difficulty : 'easy' | 'medium' | 'hard', needtoconnect? : string }
 ) {
 
     await ctx.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
@@ -441,10 +441,11 @@ export async function FUNCTION(
 
     const poto = new Connect4AI<Player>({
         lengthArr : 6,
-        columns : 7
+        columns : 7,
+        necessaryToWin : parseInt(args.needtoconnect) || 4
     }, getTURNS(ctx.userId, usuario.id, ctx.client.userId), 10);
     poto.createBoard();
-
+    console.log(poto.necessaryToWin);
     const CHANNEL : { id : string; type? : number } = ctx.channel && ctx.guild && !ctx.channel.isGuildThread && ctx.guild.features.has("THREADS_ENABLED") && ctx.channel.can(Flags.MANAGE_THREADS) ? await ctx.channel.createThread({
         name : `Game of ${ctx.user.tag} vs ${usuario.tag}`,
         autoArchiveDuration : 1440,

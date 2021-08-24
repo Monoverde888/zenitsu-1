@@ -13,6 +13,15 @@ export function user() {
                         required : true,
                         type : detritus.Constants.ApplicationCommandOptionTypes.USER,
                         description : 'User'
+                    },
+                    {
+                        name : 'needtoconnect',
+                        required : false,
+                        type : detritus.Constants.ApplicationCommandOptionTypes.STRING,
+                        choices : ['3', '4', '5', '6'].map(x => {
+                            return {name : x, value : x}
+                        }),
+                        description : 'Chips needed to win'
                     }
                 ]
             });
@@ -29,7 +38,7 @@ export function user() {
         }
 
         run(ctx : detritus.Interaction.InteractionContext,
-            args : { difficulty : null; user : detritus.Structures.MemberOrUser }) {
+            args : { difficulty : null; user : detritus.Structures.MemberOrUser; needtoconnect : string }) {
             return FUNCTION(ctx, args)
         }
 

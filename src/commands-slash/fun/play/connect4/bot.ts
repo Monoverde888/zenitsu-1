@@ -15,7 +15,7 @@ export function bot() {
                         choices : ['easy', 'medium', 'hard'].map(x => {
                             return {name : x, value : x}
                         }),
-                        description: 'Difficulty'
+                        description : 'Difficulty'
                     }]
             });
             this.name = "bot";

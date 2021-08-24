@@ -148,7 +148,7 @@ async function jugar(firstp : detritus.Structures.MemberOrUser, secondp : detrit
         if (!respuesta) {
             await ctx.editOrRespond({
                 embeds : [],
-                content : langjson.commands.tictactoe.dont_answer(secondp.username), components : [
+                content : langjson.commands.tictactoe.dont_answer(secondp.username), components : [new Components(
                     new Button('primary')
                         .setCustomID('tictactoe_yes')
                         .setEmoji({name : '✅', id : undefined})
@@ -157,7 +157,7 @@ async function jugar(firstp : detritus.Structures.MemberOrUser, secondp : detrit
                         .setCustomID('tictactoe_no')
                         .setEmoji({name : '❌', id : undefined})
                         .setDisabled(true)
-                ]
+                )]
             })
             return partidas.delete(ctx.channelId)
         }
