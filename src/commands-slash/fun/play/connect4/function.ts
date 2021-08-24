@@ -445,7 +445,7 @@ export async function FUNCTION(
         necessaryToWin : parseInt(args.needtoconnect) || 4
     }, getTURNS(ctx.userId, usuario.id, ctx.client.userId), 10);
     poto.createBoard();
-    console.log(poto.necessaryToWin);
+
     const CHANNEL : { id : string; type? : number } = ctx.channel && ctx.guild && !ctx.channel.isGuildThread && ctx.guild.features.has("THREADS_ENABLED") && ctx.channel.can(Flags.MANAGE_THREADS) ? await ctx.channel.createThread({
         name : `Game of ${ctx.user.tag} vs ${usuario.tag}`,
         autoArchiveDuration : 1440,
