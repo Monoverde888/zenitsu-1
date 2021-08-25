@@ -38,7 +38,6 @@ export function view() {
             const embed = new MessageEmbed()
                 .setColor(0xff0000)
                 .addField('Muterole', rol ? `${rol.mention}  \`[${rol.id}]\`` : '❌', true)
-                .addField('Onlythreads', data.onlythreads ? `✅` : '❌', true)
                 .addField('Ignore channels', canales.join(', ') || '❌', true)
                 .setTimestamp();
             return ctx.editOrRespond({embed});

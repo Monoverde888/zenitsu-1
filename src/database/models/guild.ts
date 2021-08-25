@@ -8,7 +8,6 @@ export interface GUILD extends mongoose.Document {
   logs: { idWeb: string; tokenWeb: string; TYPE: string }[];
   muterole: string;
   ignorechannels: string[];
-  onlythreads: boolean;
 }
 
 const Guild = new Schema({
@@ -28,10 +27,6 @@ const Guild = new Schema({
   }],
   muterole: { type: String, default: '1' },
   ignorechannels: [String],
-  onlythreads: {
-    type: Boolean,
-    default: true
-  }
 }, { timestamps: true });
 
 export default mongoose.models.GuildInfo || model<GUILD>('GuildInfo', Guild);

@@ -15,7 +15,6 @@ import fetch                   from 'node-fetch';
 const {Connect4AI} = c4
 const games : Map<string, c4.Connect4AI<Player>> = new Map();
 const {Constants : {Permissions : Flags}} = detritus;
-const zenitsuGif = `https://media1.tenor.com/images/07622a68b0145d04d1fa5536aa62faee/tenor.gif?itemid=17636946`
 
 interface Player {
     id : string;
@@ -135,8 +134,9 @@ function awaitAnswer(MESSAGEID : string,
                      usuario : detritus.Structures.Member | detritus.Structures.User,
                      langjson : typeof json.es | typeof json.en,
                      difficulty : 'easy' | 'medium' | 'hard',
-                     easyAnswer : (id : string) => any,
-                     CHANNEL : { id : string },
+                     easyAnswer : (id : string, lastMessage? : detritus.Structures.Message) => any,
+                     CHANNEL : { id : string; type : number },
+                     lastMessage? : detritus.Structures.Message
 ) {
 
     Collector.add({
@@ -272,8 +272,12 @@ function awaitAnswer(MESSAGEID : string,
                     .setImage('attachment://party.gif');
                 await interaction.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
                 const buf = await displayConnectFourBoard(games.get(CHANNEL.id))
-
-                const {id} = await interaction.editOrRespond({
+                try {
+                    if (!lastMessage?.deleted && !([10, 11, 12].includes(CHANNEL.type))) await lastMessage.delete();
+                }
+                catch {
+                }
+                lastMessage = await interaction.editOrRespond({
                     file : {
                         value : buf,
                         filename : 'party.gif'
@@ -282,7 +286,7 @@ function awaitAnswer(MESSAGEID : string,
                     components : generateButtons(games.get(CHANNEL.id), langjson.commands.connect4.surrender, false)
                 })
 
-                return easyAnswer(id);
+                return easyAnswer(lastMessage.id, lastMessage);
 
             }
 
@@ -298,7 +302,12 @@ function awaitAnswer(MESSAGEID : string,
                 await interaction.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
                 const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
 
-                const {id} = await interaction.editOrRespond({
+                try {
+                    if (!lastMessage?.deleted && !([10, 11, 12].includes(CHANNEL.type))) await lastMessage.delete();
+                }
+                catch {
+                }
+                lastMessage = await interaction.editOrRespond({
                     file : {
                         value : buf,
                         filename : 'party.gif'
@@ -306,7 +315,8 @@ function awaitAnswer(MESSAGEID : string,
                     embed,
                     components : generateButtons(games.get(CHANNEL.id), langjson.commands.connect4.surrender, false)
                 })
-                return easyAnswer(id);
+
+                return easyAnswer(lastMessage.id, lastMessage);
 
             }
         },
@@ -410,9 +420,8 @@ export async function FUNCTION(
     await ctx.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
     const ArrayOfArrayOfNumbers : [number, number, string][] = [];
     const DATAPROFILE = await getUser(ctx.user.id);
-    const DATAGUILD : { lang : 'es' | 'en'; onlythreads : boolean } = ctx.guildId ? await getGuild(ctx.guildId) : {
+    const DATAGUILD : { lang : 'es' | 'en' } = ctx.guildId ? await getGuild(ctx.guildId) : {
         lang : 'en',
-        onlythreads : false
     }
     const langjson = json[DATAGUILD.lang];
 
@@ -446,20 +455,20 @@ export async function FUNCTION(
     }, getTURNS(ctx.userId, usuario.id, ctx.client.userId), 10);
     poto.createBoard();
 
-    const CHANNEL : { id : string; type? : number } = ctx.channel && ctx.guild && !ctx.channel.isGuildThread && ctx.guild.features.has("THREADS_ENABLED") && ctx.channel.can(Flags.MANAGE_THREADS) ? await ctx.channel.createThread({
+    const CHANNEL : { id : string; type : number } = ctx.channel && ctx.guild && !ctx.channel.isGuildThread && ctx.guild.features.has("THREADS_ENABLED") && ctx.channel.can(Flags.MANAGE_THREADS) ? await ctx.channel.createThread({
         name : `Game of ${ctx.user.tag} vs ${usuario.tag}`,
         autoArchiveDuration : 1440,
         type : 11,
         reason : `Game of ${ctx.user.tag} vs ${usuario.tag}`
-    }) : {id : ctx.channelId};
+    }) : {id : ctx.channelId, type : ctx.channel?.type};
 
-    if (CHANNEL.type != 11 && DATAGUILD.onlythreads && !ctx.channel?.isGuildThread) {
-        const embed = new MessageEmbed()
-            .setColor(0xff0000)
-            .setDescription(langjson.commands.connect4.enable_threads('/'))
-            .setThumbnail(zenitsuGif);
-        return ctx.editOrRespond({embed});
-    }
+    // if (CHANNEL.type != 11 && DATAGUILD.onlythreads && !ctx.channel?.isGuildThread) {
+    //     const embed = new MessageEmbed()
+    //         .setColor(0xff0000)
+    //         .setDescription(langjson.commands.connect4.enable_threads('/'))
+    //         .setThumbnail(zenitsuGif);
+    //     return ctx.editOrRespond({embed});
+    // }
 
     games.set(CHANNEL.id, poto)
 
@@ -511,7 +520,14 @@ export async function FUNCTION(
         .setImage('attachment://party.gif');
     const bufParty = await displayConnectFourBoard(games.get(CHANNEL.id))
 
-    const messageParty = await ctx.client.rest.createMessage(CHANNEL.id, {
+    const messageParty = CHANNEL.id !== ctx.channelId ? await ctx.client.rest.createMessage(CHANNEL.id, {
+        file : {
+            value : bufParty,
+            filename : 'party.gif'
+        },
+        embed : embedStart,
+        components : generateButtons(games.get(CHANNEL.id), langjson.commands.connect4.surrender, false)
+    }) : await ctx.editOrRespond({
         file : {
             value : bufParty,
             filename : 'party.gif'
@@ -551,10 +567,10 @@ export async function FUNCTION(
 
     }
 
-    function easyAwaitAnswer(MESSAGEID : string) {
-        awaitAnswer(MESSAGEID, sendCoso, ctx, findTurn, ArrayOfArrayOfNumbers, args, DATAPROFILE, usuario, langjson, difficulty, easyAwaitAnswer, CHANNEL);
+    function easyAwaitAnswer(MESSAGEID : string, lastMessage? : detritus.Structures.Message) {
+        awaitAnswer(MESSAGEID, sendCoso, ctx, findTurn, ArrayOfArrayOfNumbers, args, DATAPROFILE, usuario, langjson, difficulty, easyAwaitAnswer, CHANNEL, lastMessage);
     }
 
-    return easyAwaitAnswer(messageParty.id);
+    return easyAwaitAnswer(messageParty.id, messageParty);
 
 }

@@ -1,10 +1,10 @@
 import {BaseSlash}      from "../../../utils/classes/slash.js";
-import {muterole}    from "./muterole/index.js";
-import {view}        from './view.js';
-import {onlythreads} from './onlythreads.js';
+import {muterole}       from "./muterole/index.js";
+import {view}           from './view.js';
 import {reset}          from './reset.js';
 import {ignorechannels} from './ignorechannels.js';
 import detritus         from 'detritus-client';
+
 const {Constants : {Permissions : Flags}} = detritus;
 export default function () {
     class Settings extends BaseSlash {
@@ -27,7 +27,7 @@ export default function () {
                 category : "admin",
             }
             this.disableDm = true;
-            this.options = [muterole(), view(), reset(), onlythreads(), ignorechannels()];
+            this.options = [muterole(), view(), reset(), ignorechannels()];
             this.permissions = [Flags.MANAGE_GUILD].map(BigInt);
             this.permissionsClient = [Flags.MANAGE_GUILD, Flags.MANAGE_ROLES, Flags.MANAGE_CHANNELS].map(BigInt);
         }

@@ -16,7 +16,7 @@ export function reset() {
                 options : [{
                     name : 'field',
                     description : 'Configuration to restart',
-                    choices : ['ignorechannels', 'onlythreads', 'muterole', 'all'].map(x => {
+                    choices : ['ignorechannels', 'muterole', 'all'].map(x => {
                         return {name : x, value : x}
                     }),
                     required : true,
@@ -68,9 +68,6 @@ export function reset() {
                 default: {
                     const data : GUILD = await guild.findOne({id : ctx.guildId});
                     switch (args.field) {
-                        case 'onlythreads':
-                            data["onlythreads"] = true;
-                            break;
                         case 'muterole':
                             data['muterole'] = '1';
                             break;
