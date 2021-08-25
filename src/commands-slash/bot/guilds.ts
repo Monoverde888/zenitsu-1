@@ -1,9 +1,9 @@
-import detritus                from 'detritus-client';
-import {Embed as MessageEmbed} from 'detritus-client/lib/utils/embed.js';
-import {Color}                 from '../../utils/const.js'
-import {BaseSlash}             from '../../utils/classes/slash.js';
-import json                    from '../../utils/lang/langs.js';
-import getGuild                from '../../utils/functions/getguild.js';
+import detritus from 'detritus-client';
+import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
+import { Color } from '../../utils/const.js'
+import { BaseSlash } from '../../utils/classes/slash.js';
+import json from '../../utils/lang/langs.js';
+import getGuild from '../../utils/functions/getguild.js';
 
 export default function () {
 
@@ -13,14 +13,14 @@ export default function () {
             this.name = 'guilds'
             this.description = 'Number of servers'
             this.metadata = {
-                usage(prefix : string) {
+                usage(prefix: string) {
                     return [`${prefix}guilds`];
                 },
-                category : "bot",
+                category: "bot",
             };
         }
 
-        async run(ctx : detritus.Interaction.InteractionContext) {
+        async run(ctx: detritus.Interaction.InteractionContext) {
 
             const langjson = ctx.guildId ? json[(await getGuild(ctx.guildId).then(x => x.lang))] : json.en;
 
@@ -33,12 +33,12 @@ export default function () {
 
             return ctx.respond(detritus.Constants.InteractionCallbackTypes.CHANNEL_MESSAGE_WITH_SOURCE, {
                 embed,
-                flags : detritus.Constants.MessageFlags.EPHEMERAL
+                flags: detritus.Constants.MessageFlags.EPHEMERAL
             });
-            
+
         }
     }
 
     return new Guilds();
 
-};
+}

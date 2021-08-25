@@ -1,11 +1,10 @@
 import detritus from 'detritus-client';
-import CommandClientType from '../../utils/classes/commandclient.js';
 import getguild from '../../utils/functions/getguild.js';
 import model from '../../database/models/guild.js';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
 import redis from '../../utils/managers/redis.js';
 
-async function messageUpdate(client: detritus.ShardClient, _commandClient: CommandClientType, { message: newMessage, old: oldMessage }: detritus.GatewayClientEvents.MessageUpdate) {
+async function messageUpdate(client: detritus.ShardClient, _interactionClient: detritus.InteractionCommandClient, { message: newMessage, old: oldMessage }: detritus.GatewayClientEvents.MessageUpdate) {
 
   if (!oldMessage || !newMessage) return;
 
@@ -58,7 +57,7 @@ async function messageUpdate(client: detritus.ShardClient, _commandClient: Comma
               idWeb: find.idWeb
             }
           }
-        }, { new: true })
+        }, { new: true }).lean();
         await redis.set(newMessage.guildId, JSON.stringify(dataa))
         return undefined;
       }

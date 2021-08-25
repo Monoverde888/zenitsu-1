@@ -1,12 +1,12 @@
 import detritus from 'detritus-client'
 
-const {Constants : {Permissions : Flags}} = detritus;
+const { Constants: { Permissions: Flags } } = detritus;
 const Arr = Object.entries(Flags);
 import getGuild from '../functions/getguild.js';
-import json     from '../lang/langs.js';
+import json from '../lang/langs.js';
 
 class RegisterCommand {
-    constructor(options : detritus.CommandClientAdd) {
+    constructor(options: detritus.CommandClientAdd) {
 
         options.onError = (ctx, __args, error) => {
             console.error(error);
@@ -23,22 +23,21 @@ class RegisterCommand {
         });
 
         options.onPermissionsFail = async (ctx, perms) => {
-            const {lang} = await getGuild(ctx.guildId);
+            const { lang } = await getGuild(ctx.guildId);
             const langjson = json[lang];
             const permsStr = '`' + Arr.filter(item => perms.map(Number).includes(Number(item[1]))).map(x => x[0]).map(perm => langjson.permissions[perm as 'SPEAK']).join(', ') + '`';
             return ctx.reply(langjson.messages.permisos_user(permsStr));
         };
 
         options.onPermissionsFailClient = async (ctx, perms) => {
-            const {lang} = await getGuild(ctx.guildId);
+            const { lang } = await getGuild(ctx.guildId);
             const langjson = json[lang];
             const permsStr = '`' + Arr.filter(item => perms.map(Number).includes(Number(item[1]))).map(x => x[0]).map(perm => langjson.permissions[perm as 'SPEAK']).join(', ') + '`';
             return ctx.reply(langjson.messages.permisos_bot(permsStr));
         }
 
         return options;
-    };
-
+    }
 }
 
 export default RegisterCommand;

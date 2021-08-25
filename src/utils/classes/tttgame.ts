@@ -12,31 +12,30 @@ const pos = [
 ];
 
 class TheGame extends EVENTS.EventEmitter {
-    players : [string, string];
-    map : string[];
-    private __lastTurn : number;
-    winner : string;
-    draw : boolean;
-    ended : boolean;
+    players: [string, string];
+    map: string[];
+    private __lastTurn: number;
+    winner: string;
+    draw: boolean;
+    ended: boolean;
 
-    constructor(players : [string, string], random : boolean) {
+    constructor(players: [string, string]) {
         super();
         const randomPlayer = players[Math.floor(Math.random() * players.length)]
-        if (random) this.players = [randomPlayer == players[0] ? players[1] : players[0], randomPlayer == players[1] ? players[1] : players[0]];
-        else this.players = players;
+        this.players = [randomPlayer == players[0] ? players[1] : players[0], randomPlayer == players[1] ? players[1] : players[0]];
         this.map = ['', '', '', '', '', '', '', '', '',]
         this.__lastTurn = 0;
         this.winner = null;
         this.draw = null;
     }
 
-    emit(event : 'winner' | 'draw' | 'end', ...args : any[]) : boolean;
-    emit(event : 'winner' | 'draw' | 'end', ...args : any[]) {
+    emit(event: 'winner' | 'draw' | 'end', ...args: any[]): boolean;
+    emit(event: 'winner' | 'draw' | 'end', ...args: any[]) {
         return super.emit(event, ...args);
     }
 
-    on(event : 'winner' | 'draw' | 'end', listener : () => void) : this
-    on(event : 'winner' | 'draw' | 'end', listener : () => void) {
+    on(event: 'winner' | 'draw' | 'end', listener: () => void): this
+    on(event: 'winner' | 'draw' | 'end', listener: () => void) {
         return super.on(event, listener);
     }
 
@@ -48,7 +47,7 @@ class TheGame extends EVENTS.EventEmitter {
         return this.players[this.turn];
     }
 
-    get ficha() : 'X' | 'O' {
+    get ficha(): 'X' | 'O' {
         return this.turn == 1 ? 'X' : 'O'
     }
 
@@ -62,7 +61,7 @@ class TheGame extends EVENTS.EventEmitter {
         return this.draw || this.ended || !!this.winner
     }
 
-    play(played : number) {
+    play(played: number) {
         if (!this.canPlay(played)) throw new Error(`Can't play ${played}.`)
         this.map[played] = this.ficha;
         if (pos.find(p => p.every(x => this.map[x] == 'X')) || pos.find(p => p.every(x => this.map[x] == 'O'))) {
@@ -80,7 +79,7 @@ class TheGame extends EVENTS.EventEmitter {
         return played;
     }
 
-    canPlay(played : number) {
+    canPlay(played: number) {
         return this.map[played] === '';
     }
 

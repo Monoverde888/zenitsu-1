@@ -1,37 +1,37 @@
-import detritus            from "detritus-client";
-import {BaseCommandOption} from "../../utils/classes/slash.js";
+import detritus from "detritus-client";
+import { BaseCommandOption } from "../../utils/classes/slash.js";
 
-const {Constants : {ApplicationCommandOptionTypes}} = detritus;
+const { Constants: { ApplicationCommandOptionTypes } } = detritus;
 
 export function avatar() {
     class Avatar extends BaseCommandOption {
         constructor() {
             super({
-                options : [
+                options: [
                     {
-                        name : "user",
-                        type : ApplicationCommandOptionTypes.USER,
-                        required : false,
-                        description : "User",
+                        name: "user",
+                        type: ApplicationCommandOptionTypes.USER,
+                        required: false,
+                        description: "User",
                     },
                 ],
             });
             this.name = "avatar";
             this.description = "User avatar";
             this.metadata = {
-                usage(prefix : string) {
+                usage(prefix: string) {
                     return [`${prefix}avatar [Member]`];
                 },
-                category : "util",
+                category: "util",
             };
         }
 
         async run(
-            ctx : detritus.Interaction.InteractionContext,
-            args : { user : detritus.Structures.MemberOrUser }
+            ctx: detritus.Interaction.InteractionContext,
+            args: { user: detritus.Structures.MemberOrUser }
         ) {
-            const user   = args.user || ctx.user,
-                  avatar = user.avatarUrl + "?size=2048";
+            const user = args.user || ctx.user,
+                avatar = user.avatarUrl + "?size=2048";
             return ctx.editOrRespond(`> ${avatar}`);
         }
     }

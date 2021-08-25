@@ -1,10 +1,10 @@
-import detritus            from "detritus-client";
-import fetch               from "node-fetch";
-import json                from "../../utils/lang/langs.js";
-import getGuild            from "../../utils/functions/getguild.js";
-import {BaseCommandOption} from "../../utils/classes/slash.js";
+import detritus from "detritus-client";
+import fetch from "node-fetch";
+import json from "../../utils/lang/langs.js";
+import getGuild from "../../utils/functions/getguild.js";
+import { BaseCommandOption } from "../../utils/classes/slash.js";
 
-const {Constants : {ApplicationCommandOptionTypes}} = detritus;
+const { Constants: { ApplicationCommandOptionTypes } } = detritus;
 
 export function DjsDocs() {
     const options = [
@@ -20,20 +20,20 @@ export function DjsDocs() {
     class Docs extends BaseCommandOption {
         constructor() {
             super({
-                options : [
+                options: [
                     {
-                        name : "query",
-                        required : true,
-                        description : "To search",
-                        type : ApplicationCommandOptionTypes.STRING,
+                        name: "query",
+                        required: true,
+                        description: "To search",
+                        type: ApplicationCommandOptionTypes.STRING,
                     },
                     {
-                        name : "type",
-                        required : false,
-                        description : "Type of documentation",
-                        type : ApplicationCommandOptionTypes.STRING,
-                        choices : options.map((x) => {
-                            return {name : x, value : x};
+                        name: "type",
+                        required: false,
+                        description: "Type of documentation",
+                        type: ApplicationCommandOptionTypes.STRING,
+                        choices: options.map((x) => {
+                            return { name: x, value: x };
                         }),
                     },
                 ],
@@ -41,16 +41,16 @@ export function DjsDocs() {
             this.name = "djsdocs";
             this.description = "Search the desired documentation";
             this.metadata = {
-                usage(prefix : string) {
+                usage(prefix: string) {
                     return options.map((x) => `${prefix}djsdocs query [${x}]`);
                 },
-                category : "util",
+                category: "util",
             };
         }
 
         async run(
-            ctx : detritus.Interaction.InteractionContext,
-            args : { query : string; type? : string }
+            ctx: detritus.Interaction.InteractionContext,
+            args: { query: string; type?: string }
         ) {
             await ctx.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
             const langjson = ctx.guildId
@@ -68,7 +68,7 @@ export function DjsDocs() {
             if (!response || response.status == 404)
                 return ctx.editOrRespond(langjson.commands.djs.no_result);
 
-            return ctx.editOrRespond({embed : response});
+            return ctx.editOrRespond({ embed: response });
         }
     }
 

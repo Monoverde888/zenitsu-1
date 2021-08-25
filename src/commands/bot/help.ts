@@ -1,22 +1,22 @@
-import BaseCommand             from '../../utils/classes/command.js';
-import json                    from '../../utils/lang/langs.js';
-import {Embed as MessageEmbed} from 'detritus-client/lib/utils/embed.js';
-import URLButton               from '../../utils/buttons/url.js';
-import Components              from '../../utils/buttons/component.js';
-import getGuild                from '../../utils/functions/getguild.js';
-import {Color}                 from '../../utils/const.js'
+import BaseCommand from '../../utils/classes/command.js';
+import json from '../../utils/lang/langs.js';
+import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
+import URLButton from '../../utils/buttons/url.js';
+import Components from '../../utils/buttons/component.js';
+import getGuild from '../../utils/functions/getguild.js';
+import { Color } from '../../utils/const.js'
 
 export default new BaseCommand({
-    metadata : {
-        usage(prefix : string) {
+    metadata: {
+        usage(prefix: string) {
             return [`${prefix}help`]
         },
-        category : 'bot'
+        category: 'bot'
     },
-    name : 'help',
-    aliases : ['h'],
+    name: 'help',
+    aliases: ['h'],
     async run(ctx) {
-        const {lang} = await getGuild(ctx.guildId);
+        const { lang } = await getGuild(ctx.guildId);
         const langjson = json[lang]
         const categories = langjson.commands.help.categories;
 
@@ -32,29 +32,29 @@ export default new BaseCommand({
             .addField(categories[4], ctx.client.commandClient.commands.filter(a => a.metadata.category === 'admin').map(a => `\`${a.name}\``).join(', ') || 'on slash commands.');
 
         const BUTTONS =
-                  [
-                      new URLButton()
-                          .setLabel(langjson.commands.help.support)
-                          .setURL('https://discord.gg/4Yzc7Hk')
-                          .setEmoji({name : '🤖', id : undefined}),
-                      new URLButton()
-                          .setLabel(langjson.commands.help.invite)
-                          .setURL('https://discord.com/api/oauth2/authorize?client_id=721080193678311554&scope=bot+applications.commands&permissions=8')
-                          .setEmoji({name : '🤖', id : undefined}),
-                      new URLButton()
-                          .setLabel('GitHub')
-                          .setURL('https://github.com/marcrock22/zenitsu')
-                          .setEmoji({name : '🐙', id : undefined}),
-                      new URLButton()
-                          .setURL(`https://zenitsu.eastus.cloudapp.azure.com/runcode`)
-                          .setLabel("Run code")
-                          .setEmoji({name : '💻', id : undefined}),
-                  ];
+            [
+                new URLButton()
+                    .setLabel(langjson.commands.help.support)
+                    .setURL('https://discord.gg/4Yzc7Hk')
+                    .setEmoji({ name: '🤖', id: undefined }),
+                new URLButton()
+                    .setLabel(langjson.commands.help.invite)
+                    .setURL('https://discord.com/api/oauth2/authorize?client_id=721080193678311554&scope=bot+applications.commands&permissions=8')
+                    .setEmoji({ name: '🤖', id: undefined }),
+                new URLButton()
+                    .setLabel('GitHub')
+                    .setURL('https://github.com/marcrock22/zenitsu')
+                    .setEmoji({ name: '🐙', id: undefined }),
+                new URLButton()
+                    .setURL(`https://zenitsu.eastus.cloudapp.azure.com/runcode`)
+                    .setLabel("Run code")
+                    .setEmoji({ name: '💻', id: undefined }),
+            ];
 
         const componente = new Components(...BUTTONS)
 
         return ctx.reply({
-            embed : embedHelp, components : [componente]
+            embed: embedHelp, components: [componente]
         })
 
     },

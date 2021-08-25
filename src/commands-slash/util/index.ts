@@ -1,7 +1,7 @@
-import {BaseSlash} from "../../utils/classes/slash.js";
-import {runcode}   from "./runcode.js";
-import {DjsDocs}   from "./djsdocs.js";
-import {avatar}    from "./avatar.js";
+import { BaseSlash } from "../../utils/classes/slash.js";
+import { runcode } from "./runcode.js";
+import { DjsDocs } from "./djsdocs.js";
+import { avatar } from "./avatar.js";
 
 export default async function () {
     const runCode = await runcode();
@@ -13,14 +13,14 @@ export default async function () {
             this.description = "Utils";
             this.options = [runCode, DjsDocs(), avatar()];
             this.metadata = {
-                usage(prefix : string) {
+                usage(prefix: string) {
                     return [
                         `${prefix}util avatar [Member]`,
                         `${prefix}util djsdocs Query`,
                         `${prefix}util runcode Code Language`,
                     ];
                 },
-                category : "util",
+                category: "util",
             };
         }
     }

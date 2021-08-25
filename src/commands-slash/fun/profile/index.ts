@@ -1,6 +1,6 @@
-import {BaseSlash} from "../../../utils/classes/slash.js";
-import { view }    from './view.js';
-import { edit }    from './edit.js';
+import { BaseSlash } from "../../../utils/classes/slash.js";
+import { view } from './view.js';
+import { edit } from './edit.js';
 
 export default function () {
 
@@ -11,7 +11,7 @@ export default function () {
             this.description = "Manage profiles";
             this.options = [view(), edit()];
             this.metadata = {
-                usage(prefix : string) {
+                usage(prefix: string) {
                     return [
                         `${prefix}profile view [Member]`,
                         `${prefix}profile edit color FF0000`,
@@ -20,7 +20,7 @@ export default function () {
                         `${prefix}profile edit background URL`
                     ];
                 },
-                category : "fun",
+                category: "fun",
             };
         }
     }

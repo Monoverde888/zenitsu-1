@@ -1,54 +1,54 @@
 import detritus from 'detritus-client';
 
 export interface Fixed extends detritus.Structures.Interaction {
-    data : detritus.Structures.InteractionDataComponent
+    data: detritus.Structures.InteractionDataComponent
 }
 
-type CollectorFilter<T, R, Y = any> = (param : T, param2? : Y) => R;
+type CollectorFilter<T, R, Y = any> = (param: T, param2?: Y) => R;
 
 interface listenerType {
-    filter : CollectorFilter<Fixed, boolean>;
-    channelID : string;
-    guildID : string;
-    messageID : string;
-    options : { idle : number, time : number, max : number };
-    _timeTimeout : NodeJS.Timeout;
-    _idleTimeout : NodeJS.Timeout;
-    usages : number;
-    listen : {
-        onCollect : CollectorFilter<Fixed, any>;
-        onStop : CollectorFilter<string, any, listenerType>;
+    filter: CollectorFilter<Fixed, boolean>;
+    channelID: string;
+    guildID: string;
+    messageID: string;
+    options: { idle: number, time: number, max: number };
+    _timeTimeout: NodeJS.Timeout;
+    _idleTimeout: NodeJS.Timeout;
+    usages: number;
+    listen: {
+        onCollect: CollectorFilter<Fixed, any>;
+        onStop: CollectorFilter<string, any, listenerType>;
     };
-    running : boolean;
+    running: boolean;
 }
 
 class ButtonCollector {
-    _listeners : listenerType[]
+    _listeners: listenerType[]
 
     constructor() {
         this._listeners = [];
     }
 
-    add(listen : {
-        onCollect : CollectorFilter<Fixed, any>;
-        onStop : CollectorFilter<string, any, listenerType>;
-    }, filter : CollectorFilter<Fixed, boolean>, options : { idle : number, time : number, max : number }, data : { channelID : string; guildID : string; messageID : string; }) {
+    add(listen: {
+        onCollect: CollectorFilter<Fixed, any>;
+        onStop: CollectorFilter<string, any, listenerType>;
+    }, filter: CollectorFilter<Fixed, boolean>, options: { idle: number, time: number, max: number }, data: { channelID: string; guildID: string; messageID: string; }) {
         this._listeners.push({
-            running : true,
+            running: true,
             filter,
-            channelID : data.channelID,
-            guildID : data.guildID,
-            messageID : data.messageID,
+            channelID: data.channelID,
+            guildID: data.guildID,
+            messageID: data.messageID,
             options,
-            _timeTimeout : options.time ? setTimeout(() => this.stop('time', this.listeners.find(item => item.messageID == data.messageID)), options.time) : null,
-            _idleTimeout : options.idle ? setTimeout(() => this.stop('idle', this.listeners.find(item => item.messageID == data.messageID)), options.idle) : null,
-            usages : 0,
+            _timeTimeout: options.time ? setTimeout(() => this.stop('time', this.listeners.find(item => item.messageID == data.messageID)), options.time) : null,
+            _idleTimeout: options.idle ? setTimeout(() => this.stop('idle', this.listeners.find(item => item.messageID == data.messageID)), options.idle) : null,
+            usages: 0,
             listen
         })
 
     }
 
-    handleInteractionCreate(interaction : Fixed) {
+    handleInteractionCreate(interaction: Fixed) {
 
         for (const data of this.listeners) {
 
@@ -84,7 +84,7 @@ class ButtonCollector {
 
     }
 
-    handleMessageDelete(message : detritus.GatewayClientEvents.MessageDelete) {
+    handleMessageDelete(message: detritus.GatewayClientEvents.MessageDelete) {
 
         for (const data of this.listeners) {
 
@@ -95,7 +95,7 @@ class ButtonCollector {
 
     }
 
-    handleMessageDeleteBulk(message : detritus.GatewayClientEvents.MessageDeleteBulk) {
+    handleMessageDeleteBulk(message: detritus.GatewayClientEvents.MessageDeleteBulk) {
 
         for (const data of this.listeners) {
 
@@ -106,7 +106,7 @@ class ButtonCollector {
 
     }
 
-    handleGuildDelete(guild : detritus.GatewayClientEvents.GuildDelete) {
+    handleGuildDelete(guild: detritus.GatewayClientEvents.GuildDelete) {
 
         for (const data of this.listeners) {
 
@@ -117,7 +117,7 @@ class ButtonCollector {
 
     }
 
-    handleChannelDelete(channel : detritus.GatewayClientEvents.ChannelDelete) {
+    handleChannelDelete(channel: detritus.GatewayClientEvents.ChannelDelete) {
 
         for (const data of this.listeners) {
 
@@ -128,7 +128,7 @@ class ButtonCollector {
 
     }
 
-    handleThreadDelete(thread : detritus.GatewayClientEvents.ThreadDelete) {
+    handleThreadDelete(thread: detritus.GatewayClientEvents.ThreadDelete) {
 
         for (const data of this.listeners) {
 
@@ -139,7 +139,7 @@ class ButtonCollector {
 
     }
 
-    stop(reason : string, listener : listenerType, bypass : boolean = false) {
+    stop(reason: string, listener: listenerType, bypass = false) {
         if (!listener.running && !bypass) return null;
         listener.running = false;
         listener.listen.onStop(reason, listener);

@@ -1,6 +1,6 @@
 import detritus from 'detritus-client';
 
-function getHighest(member: detritus.Structures.Member) {
+function getHighest(member: detritus.Structures.Member): detritus.Structures.Role {
 
   const memberRole = member.roles.map(item => item && member.guild.roles.get(item.id)).filter(xd => xd);
 

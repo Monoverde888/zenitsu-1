@@ -1,11 +1,11 @@
-import {BaseSlash}      from "../../../utils/classes/slash.js";
-import {muterole}       from "./muterole/index.js";
-import {view}           from './view.js';
-import {reset}          from './reset.js';
-import {ignorechannels} from './ignorechannels.js';
-import detritus         from 'detritus-client';
+import { BaseSlash } from "../../../utils/classes/slash.js";
+import { muterole } from "./muterole/index.js";
+import { view } from './view.js';
+import { reset } from './reset.js';
+import { ignorechannels } from './ignorechannels.js';
+import detritus from 'detritus-client';
 
-const {Constants : {Permissions : Flags}} = detritus;
+const { Constants: { Permissions: Flags } } = detritus;
 export default function () {
     class Settings extends BaseSlash {
         constructor() {
@@ -13,7 +13,7 @@ export default function () {
             this.name = "settings";
             this.description = "Configurations";
             this.metadata = {
-                usage(prefix : string) {
+                usage(prefix: string) {
                     return [
                         prefix + "settings (view|muterole|reset)",
                         prefix + "settings view",
@@ -24,7 +24,7 @@ export default function () {
                         prefix + "settings reset"
                     ];
                 },
-                category : "admin",
+                category: "admin",
             }
             this.disableDm = true;
             this.options = [muterole(), view(), reset(), ignorechannels()];

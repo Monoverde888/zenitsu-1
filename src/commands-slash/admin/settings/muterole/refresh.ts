@@ -1,15 +1,13 @@
-import detritus            from "detritus-client";
-import {Edit, filter}      from "../../../../utils/functions/edit.js";
-import json                from "../../../../utils/lang/langs.js";
-import getGuild            from "../../../../utils/functions/getguild.js";
-import {BaseCommandOption} from "../../../../utils/classes/slash.js";
-import guild               from "../../../../database/models/guild.js";
-import redis               from "../../../../utils/managers/redis.js";
-import getHighest          from "../../../../utils/functions/gethighest.js";
-import {cooldown}          from '../../../../utils/maps.js';
+import detritus from "detritus-client";
+import { Edit, filter } from "../../../../utils/functions/edit.js";
+import json from "../../../../utils/lang/langs.js";
+import getGuild from "../../../../utils/functions/getguild.js";
+import { BaseCommandOption } from "../../../../utils/classes/slash.js";
+import guild from "../../../../database/models/guild.js";
+import redis from "../../../../utils/managers/redis.js";
+import { cooldown } from '../../../../utils/maps.js';
 
-const {Constants : {Permissions : Flags}} = detritus;
-const {Constants : {ApplicationCommandOptionTypes}} = detritus;
+const { Constants: { Permissions: Flags } } = detritus;
 
 export function refresh() {
 
@@ -19,18 +17,17 @@ export function refresh() {
             this.name = "refresh";
             this.description = "Refresh configured role";
             this.metadata = {
-                usage(prefix : string) {
+                usage(prefix: string) {
                     return [prefix + "settings muterole refresh"];
                 },
-                category : "util",
+                category: "util",
             };
             this.permissions = [Flags.MANAGE_GUILD].map(BigInt);
             this.permissionsClient = [Flags.MANAGE_GUILD, Flags.MANAGE_ROLES, Flags.MANAGE_CHANNELS].map(BigInt);
         }
 
         async run(
-            ctx : detritus.Interaction.InteractionContext,
-            args : { muterole : detritus.Structures.Role }
+            ctx: detritus.Interaction.InteractionContext,
         ) {
             await ctx.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
 
@@ -43,11 +40,10 @@ export function refresh() {
                 langjson.commands.settings.muterole.refresh.use_init('/'),
             );
 
-            if ((getHighest(ctx.guild.me).position < role.position) || role.managed) {
+            if (!ctx.guild.me.canEditRole(role) || role.managed) {
                 cooldown.delete(ctx.guildId);
                 return ctx.editOrRespond(langjson.commands.settings.muterole.refresh.cannt_edit(role.mention));
             }
-            ;
 
             const canales = ctx.guild.channels.filter(item => filter(item, role.id))
 
@@ -58,12 +54,12 @@ export function refresh() {
 
             //await ctx.editOrRespond(langjson.commands.settings.muterole.refresh.editando);
 
-            const {success, error} = await Edit({canales, guild : ctx.guild, id : role.id})
+            const { success, error } = await Edit({ canales, guild: ctx.guild, id: role.id })
 
             if (success) {
                 //Todo bien, todo correcto...
                 cooldown.delete(ctx.guildId);
-                const temp = await guild.findOneAndUpdate({id : ctx.guildId}, {muterole : role.id}, {new : true}).lean();
+                const temp = await guild.findOneAndUpdate({ id: ctx.guildId }, { muterole: role.id }, { new: true }).lean();
                 await redis.set(ctx.guildId, JSON.stringify(temp));
                 return ctx.editOrRespond(langjson.commands.settings.muterole.refresh.success);
             }

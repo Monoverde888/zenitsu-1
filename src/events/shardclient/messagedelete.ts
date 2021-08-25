@@ -1,12 +1,11 @@
 import detritus from 'detritus-client';
-import CommandClientType from '../../utils/classes/commandclient.js';
 import Collector from '../../utils/collectors/button.js';
 import getguild from '../../utils/functions/getguild.js';
 import model from '../../database/models/guild.js';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
 import redis from '../../utils/managers/redis.js';
 
-async function messageDelete(client: detritus.ShardClient, _commandClient: CommandClientType, DATA: detritus.GatewayClientEvents.MessageDelete) {
+async function messageDelete(client: detritus.ShardClient, _interactionClient: detritus.InteractionCommandClient, DATA: detritus.GatewayClientEvents.MessageDelete) {
   Collector.handleMessageDelete(DATA);
 
   const { message } = DATA;
@@ -45,7 +44,7 @@ async function messageDelete(client: detritus.ShardClient, _commandClient: Comma
               idWeb: find.idWeb
             }
           }
-        }, { new: true })
+        }, { new: true }).lean()
         await redis.set(message.guildId, JSON.stringify(dataa))
         return undefined;
       }

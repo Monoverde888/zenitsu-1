@@ -1,38 +1,38 @@
-import detritus                from "detritus-client";
-import {BaseCommandOption}     from "../../../utils/classes/slash.js";
-import jsonOBJECT                    from "../../../utils/lang/langs.js";
-import getGuild                from "../../../utils/functions/getguild.js";
-import getUser                 from "../../../utils/functions/getuser.js";
-import {Embed as MessageEmbed} from "detritus-client/lib/utils/embed.js";
+import detritus from "detritus-client";
+import { BaseCommandOption } from "../../../utils/classes/slash.js";
+import jsonOBJECT from "../../../utils/lang/langs.js";
+import getGuild from "../../../utils/functions/getguild.js";
+import getUser from "../../../utils/functions/getuser.js";
+import { Embed as MessageEmbed } from "detritus-client/lib/utils/embed.js";
 
-const {Constants : {ApplicationCommandOptionTypes}} = detritus;
+const { Constants: { ApplicationCommandOptionTypes } } = detritus;
 
 export function stats() {
     class Stats extends BaseCommandOption {
         constructor() {
             super({
-                options : [
+                options: [
                     {
-                        name : "user",
-                        type : ApplicationCommandOptionTypes.USER,
-                        required : false,
-                        description : "User",
+                        name: "user",
+                        type: ApplicationCommandOptionTypes.USER,
+                        required: false,
+                        description: "User",
                     },
                 ],
             });
             this.name = "stats";
             this.description = "Statistics";
             this.metadata = {
-                usage(prefix : string) {
+                usage(prefix: string) {
                     return [`${prefix}connect4 stats User`];
                 },
-                category : "fun",
+                category: "fun",
             };
         }
 
         async run(
-            ctx : detritus.Interaction.InteractionContext,
-            args : { user : detritus.Structures.MemberOrUser }
+            ctx: detritus.Interaction.InteractionContext,
+            args: { user: detritus.Structures.MemberOrUser }
         ) {
 
             await ctx.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
@@ -41,8 +41,8 @@ export function stats() {
             const user = (args.user ? args.user.bot ? ctx.user : args.user : ctx.user) || ctx.user;
             const data = await getUser(user.id)
             const easy = data.c4easy,
-                  medium = data.c4medium,
-                  hard = data.c4hard
+                medium = data.c4medium,
+                hard = data.c4hard
 
             if (!easy && !medium && !hard) {
                 const embed = new MessageEmbed()
@@ -52,8 +52,8 @@ export function stats() {
             }
 
             const json = langjson.commands.connect4stats,
-                  difi = json.difficulties,
-                  states = json.states
+                difi = json.difficulties,
+                states = json.states
 
             const embed = new MessageEmbed()
                 .setColor(0xff0000)
