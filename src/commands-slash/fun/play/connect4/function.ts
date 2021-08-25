@@ -484,7 +484,7 @@ export async function FUNCTION(
         ];
 
         const wait = await ctx.editOrRespond({
-            content : langjson.commands.connect4.wait_user(usuario.username),
+            content : langjson.commands.connect4.wait_user(usuario.mention),
             components : [new Component(...Buttons)]
         });
 
