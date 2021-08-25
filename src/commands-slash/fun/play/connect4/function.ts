@@ -526,6 +526,7 @@ export async function FUNCTION(
             filename : 'party.gif'
         },
         embed : embedStart,
+        content: null,
         components : generateButtons(games.get(CHANNEL.id), langjson.commands.connect4.surrender, false)
     }) : await ctx.editOrRespond({
         file : {
@@ -533,6 +534,7 @@ export async function FUNCTION(
             filename : 'party.gif'
         },
         embed : embedStart,
+        content: null,
         components : generateButtons(games.get(CHANNEL.id), langjson.commands.connect4.surrender, false)
     });
 
