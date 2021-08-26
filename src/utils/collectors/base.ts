@@ -36,6 +36,13 @@ class BaseCollector extends events.EventEmitter {
         }
 
         this.once('end', () => {
+
+            if (this.options.timeIdle)
+                clearTimeout(this._idleTimeout);
+            if (this.options.timeLimit)
+                clearTimeout(this._timeTimeout);
+
+            this.removeAllListeners();
             for (const sub of Object.values(subscriptions)) {
                 sub.remove();
             };
@@ -79,7 +86,7 @@ class BaseCollector extends events.EventEmitter {
     }
 
     stop(reason: string) {
-        if (!this.running) return console.warn('ya no taba corriendo como dicen los chavos');
+        if (!this.running) return;
         this.emit('end', reason);
         this.running = false;
     }

@@ -3,7 +3,7 @@ import { BaseCommandOption } from "../../../utils/classes/slash.js";
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
 import json from '../../../utils/lang/langs.js';
 import getGuild from '../../../utils/functions/getguild.js';
-import Collector, { Fixed } from '../../../utils/collectors/button.js';
+import ButtonCollector, { INTERACTION } from "../../../utils/collectors/buttoncollector.js";
 import AI from 'tictactoe-complex-ai';
 import TheGame from '../../../utils/classes/tttgame.js';
 import Button from '../../../utils/buttons/normal.js';
@@ -124,24 +124,13 @@ async function jugar(firstp: detritus.Structures.MemberOrUser, secondp: detritus
 
         const respuesta: string | undefined = await new Promise(resolve => {
 
-            Collector.add({
-                async onStop() {
-                    resolve(undefined);
-                },
-                async onCollect(m) {
-                    resolve(m.data.customId);
-                },
-            },
-                (m) => {
-                    return m.userId == secondp.id && ['tictactoe_no', 'tictactoe_yes'].some(item => item == m.data.customId)
-                },
-                {
-                    idle: 0, time: 60 * 1000, max: 0
-                }, {
-                channelID: ctx.channelId,
-                messageID: msgRepuesta.id,
-                guildID: msgRepuesta.guildId
-            })
+            const collector = new ButtonCollector(msgRepuesta, { timeLimit: 60 * 1000, filter: (m) => m.userId == secondp.id && ['tictactoe_no', 'tictactoe_yes'].some(item => item == m.data.customId) }, ctx.client);
+
+            collector.on('collect', (interaction) => {
+                resolve(interaction.data.customId);
+            }).on('end', () => {
+                resolve(undefined);
+            });
 
         });
 
@@ -171,6 +160,67 @@ async function jugar(firstp: detritus.Structures.MemberOrUser, secondp: detritus
     users.set(secondp.id, secondp.username)
     users.set(firstp.id, firstp.username)
 
+    let msg: detritus.Structures.Message;
+
+    if (partida.player != ctx.client.user.id) {
+        await ctx.editOrRespond({
+            content: `${resolveMarkdown(firstp, partida)} vs ${resolveMarkdown(secondp, partida)}\n\n${langjson.commands.tictactoe.start(partida.player == firstp.id ? firstp.username : secondp.username, emojis[partida.ficha])}`,
+            components: generateButtons(partida),
+            embed: { color: 0xff0000, description: '\u200b' },
+        });
+        msg = await ctx.fetchResponse();
+    }
+
+    else {
+        partida.play(await AIplay(partida));
+        await ctx.editOrRespond({
+            content: `${resolveMarkdown(firstp, partida)} vs ${resolveMarkdown(secondp, partida)}`,
+            components: generateButtons(partida),
+            embed: { color: 0xff0000, description: '\u200b' },
+        });
+        msg = await ctx.fetchResponse();
+    }
+
+    const collector = new ButtonCollector(msg, {
+        timeIdle: (2 * 60) * 1000, timeLimit: (5 * 60) * 1000,
+        filter: (m) => m.userId === partida.player && partida.canPlay(parseInt(m.data.customId.split('tictactoe_')[1])) && !partida.finished
+    }, ctx.client);
+
+    collector.on('end', r => {
+        if (['channelDelete', 'messageDelete', 'guildDelete', 'threadDelete'].includes(r)) return partidas.delete(ctx.id);
+        if ((r != 'NO')) {
+            return !partida || partida.finished ? null : partida.emit('end');
+        }
+    }).on('collect', async (m) => {
+
+        partida.play(parseInt(m.data.customId.split('tictactoe_')[1]));
+
+        if (partida.finished) {
+            collector.stop('');
+            return;
+        }
+
+        await msg.edit({
+            content: `${resolveMarkdown(firstp, partida)} vs ${resolveMarkdown(secondp, partida)}`,
+            components: generateButtons(partida)
+        });
+
+        if (!partida.finished && partida.player == ctx.client.user.id) {
+
+            await m.respond({ data: { flags: 64 }, type: 5 });
+
+            partida.play(await AIplay(partida));
+            if (!partida.finished) {
+
+                await msg.edit({
+                    content: `${resolveMarkdown(firstp, partida)} vs ${resolveMarkdown(secondp, partida)}`,
+                    components: generateButtons(partida)
+                });
+
+            }
+        }
+    });
+
     partida.on('winner', async () => {
         const jugador = partida.player;
         partidas.delete(ctx.channelId);
@@ -198,8 +248,7 @@ async function jugar(firstp: detritus.Structures.MemberOrUser, secondp: detritus
 
         }
 
-        const col = Collector._listeners.find(item => item.messageID == msg.id);
-        Collector.stop('NO', col);
+        collector.stop('NO');
 
         await ctx.editOrRespond({ embed, components: botones });
 
@@ -212,34 +261,23 @@ async function jugar(firstp: detritus.Structures.MemberOrUser, secondp: detritus
             .setColor(0xff0000)
             .setDescription(langjson.commands.tictactoe.draw(users.get(jugadores[0]), users.get(jugadores[1])))
 
-        const col = Collector._listeners.find(item => item.messageID == msg.id);
-        Collector.stop('NO', col);
+        collector.stop('NO');
 
         const empate = await ctx.editOrRespond({
             embed,
             components: generateButtons(partida, true, langjson.commands.tictactoe.rematch)
         })
 
-        const res: Fixed | false = await new Promise(resolve => {
+        const res: INTERACTION | false = await new Promise(resolve => {
 
-            Collector.add({
-                async onStop() {
-                    resolve(false);
-                },
-                async onCollect(m) {
-                    resolve(m);
-                },
-            },
-                (m) => {
-                    return jugadores.includes(m.userId) && 'tictactoe_repeat' == m.data.customId
-                },
-                {
-                    idle: 0, time: 30 * 1000, max: 0
-                }, {
-                channelID: ctx.channelId,
-                messageID: empate.id,
-                guildID: empate.guildId
-            })
+            const collectorRepeat = new ButtonCollector(empate, {
+                timeLimit: 30 * 1000,
+                filter: m => jugadores.includes(m.userId) && 'tictactoe_repeat' == m.data.customId
+            }, ctx.client);
+
+            collectorRepeat.on('end', () => {
+                resolve(false);
+            }).on('collect', m => resolve(m))
 
         });
 
@@ -256,82 +294,11 @@ async function jugar(firstp: detritus.Structures.MemberOrUser, secondp: detritus
             .setColor(0xff0000)
             .setDescription(langjson.commands.tictactoe.game_over);
 
-        const col = Collector._listeners.find(item => item.messageID == msg.id);
-        Collector.stop('NO', col);
+        collector.stop('NO');
 
         await ctx.editOrRespond({ embed, components: generateButtons(partida, true) });
 
     });
-
-    let msg: detritus.Structures.Message;
-
-    if (partida.player != ctx.client.user.id) {
-        await ctx.editOrRespond({
-            content: `${resolveMarkdown(firstp, partida)} vs ${resolveMarkdown(secondp, partida)}\n\n${langjson.commands.tictactoe.start(partida.player == firstp.id ? firstp.username : secondp.username, emojis[partida.ficha])}`,
-            components: generateButtons(partida),
-            embed: { color: 0xff0000, description: '\u200b' },
-        });
-        msg = await ctx.fetchResponse();
-    }
-
-    else {
-        partida.play(await AIplay(partida));
-        await ctx.editOrRespond({
-            content: `${resolveMarkdown(firstp, partida)} vs ${resolveMarkdown(secondp, partida)}`,
-            components: generateButtons(partida),
-            embed: { color: 0xff0000, description: '\u200b' },
-        });
-        msg = await ctx.fetchResponse();
-    }
-
-    Collector.add({
-        onStop(r) {
-            if (['channelDelete', 'messageDelete', 'guildDelete', 'threadDelete'].includes(r)) return partidas.delete(ctx.id);
-            if ((r != 'NO')) {
-                return !partida || partida.finished ? null : partida.emit('end');
-            }
-        },
-        async onCollect(m) {
-
-            partida.play(parseInt(m.data.customId.split('tictactoe_')[1]));
-
-            if (partida.finished) {
-                const col = Collector._listeners.find(item => item.messageID == msg.id);
-                Collector.stop('', col);
-                return;
-            }
-
-            await msg.edit({
-                content: `${resolveMarkdown(firstp, partida)} vs ${resolveMarkdown(secondp, partida)}`,
-                components: generateButtons(partida)
-            });
-
-            if (!partida.finished && partida.player == ctx.client.user.id) {
-
-                await m.respond({ data: { flags: 64 }, type: 5 });
-
-                partida.play(await AIplay(partida));
-                if (!partida.finished) {
-
-                    await msg.edit({
-                        content: `${resolveMarkdown(firstp, partida)} vs ${resolveMarkdown(secondp, partida)}`,
-                        components: generateButtons(partida)
-                    });
-
-                }
-            }
-        },
-    },
-        (m) => {
-            return m.userId === partida.player && partida.canPlay(parseInt(m.data.customId.split('tictactoe_')[1])) && !partida.finished
-        },
-        {
-            idle: (2 * 60) * 1000, time: (5 * 60) * 1000, max: 0
-        }, {
-        channelID: msg.id,
-        messageID: msg.id,
-        guildID: msg.guildId
-    })
 
     return true;
 

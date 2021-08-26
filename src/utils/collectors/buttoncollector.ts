@@ -19,7 +19,7 @@ class ButtonCollector extends BaseCollector {
     }
 
 
-    handleInteractionCreate(payload: detritus.GatewayClientEvents.InteractionCreate) {
+    async handleInteractionCreate(payload: detritus.GatewayClientEvents.InteractionCreate) {
 
         if (!this.running) return false;
 
@@ -28,15 +28,13 @@ class ButtonCollector extends BaseCollector {
 
         if (this.message.id != payload.interaction.message.id) return;
 
-        const resFilter = this.options.filter(payload.interaction as INTERACTION);
+        const resFilter = await this.options.filter(payload.interaction as INTERACTION);
 
         if (!resFilter) return;
 
         if (++this.usages == this.options.max) {
-
             this.emit('collect', payload.interaction as INTERACTION);
             this.stop('max');
-
         }
 
         else {
@@ -44,10 +42,6 @@ class ButtonCollector extends BaseCollector {
             if (this.options.timeIdle) {
                 clearTimeout(this._idleTimeout);
                 this._idleTimeout = setTimeout(() => this.stop('idle'), this.options.timeIdle);
-            }
-            if (this.options.timeLimit) {
-                clearTimeout(this._timeTimeout);
-                this._timeTimeout = setTimeout(() => this.stop('time'), this.options.timeLimit);
             }
 
             this.emit('collect', payload.interaction as INTERACTION);
