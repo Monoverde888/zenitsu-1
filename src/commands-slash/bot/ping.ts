@@ -3,6 +3,9 @@ import mongoose from 'mongoose';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
 import { Color } from '../../utils/const.js'
 import { BaseSlash } from '../../utils/classes/slash.js';
+import ButtonCollector from '../../utils/collectors/buttoncollector.js';
+import Button from '../../utils/buttons/normal.js';
+import Components from '../../utils/buttons/component.js';
 
 export default function () {
 
@@ -36,7 +39,25 @@ export default function () {
         `)
                 .setTimestamp()
                 .setColor(Color);
-            return ctx.editOrRespond({ embed });
+            await ctx.editOrRespond({
+                embed, components: [new Components(new Button('primary').setCustomID('xd').setLabel('???'))]
+            });
+
+            const message = await ctx.fetchResponse();
+
+            const col = new ButtonCollector(message, {
+                filter(interaction) {
+                    return interaction.user.id == ctx.userId;
+                },
+                max: 1
+            }, ctx.client)
+
+            col.on('collect', (interaction) => {
+                return interaction.respond({ data: { content: 'shh', flags: detritus.Constants.MessageFlags.EPHEMERAL }, type: detritus.Constants.InteractionCallbackTypes.CHANNEL_MESSAGE_WITH_SOURCE })
+            })
+
+            return message;
+
         }
     }
 

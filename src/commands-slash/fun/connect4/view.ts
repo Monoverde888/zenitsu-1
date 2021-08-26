@@ -20,6 +20,9 @@ export function view() {
                         description: "Game ID",
                     },
                 ],
+                ratelimits: [{
+                    duration: 10000, limit: 1, type: 'guild',
+                }]
             });
             this.name = "view";
             this.description = "View a connect4 game";

@@ -12,6 +12,7 @@ import Button from '../../../../utils/buttons/normal.js';
 import Component from '../../../../utils/buttons/component.js';
 import fetch from 'node-fetch';
 import mongoose from 'mongoose';
+const users = new Set<string>();
 
 const { Connect4AI } = c4
 const games: Map<string, c4.Connect4AI<Player>> = new Map();
@@ -205,6 +206,8 @@ function awaitAnswer(MESSAGEID: string,
                 }
 
                 games.delete(CHANNEL.id);
+                users.delete(ctx.userId);
+                users.delete(usuario.id);
                 return Collector.stop('win', collector);
 
             }
@@ -224,6 +227,8 @@ function awaitAnswer(MESSAGEID: string,
                     await redis.set(ctx.userId, JSON.stringify(res));
                 }
                 games.delete(CHANNEL.id);
+                users.delete(ctx.userId);
+                users.delete(usuario.id);
                 return Collector.stop('win', collector);
             }
 
@@ -247,6 +252,8 @@ function awaitAnswer(MESSAGEID: string,
                     const res = await modificar(da, args.difficulty, 'perdidas', ctx.user.username);
                     await redis.set(ctx.userId, JSON.stringify(res));
                     games.delete(CHANNEL.id);
+                    users.delete(ctx.userId);
+                    users.delete(usuario.id);
                     return Collector.stop('win', collector);
                 }
 
@@ -263,6 +270,8 @@ function awaitAnswer(MESSAGEID: string,
                     const res = await modificar(da, args.difficulty, 'empates', ctx.user.username);
                     await redis.set(ctx.userId, JSON.stringify(res));
                     games.delete(CHANNEL.id);
+                    users.delete(ctx.userId);
+                    users.delete(usuario.id);
                     return Collector.stop('win', collector);
                 }
 
@@ -343,7 +352,9 @@ function awaitAnswer(MESSAGEID: string,
                 const buf = await displayConnectFourBoard(games.get(CHANNEL.id))
                 await sendCoso(embed, buf);
 
-                return games.delete(CHANNEL.id);
+                games.delete(CHANNEL.id);
+                users.delete(ctx.userId);
+                return users.delete(usuario.id);
             }
 
             else if (reason === 'idle' && games.get(CHANNEL.id)) {
@@ -360,7 +371,9 @@ function awaitAnswer(MESSAGEID: string,
                 const buf = await displayConnectFourBoard(games.get(CHANNEL.id))
                 await sendCoso(embed, buf);
 
-                return games.delete(CHANNEL.id);
+                games.delete(CHANNEL.id);
+                users.delete(ctx.userId);
+                return users.delete(usuario.id);
 
             }
 
@@ -377,9 +390,15 @@ function awaitAnswer(MESSAGEID: string,
                 const buf = await displayConnectFourBoard(games.get(CHANNEL.id))
                 await sendCoso(embed, buf);
 
-                return games.delete(CHANNEL.id);
+                games.delete(CHANNEL.id);
+                users.delete(ctx.userId);
+                return users.delete(usuario.id);
             }
-            else return games.delete(CHANNEL.id)
+            else {
+                games.delete(CHANNEL.id);
+                users.delete(ctx.userId);
+                return users.delete(usuario.id);
+            }
 
         }
     }, (interaction) => {
@@ -473,6 +492,8 @@ export async function FUNCTION(
     //     return ctx.editOrRespond({embed});
     // }
 
+    users.add(usuario.id);
+    users.add(ctx.userId);
     games.set(CHANNEL.id, poto)
 
     if (usuario.id != ctx.client.user.id) {
@@ -506,12 +527,16 @@ export async function FUNCTION(
         });
 
         if (!respuesta) {
-            games.delete(CHANNEL.id)
+            games.delete(CHANNEL.id);
+            users.delete(ctx.userId);
+            users.delete(usuario.id);
             return ctx.editOrRespond(langjson.commands.connect4.dont_answer(usuario.username))
         }
 
         if (respuesta == 'c4_no') {
-            games.delete(CHANNEL.id)
+            games.delete(CHANNEL.id);
+            users.delete(ctx.userId);
+            users.delete(usuario.id);
             return ctx.editOrRespond(langjson.commands.connect4.deny(usuario.username))
         }
 

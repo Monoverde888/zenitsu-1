@@ -13,7 +13,10 @@ async function commandRatelimit(_client: detritus.ShardClient, _interactionClien
     if (i.remaining < 2000) continue;
     i.item.replied = true;
     replied = true;
-    return data.context.respond({ data: { content: langjson.messages.ratelimit(i.remaining) }, type: detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE });
+    return data.context.respond({
+      data: { flags: detritus.Constants.MessageFlags.EPHEMERAL, content: langjson.messages.ratelimit(i.remaining) },
+      type: detritus.Constants.InteractionCallbackTypes.CHANNEL_MESSAGE_WITH_SOURCE
+    });
   }
 }
 
