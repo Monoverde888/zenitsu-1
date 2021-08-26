@@ -1,8 +1,8 @@
 import detritus from 'detritus-client';
 
-const {Constants : {Permissions : Flags}} = detritus;
+const { Constants: { Permissions: Flags } } = detritus;
 
-function canMod(member : detritus.Structures.Member, client : detritus.ShardClient, mod : 'kick' | 'ban' | null) : boolean {
+function canMod(member: detritus.Structures.Member, client: detritus.ShardClient, mod: 'kick' | 'ban' | null): boolean {
     if (member.id === member.guild.ownerId) return false;
     if (member.id === client.user.id) return false;
     if (client.user.id === member.guild.ownerId) return true;
@@ -17,7 +17,3 @@ function canMod(member : detritus.Structures.Member, client : detritus.ShardClie
 }
 
 export default canMod;
-
-// function hasPermission(permisos : number, elpermiso : number) {
-//     return ((permisos & elpermiso) == elpermiso)
-// }

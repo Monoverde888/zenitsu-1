@@ -111,15 +111,6 @@ export function edit() {
 
                 case 'description': {
 
-                    // if (!args.data) {
-                    //
-                    //     const embed = new MessageEmbed()
-                    //         .setDescription(langjson.commands.editprofile.description_invalid('/'))
-                    //         .setColor(0xff0000);
-                    //     return ctx.editOrRespond({embed});
-                    //
-                    // }
-
                     const d = await model.findOneAndUpdate({ id: ctx.userId }, { description: args.data }, {
                         new: true,
                         upsert: true

@@ -52,8 +52,6 @@ export function refresh() {
 
             cooldown.add(ctx.guildId);
 
-            //await ctx.editOrRespond(langjson.commands.settings.muterole.refresh.editando);
-
             const { success, error } = await Edit({ canales, guild: ctx.guild, id: role.id })
 
             if (success) {

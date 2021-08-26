@@ -61,18 +61,6 @@ export async function runcode() {
                 ? json[await getGuild(ctx.guildId).then((x) => x.lang)]
                 : json.en;
 
-            // const pre_code = args.join(' ');
-            //
-            // if (!pre_code) return ctx.reply(langjson.commands.runcode.no_code);
-            //
-            // const res_regex = pre_code.match(regex);
-            // const code = res_regex ? (res_regex[0].split('```').slice(0, 2).join('```').slice(3).split('\n').slice(1).join('\n') || '').trim() : null;
-            //
-            // if (!code) return ctx.reply(langjson.commands.runcode.no_code);
-            //
-            // final_code = code;
-            // final_lang = res_regex[0].slice(3).split('\n')[0].trim().toLowerCase();
-
             if (!avaliables.includes(args.language))
                 return ctx.editOrRespond({
                     content: langjson.commands.runcode.invalid_lang, components: [new Component(

@@ -69,7 +69,6 @@ export function init() {
             if (!ctx.guild.me.canEditRole(role) || role.managed)
                 return ctx.editOrRespond(langjson.commands.settings.muterole.init.cannt_edit(role.mention));
 
-            //await ctx.editOrRespond(langjson.commands.settings.muterole.init.editando);
             cooldown.add(ctx.guildId);
             const { success, error } = await Edit({ canales, id: role.id, guild: ctx.guild })
 

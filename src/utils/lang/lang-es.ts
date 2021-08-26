@@ -56,7 +56,6 @@ const obj = {
 
         "runcode": {
 
-            no_code: 'Falta bloque de código.\n\n**Ejemplo** de uso:\n\n\\`\\`\\`javascript\nthis.team = "poto";\nconsole.log(\\`Testing things with the ${this.team} team\\`)\n\\`\\`\\`',
             invalid_lang: 'Lenguaje inválido, revise https://github.com/engineer-man/piston#supported-languages',
             no_output: 'Sin salida.',
             error: 'Error desconocido...'
@@ -193,7 +192,6 @@ const obj = {
         "editprofile": {
             invalid: `Uso invalido.`,
             new_color: `<-- Nuevo color.`,
-            description_invalid: (prefix: string): string => `Uso invalido.\nUso correcto: **${prefix}editprofile description Nueva descripción**`,
             description_nice: (prefix: string): string => `Ahora usa ${prefix}profile para ver tu descripción.`,
             invalid_url: 'URL invalido.',
             new_background: 'Nuevo fondo.'
@@ -218,7 +216,6 @@ const obj = {
                 init: {
                     use_refresh: (prefix: string): string => `Usa \`${prefix}settings muterole refresh\` para **actualizar los canales sin la configuración**.`,
                     cannt_edit: (role: string): string => `No puedo editar ${role}.`,
-                    editando: `Editando canales.`,
                     success: `Canales configurados.`,
                     else: `Parece que no tengo todos mis permisos.`
                 },
@@ -226,7 +223,6 @@ const obj = {
                     use_init: (prefix: string): string => `Usa \`${prefix}settings muterole init @Rol\`.`,
                     cannt_edit: (role: string): string => `No puedo editar ${role}.`,
                     already: `Todos los canales ya estaban configurados.`,
-                    editando: `Editando canales.`,
                     success: `Canales configurados.`,
                     else: `Parece que no tengo todos mis permisos.`
                 },
