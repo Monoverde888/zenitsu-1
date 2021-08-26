@@ -12,7 +12,7 @@ import Component from '../../../../utils/buttons/component.js';
 import fetch from 'node-fetch';
 import mongoose from 'mongoose';
 import ButtonCollector, { INTERACTION } from "../../../../utils/collectors/buttoncollector.js";
-const users = new Set<string>();
+import { users } from "../../../../utils/maps.js";
 
 const { Connect4AI } = c4
 const games: Map<string, c4.Connect4AI<Player>> = new Map();
@@ -442,16 +442,17 @@ export async function FUNCTION(
         lang: 'en',
     }
     const langjson = json[DATAGUILD.lang];
-
-    if (games.get(ctx.channelId)) {
-        const embed = new MessageEmbed()
-            .setColor(0xff0000)
-            .setDescription(langjson.commands.connect4.curso)
-        return ctx.editOrRespond({ embed });
-    }
-
     const difficulty = args.difficulty;
     const usuario = difficulty ? ctx.client.user : args.user;
+
+    if (users.has(ctx.userId))
+        return ctx.editOrRespond(langjson.commands.connect4.author_active);
+
+    if (users.has(usuario.id) && (usuario.id !== ctx.client.userId))
+        return ctx.editOrRespond(langjson.commands.connect4.user_active(usuario.username));
+
+    if (games.get(ctx.channelId))
+        return ctx.editOrRespond(langjson.commands.connect4.curso);
 
     if (!difficulty) {
         if ((!usuario) || (usuario.id == ctx.user.id) || (usuario.bot)) {
@@ -479,14 +480,6 @@ export async function FUNCTION(
         type: 11,
         reason: `Game of ${ctx.user.tag} vs ${usuario.tag}`
     }) : { id: ctx.channelId, type: ctx.channel?.type };
-
-    // if (CHANNEL.type != 11 && DATAGUILD.onlythreads && !ctx.channel?.isGuildThread) {
-    //     const embed = new MessageEmbed()
-    //         .setColor(0xff0000)
-    //         .setDescription(langjson.commands.connect4.enable_threads('/'))
-    //         .setThumbnail(zenitsuGif);
-    //     return ctx.editOrRespond({embed});
-    // }
 
     users.add(usuario.id);
     users.add(ctx.userId);
@@ -591,9 +584,9 @@ export async function FUNCTION(
 
     }
 
-    function easyAwaitAnswer(MESSAGEID: detritus.Structures.Message, lastMessage?: detritus.Structures.Message) {
-        awaitAnswer(MESSAGEID, sendCoso, ctx, findTurn, ArrayOfArrayOfNumbers, args, DATAPROFILE, usuario, langjson, difficulty, easyAwaitAnswer, CHANNEL, lastMessage);
-    }
+    function easyAwaitAnswer(MESSAGE: detritus.Structures.Message, lastMessage?: detritus.Structures.Message) {
+        awaitAnswer(MESSAGE, sendCoso, ctx, findTurn, ArrayOfArrayOfNumbers, args, DATAPROFILE, usuario, langjson, difficulty, easyAwaitAnswer, CHANNEL, lastMessage);
+    };
 
     return easyAwaitAnswer(messageParty, messageParty);
 
