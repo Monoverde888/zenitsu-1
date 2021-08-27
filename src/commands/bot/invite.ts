@@ -19,6 +19,8 @@ export default new BaseCommand({
         const invitacionLink = 'https://discord.gg/4Yzc7Hk';
         const embed = new MessageEmbed()
             .setThumbnail(ctx.client.user.avatarUrl)
+            .setTitle(langjson.messages.use_slash)
+            .setUrl('https://discord.com/api/oauth2/authorize?client_id=721080193678311554&scope=bot+applications.commands&permissions=8')
             .setDescription(langjson.commands.invite.message(link, invitacionLink))
             .setColor(Color)
             .setTimestamp();

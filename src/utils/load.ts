@@ -75,7 +75,7 @@ export default async function Load(options: {
             { duration: 120000, limit: 40, type: 'guild' },
             { duration: 10000, limit: 5, type: 'channel' },
         ],
-        mentionsEnabled: false,
+        mentionsEnabled: true,
         activateOnEdits: false,
         prefixes: ['z!'],
     });

@@ -3,7 +3,6 @@ import { Color } from '../../utils/const.js';
 import { BaseSlash } from '../../utils/classes/slash.js';
 import json from '../../utils/lang/langs.js';
 import getGuild from '../../utils/functions/getguild.js';
-import Components from '../../utils/buttons/component.js';
 
 export default function () {
 

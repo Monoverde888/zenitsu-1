@@ -49,7 +49,9 @@ export default new BaseCommand({
                     .setEmoji({ name: '💻', id: undefined }),
             ];
 
-        const componente = new detritus.Utils.ComponentActionRow(...BUTTONS);
+        const componente = new detritus.Utils.ComponentActionRow();
+        for (const i of BUTTONS)
+            componente.addButton(i);
 
         return ctx.reply({
             embed: embedHelp, components: [componente]

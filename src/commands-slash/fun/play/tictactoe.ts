@@ -85,7 +85,15 @@ function generateButtons(partida: TheGame, forceDisable = false, empate = '') {
             .setLabel(empate)
     );
 
-    return [new Components(...buttons1), new Components(...buttons2), new Components(...buttons3)];
+    const cp1 = new detritus.Utils.ComponentActionRow(),
+        cp2 = new detritus.Utils.ComponentActionRow(),
+        cp3 = new detritus.Utils.ComponentActionRow();
+
+    for (const i of buttons1) cp1.addButton(i);
+    for (const i of buttons2) cp2.addButton(i);
+    for (const i of buttons3) cp3.addButton(i);
+
+    return [cp1, cp2, cp3];
 
 }
 
@@ -106,11 +114,13 @@ async function jugar(firstp: detritus.Structures.MemberOrUser, secondp: detritus
             components: [{
                 type: 1,
                 components: [
-                    new Button('primary')
-                        .setCustomID('tictactoe_yes')
+                    new detritus.Utils.ComponentButton()
+                        .setStyle(detritus.Constants.MessageComponentButtonStyles.PRIMARY)
+                        .setCustomId('tictactoe_yes')
                         .setEmoji({ name: '✅', id: undefined }),
-                    new Button('primary')
-                        .setCustomID('tictactoe_no')
+                    new detritus.Utils.ComponentButton()
+                        .setStyle(detritus.Constants.MessageComponentButtonStyles.DANGER)
+                        .setCustomId('tictactoe_no')
                         .setEmoji({ name: '❌', id: undefined })
                 ]
             }]
@@ -136,16 +146,21 @@ async function jugar(firstp: detritus.Structures.MemberOrUser, secondp: detritus
         if (!respuesta) {
             await ctx.editOrRespond({
                 embeds: [],
-                content: langjson.commands.tictactoe.dont_answer(secondp.username), components: [new Components(
-                    new Button('primary')
-                        .setCustomID('tictactoe_yes')
-                        .setEmoji({ name: '✅', id: undefined })
-                        .setDisabled(true),
-                    new Button('primary')
-                        .setCustomID('tictactoe_no')
-                        .setEmoji({ name: '❌', id: undefined })
-                        .setDisabled(true)
-                )]
+                content: langjson.commands.tictactoe.dont_answer(secondp.username), components: [{
+                    type: 1,
+                    components: [
+                        new detritus.Utils.ComponentButton()
+                            .setStyle(detritus.Constants.MessageComponentButtonStyles.PRIMARY)
+                            .setCustomId('tictactoe_yes')
+                            .setEmoji({ name: '✅', id: undefined })
+                            .setDisabled(true),
+                        new detritus.Utils.ComponentButton()
+                            .setStyle(detritus.Constants.MessageComponentButtonStyles.PRIMARY)
+                            .setCustomId('tictactoe_no')
+                            .setEmoji({ name: '❌', id: undefined })
+                            .setDisabled(true)
+                    ]
+                }]
             });
             return partidas.delete(ctx.channelId);
         }
@@ -241,7 +256,7 @@ async function jugar(firstp: detritus.Structures.MemberOrUser, secondp: detritus
 
             const check = positions.some(item => item == numero);
             if (check)
-                (botones[fila].components[numero % 3] as Button).setStyle('success');
+                (botones[fila].components[numero % 3] as detritus.Utils.ComponentButton).setStyle(detritus.Constants.MessageComponentButtonStyles.SUCCESS);
 
         }
 
@@ -301,8 +316,6 @@ async function jugar(firstp: detritus.Structures.MemberOrUser, secondp: detritus
 
 }
 
-const { Constants: { ApplicationCommandOptionTypes }} = detritus;
-
 export function tictactoe() {
     class TicTacToe extends BaseCommandOption {
         constructor() {
@@ -310,7 +323,7 @@ export function tictactoe() {
                 options: [
                     {
                         name: 'user',
-                        type: ApplicationCommandOptionTypes.USER,
+                        type: detritus.Constants.ApplicationCommandOptionTypes.USER,
                         required: true,
                         description: 'User to be re-reached',
                     },

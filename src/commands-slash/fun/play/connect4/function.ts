@@ -7,8 +7,6 @@ import getUser from '../../../../utils/functions/getuser.js';
 import json from '../../../../utils/lang/langs.js';
 import getGuild from '../../../../utils/functions/getguild.js';
 import model, { USER } from '../../../../database/models/user.js';
-import Button from '../../../../utils/buttons/normal.js';
-import Component from '../../../../utils/buttons/component.js';
 import fetch from 'node-fetch';
 import mongoose from 'mongoose';
 import ButtonCollector, { INTERACTION } from '../../../../utils/collectors/buttoncollector.js';
@@ -16,7 +14,7 @@ import { users } from '../../../../utils/maps.js';
 
 const { Connect4AI } = c4;
 const games: Map<string, c4.Connect4AI<Player>> = new Map();
-const { Constants: { Permissions: Flags }} = detritus;
+const { Constants: { Permissions: Flags } } = detritus;
 
 interface Player {
     id: string;
@@ -26,29 +24,37 @@ interface Player {
 function generateButtons(partida: c4.Connect4AI<Player>, text: string, forceDisable: boolean) {
 
     const buttons = [
-        new Button('primary')
-            .setCustomID('c4_0')
+        new detritus.Utils.ComponentButton()
+            .setCustomId('c4_0')
+            .setStyle(detritus.Constants.MessageComponentButtonStyles.PRIMARY)
             .setLabel('1'),
-        new Button('primary')
-            .setCustomID('c4_1')
+        new detritus.Utils.ComponentButton()
+            .setCustomId('c4_1')
+            .setStyle(detritus.Constants.MessageComponentButtonStyles.PRIMARY)
             .setLabel('2'),
-        new Button('primary')
-            .setCustomID('c4_2')
+        new detritus.Utils.ComponentButton()
+            .setCustomId('c4_2')
+            .setStyle(detritus.Constants.MessageComponentButtonStyles.PRIMARY)
             .setLabel('3'),
-        new Button('primary')
-            .setCustomID('c4_3')
+        new detritus.Utils.ComponentButton()
+            .setCustomId('c4_3')
+            .setStyle(detritus.Constants.MessageComponentButtonStyles.PRIMARY)
             .setLabel('4'),
-        new Button('primary')
-            .setCustomID('c4_4')
+        new detritus.Utils.ComponentButton()
+            .setCustomId('c4_4')
+            .setStyle(detritus.Constants.MessageComponentButtonStyles.PRIMARY)
             .setLabel('5'),
-        new Button('primary')
-            .setCustomID('c4_5')
+        new detritus.Utils.ComponentButton()
+            .setCustomId('c4_5')
+            .setStyle(detritus.Constants.MessageComponentButtonStyles.PRIMARY)
             .setLabel('6'),
-        new Button('primary')
-            .setCustomID('c4_6')
+        new detritus.Utils.ComponentButton()
+            .setCustomId('c4_6')
+            .setStyle(detritus.Constants.MessageComponentButtonStyles.PRIMARY)
             .setLabel('7'),
-        new Button('danger')
-            .setCustomID('c4_surrender')
+        new detritus.Utils.ComponentButton()
+            .setCustomId('c4_surrender')
+            .setStyle(detritus.Constants.MessageComponentButtonStyles.DANGER)
             .setLabel(text)
     ];
 
@@ -73,10 +79,16 @@ function generateButtons(partida: c4.Connect4AI<Player>, text: string, forceDisa
 
     }
 
-    return [
-        new Component(...buttons.slice(0, 5)),
-        new Component(...buttons.slice(5))
-    ];
+    const cp1 = new detritus.Utils.ComponentActionRow(),
+        cp2 = new detritus.Utils.ComponentActionRow();
+
+    for (const i of buttons.slice(0, 5))
+        cp1.addButton(i);
+
+    for (const i of buttons.slice(5))
+        cp2.addButton(i);
+
+    return [cp1, cp2];
 
 }
 
@@ -262,22 +274,22 @@ function awaitAnswer(MESSAGE: detritus.Structures.Message,
 
                     if ((a.c4hard.ganadas >= 10) && !(DATAPROFILE.achievements.includes(IDS.ACHIEVEMENTS.C4LEVEL1))) {
 
-                        const data = await model.findOneAndUpdate({ id: ctx.user.id }, { $addToSet: { achievements: IDS.ACHIEVEMENTS.C4LEVEL1 }}, { new: true }).lean();
+                        const data = await model.findOneAndUpdate({ id: ctx.user.id }, { $addToSet: { achievements: IDS.ACHIEVEMENTS.C4LEVEL1 } }, { new: true }).lean();
                         await redis.set(ctx.user.id, JSON.stringify(data));
 
                     } else if ((a.c4hard.ganadas >= 15) && !(DATAPROFILE.achievements.includes(IDS.ACHIEVEMENTS.C4LEVEL2))) {
 
-                        const data = await model.findOneAndUpdate({ id: ctx.user.id }, { $addToSet: { achievements: IDS.ACHIEVEMENTS.C4LEVEL2 }}, { new: true }).lean();
+                        const data = await model.findOneAndUpdate({ id: ctx.user.id }, { $addToSet: { achievements: IDS.ACHIEVEMENTS.C4LEVEL2 } }, { new: true }).lean();
                         await redis.set(ctx.user.id, JSON.stringify(data));
 
                     } else if ((a.c4hard.ganadas >= 25) && !(DATAPROFILE.achievements.includes(IDS.ACHIEVEMENTS.C4LEVEL3))) {
 
-                        const data = await model.findOneAndUpdate({ id: ctx.user.id }, { $addToSet: { achievements: IDS.ACHIEVEMENTS.C4LEVEL3 }}, { new: true }).lean();
+                        const data = await model.findOneAndUpdate({ id: ctx.user.id }, { $addToSet: { achievements: IDS.ACHIEVEMENTS.C4LEVEL3 } }, { new: true }).lean();
                         await redis.set(ctx.user.id, JSON.stringify(data));
 
                     } else if ((a.c4hard.ganadas >= 50) && !(DATAPROFILE.achievements.includes(IDS.ACHIEVEMENTS.C4LEVEL4))) {
 
-                        const data = await model.findOneAndUpdate({ id: ctx.user.id }, { $addToSet: { achievements: IDS.ACHIEVEMENTS.C4LEVEL4 }}, { new: true }).lean();
+                        const data = await model.findOneAndUpdate({ id: ctx.user.id }, { $addToSet: { achievements: IDS.ACHIEVEMENTS.C4LEVEL4 } }, { new: true }).lean();
                         await redis.set(ctx.user.id, JSON.stringify(data));
 
                     }
@@ -468,17 +480,19 @@ export async function FUNCTION(
     if (usuario.id != ctx.client.user.id) {
 
         const Buttons = [
-            new Button('primary')
-                .setCustomID('c4_yes')
+            new detritus.Utils.ComponentButton()
+                .setCustomId('c4_yes')
+                .setStyle(detritus.Constants.MessageComponentButtonStyles.PRIMARY)
                 .setEmoji({ name: '✅', id: undefined }),
-            new Button('danger')
-                .setCustomID('c4_no')
+            new detritus.Utils.ComponentButton()
+                .setCustomId('c4_no')
+                .setStyle(detritus.Constants.MessageComponentButtonStyles.DANGER)
                 .setEmoji({ name: '❌', id: undefined })
         ];
 
         const wait = await ctx.editOrRespond({
             content: langjson.commands.connect4.wait_user(usuario.mention),
-            components: [new Component(...Buttons)]
+            components: [new detritus.Utils.ComponentActionRow().addButton(Buttons[0]).addButton(Buttons[1])]
         });
 
         const respuesta: string | undefined = await new Promise(resolve => {
