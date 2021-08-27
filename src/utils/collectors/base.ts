@@ -9,7 +9,6 @@ export interface CollectorOptions<T = any> {
 }
 
 class BaseCollector extends events.EventEmitter {
-    message: detritus.Structures.Message;
     shardClient: detritus.ShardClient;
     options: CollectorOptions;
     running: boolean;
@@ -17,26 +16,25 @@ class BaseCollector extends events.EventEmitter {
     _idleTimeout: NodeJS.Timeout;
     _timeTimeout: NodeJS.Timeout;
 
-    constructor(message: detritus.Structures.Message, options: CollectorOptions, shardClient: detritus.ShardClient) {
+    constructor(options: CollectorOptions, shardClient: detritus.ShardClient) {
         super();
-        this.message = message;
         this.shardClient = shardClient;
         this.options = options;
         this.running = true;
         this.incrementMaxListeners();
         this.usages = 0;
         if (options.timeLimit) this._timeTimeout = setTimeout(() => {
-            this.stop('time'); 
+            this.stop('time');
         }, options.timeLimit);
         if (options.timeIdle) this._timeTimeout = setTimeout(() => {
-            this.stop('idle'); 
+            this.stop('idle');
         }, options.timeIdle);
         const subscriptions = {
-            messageDelete: shardClient.subscribe('messageDelete', this.handleMessageDelete),
-            messageDeleteBulk: shardClient.subscribe('messageDeleteBulk', this.handleMessageDeleteBulk),
-            guildDelete: shardClient.subscribe('guildDelete', this.handleGuildDelete),
-            channelDelete: shardClient.subscribe('channelDelete', this.handleChannelDelete),
-            threadDelete: shardClient.subscribe('threadDelete', this.handleThreadDelete),
+            messageDelete: shardClient.subscribe('messageDelete', (d) => this.handleMessageDelete(d)),
+            messageDeleteBulk: shardClient.subscribe('messageDeleteBulk', (d) => this.handleMessageDeleteBulk(d)),
+            guildDelete: shardClient.subscribe('guildDelete', (d) => this.handleGuildDelete(d)),
+            channelDelete: shardClient.subscribe('channelDelete', (d) => this.handleChannelDelete(d)),
+            threadDelete: shardClient.subscribe('threadDelete', (d) => this.handleThreadDelete(d)),
         };
 
         this.once('end', () => {
@@ -56,35 +54,35 @@ class BaseCollector extends events.EventEmitter {
 
     handleMessageDelete(message: detritus.GatewayClientEvents.MessageDelete) {
 
-        if (message.messageId == this.message.id)
+        if (message.messageId == this.messageId)
             this.stop('messageDelete');
 
     }
 
     handleMessageDeleteBulk({ messages }: detritus.GatewayClientEvents.MessageDeleteBulk) {
 
-        if (messages.some(item => item && item.id == this.message.id))
+        if (messages.some(item => item && item.id == this.messageId))
             this.stop('messageDelete');
 
     }
 
     handleGuildDelete({ guild }: detritus.GatewayClientEvents.GuildDelete) {
 
-        if (guild.id == this.message.guildId)
+        if (guild.id == this.guildId)
             this.stop('guildDelete');
 
     }
 
     handleChannelDelete({ channel }: detritus.GatewayClientEvents.ChannelDelete) {
 
-        if (channel.id == this.message.channelId)
+        if (channel.id == this.messageId)
             this.stop('channelDelete');
 
     }
 
     handleThreadDelete({ thread }: detritus.GatewayClientEvents.ThreadDelete) {
 
-        if (thread.id == this.message.channelId)
+        if (thread.id == this.channelId)
             this.stop('threadDelete');
 
     }
@@ -107,6 +105,18 @@ class BaseCollector extends events.EventEmitter {
         if (maxListeners !== 0) {
             this.shardClient.setMaxListeners(maxListeners - 1);
         }
+    }
+
+    get channelId() {
+        return '';
+    }
+
+    get messageId() {
+        return '';
+    }
+
+    get guildId() {
+        return '';
     }
 
 

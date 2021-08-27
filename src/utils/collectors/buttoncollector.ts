@@ -7,10 +7,12 @@ export interface INTERACTION extends detritus.Structures.Interaction {
 
 class ButtonCollector extends BaseCollector {
 
-    options: CollectorOptions<INTERACTION>
+    options: CollectorOptions<INTERACTION>;
+    message: detritus.Structures.Message;
 
     constructor(message: detritus.Structures.Message, options: CollectorOptions<INTERACTION>, shardClient: detritus.ShardClient) {
-        super(message, options, shardClient);
+        super(options, shardClient);
+        this.message = message;
         const sub = shardClient.subscribe('interactionCreate', (data) => this.handleInteractionCreate(data));
         this.once('end', () => {
             sub.remove();
@@ -64,6 +66,17 @@ class ButtonCollector extends BaseCollector {
         return super.emit(event, ...args);
     }
 
+    get channelId() {
+        return this.message.channelId;
+    }
+
+    get messageId() {
+        return this.message.id;
+    }
+
+    get guildId() {
+        return this.message.guildId;
+    }
 
 }
 
