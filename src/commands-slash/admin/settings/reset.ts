@@ -5,8 +5,8 @@ import json from '../../../utils/lang/langs.js';
 import guild from '../../../database/models/guild.js';
 import redis from '../../../utils/managers/redis.js';
 
-const { Constants: { ApplicationCommandOptionTypes }} = detritus;
-const { Constants: { Permissions: Flags }} = detritus;
+const { Constants: { ApplicationCommandOptionTypes } } = detritus;
+const { Constants: { Permissions: Flags } } = detritus;
 
 export function reset() {
 
@@ -59,7 +59,7 @@ export function reset() {
                     const langjson = json[data.lang];
 
                     const embed = new MessageEmbed()
-                        .setColor(0xff0000)
+                        .setColor(14720566)
                         .setDescription(langjson.commands.settings.reset.message)
                         .setTimestamp();
                     return ctx.editOrRespond({ embed });
@@ -80,7 +80,7 @@ export function reset() {
                     const langjson = json[data.lang];
 
                     const embed = new MessageEmbed()
-                        .setColor(0xff0000)
+                        .setColor(14720566)
                         .setDescription(langjson.commands.settings.reset.message)
                         .setTimestamp()
                         .setFooter(args.field);

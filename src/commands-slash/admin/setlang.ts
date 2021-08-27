@@ -3,10 +3,9 @@ import { BaseSlash } from '../../utils/classes/slash.js';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
 import guild from '../../database/models/guild.js';
 import redis from '../../utils/managers/redis.js';
-import { Color } from '../../utils/const.js';
 
-const { Constants: { Permissions: Flags }} = detritus;
-const { Constants: { ApplicationCommandOptionTypes }} = detritus;
+const { Constants: { Permissions: Flags } } = detritus;
+const { Constants: { ApplicationCommandOptionTypes } } = detritus;
 
 const langs = ['en', 'es'];
 
@@ -58,7 +57,7 @@ export default function () {
                     return ctx.editOrRespond({
                         embed:
                             new MessageEmbed()
-                                .setColor(Color)
+                                .setColor(14720566)
                                 .setDescription('🇪🇸 | Establecido al español :D.')
                                 .setAuthor(ctx.user.username, ctx.user.avatarUrl)
                     });
@@ -76,7 +75,7 @@ export default function () {
                     return ctx.editOrRespond({
                         embed:
                             new MessageEmbed()
-                                .setColor(Color)
+                                .setColor(14720566)
                                 .setDescription('🇺🇸 | Set to English :D.')
                                 .setAuthor(ctx.user.username, ctx.user.avatarUrl)
                     });

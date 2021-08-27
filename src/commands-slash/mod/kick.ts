@@ -7,8 +7,8 @@ import getHighest from '../../utils/functions/gethighest.js';
 import unmarkdown from '../../utils/functions/unmarkdown.js';
 import canMod from '../../utils/functions/canmod.js';
 
-const { Constants: { Permissions: Flags }} = detritus;
-const { Constants: { ApplicationCommandOptionTypes }} = detritus;
+const { Constants: { Permissions: Flags } } = detritus;
+const { Constants: { ApplicationCommandOptionTypes } } = detritus;
 
 export default function () {
     class Kick extends BaseSlash {
@@ -66,7 +66,7 @@ export default function () {
                 .then(() => {
 
                     const embed = new MessageEmbed()
-                        .setColor(0x2ecc71)
+                        .setColor(14720566)
                         .setDescription(langjson.commands.kick.kick(`**${unmarkdown(member.username)}**`, args.reason))
                         .setFooter(ctx.user.username, ctx.user.avatarUrl);
 
@@ -75,7 +75,7 @@ export default function () {
                 }).catch((error) => {
 
                     const embed = new MessageEmbed()
-                        .setColor(0xff0000)
+                        .setColor(14720566)
                         .setDescription(`Error: ${error ? (error.message || error) : error}`)
                         .setFooter(ctx.user.username, ctx.user.avatarUrl);
 

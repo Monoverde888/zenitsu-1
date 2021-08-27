@@ -3,7 +3,7 @@ import detritus from 'detritus-client';
 import getGuild from '../../../utils/functions/getguild.js';
 import { BaseCommandOption } from '../../../utils/classes/slash.js';
 
-const { Constants: { Permissions: Flags }} = detritus;
+const { Constants: { Permissions: Flags } } = detritus;
 
 export function view() {
 
@@ -36,7 +36,7 @@ export function view() {
                 return `${channel.mention} - (${channel.name})`;
             }) : [];
             const embed = new MessageEmbed()
-                .setColor(0xff0000)
+                .setColor(14720566)
                 .addField('Muterole', rol ? `${rol.mention}  \`[${rol.id}]\`` : '❌', true)
                 .addField('Ignore channels', canales.join(', ') || '❌', true)
                 .setTimestamp();

@@ -1,7 +1,7 @@
 import detritus from 'detritus-client';
 import mongoose from 'mongoose';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
-import { Color } from '../../utils/const.js';
+
 import { BaseSlash } from '../../utils/classes/slash.js';
 import ButtonCollector from '../../utils/collectors/buttoncollector.js';
 
@@ -36,7 +36,7 @@ export default function () {
         🏓 Gateway: ${res.gateway}ms [${getStatus(res.gateway)}]\n🏃 Message: ${date - Number(ctx.interaction.createdAt)}ms [${getStatus(date - Number(ctx.interaction.createdAt))}]\n🗃️ DB: ${ping_db}ms [${getStatus(ping_db)}]
         `)
                 .setTimestamp()
-                .setColor(Color);
+                .setColor(14720566);
             await ctx.editOrRespond({ embed });
 
             const message = await ctx.fetchResponse();

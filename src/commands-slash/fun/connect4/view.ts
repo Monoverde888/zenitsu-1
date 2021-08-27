@@ -6,7 +6,7 @@ import getUser from '../../../utils/functions/getuser.js';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
 import fetch from 'node-fetch';
 
-const { Constants: { ApplicationCommandOptionTypes }} = detritus;
+const { Constants: { ApplicationCommandOptionTypes } } = detritus;
 
 export function view() {
     class View extends BaseCommandOption {
@@ -45,7 +45,7 @@ export function view() {
             const langjson = ctx.guildId ? jsonOBJECT[(await getGuild(ctx.guildId)).lang] : jsonOBJECT.en;
 
             const embed = new MessageEmbed()
-                .setColor(0xff0000)
+                .setColor(14720566)
                 .setImage('https://is.gd/6KTM2e')
                 .setDescription(langjson.commands.connect4view.invalid);
 

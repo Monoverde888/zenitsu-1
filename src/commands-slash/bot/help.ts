@@ -1,5 +1,5 @@
 import detritus from 'detritus-client';
-import { Color } from '../../utils/const.js';
+
 import { BaseSlash } from '../../utils/classes/slash.js';
 import json from '../../utils/lang/langs.js';
 import getGuild from '../../utils/functions/getguild.js';
@@ -25,7 +25,7 @@ export default function () {
             const { categories } = langjson.commands.help;
 
             const embedHelp = new detritus.Utils.Embed()
-                .setColor(Color)
+                .setColor(14720566)
                 .setTimestamp()
                 .addField(categories[0], ctx.client.interactionCommandClient.commands.filter(a => a.metadata.category === 'util').map(a => `\`${a.name}\``).join(', ') || 'weird')
                 .addField(categories[1], ctx.client.interactionCommandClient.commands.filter(a => a.metadata.category === 'fun').map(a => `\`${a.name}\``).join(', ') || 'weird')

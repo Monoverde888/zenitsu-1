@@ -1,6 +1,6 @@
 import BaseCommand from '../../utils/classes/command.js';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
-import { Color } from '../../utils/const.js';
+
 
 export default new BaseCommand({
     metadata: {
@@ -16,7 +16,7 @@ export default new BaseCommand({
         const embed = new MessageEmbed()
             .setThumbnail(ctx.client.user.avatarUrl)
             .setDescription('https://top.gg/bot/721080193678311554')
-            .setColor(Color)
+            .setColor(14720566)
             .setFooter(ctx.message.author.username, ctx.message.author.avatarUrl)
             .setTimestamp();
 

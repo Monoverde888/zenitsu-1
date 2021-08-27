@@ -1,6 +1,6 @@
 import detritus from 'detritus-client';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
-import { Color } from '../../utils/const.js';
+
 import { BaseSlash } from '../../utils/classes/slash.js';
 import json from '../../utils/lang/langs.js';
 import getGuild from '../../utils/functions/getguild.js';
@@ -28,7 +28,7 @@ export default function () {
             const embed = new MessageEmbed()
                 .setThumbnail(ctx.client.user.avatarUrl)
                 .setDescription(langjson.commands.invite.message(link, invitacionLink))
-                .setColor(Color)
+                .setColor(14720566)
                 .setTimestamp();
             return ctx.respond(detritus.Constants.InteractionCallbackTypes.CHANNEL_MESSAGE_WITH_SOURCE, {
                 embed,

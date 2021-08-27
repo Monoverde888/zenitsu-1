@@ -2,7 +2,7 @@ import BaseCommand from '../../utils/classes/command.js';
 import json from '../../utils/lang/langs.js';
 import detritus from 'detritus-client';
 import getGuild from '../../utils/functions/getguild.js';
-import { Color } from '../../utils/const.js';
+
 
 export default new BaseCommand({
     metadata: {
@@ -19,7 +19,7 @@ export default new BaseCommand({
         const categories = langjson.commands.help.categories;
 
         const embedHelp = new detritus.Utils.Embed()
-            .setColor(Color)
+            .setColor(14720566)
             .setTimestamp()
             .setTitle(json[lang].messages.use_slash)
             .setUrl('https://discord.com/api/oauth2/authorize?client_id=721080193678311554&scope=bot+applications.commands&permissions=8')

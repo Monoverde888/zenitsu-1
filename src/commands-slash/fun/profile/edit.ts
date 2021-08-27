@@ -8,7 +8,7 @@ import model from '../../../database/models/user.js';
 import pkgvalidURL from 'image-url-validator';
 
 const validURL = pkgvalidURL.default;
-const { Constants: { ApplicationCommandOptionTypes }} = detritus;
+const { Constants: { ApplicationCommandOptionTypes } } = detritus;
 
 export function edit() {
     class Edit extends BaseCommandOption {
@@ -89,7 +89,7 @@ export function edit() {
                         const embed = new MessageEmbed()
                             .setImage('https://cdn.discordapp.com/attachments/842090973311270914/843166076673327134/G64ZYWcv.gif')
                             .setDescription(langjson.commands.editprofile.invalid)
-                            .setColor(0xff0000);
+                            .setColor(14720566);
                         return ctx.editOrRespond({ embed });
 
                     }
@@ -119,7 +119,7 @@ export function edit() {
                     await redis.set(ctx.userId, JSON.stringify(d));
 
                     const embed = new MessageEmbed()
-                        .setColor(0xff0000)
+                        .setColor(14720566)
                         .setDescription(langjson.commands.editprofile.description_nice('/'));
                     return ctx.editOrRespond({ embed });
 

@@ -6,8 +6,8 @@ import getGuild from '../../utils/functions/getguild.js';
 import getHighest from '../../utils/functions/gethighest.js';
 import unmarkdown from '../../utils/functions/unmarkdown.js';
 
-const { Constants: { Permissions: Flags }} = detritus;
-const { Constants: { ApplicationCommandOptionTypes }} = detritus;
+const { Constants: { Permissions: Flags } } = detritus;
+const { Constants: { ApplicationCommandOptionTypes } } = detritus;
 
 export default function () {
     class UnMute extends BaseSlash {
@@ -73,7 +73,7 @@ export default function () {
                 .then(() => {
 
                     const embed = new MessageEmbed()
-                        .setColor(0x2ecc71)
+                        .setColor(14720566)
                         .setDescription(langjson.commands.unmute.unmute(unmarkdown(member.username)))
                         .setFooter(ctx.user.username, ctx.user.avatarUrl);
 
@@ -83,7 +83,7 @@ export default function () {
                 .catch((error) => {
 
                     const embed = new MessageEmbed()
-                        .setColor(0xff0000)
+                        .setColor(14720566)
                         .setDescription(`Error: ${error ? (error.message || error) : error}`)
                         .setFooter(ctx.user.username, ctx.user.avatarUrl);
 

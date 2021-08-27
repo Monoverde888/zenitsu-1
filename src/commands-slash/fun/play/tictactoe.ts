@@ -237,7 +237,7 @@ async function jugar(firstp: detritus.Structures.MemberOrUser, secondp: detritus
         const jugador = partida.player;
         partidas.delete(ctx.channelId);
         const embed = new MessageEmbed()
-            .setColor(0xff0000)
+            .setColor(14720566)
             .setDescription(langjson.commands.tictactoe.win(users.get(jugador)));
 
         const positions = pos.find(p => p.every(x => partida.map[x] == 'X')) || pos.find(p => p.every(x => partida.map[x] == 'O')),
@@ -270,7 +270,7 @@ async function jugar(firstp: detritus.Structures.MemberOrUser, secondp: detritus
         const jugadores = partida.players;
         partidas.delete(ctx.channelId);
         const embed = new MessageEmbed()
-            .setColor(0xff0000)
+            .setColor(14720566)
             .setDescription(langjson.commands.tictactoe.draw(users.get(jugadores[0]), users.get(jugadores[1])));
 
         collector.stop('NO');
@@ -303,7 +303,7 @@ async function jugar(firstp: detritus.Structures.MemberOrUser, secondp: detritus
     partida.on('end', async () => {
         partidas.delete(ctx.channelId);
         const embed = new MessageEmbed()
-            .setColor(0xff0000)
+            .setColor(14720566)
             .setDescription(langjson.commands.tictactoe.game_over);
 
         collector.stop('NO');

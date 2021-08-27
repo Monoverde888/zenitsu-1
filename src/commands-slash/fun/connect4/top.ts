@@ -5,7 +5,7 @@ import getGuild from '../../../utils/functions/getguild.js';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
 import model, { USER } from '../../../database/models/user.js';
 
-const { Constants: { ApplicationCommandOptionTypes }} = detritus;
+const { Constants: { ApplicationCommandOptionTypes } } = detritus;
 
 export function top() {
     class Top extends BaseCommandOption {
@@ -45,7 +45,7 @@ export function top() {
             const data = await model.find().sort({ [`c4${args.difficulty}.ganadas`]: -1 }).limit(10);
             const embed = new MessageEmbed()
                 .setDescription(langjson.commands.connect4top.no_data(args.difficulty))
-                .setColor(0xff0000);
+                .setColor(14720566);
 
             if (!data.length)
                 return ctx.editOrRespond({ embed });
@@ -70,7 +70,7 @@ export function top() {
                 .setTitle('Top 10.')
                 .setFooter(args.difficulty)
                 .setDescription(description)
-                .setColor(0xff0000);
+                .setColor(14720566);
 
             return ctx.editOrRespond({ embed: embed2 });
 

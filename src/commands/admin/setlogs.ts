@@ -1,7 +1,7 @@
 import BaseCommand from '../../utils/classes/command.js';
 import parseArgs from '../../utils/functions/parseargs.js';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
-import { Color } from '../../utils/const.js';
+
 
 const regex = /((http|https):\/\/)((www|canary|ptb)\.)?(discordapp|discord)\.com\/api\/webhooks\/([0-9]){7,19}\/[-a-zA-Z0-9@:%._+~#=]{60,120}/gmi;
 import redis from '../../utils/managers/redis.js';
@@ -12,7 +12,7 @@ import nodefetch from 'node-fetch';
 import unmarkdown from '../../utils/functions/unmarkdown.js';
 import detritus from 'detritus-client';
 
-const { Constants: { Permissions: Flags }} = detritus;
+const { Constants: { Permissions: Flags } } = detritus;
 
 export default new BaseCommand({
     label: 'arg',
@@ -36,7 +36,7 @@ export default new BaseCommand({
 
         const invalidUse = new MessageEmbed()
             .setTimestamp()
-            .setColor(Color)
+            .setColor(14720566)
             .setDescription(langjson.commands.setlogs.invalid)
             .setFooter(`${ctx.prefix}setlogs (WebhookURL) (messageUpdate|messageUpdate)`)
             .setImage('https://i.imgur.com/2WZ1ctQ.gif')
@@ -106,7 +106,7 @@ export default new BaseCommand({
                         ? `https://cdn.discordapp.com/avatars/${webhook.id}/${webhook.avatar}.png`
                         : 'https://cdn.discordapp.com/embed/avatars/0.png')
                     .setDescription(langjson.commands.setlogs.correct(unmarkdown(webhook.name), type))
-                    .setColor(Color);
+                    .setColor(14720566);
 
                 return ctx.reply({ embed });
 

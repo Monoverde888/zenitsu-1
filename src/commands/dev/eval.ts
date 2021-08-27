@@ -3,7 +3,7 @@ import getPrivate from '../../utils/functions/getprivate.js';
 import replace from '../../utils/functions/replace.js';
 import parseArgs from '../../utils/functions/parseargs.js';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
-import { Color } from '../../utils/const.js';
+
 import util from 'util';
 import child_process from 'child_process';
 const { exec: execC } = child_process;
@@ -45,7 +45,7 @@ export default new BaseCommand({
                     let evalued = typeof res_evalued == 'string' ? res_evalued : util.inspect(res_evalued, { depth: 0 });
                     evalued = replace(evalued, getPrivate(), '☹️');
                     const embed = new MessageEmbed()
-                        .setColor(Color)
+                        .setColor(14720566)
                         .setDescription('```js\n' + evalued.slice(0, 2000) + '\n```')
                         .setTimestamp()
                         .setFooter(ctx.message.author.username, ctx.message.author.avatarUrl)

@@ -1,6 +1,6 @@
 import detritus from 'detritus-client';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
-import { Color } from '../../utils/const.js';
+
 import { BaseSlash } from '../../utils/classes/slash.js';
 
 export default function () {
@@ -23,7 +23,7 @@ export default function () {
             const embed = new MessageEmbed()
                 .setThumbnail(ctx.client.user.avatarUrl)
                 .setDescription('https://top.gg/bot/721080193678311554')
-                .setColor(Color)
+                .setColor(14720566)
                 .setFooter(ctx.user.username, ctx.user.avatarUrl)
                 .setTimestamp();
 

@@ -5,7 +5,7 @@ import getGuild from '../../../utils/functions/getguild.js';
 import getUser from '../../../utils/functions/getuser.js';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
 
-const { Constants: { ApplicationCommandOptionTypes }} = detritus;
+const { Constants: { ApplicationCommandOptionTypes } } = detritus;
 
 export function stats() {
     class Stats extends BaseCommandOption {
@@ -47,7 +47,7 @@ export function stats() {
             if (!easy && !medium && !hard) {
                 const embed = new MessageEmbed()
                     .setDescription(langjson.commands.connect4stats.no_data(user.mention))
-                    .setColor(0xff0000);
+                    .setColor(14720566);
                 return ctx.editOrRespond({ embed });
             }
 
@@ -56,7 +56,7 @@ export function stats() {
                 states = json.states;
 
             const embed = new MessageEmbed()
-                .setColor(0xff0000)
+                .setColor(14720566)
                 .setAuthor(user.username, user.avatarUrl);
 
             if (easy) embed.addField(difi[0], `${states[0]}: ${easy.ganadas || 0} ${states[1]}: ${easy.perdidas || 0} ${states[2]}: ${easy.empates || 0}`);

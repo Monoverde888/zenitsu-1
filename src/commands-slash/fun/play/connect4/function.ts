@@ -195,7 +195,7 @@ function awaitAnswer(MESSAGE: detritus.Structures.Message,
             }
             const embed = new MessageEmbed()
                 .setDescription(langjson.commands.connect4.game_over)
-                .setColor(0xff0000)
+                .setColor(14720566)
                 .setImage('attachment://party.gif');
             const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
             await sendCoso(embed, buf);
@@ -211,7 +211,7 @@ function awaitAnswer(MESSAGE: detritus.Structures.Message,
             }
             const embed = new MessageEmbed()
                 .setDescription(langjson.commands.connect4.time_over)
-                .setColor(0xff0000)
+                .setColor(14720566)
                 .setImage('attachment://4enraya.gif')
                 .setImage('attachment://party.gif');
             const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
@@ -229,7 +229,7 @@ function awaitAnswer(MESSAGE: detritus.Structures.Message,
             }
             const embed = new MessageEmbed()
                 .setDescription(langjson.commands.connect4.game_over2)
-                .setColor(0xff0000)
+                .setColor(14720566)
                 .setImage('attachment://party.gif');
             const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
             await sendCoso(embed, buf);
@@ -258,7 +258,7 @@ function awaitAnswer(MESSAGE: detritus.Structures.Message,
         if (games.get(CHANNEL.id).solution) {
             const embed = new MessageEmbed()
                 .setDescription(langjson.commands.connect4.win(interaction.user.username))
-                .setColor(0xff0000)
+                .setColor(14720566)
                 .setImage('attachment://party.gif');
             await interaction.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
             const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
@@ -306,7 +306,7 @@ function awaitAnswer(MESSAGE: detritus.Structures.Message,
         } else if (games.get(CHANNEL.id).tie) {
             const embed = new MessageEmbed()
                 .setDescription(langjson.commands.connect4.draw(usuario.username, ctx.user.username))
-                .setColor(0xff0000)
+                .setColor(14720566)
                 .setImage('attachment://party.gif');
             const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
             await interaction.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
@@ -333,7 +333,7 @@ function awaitAnswer(MESSAGE: detritus.Structures.Message,
             if (games.get(CHANNEL.id).solution) {
                 const embed = new MessageEmbed()
                     .setDescription(langjson.commands.connect4.win(usuario.username))
-                    .setColor(0xff0000)
+                    .setColor(14720566)
                     .setImage('attachment://party.gif');
                 await interaction.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
                 const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
@@ -349,7 +349,7 @@ function awaitAnswer(MESSAGE: detritus.Structures.Message,
             } else if (games.get(CHANNEL.id).tie) {
                 const embed = new MessageEmbed()
                     .setDescription(langjson.commands.connect4.draw(usuario.username, ctx.user.username))
-                    .setColor(0xff0000)
+                    .setColor(14720566)
                     .setImage('attachment://party.gif');
                 await interaction.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
                 const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
@@ -367,7 +367,7 @@ function awaitAnswer(MESSAGE: detritus.Structures.Message,
             const embed = new MessageEmbed()
                 .setDescription(langjson.commands.connect4.turn(ctx.user.username, '🔴'))
                 .setFooter(args.difficulty)
-                .setColor(0xff0000)
+                .setColor(14720566)
                 .setImage('attachment://party.gif');
             await interaction.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
             const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
@@ -396,7 +396,7 @@ function awaitAnswer(MESSAGE: detritus.Structures.Message,
                     findTurn(interaction.userId, CHANNEL.id).turn == 2 ? '🔴' : '🟡'
                 ))
                 .setFooter(args.difficulty)
-                .setColor(0xff0000)
+                .setColor(14720566)
                 .setImage('attachment://party.gif');
             await interaction.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
             const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
@@ -451,7 +451,7 @@ export async function FUNCTION(
             const embed = new MessageEmbed()
                 .setDescription(langjson.commands.connect4.mention)
                 .setFooter(langjson.commands.connect4.footer)
-                .setColor(0xff0000);
+                .setColor(14720566);
 
             return ctx.editOrRespond({ embed });
         }
@@ -506,26 +506,35 @@ export async function FUNCTION(
                 .on('collect', interaction => resolve(interaction.data.customId));
 
         });
-
         if (!respuesta) {
+            Buttons[0].setDisabled(true);
+            Buttons[1].setDisabled(true);
             games.delete(CHANNEL.id);
             users.delete(ctx.userId);
             users.delete(usuario.id);
-            return ctx.editOrRespond(langjson.commands.connect4.dont_answer(usuario.username));
+            return ctx.editOrRespond({
+                content: langjson.commands.connect4.dont_answer(usuario.username),
+                components: [new detritus.Utils.ComponentActionRow().addButton(Buttons[0]).addButton(Buttons[1])]
+            });
         }
 
         if (respuesta == 'c4_no') {
+            Buttons[0].setDisabled(true);
+            Buttons[1].setDisabled(true);
             games.delete(CHANNEL.id);
             users.delete(ctx.userId);
             users.delete(usuario.id);
-            return ctx.editOrRespond(langjson.commands.connect4.deny(usuario.username));
+            return ctx.editOrRespond({
+                content: langjson.commands.connect4.deny(usuario.username),
+                components: [new detritus.Utils.ComponentActionRow().addButton(Buttons[0]).addButton(Buttons[1])]
+            });
         }
 
     }
 
     const embedStart = new MessageEmbed()
         .setDescription(langjson.commands.connect4.start(findTurn(ctx.user.id, CHANNEL.id).turn == 1 ? ctx.user.username : usuario.username))
-        .setColor(0xff0000)
+        .setColor(14720566)
         .setImage('attachment://party.gif');
     const bufParty = await displayConnectFourBoard(games.get(CHANNEL.id));
 
