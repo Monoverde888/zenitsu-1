@@ -1,14 +1,11 @@
-import detritus from "detritus-client";
-import { BaseCommandOption } from "../../../utils/classes/slash.js";
+import detritus from 'detritus-client';
+import { BaseCommandOption } from '../../../utils/classes/slash.js';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
 import json from '../../../utils/lang/langs.js';
 import getGuild from '../../../utils/functions/getguild.js';
-import ButtonCollector, { INTERACTION } from "../../../utils/collectors/buttoncollector.js";
+import ButtonCollector, { INTERACTION } from '../../../utils/collectors/buttoncollector.js';
 import AI from 'tictactoe-complex-ai';
 import TheGame from '../../../utils/classes/tttgame.js';
-import Button from '../../../utils/buttons/normal.js';
-import Components from '../../../utils/buttons/component.js';
-import { estilos } from '../../../utils/buttons/types.js';
 
 const users: Map<string, string> = new Map();
 
@@ -24,14 +21,14 @@ const pos = [
 ];
 
 const colors = {
-    'X': 'danger' as estilos,
-    'O': 'primary' as estilos
+    'X': detritus.Constants.MessageComponentButtonStyles.DANGER,
+    'O': detritus.Constants.MessageComponentButtonStyles.PRIMARY
 };
 
 const emojis = {
     'X': '<:x_tic:849685084236021790>',
     'O': '<:o_tic:849685083967586304>'
-}
+};
 
 function AIplay(partida: TheGame) {
     const instance = AI.createAI({
@@ -47,7 +44,7 @@ function AIplay(partida: TheGame) {
 
 function resolveMarkdown(user: detritus.Structures.MemberOrUser, partida: TheGame) {
 
-    return partida.player == user.id ? `**${user.username}** ${emojis[partida.ficha]}` : user.username
+    return partida.player == user.id ? `**${user.username}** ${emojis[partida.ficha]}` : user.username;
 
 }
 
@@ -57,19 +54,20 @@ function generateButtons(partida: TheGame, forceDisable = false, empate = '') {
 
     for (const i in partida.map) {
 
-        const but = partida.map[i]
+        const but = partida.map[i];
         const check = ['X', 'O'].find(item => but == item) as 'X' | 'O';
         const number = parseInt(i);
 
-        const temp = new Button(colors[check] ? colors[check] : 'secondary')
-            .setCustomID(`tictactoe_${number}`)
-            .setDisabled(forceDisable || !!check)
+        const temp = new detritus.Utils.ComponentButton()
+            .setStyle(colors[check] ? colors[check] : detritus.Constants.MessageComponentButtonStyles.SECONDARY)
+            .setCustomId(`tictactoe_${number}`)
+            .setDisabled(forceDisable || !!check);
 
         if (check) temp.setEmoji({
             id: but == 'X' ? '849685084236021790' : '849685083967586304',
             name: but == 'X' ? 'x_tic' : 'o_tic'
         });
-        else temp.setLabel('~')
+        else temp.setLabel('~');
 
         res.push(temp);
 
@@ -80,8 +78,9 @@ function generateButtons(partida: TheGame, forceDisable = false, empate = '') {
     const buttons3 = res.slice(6);
 
     if (empate) buttons2.push(
-        new Button('success')
-            .setCustomID('tictactoe_repeat')
+        new detritus.Utils.ComponentButton()
+            .setStyle(detritus.Constants.MessageComponentButtonStyles.SUCCESS)
+            .setCustomId('tictactoe_repeat')
             .setEmoji({ name: '🔁', id: undefined })
             .setLabel(empate)
     );
@@ -147,18 +146,18 @@ async function jugar(firstp: detritus.Structures.MemberOrUser, secondp: detritus
                         .setEmoji({ name: '❌', id: undefined })
                         .setDisabled(true)
                 )]
-            })
-            return partidas.delete(ctx.channelId)
+            });
+            return partidas.delete(ctx.channelId);
         }
 
         if (respuesta == 'tictactoe_no') {
-            await ctx.editOrRespond({ content: langjson.commands.tictactoe.deny(secondp.username), embeds: [], })
-            return partidas.delete(ctx.channelId)
+            await ctx.editOrRespond({ content: langjson.commands.tictactoe.deny(secondp.username), embeds: [], });
+            return partidas.delete(ctx.channelId);
         }
     }
 
-    users.set(secondp.id, secondp.username)
-    users.set(firstp.id, firstp.username)
+    users.set(secondp.id, secondp.username);
+    users.set(firstp.id, firstp.username);
 
     let msg: detritus.Structures.Message;
 
@@ -169,9 +168,7 @@ async function jugar(firstp: detritus.Structures.MemberOrUser, secondp: detritus
             embed: { color: 0xff0000, description: '\u200b' },
         });
         msg = await ctx.fetchResponse();
-    }
-
-    else {
+    } else {
         partida.play(await AIplay(partida));
         await ctx.editOrRespond({
             content: `${resolveMarkdown(firstp, partida)} vs ${resolveMarkdown(secondp, partida)}`,
@@ -226,16 +223,16 @@ async function jugar(firstp: detritus.Structures.MemberOrUser, secondp: detritus
         partidas.delete(ctx.channelId);
         const embed = new MessageEmbed()
             .setColor(0xff0000)
-            .setDescription(langjson.commands.tictactoe.win(users.get(jugador)))
+            .setDescription(langjson.commands.tictactoe.win(users.get(jugador)));
 
         const positions = pos.find(p => p.every(x => partida.map[x] == 'X')) || pos.find(p => p.every(x => partida.map[x] == 'O')),
             botones = generateButtons(partida, true),
-            pasaber = [...botones[0].components, ...botones[1].components, ...botones[2].components]
+            pasaber = [...botones[0].components, ...botones[1].components, ...botones[2].components];
 
         let fila = 0;
 
         for (const i in pasaber) {
-            const numero = parseInt(i)
+            const numero = parseInt(i);
 
             if (numero == 3)
                 fila = 1;
@@ -259,25 +256,25 @@ async function jugar(firstp: detritus.Structures.MemberOrUser, secondp: detritus
         partidas.delete(ctx.channelId);
         const embed = new MessageEmbed()
             .setColor(0xff0000)
-            .setDescription(langjson.commands.tictactoe.draw(users.get(jugadores[0]), users.get(jugadores[1])))
+            .setDescription(langjson.commands.tictactoe.draw(users.get(jugadores[0]), users.get(jugadores[1])));
 
         collector.stop('NO');
 
         const empate = await ctx.editOrRespond({
             embed,
             components: generateButtons(partida, true, langjson.commands.tictactoe.rematch)
-        })
+        });
 
         const res: INTERACTION | false = await new Promise(resolve => {
 
             const collectorRepeat = new ButtonCollector(empate, {
                 timeLimit: 30 * 1000,
-                filter: m => jugadores.includes(m.userId) && 'tictactoe_repeat' == m.data.customId
+                filter: m => jugadores.includes(m.userId) && m.data.customId == 'tictactoe_repeat'
             }, ctx.client);
 
             collectorRepeat.on('end', () => {
                 resolve(false);
-            }).on('collect', m => resolve(m))
+            }).on('collect', m => resolve(m));
 
         });
 
@@ -289,7 +286,7 @@ async function jugar(firstp: detritus.Structures.MemberOrUser, secondp: detritus
     });
 
     partida.on('end', async () => {
-        partidas.delete(ctx.channelId)
+        partidas.delete(ctx.channelId);
         const embed = new MessageEmbed()
             .setColor(0xff0000)
             .setDescription(langjson.commands.tictactoe.game_over);
@@ -304,7 +301,7 @@ async function jugar(firstp: detritus.Structures.MemberOrUser, secondp: detritus
 
 }
 
-const { Constants: { ApplicationCommandOptionTypes } } = detritus;
+const { Constants: { ApplicationCommandOptionTypes }} = detritus;
 
 export function tictactoe() {
     class TicTacToe extends BaseCommandOption {
@@ -312,23 +309,23 @@ export function tictactoe() {
             super({
                 options: [
                     {
-                        name: "user",
+                        name: 'user',
                         type: ApplicationCommandOptionTypes.USER,
                         required: true,
-                        description: "User to be re-reached",
+                        description: 'User to be re-reached',
                     },
                 ],
             });
-            this.name = "tictactoe";
-            this.description = "Play tictactoe";
+            this.name = 'tictactoe';
+            this.description = 'Play tictactoe';
             this.metadata = {
                 usage(prefix: string) {
                     return [
                         `${prefix}play tictactoe @Zenitsu.`,
                         `${prefix}play tictactoe @User`
-                    ]
+                    ];
                 },
-                category: "fun",
+                category: 'fun',
             };
         }
 

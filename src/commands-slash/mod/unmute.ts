@@ -1,13 +1,13 @@
-import detritus from "detritus-client";
-import { BaseSlash } from "../../utils/classes/slash.js";
+import detritus from 'detritus-client';
+import { BaseSlash } from '../../utils/classes/slash.js';
 import json from '../../utils/lang/langs.js';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
 import getGuild from '../../utils/functions/getguild.js';
 import getHighest from '../../utils/functions/gethighest.js';
 import unmarkdown from '../../utils/functions/unmarkdown.js';
 
-const { Constants: { Permissions: Flags } } = detritus;
-const { Constants: { ApplicationCommandOptionTypes } } = detritus;
+const { Constants: { Permissions: Flags }} = detritus;
+const { Constants: { ApplicationCommandOptionTypes }} = detritus;
 
 export default function () {
     class UnMute extends BaseSlash {
@@ -15,27 +15,27 @@ export default function () {
             super({
                 options: [
                     {
-                        name: "member",
+                        name: 'member',
                         type: ApplicationCommandOptionTypes.USER,
                         required: true,
-                        description: "Member to unmute",
+                        description: 'Member to unmute',
                     },
                     {
-                        name: "reason",
+                        name: 'reason',
                         type: ApplicationCommandOptionTypes.STRING,
                         required: false,
-                        description: "Reason",
+                        description: 'Reason',
                     },
                 ],
             });
             this.disableDm = true;
-            this.name = "unmute";
-            this.description = "Unmute a member";
+            this.name = 'unmute';
+            this.description = 'Unmute a member';
             this.metadata = {
                 usage(prefix: string) {
                     return [`${prefix}unmute [Member]`];
                 },
-                category: "mod",
+                category: 'mod',
             };
             this.permissions = [Flags.KICK_MEMBERS].map(BigInt);
             this.permissionsClient = [Flags.MANAGE_ROLES].map(BigInt);
@@ -60,13 +60,13 @@ export default function () {
                 return ctx.editOrRespond(langjson.commands.unmute.no_role('/'));
 
             if (!ctx.guild.me.canEditRole(role) || !role.managed)
-                return ctx.editOrRespond(langjson.commands.unmute.cant_role(role.mentionable ? role.name : role.mention))
+                return ctx.editOrRespond(langjson.commands.unmute.cant_role(role.mentionable ? role.name : role.mention));
 
-            const member = args.member as detritus.Structures.Member
+            const member = args.member as detritus.Structures.Member;
 
             if (!member.roles.has(role.id)) return ctx.editOrRespond(langjson.commands.unmute.already_unmuted(unmarkdown(member.username)));
             if (ctx.userId != ctx.guild.ownerId) {
-                if (getHighest(ctx.member).position <= getHighest(member).position) return ctx.editOrRespond(langjson.commands.unmute.user_cannt_unmute(`**${unmarkdown(member.username)}**`))
+                if (getHighest(ctx.member).position <= getHighest(member).position) return ctx.editOrRespond(langjson.commands.unmute.user_cannt_unmute(`**${unmarkdown(member.username)}**`));
             }
 
             return member.removeRole(role.id, args.reason ? { reason: args.reason } : {})
@@ -75,9 +75,9 @@ export default function () {
                     const embed = new MessageEmbed()
                         .setColor(0x2ecc71)
                         .setDescription(langjson.commands.unmute.unmute(unmarkdown(member.username)))
-                        .setFooter(ctx.user.username, ctx.user.avatarUrl)
+                        .setFooter(ctx.user.username, ctx.user.avatarUrl);
 
-                    return ctx.editOrRespond({ embed })
+                    return ctx.editOrRespond({ embed });
 
                 })
                 .catch((error) => {
@@ -85,9 +85,9 @@ export default function () {
                     const embed = new MessageEmbed()
                         .setColor(0xff0000)
                         .setDescription(`Error: ${error ? (error.message || error) : error}`)
-                        .setFooter(ctx.user.username, ctx.user.avatarUrl)
+                        .setFooter(ctx.user.username, ctx.user.avatarUrl);
 
-                    return ctx.editOrRespond({ embed })
+                    return ctx.editOrRespond({ embed });
 
                 });
         }

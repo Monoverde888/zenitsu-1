@@ -1,12 +1,12 @@
-import { Embed as MessageEmbed } from "detritus-client/lib/utils/embed.js";
-import detritus from "detritus-client";
-import { BaseCommandOption } from "../../../utils/classes/slash.js";
-import json from "../../../utils/lang/langs.js";
-import guild from "../../../database/models/guild.js";
-import redis from "../../../utils/managers/redis.js";
+import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
+import detritus from 'detritus-client';
+import { BaseCommandOption } from '../../../utils/classes/slash.js';
+import json from '../../../utils/lang/langs.js';
+import guild from '../../../database/models/guild.js';
+import redis from '../../../utils/managers/redis.js';
 
-const { Constants: { ApplicationCommandOptionTypes } } = detritus;
-const { Constants: { Permissions: Flags } } = detritus;
+const { Constants: { ApplicationCommandOptionTypes }} = detritus;
+const { Constants: { Permissions: Flags }} = detritus;
 
 export function reset() {
 
@@ -17,25 +17,25 @@ export function reset() {
                     name: 'field',
                     description: 'Configuration to restart',
                     choices: ['ignorechannels', 'muterole', 'all'].map(x => {
-                        return { name: x, value: x }
+                        return { name: x, value: x };
                     }),
                     required: true,
                     type: ApplicationCommandOptionTypes.STRING
                 }]
             });
-            this.name = "reset";
+            this.name = 'reset';
             this.disableDm = true;
-            this.description = "Restart configuration";
+            this.description = 'Restart configuration';
             this.metadata = {
                 usage(prefix: string) {
                     return [
-                        prefix + "settings reset ignorechannels",
-                        prefix + "settings reset onlythreads",
-                        prefix + "settings reset muterole",
-                        prefix + "settings reset all"
+                        prefix + 'settings reset ignorechannels',
+                        prefix + 'settings reset onlythreads',
+                        prefix + 'settings reset muterole',
+                        prefix + 'settings reset all'
                     ];
                 },
-                category: "admin",
+                category: 'admin',
             };
             this.permissions = [Flags.MANAGE_GUILD].map(BigInt);
             this.permissionsClient = [];
@@ -64,7 +64,7 @@ export function reset() {
                         .setTimestamp();
                     return ctx.editOrRespond({ embed });
                 }
-                    break;
+
                 default: {
                     const data = await guild.findOne({ id: ctx.guildId });
                     switch (args.field) {
@@ -87,7 +87,7 @@ export function reset() {
 
                     return ctx.editOrRespond({ embed });
                 }
-                    break;
+
             }
         }
     }

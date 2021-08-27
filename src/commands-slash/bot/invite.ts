@@ -1,6 +1,6 @@
 import detritus from 'detritus-client';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
-import { Color } from '../../utils/const.js'
+import { Color } from '../../utils/const.js';
 import { BaseSlash } from '../../utils/classes/slash.js';
 import json from '../../utils/lang/langs.js';
 import getGuild from '../../utils/functions/getguild.js';
@@ -10,13 +10,13 @@ export default function () {
     class Invite extends BaseSlash {
         constructor() {
             super();
-            this.name = 'invite'
-            this.description = 'Invite the bot'
+            this.name = 'invite';
+            this.description = 'Invite the bot';
             this.metadata = {
                 usage(prefix: string) {
                     return [`${prefix}invite`];
                 },
-                category: "bot",
+                category: 'bot',
             };
         }
 
@@ -29,7 +29,7 @@ export default function () {
                 .setThumbnail(ctx.client.user.avatarUrl)
                 .setDescription(langjson.commands.invite.message(link, invitacionLink))
                 .setColor(Color)
-                .setTimestamp()
+                .setTimestamp();
             return ctx.respond(detritus.Constants.InteractionCallbackTypes.CHANNEL_MESSAGE_WITH_SOURCE, {
                 embed,
                 flags: detritus.Constants.MessageFlags.EPHEMERAL

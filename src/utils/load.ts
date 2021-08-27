@@ -1,32 +1,32 @@
-import fs from "fs/promises";
-import path from "path";
-import commons from "./functions/commons.js";
-import detritus from "detritus-client";
-import CommandClient from "./classes/commandclient.js";
-import connect from "../database/connect.js";
-import kufa from "kufa";
+import fs from 'fs/promises';
+import path from 'path';
+import commons from './functions/commons.js';
+import detritus from 'detritus-client';
+import CommandClient from './classes/commandclient.js';
+import connect from '../database/connect.js';
+import kufa from 'kufa';
 
 console = new kufa.KufaConsole({
-    format: `[§a%time%§r] [%prefix%§r] %message% %trace% %memory%`,
-    log_prefix: `§2LOG`,
-    warn_prefix: `§6WARN`,
-    error_prefix: `§4ERROR`,
+    format: '[§a%time%§r] [%prefix%§r] %message% %trace% %memory%',
+    log_prefix: '§2LOG',
+    warn_prefix: '§6WARN',
+    error_prefix: '§4ERROR',
     traceFun: true,
     save: true,
-    dir: path.join(process.cwd(), "logs"),
+    dir: path.join(process.cwd(), 'logs'),
     parser(ctx) {
         switch (ctx.type) {
-            case "error":
-                ctx.format = `[§4%time%§r] [%prefix%§r] %message% %trace% %memory%`;
+            case 'error':
+                ctx.format = '[§4%time%§r] [%prefix%§r] %message% %trace% %memory%';
                 break;
 
-            case "warn":
-                ctx.format = `[§6%time%§r] [%prefix%§r] %message% %trace% %memory%`;
+            case 'warn':
+                ctx.format = '[§6%time%§r] [%prefix%§r] %message% %trace% %memory%';
                 break;
 
-            case "log":
+            case 'log':
             default:
-                ctx.format = `[§a%time%§r] [%prefix%§r] %message% %trace% %memory%`;
+                ctx.format = '[§a%time%§r] [%prefix%§r] %message% %trace% %memory%';
                 break;
         }
     },
@@ -59,7 +59,7 @@ export default async function Load(options: {
     mongo: string;
 }) {
 
-    const { token, mongo } = options
+    const { token, mongo } = options;
 
     await connect(mongo);
 
@@ -72,12 +72,12 @@ export default async function Load(options: {
     const commandClient = new CommandClient(shardClient, {
         cache,
         ratelimits: [
-            { duration: 120000, limit: 40, type: "guild" },
-            { duration: 10000, limit: 5, type: "channel" },
+            { duration: 120000, limit: 40, type: 'guild' },
+            { duration: 10000, limit: 5, type: 'channel' },
         ],
         mentionsEnabled: false,
         activateOnEdits: false,
-        prefixes: ["z!"],
+        prefixes: ['z!'],
     });
 
     await commandClient.run();
@@ -86,11 +86,11 @@ export default async function Load(options: {
         cache,
         checkCommands: true,
         ratelimits: [
-            { duration: 120000, limit: 40, type: "guild" },
-            { duration: 10000, limit: 5, type: "channel" },
+            { duration: 120000, limit: 40, type: 'guild' },
+            { duration: 10000, limit: 5, type: 'channel' },
         ],
     });
-    await addMultipleIn(slashClient, "./dist/commands-slash");
+    await addMultipleIn(slashClient, './dist/commands-slash');
     await slashClient.run();
 
     console.log(
@@ -110,32 +110,31 @@ async function loadEvents(
 ) {
     const { __dirname } = commons(import.meta.url);
 
-    const ruta = (...str: string[]) => path.join(__dirname, "..", ...str);
+    const ruta = (...str: string[]) => path.join(__dirname, '..', ...str);
     const load = async (
         file: string,
         listener: detritus.ShardClient | CommandClient | detritus.InteractionCommandClient
     ) => {
         try {
             const { default: RES } = await import(
-                "file:///" +
-                ruta("events", listener.constructor.name.toLowerCase(), file)
+                'file:///' +
+                ruta('events', listener.constructor.name.toLowerCase(), file)
             );
             listener.on(RES.name, RES.bind(null, client).bind(null, slashClient));
-        }
-        catch (e) {
+        } catch (e) {
             console.error(e, file);
         }
     };
 
-    const eventos = await fs.readdir(ruta("events", "shardclient"));
+    const eventos = await fs.readdir(ruta('events', 'shardclient'));
 
     for (const i of eventos) await load(i, client);
 
-    const eventosC = await fs.readdir(ruta("events", "commandclient"));
+    const eventosC = await fs.readdir(ruta('events', 'commandclient'));
 
     for (const i of eventosC) await load(i, commandClient);
 
-    const eventosI = await fs.readdir(ruta("events", "interactioncommandclient"));
+    const eventosI = await fs.readdir(ruta('events', 'interactioncommandclient'));
 
     for (const i of eventosI) await load(i, slashClient);
 }
@@ -143,26 +142,25 @@ async function loadEvents(
 async function loadCommands(commandClient: CommandClient) {
     const { __dirname } = commons(import.meta.url);
 
-    const ruta = (...str: string[]) => path.join(__dirname, "..", ...str);
+    const ruta = (...str: string[]) => path.join(__dirname, '..', ...str);
     const load = async (dirs: string) => {
-        const commands = (await fs.readdir(ruta("commands", dirs))).filter((d) => {
-            return d.endsWith(".ts") || d.endsWith(".js");
+        const commands = (await fs.readdir(ruta('commands', dirs))).filter((d) => {
+            return d.endsWith('.ts') || d.endsWith('.js');
         });
         for (const file of commands) {
             try {
                 const { default: archivo } = await import(
-                    `file:///` + ruta("commands", dirs, file)
+                    'file:///' + ruta('commands', dirs, file)
                 );
                 commandClient.add(archivo);
-            }
-            catch (e) {
+            } catch (e) {
                 console.error(e, file);
                 break;
             }
         }
     };
 
-    const categorys = await fs.readdir(ruta("commands"));
+    const categorys = await fs.readdir(ruta('commands'));
 
     for (const i of categorys) {
         await load(i);
@@ -183,7 +181,7 @@ async function addMultipleIn(
         subdirectories: !!options.subdirectories,
     });
 
-    const files: Array<string> = await getFiles(
+    const files: string[] = await getFiles(
         directory,
         options.subdirectories
     );
@@ -193,39 +191,35 @@ async function addMultipleIn(
         if (!imported) {
             return;
         }
-        if (typeof imported === "function") {
-            slashClient.add({ _file: filepath, _class: imported, name: "" });
-        }
-        else if (imported instanceof detritus.Interaction.InteractionCommand) {
-            Object.defineProperty(imported, "_file", { value: filepath });
+        if (typeof imported === 'function') {
+            slashClient.add({ _file: filepath, _class: imported, name: '' });
+        } else if (imported instanceof detritus.Interaction.InteractionCommand) {
+            Object.defineProperty(imported, '_file', { value: filepath });
             slashClient.add(imported);
-        }
-        else if (typeof imported === "object" && Object.keys(imported).length) {
+        } else if (typeof imported === 'object' && Object.keys(imported).length) {
             if (Array.isArray(imported)) {
                 for (const child of imported) {
                     addCommand(child, filepath);
                 }
-            }
-            else {
-                if ("name" in imported) {
+            } else {
+                if ('name' in imported) {
                     slashClient.add({ ...imported, _file: filepath });
                 }
             }
         }
     };
     for (const file of files) {
-        if (!file.endsWith(".js")) {
+        if (!file.endsWith('.js')) {
             continue;
         }
         const filepath = path.resolve(directory, file);
         try {
-            let importedCommand: any = await import("file:///" + filepath);
-            if (typeof importedCommand === "object" && importedCommand.default) {
+            let importedCommand: any = await import('file:///' + filepath);
+            if (typeof importedCommand === 'object' && importedCommand.default) {
                 importedCommand = await importedCommand.default();
             }
             addCommand(importedCommand, filepath);
-        }
-        catch (error) {
+        } catch (error) {
             errors[filepath] = error;
         }
     }
@@ -240,10 +234,10 @@ async function addMultipleIn(
 async function getFiles(
     directory: string,
     subdirectories?: boolean
-): Promise<Array<string>> {
+): Promise<string[]> {
     if (subdirectories) {
         const dirents = await fs.readdir(directory, { withFileTypes: true });
-        const names: Array<string> = [];
+        const names: string[] = [];
         for (const folder of dirents.filter((dirent) => dirent.isDirectory())) {
             const files = await getFiles(
                 `${directory}/${folder.name}`,
@@ -257,8 +251,7 @@ async function getFiles(
             names.push(file.name);
         }
         return names;
-    }
-    else {
+    } else {
         return await fs.readdir(directory);
     }
 }

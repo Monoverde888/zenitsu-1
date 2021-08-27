@@ -1,6 +1,6 @@
 import detritus from 'detritus-client';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
-import { Color } from '../../utils/const.js'
+import { Color } from '../../utils/const.js';
 import { BaseSlash } from '../../utils/classes/slash.js';
 import json from '../../utils/lang/langs.js';
 import getGuild from '../../utils/functions/getguild.js';
@@ -10,13 +10,13 @@ export default function () {
     class Guilds extends BaseSlash {
         constructor() {
             super();
-            this.name = 'guilds'
-            this.description = 'Number of servers'
+            this.name = 'guilds';
+            this.description = 'Number of servers';
             this.metadata = {
                 usage(prefix: string) {
                     return [`${prefix}guilds`];
                 },
-                category: "bot",
+                category: 'bot',
             };
         }
 

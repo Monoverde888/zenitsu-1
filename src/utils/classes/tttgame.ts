@@ -21,9 +21,9 @@ class TheGame extends EVENTS.EventEmitter {
 
     constructor(players: [string, string]) {
         super();
-        const randomPlayer = players[Math.floor(Math.random() * players.length)]
+        const randomPlayer = players[Math.floor(Math.random() * players.length)];
         this.players = [randomPlayer == players[0] ? players[1] : players[0], randomPlayer == players[1] ? players[1] : players[0]];
-        this.map = ['', '', '', '', '', '', '', '', '',]
+        this.map = ['', '', '', '', '', '', '', '', '',];
         this.__lastTurn = 0;
         this.winner = null;
         this.draw = null;
@@ -48,7 +48,7 @@ class TheGame extends EVENTS.EventEmitter {
     }
 
     get ficha(): 'X' | 'O' {
-        return this.turn == 1 ? 'X' : 'O'
+        return this.turn == 1 ? 'X' : 'O';
     }
 
     finish() {
@@ -58,19 +58,18 @@ class TheGame extends EVENTS.EventEmitter {
     }
 
     get finished() {
-        return this.draw || this.ended || !!this.winner
+        return this.draw || this.ended || !!this.winner;
     }
 
     play(played: number) {
-        if (!this.canPlay(played)) throw new Error(`Can't play ${played}.`)
+        if (!this.canPlay(played)) throw new Error(`Can't play ${played}.`);
         this.map[played] = this.ficha;
         if (pos.find(p => p.every(x => this.map[x] == 'X')) || pos.find(p => p.every(x => this.map[x] == 'O'))) {
             this.emit('winner');
             this.winner = this.player;
             this.draw = false;
             return played;
-        }
-        else if (this.map.every(x => x)) {
+        } else if (this.map.every(x => x)) {
             this.emit('draw');
             this.draw = true;
             return played;

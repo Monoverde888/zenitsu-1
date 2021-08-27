@@ -25,15 +25,19 @@ class BaseCollector extends events.EventEmitter {
         this.running = true;
         this.incrementMaxListeners();
         this.usages = 0;
-        if (options.timeLimit) this._timeTimeout = setTimeout(() => { this.stop('time') }, options.timeLimit);
-        if (options.timeIdle) this._timeTimeout = setTimeout(() => { this.stop('idle') }, options.timeIdle);
+        if (options.timeLimit) this._timeTimeout = setTimeout(() => {
+            this.stop('time'); 
+        }, options.timeLimit);
+        if (options.timeIdle) this._timeTimeout = setTimeout(() => {
+            this.stop('idle'); 
+        }, options.timeIdle);
         const subscriptions = {
             messageDelete: shardClient.subscribe('messageDelete', this.handleMessageDelete),
             messageDeleteBulk: shardClient.subscribe('messageDeleteBulk', this.handleMessageDeleteBulk),
             guildDelete: shardClient.subscribe('guildDelete', this.handleGuildDelete),
             channelDelete: shardClient.subscribe('channelDelete', this.handleChannelDelete),
             threadDelete: shardClient.subscribe('threadDelete', this.handleThreadDelete),
-        }
+        };
 
         this.once('end', () => {
 
@@ -45,10 +49,10 @@ class BaseCollector extends events.EventEmitter {
             this.removeAllListeners();
             for (const sub of Object.values(subscriptions)) {
                 sub.remove();
-            };
+            }
             this.decrementMaxListeners();
         });
-    };
+    }
 
     handleMessageDelete(message: detritus.GatewayClientEvents.MessageDelete) {
 
@@ -60,7 +64,7 @@ class BaseCollector extends events.EventEmitter {
     handleMessageDeleteBulk({ messages }: detritus.GatewayClientEvents.MessageDeleteBulk) {
 
         if (messages.some(item => item && item.id == this.message.id))
-            this.stop('messageDelete')
+            this.stop('messageDelete');
 
     }
 
@@ -106,6 +110,6 @@ class BaseCollector extends events.EventEmitter {
     }
 
 
-};
+}
 
 export default BaseCollector;

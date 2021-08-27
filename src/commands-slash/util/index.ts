@@ -1,7 +1,7 @@
-import { BaseSlash } from "../../utils/classes/slash.js";
-import { runcode } from "./runcode.js";
-import { DjsDocs } from "./djsdocs.js";
-import { avatar } from "./avatar.js";
+import { BaseSlash } from '../../utils/classes/slash.js';
+import { runcode } from './runcode.js';
+import { DjsDocs } from './djsdocs.js';
+import { avatar } from './avatar.js';
 
 export default async function () {
     const runCode = await runcode();
@@ -9,8 +9,8 @@ export default async function () {
     class Tools extends BaseSlash {
         constructor() {
             super();
-            this.name = "util";
-            this.description = "Utils";
+            this.name = 'util';
+            this.description = 'Utils';
             this.options = [runCode, DjsDocs(), avatar()];
             this.metadata = {
                 usage(prefix: string) {
@@ -20,7 +20,7 @@ export default async function () {
                         `${prefix}util runcode Code Language`,
                     ];
                 },
-                category: "util",
+                category: 'util',
             };
         }
     }

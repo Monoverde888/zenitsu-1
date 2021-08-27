@@ -1,12 +1,12 @@
-import detritus from "detritus-client";
-import { BaseCommandOption } from "../../../utils/classes/slash.js";
-import jsonOBJECT from "../../../utils/lang/langs.js";
-import getGuild from "../../../utils/functions/getguild.js";
-import getUser from "../../../utils/functions/getuser.js";
-import { Embed as MessageEmbed } from "detritus-client/lib/utils/embed.js";
-import fetch from "node-fetch";
+import detritus from 'detritus-client';
+import { BaseCommandOption } from '../../../utils/classes/slash.js';
+import jsonOBJECT from '../../../utils/lang/langs.js';
+import getGuild from '../../../utils/functions/getguild.js';
+import getUser from '../../../utils/functions/getuser.js';
+import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
+import fetch from 'node-fetch';
 
-const { Constants: { ApplicationCommandOptionTypes } } = detritus;
+const { Constants: { ApplicationCommandOptionTypes }} = detritus;
 
 export function view() {
     class View extends BaseCommandOption {
@@ -14,23 +14,23 @@ export function view() {
             super({
                 options: [
                     {
-                        name: "id",
+                        name: 'id',
                         type: ApplicationCommandOptionTypes.STRING,
                         required: true,
-                        description: "Game ID",
+                        description: 'Game ID',
                     },
                 ],
                 ratelimits: [{
                     duration: 10000, limit: 1, type: 'guild',
                 }]
             });
-            this.name = "view";
-            this.description = "View a connect4 game";
+            this.name = 'view';
+            this.description = 'View a connect4 game';
             this.metadata = {
                 usage(prefix: string) {
                     return [`${prefix}connect4 view ID`];
                 },
-                category: "fun",
+                category: 'fun',
             };
         }
 
@@ -66,9 +66,7 @@ export function view() {
                     files: [{ value: buffer, filename: 'ggez.gif' }]
                 });
 
-            }
-
-            catch {
+            } catch {
 
                 return ctx.editOrRespond('Error...');
 

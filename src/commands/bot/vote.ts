@@ -5,7 +5,7 @@ import { Color } from '../../utils/const.js';
 export default new BaseCommand({
     metadata: {
         usage(prefix: string) {
-            return [`${prefix}vote`]
+            return [`${prefix}vote`];
         },
         category: 'bot'
     },
@@ -15,12 +15,12 @@ export default new BaseCommand({
 
         const embed = new MessageEmbed()
             .setThumbnail(ctx.client.user.avatarUrl)
-            .setDescription(`https://top.gg/bot/721080193678311554`)
+            .setDescription('https://top.gg/bot/721080193678311554')
             .setColor(Color)
             .setFooter(ctx.message.author.username, ctx.message.author.avatarUrl)
             .setTimestamp();
 
-        return ctx.reply({ embed: embed })
+        return ctx.reply({ embed: embed });
 
     },
 });

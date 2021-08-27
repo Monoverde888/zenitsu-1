@@ -1,20 +1,20 @@
-import detritus from "detritus-client";
-import fetch from "node-fetch";
-import json from "../../utils/lang/langs.js";
-import getGuild from "../../utils/functions/getguild.js";
-import { BaseCommandOption } from "../../utils/classes/slash.js";
+import detritus from 'detritus-client';
+import fetch from 'node-fetch';
+import json from '../../utils/lang/langs.js';
+import getGuild from '../../utils/functions/getguild.js';
+import { BaseCommandOption } from '../../utils/classes/slash.js';
 
-const { Constants: { ApplicationCommandOptionTypes } } = detritus;
+const { Constants: { ApplicationCommandOptionTypes }} = detritus;
 
 export function DjsDocs() {
     const options = [
-        "stable",
-        "master",
-        "commando",
-        "rpc",
-        "akairo",
-        "akairo-master",
-        "collection",
+        'stable',
+        'master',
+        'commando',
+        'rpc',
+        'akairo',
+        'akairo-master',
+        'collection',
     ];
 
     class Docs extends BaseCommandOption {
@@ -22,15 +22,15 @@ export function DjsDocs() {
             super({
                 options: [
                     {
-                        name: "query",
+                        name: 'query',
                         required: true,
-                        description: "To search",
+                        description: 'To search',
                         type: ApplicationCommandOptionTypes.STRING,
                     },
                     {
-                        name: "type",
+                        name: 'type',
                         required: false,
-                        description: "Type of documentation",
+                        description: 'Type of documentation',
                         type: ApplicationCommandOptionTypes.STRING,
                         choices: options.map((x) => {
                             return { name: x, value: x };
@@ -38,13 +38,13 @@ export function DjsDocs() {
                     },
                 ],
             });
-            this.name = "djsdocs";
-            this.description = "Search the desired documentation";
+            this.name = 'djsdocs';
+            this.description = 'Search the desired documentation';
             this.metadata = {
                 usage(prefix: string) {
                     return options.map((x) => `${prefix}djsdocs query [${x}]`);
                 },
-                category: "util",
+                category: 'util',
             };
         }
 
@@ -56,7 +56,7 @@ export function DjsDocs() {
             const langjson = ctx.guildId
                 ? json[await getGuild(ctx.guildId).then((x) => x.lang)]
                 : json.en;
-            const type = args.type ? args.type : "stable";
+            const type = args.type ? args.type : 'stable';
             const response = await fetch(
                 `https://djsdocs.sorta.moe/v2/embed?src=${encodeURIComponent(
                     type

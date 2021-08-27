@@ -2,12 +2,12 @@ import redis from 'redis';
 import util  from 'util';
 
 const client      = redis.createClient(),
-      {promisify} = util,
-      setPromise  = promisify(client.set).bind(client),
-      getPromise  = promisify(client.get).bind(client),
-      delPromise  = promisify(client.del).bind(client);
+    { promisify } = util,
+    setPromise  = promisify(client.set).bind(client),
+    getPromise  = promisify(client.get).bind(client),
+    delPromise  = promisify(client.del).bind(client);
 
-client.on("error", (...errors) => {
+client.on('error', (...errors) => {
     console.error(...errors);
 }).on('ready', (...xd) => {
     console.log('[REDIS] Ready', ...xd);
@@ -18,7 +18,7 @@ client.on("error", (...errors) => {
 }).on('end', (...xd) => {
     console.log('[REDIS] Ended', ...xd);
 }).on('warning', (...xd) => {
-    console.warn(`[REDIS] Warning`, ...xd);
+    console.warn('[REDIS] Warning', ...xd);
 });
 
 class RedisManager {

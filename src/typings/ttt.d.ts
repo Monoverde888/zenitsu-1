@@ -11,5 +11,5 @@ declare module 'tictactoe-complex-ai' {
 
     function createAI(options : Options) : { play(board : string[]) : Promise<number> }
 
-    export default {createAI}
+    export default { createAI };
 }

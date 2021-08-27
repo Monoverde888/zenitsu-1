@@ -1,5 +1,5 @@
 export const Color = 14720566;
-import { Permissions } from "detritus-client/lib/constants.js";
+import { Permissions } from 'detritus-client/lib/constants.js';
 
 export const IDS = {
     ACHIEVEMENTS : {

@@ -1,4 +1,4 @@
-import detritus from "detritus-client";
+import detritus from 'detritus-client';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
 import redis from '../../../../utils/managers/redis.js';
 import c4 from '@lil_marcrock22/connect4-ai';
@@ -11,12 +11,12 @@ import Button from '../../../../utils/buttons/normal.js';
 import Component from '../../../../utils/buttons/component.js';
 import fetch from 'node-fetch';
 import mongoose from 'mongoose';
-import ButtonCollector, { INTERACTION } from "../../../../utils/collectors/buttoncollector.js";
-import { users } from "../../../../utils/maps.js";
+import ButtonCollector, { INTERACTION } from '../../../../utils/collectors/buttoncollector.js';
+import { users } from '../../../../utils/maps.js';
 
-const { Connect4AI } = c4
+const { Connect4AI } = c4;
 const games: Map<string, c4.Connect4AI<Player>> = new Map();
-const { Constants: { Permissions: Flags } } = detritus;
+const { Constants: { Permissions: Flags }} = detritus;
 
 interface Player {
     id: string;
@@ -50,7 +50,7 @@ function generateButtons(partida: c4.Connect4AI<Player>, text: string, forceDisa
         new Button('danger')
             .setCustomID('c4_surrender')
             .setLabel(text)
-    ]
+    ];
 
     if (!forceDisable) {
 
@@ -65,8 +65,7 @@ function generateButtons(partida: c4.Connect4AI<Player>, text: string, forceDisa
 
         if (!partida) buttons[7].setDisabled(true);
 
-    }
-    else {
+    } else {
 
         for (const i of buttons) {
             i.setDisabled(true);
@@ -103,8 +102,8 @@ async function modificar(data: mongoose.LeanDocument<USER>, dif: string, tipo: '
 function getTURNS(author: string, mention: string, clientID: string): [Player, Player] {
 
     if (mention != clientID) {
-        const user1 = Math.floor(Math.random() * 2) + 1 == 2 ? 2 : 1
-        const user2 = user1 == 2 ? 1 : 2
+        const user1 = Math.floor(Math.random() * 2) + 1 == 2 ? 2 : 1;
+        const user2 = user1 == 2 ? 1 : 2;
         return [{
             id: mention,
             turn: user1
@@ -112,7 +111,7 @@ function getTURNS(author: string, mention: string, clientID: string): [Player, P
         {
             id: author,
             turn: user2
-        }]
+        }];
     }
 
     return [{
@@ -156,16 +155,14 @@ function awaitAnswer(MESSAGE: detritus.Structures.Message,
                 return ['c4_1', 'c4_2', 'c4_3', 'c4_4', 'c4_5', 'c4_6', 'c4_0', 'c4_surrender'].includes(interaction.data.customId)
                     && findTurn(interaction.userId, CHANNEL.id).turn === games.get(CHANNEL.id).turn
                     && !games.get(CHANNEL.id).finished
-                    || ((games.get(CHANNEL.id).players.some(item => item.id == interaction.userId) && interaction.data.customId == 'c4_surrender'))
+                    || ((games.get(CHANNEL.id).players.some(item => item.id == interaction.userId) && interaction.data.customId == 'c4_surrender'));
 
-            }
-
-            else {
+            } else {
                 return interaction.userId == ctx.user.id
                     && findTurn(interaction.userId, CHANNEL.id).turn === games.get(CHANNEL.id).turn
                     && ['c4_1', 'c4_2', 'c4_3', 'c4_4', 'c4_5', 'c4_6', 'c4_0', 'c4_surrender'].includes(interaction.data.customId)
                     && !games.get(CHANNEL.id).finished
-                    || ((games.get(CHANNEL.id).players.some(item => item.id == interaction.userId) && interaction.data.customId == 'c4_surrender'))
+                    || ((games.get(CHANNEL.id).players.some(item => item.id == interaction.userId) && interaction.data.customId == 'c4_surrender'));
             }
         },
         timeIdle: ((3 * 60) * 1000), max: 1,
@@ -188,15 +185,13 @@ function awaitAnswer(MESSAGE: detritus.Structures.Message,
                 .setDescription(langjson.commands.connect4.game_over)
                 .setColor(0xff0000)
                 .setImage('attachment://party.gif');
-            const buf = await displayConnectFourBoard(games.get(CHANNEL.id))
+            const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
             await sendCoso(embed, buf);
 
             games.delete(CHANNEL.id);
             users.delete(ctx.userId);
             return users.delete(usuario.id);
-        }
-
-        else if (reason === 'idle' && games.get(CHANNEL.id)) {
+        } else if (reason === 'idle' && games.get(CHANNEL.id)) {
             if (usuario.id == ctx.client.user.id) {
                 const da = await model.findOne({ id: ctx.user.id }).lean();
                 const res = await modificar(da, args.difficulty, 'perdidas', ctx.user.username);
@@ -205,18 +200,16 @@ function awaitAnswer(MESSAGE: detritus.Structures.Message,
             const embed = new MessageEmbed()
                 .setDescription(langjson.commands.connect4.time_over)
                 .setColor(0xff0000)
-                .setImage(`attachment://4enraya.gif`)
+                .setImage('attachment://4enraya.gif')
                 .setImage('attachment://party.gif');
-            const buf = await displayConnectFourBoard(games.get(CHANNEL.id))
+            const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
             await sendCoso(embed, buf);
 
             games.delete(CHANNEL.id);
             users.delete(ctx.userId);
             return users.delete(usuario.id);
 
-        }
-
-        else if (reason == 'time' && games.get(CHANNEL.id)) {
+        } else if (reason == 'time' && games.get(CHANNEL.id)) {
             if (usuario.id == ctx.client.user.id) {
                 const da = await model.findOne({ id: ctx.user.id }).lean();
                 const res = await modificar(da, args.difficulty, 'perdidas', ctx.user.username);
@@ -226,14 +219,13 @@ function awaitAnswer(MESSAGE: detritus.Structures.Message,
                 .setDescription(langjson.commands.connect4.game_over2)
                 .setColor(0xff0000)
                 .setImage('attachment://party.gif');
-            const buf = await displayConnectFourBoard(games.get(CHANNEL.id))
+            const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
             await sendCoso(embed, buf);
 
             games.delete(CHANNEL.id);
             users.delete(ctx.userId);
             return users.delete(usuario.id);
-        }
-        else {
+        } else {
             games.delete(CHANNEL.id);
             users.delete(ctx.userId);
             return users.delete(usuario.id);
@@ -244,7 +236,7 @@ function awaitAnswer(MESSAGE: detritus.Structures.Message,
         if (interaction.data.customId === 'c4_surrender')
             return partyCollector.emit('end', 'surrender');
 
-        games.get(CHANNEL.id).play(parseInt(interaction.data.customId.split('c4_')[1]))
+        games.get(CHANNEL.id).play(parseInt(interaction.data.customId.split('c4_')[1]));
 
         const game = games.get(CHANNEL.id);
         const board = game.map[(parseInt(interaction.data.customId.split('c4_')[1]))];
@@ -257,7 +249,7 @@ function awaitAnswer(MESSAGE: detritus.Structures.Message,
                 .setColor(0xff0000)
                 .setImage('attachment://party.gif');
             await interaction.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
-            const buf = await displayConnectFourBoard(games.get(CHANNEL.id))
+            const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
             await sendCoso(embed, buf, interaction);
 
             if (usuario.id == ctx.client.user.id) {
@@ -270,28 +262,22 @@ function awaitAnswer(MESSAGE: detritus.Structures.Message,
 
                     if ((a.c4hard.ganadas >= 10) && !(DATAPROFILE.achievements.includes(IDS.ACHIEVEMENTS.C4LEVEL1))) {
 
-                        const data = await model.findOneAndUpdate({ id: ctx.user.id }, { $addToSet: { achievements: IDS.ACHIEVEMENTS.C4LEVEL1 } }, { new: true }).lean();
+                        const data = await model.findOneAndUpdate({ id: ctx.user.id }, { $addToSet: { achievements: IDS.ACHIEVEMENTS.C4LEVEL1 }}, { new: true }).lean();
                         await redis.set(ctx.user.id, JSON.stringify(data));
 
-                    }
+                    } else if ((a.c4hard.ganadas >= 15) && !(DATAPROFILE.achievements.includes(IDS.ACHIEVEMENTS.C4LEVEL2))) {
 
-                    else if ((a.c4hard.ganadas >= 15) && !(DATAPROFILE.achievements.includes(IDS.ACHIEVEMENTS.C4LEVEL2))) {
-
-                        const data = await model.findOneAndUpdate({ id: ctx.user.id }, { $addToSet: { achievements: IDS.ACHIEVEMENTS.C4LEVEL2 } }, { new: true }).lean();
+                        const data = await model.findOneAndUpdate({ id: ctx.user.id }, { $addToSet: { achievements: IDS.ACHIEVEMENTS.C4LEVEL2 }}, { new: true }).lean();
                         await redis.set(ctx.user.id, JSON.stringify(data));
 
-                    }
+                    } else if ((a.c4hard.ganadas >= 25) && !(DATAPROFILE.achievements.includes(IDS.ACHIEVEMENTS.C4LEVEL3))) {
 
-                    else if ((a.c4hard.ganadas >= 25) && !(DATAPROFILE.achievements.includes(IDS.ACHIEVEMENTS.C4LEVEL3))) {
-
-                        const data = await model.findOneAndUpdate({ id: ctx.user.id }, { $addToSet: { achievements: IDS.ACHIEVEMENTS.C4LEVEL3 } }, { new: true }).lean();
+                        const data = await model.findOneAndUpdate({ id: ctx.user.id }, { $addToSet: { achievements: IDS.ACHIEVEMENTS.C4LEVEL3 }}, { new: true }).lean();
                         await redis.set(ctx.user.id, JSON.stringify(data));
 
-                    }
+                    } else if ((a.c4hard.ganadas >= 50) && !(DATAPROFILE.achievements.includes(IDS.ACHIEVEMENTS.C4LEVEL4))) {
 
-                    else if ((a.c4hard.ganadas >= 50) && !(DATAPROFILE.achievements.includes(IDS.ACHIEVEMENTS.C4LEVEL4))) {
-
-                        const data = await model.findOneAndUpdate({ id: ctx.user.id }, { $addToSet: { achievements: IDS.ACHIEVEMENTS.C4LEVEL4 } }, { new: true }).lean();
+                        const data = await model.findOneAndUpdate({ id: ctx.user.id }, { $addToSet: { achievements: IDS.ACHIEVEMENTS.C4LEVEL4 }}, { new: true }).lean();
                         await redis.set(ctx.user.id, JSON.stringify(data));
 
                     }
@@ -305,14 +291,12 @@ function awaitAnswer(MESSAGE: detritus.Structures.Message,
             users.delete(usuario.id);
             return partyCollector.stop('win');
 
-        }
-
-        else if (games.get(CHANNEL.id).tie) {
+        } else if (games.get(CHANNEL.id).tie) {
             const embed = new MessageEmbed()
                 .setDescription(langjson.commands.connect4.draw(usuario.username, ctx.user.username))
                 .setColor(0xff0000)
                 .setImage('attachment://party.gif');
-            const buf = await displayConnectFourBoard(games.get(CHANNEL.id))
+            const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
             await interaction.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
             await sendCoso(embed, buf, interaction);
 
@@ -340,7 +324,7 @@ function awaitAnswer(MESSAGE: detritus.Structures.Message,
                     .setColor(0xff0000)
                     .setImage('attachment://party.gif');
                 await interaction.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
-                const buf = await displayConnectFourBoard(games.get(CHANNEL.id))
+                const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
                 await sendCoso(embed, buf, interaction);
 
                 const da = await model.findOne({ id: ctx.user.id }).lean();
@@ -350,15 +334,13 @@ function awaitAnswer(MESSAGE: detritus.Structures.Message,
                 users.delete(ctx.userId);
                 users.delete(usuario.id);
                 return partyCollector.stop('win');
-            }
-
-            else if (games.get(CHANNEL.id).tie) {
+            } else if (games.get(CHANNEL.id).tie) {
                 const embed = new MessageEmbed()
                     .setDescription(langjson.commands.connect4.draw(usuario.username, ctx.user.username))
                     .setColor(0xff0000)
                     .setImage('attachment://party.gif');
                 await interaction.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
-                const buf = await displayConnectFourBoard(games.get(CHANNEL.id))
+                const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
                 await sendCoso(embed, buf, interaction);
 
                 const da = await model.findOne({ id: ctx.user.id }).lean();
@@ -376,11 +358,10 @@ function awaitAnswer(MESSAGE: detritus.Structures.Message,
                 .setColor(0xff0000)
                 .setImage('attachment://party.gif');
             await interaction.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
-            const buf = await displayConnectFourBoard(games.get(CHANNEL.id))
+            const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
             try {
                 if (!lastMessage?.deleted && !([10, 11, 12].includes(CHANNEL.type))) await lastMessage.delete();
-            }
-            catch {
+            } catch {
                 //do something
             }
             lastMessage = await interaction.editOrRespond({
@@ -390,7 +371,7 @@ function awaitAnswer(MESSAGE: detritus.Structures.Message,
                 },
                 embed,
                 components: generateButtons(games.get(CHANNEL.id), langjson.commands.connect4.surrender, false)
-            })
+            });
 
             return easyAnswer(lastMessage, lastMessage);
 
@@ -400,7 +381,7 @@ function awaitAnswer(MESSAGE: detritus.Structures.Message,
             const embed = new MessageEmbed()
                 .setDescription(langjson.commands.connect4.turn(
                     findTurn(ctx.user.id, CHANNEL.id).turn == findTurn(interaction.userId, CHANNEL.id).turn ? usuario.username : ctx.user.username,
-                    findTurn(interaction.userId, CHANNEL.id).turn == 2 ? `🔴` : `🟡`
+                    findTurn(interaction.userId, CHANNEL.id).turn == 2 ? '🔴' : '🟡'
                 ))
                 .setFooter(args.difficulty)
                 .setColor(0xff0000)
@@ -410,8 +391,7 @@ function awaitAnswer(MESSAGE: detritus.Structures.Message,
 
             try {
                 if (!lastMessage?.deleted && !([10, 11, 12].includes(CHANNEL.type))) await lastMessage.delete();
-            }
-            catch {
+            } catch {
                 //do something
             }
             lastMessage = await interaction.editOrRespond({
@@ -421,7 +401,7 @@ function awaitAnswer(MESSAGE: detritus.Structures.Message,
                 },
                 embed,
                 components: generateButtons(games.get(CHANNEL.id), langjson.commands.connect4.surrender, false)
-            })
+            });
 
             return easyAnswer(lastMessage, lastMessage);
 
@@ -440,7 +420,7 @@ export async function FUNCTION(
     const DATAPROFILE = await getUser(ctx.user.id);
     const DATAGUILD: { lang: 'es' | 'en' } = ctx.guildId ? await getGuild(ctx.guildId) : {
         lang: 'en',
-    }
+    };
     const langjson = json[DATAGUILD.lang];
     const difficulty = args.difficulty;
     const usuario = difficulty ? ctx.client.user : args.user;
@@ -459,7 +439,7 @@ export async function FUNCTION(
             const embed = new MessageEmbed()
                 .setDescription(langjson.commands.connect4.mention)
                 .setFooter(langjson.commands.connect4.footer)
-                .setColor(0xff0000)
+                .setColor(0xff0000);
 
             return ctx.editOrRespond({ embed });
         }
@@ -474,7 +454,7 @@ export async function FUNCTION(
     }, getTURNS(ctx.userId, usuario.id, ctx.client.userId), 10);
     poto.createBoard();
 
-    const CHANNEL: { id: string; type: number } = ctx.channel && ctx.guild && !ctx.channel.isGuildThread && ctx.guild.features.has("THREADS_ENABLED") && ctx.channel.can(Flags.MANAGE_THREADS) ? await ctx.channel.createThread({
+    const CHANNEL: { id: string; type: number } = ctx.channel && ctx.guild && !ctx.channel.isGuildThread && ctx.guild.features.has('THREADS_ENABLED') && ctx.channel.can(Flags.MANAGE_THREADS) ? await ctx.channel.createThread({
         name: `Game of ${ctx.user.tag} vs ${usuario.tag}`,
         autoArchiveDuration: 1440,
         type: 11,
@@ -483,7 +463,7 @@ export async function FUNCTION(
 
     users.add(usuario.id);
     users.add(ctx.userId);
-    games.set(CHANNEL.id, poto)
+    games.set(CHANNEL.id, poto);
 
     if (usuario.id != ctx.client.user.id) {
 
@@ -509,7 +489,7 @@ export async function FUNCTION(
             }, ctx.client);
 
             col.on('end', () => resolve(undefined))
-                .on('collect', interaction => resolve(interaction.data.customId))
+                .on('collect', interaction => resolve(interaction.data.customId));
 
         });
 
@@ -517,14 +497,14 @@ export async function FUNCTION(
             games.delete(CHANNEL.id);
             users.delete(ctx.userId);
             users.delete(usuario.id);
-            return ctx.editOrRespond(langjson.commands.connect4.dont_answer(usuario.username))
+            return ctx.editOrRespond(langjson.commands.connect4.dont_answer(usuario.username));
         }
 
         if (respuesta == 'c4_no') {
             games.delete(CHANNEL.id);
             users.delete(ctx.userId);
             users.delete(usuario.id);
-            return ctx.editOrRespond(langjson.commands.connect4.deny(usuario.username))
+            return ctx.editOrRespond(langjson.commands.connect4.deny(usuario.username));
         }
 
     }
@@ -533,7 +513,7 @@ export async function FUNCTION(
         .setDescription(langjson.commands.connect4.start(findTurn(ctx.user.id, CHANNEL.id).turn == 1 ? ctx.user.username : usuario.username))
         .setColor(0xff0000)
         .setImage('attachment://party.gif');
-    const bufParty = await displayConnectFourBoard(games.get(CHANNEL.id))
+    const bufParty = await displayConnectFourBoard(games.get(CHANNEL.id));
 
     const messageParty = CHANNEL.id !== ctx.channelId ? await ctx.client.rest.createMessage(CHANNEL.id, {
         file: {
@@ -586,7 +566,7 @@ export async function FUNCTION(
 
     function easyAwaitAnswer(MESSAGE: detritus.Structures.Message, lastMessage?: detritus.Structures.Message) {
         awaitAnswer(MESSAGE, sendCoso, ctx, findTurn, ArrayOfArrayOfNumbers, args, DATAPROFILE, usuario, langjson, difficulty, easyAwaitAnswer, CHANNEL, lastMessage);
-    };
+    }
 
     return easyAwaitAnswer(messageParty, messageParty);
 

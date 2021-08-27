@@ -1,12 +1,12 @@
-import detritus from "detritus-client";
-import { BaseSlash } from "../../utils/classes/slash.js";
+import detritus from 'detritus-client';
+import { BaseSlash } from '../../utils/classes/slash.js';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
-import guild from "../../database/models/guild.js";
-import redis from "../../utils/managers/redis.js";
-import { Color } from "../../utils/const.js";
+import guild from '../../database/models/guild.js';
+import redis from '../../utils/managers/redis.js';
+import { Color } from '../../utils/const.js';
 
-const { Constants: { Permissions: Flags } } = detritus;
-const { Constants: { ApplicationCommandOptionTypes } } = detritus;
+const { Constants: { Permissions: Flags }} = detritus;
+const { Constants: { ApplicationCommandOptionTypes }} = detritus;
 
 const langs = ['en', 'es'];
 
@@ -16,24 +16,24 @@ export default function () {
             super({
                 options: [
                     {
-                        name: "lang",
+                        name: 'lang',
                         type: ApplicationCommandOptionTypes.STRING,
                         required: true,
-                        description: "Language",
+                        description: 'Language',
                         choices: langs.map(x => {
-                            return { name: x, value: x }
+                            return { name: x, value: x };
                         })
                     }
                 ]
             });
             this.disableDm = true;
-            this.name = "setlang";
-            this.description = "Change the language of the server";
+            this.name = 'setlang';
+            this.description = 'Change the language of the server';
             this.metadata = {
                 usage(prefix: string) {
-                    return langs.map(lang => `${prefix}setlang ${lang}`)
+                    return langs.map(lang => `${prefix}setlang ${lang}`);
                 },
-                category: "admin",
+                category: 'admin',
             };
             this.permissions = [Flags.MANAGE_GUILD].map(BigInt);
         }
@@ -59,7 +59,7 @@ export default function () {
                         embed:
                             new MessageEmbed()
                                 .setColor(Color)
-                                .setDescription(`🇪🇸 | Establecido al español :D.`)
+                                .setDescription('🇪🇸 | Establecido al español :D.')
                                 .setAuthor(ctx.user.username, ctx.user.avatarUrl)
                     });
 
@@ -77,7 +77,7 @@ export default function () {
                         embed:
                             new MessageEmbed()
                                 .setColor(Color)
-                                .setDescription(`🇺🇸 | Set to English :D.`)
+                                .setDescription('🇺🇸 | Set to English :D.')
                                 .setAuthor(ctx.user.username, ctx.user.avatarUrl)
                     });
                 }

@@ -7,7 +7,7 @@ import getGuild from '../../utils/functions/getguild.js';
 export default new BaseCommand({
     metadata: {
         usage(prefix: string) {
-            return [`${prefix}invite`]
+            return [`${prefix}invite`];
         },
         category: 'bot'
     },
@@ -21,8 +21,8 @@ export default new BaseCommand({
             .setThumbnail(ctx.client.user.avatarUrl)
             .setDescription(langjson.commands.invite.message(link, invitacionLink))
             .setColor(Color)
-            .setTimestamp()
-        return ctx.reply({ embed: embed })
+            .setTimestamp();
+        return ctx.reply({ embed: embed });
 
     },
 });

@@ -60,6 +60,6 @@ const User = new Schema({
     c4Maps: [Map],
     cacheName: String,
     beta: Boolean
-}, { timestamps: true })
+}, { timestamps: true });
 
 export default model<USER>('UserInfo', User);

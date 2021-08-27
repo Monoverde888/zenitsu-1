@@ -1,20 +1,20 @@
 import BaseCommand from '../../utils/classes/command.js';
 import parseArgs from '../../utils/functions/parseargs.js';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
-import { Color } from '../../utils/const.js'
+import { Color } from '../../utils/const.js';
 import redis from '../../utils/managers/redis.js';
 import json from '../../utils/lang/langs.js';
 import getGuild from '../../utils/functions/getguild.js';
 import guild from '../../database/models/guild.js';
 import detritus from 'detritus-client';
 
-const { Constants: { Permissions: Flags } } = detritus;
+const { Constants: { Permissions: Flags }} = detritus;
 
 export default new BaseCommand({
     label: 'arg',
     metadata: {
         usage(prefix: string) {
-            return [`${prefix}setprefix <newPrefix>`]
+            return [`${prefix}setprefix <newPrefix>`];
         },
         category: 'admin'
     },
@@ -35,13 +35,13 @@ export default new BaseCommand({
             upsert: true
         }).lean().then(async data => {
 
-            await redis.set(ctx.guildId, JSON.stringify(data))
+            await redis.set(ctx.guildId, JSON.stringify(data));
 
             const embed = new MessageEmbed()
                 .setColor(Color)
                 .setDescription(langjson.commands.setprefix.prefix_nice(ctx.message.author.username, data.prefix))
-                .setTimestamp()
-            return ctx.reply({ embed: embed })
+                .setTimestamp();
+            return ctx.reply({ embed: embed });
 
         }).catch(err => {
 
@@ -49,11 +49,11 @@ export default new BaseCommand({
                 .setColor(Color)
                 .setDescription(langjson.commands.setprefix.prefix_error)
                 .setTimestamp()
-                .setFooter(err.message || err)
+                .setFooter(err.message || err);
 
-            return ctx.reply({ embed: embed })
+            return ctx.reply({ embed: embed });
 
-        })
+        });
 
     },
 });

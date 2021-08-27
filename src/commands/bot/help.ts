@@ -1,15 +1,13 @@
 import BaseCommand from '../../utils/classes/command.js';
 import json from '../../utils/lang/langs.js';
-import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
-import URLButton from '../../utils/buttons/url.js';
-import Components from '../../utils/buttons/component.js';
+import detritus from 'detritus-client';
 import getGuild from '../../utils/functions/getguild.js';
-import { Color } from '../../utils/const.js'
+import { Color } from '../../utils/const.js';
 
 export default new BaseCommand({
     metadata: {
         usage(prefix: string) {
-            return [`${prefix}help`]
+            return [`${prefix}help`];
         },
         category: 'bot'
     },
@@ -17,14 +15,14 @@ export default new BaseCommand({
     aliases: ['h'],
     async run(ctx) {
         const { lang } = await getGuild(ctx.guildId);
-        const langjson = json[lang]
+        const langjson = json[lang];
         const categories = langjson.commands.help.categories;
 
-        const embedHelp = new MessageEmbed()
+        const embedHelp = new detritus.Utils.Embed()
             .setColor(Color)
             .setTimestamp()
             .setTitle(json[lang].messages.use_slash)
-            .setUrl(`https://discord.com/api/oauth2/authorize?client_id=721080193678311554&scope=bot+applications.commands&permissions=8`)
+            .setUrl('https://discord.com/api/oauth2/authorize?client_id=721080193678311554&scope=bot+applications.commands&permissions=8')
             .addField(categories[0], ctx.client.commandClient.commands.filter(a => a.metadata.category === 'util').map(a => `\`${a.name}\``).join(', ') || 'on slash commands.')
             .addField(categories[1], ctx.client.commandClient.commands.filter(a => a.metadata.category === 'fun').map(a => `\`${a.name}\``).join(', ') || 'on slash commands.')
             .addField(categories[2], ctx.client.commandClient.commands.filter(a => a.metadata.category === 'mod').map(a => `\`${a.name}\``).join(', ') || 'on slash commands.')
@@ -33,29 +31,29 @@ export default new BaseCommand({
 
         const BUTTONS =
             [
-                new URLButton()
+                new detritus.Utils.ComponentButton()
                     .setLabel(langjson.commands.help.support)
-                    .setURL('https://discord.gg/4Yzc7Hk')
+                    .setUrl('https://discord.gg/4Yzc7Hk')
                     .setEmoji({ name: '🤖', id: undefined }),
-                new URLButton()
+                new detritus.Utils.ComponentButton()
                     .setLabel(langjson.commands.help.invite)
-                    .setURL('https://discord.com/api/oauth2/authorize?client_id=721080193678311554&scope=bot+applications.commands&permissions=8')
+                    .setUrl('https://discord.com/api/oauth2/authorize?client_id=721080193678311554&scope=bot+applications.commands&permissions=8')
                     .setEmoji({ name: '🤖', id: undefined }),
-                new URLButton()
+                new detritus.Utils.ComponentButton()
                     .setLabel('GitHub')
-                    .setURL('https://github.com/marcrock22/zenitsu')
+                    .setUrl('https://github.com/marcrock22/zenitsu')
                     .setEmoji({ name: '🐙', id: undefined }),
-                new URLButton()
-                    .setURL(`https://zenitsu.eastus.cloudapp.azure.com/runcode`)
-                    .setLabel("Run code")
+                new detritus.Utils.ComponentButton()
+                    .setLabel('Run code')
+                    .setUrl('https://zenitsu.eastus.cloudapp.azure.com/runcode')
                     .setEmoji({ name: '💻', id: undefined }),
             ];
 
-        const componente = new Components(...BUTTONS)
+        const componente = new detritus.Utils.ComponentActionRow(...BUTTONS);
 
         return ctx.reply({
             embed: embedHelp, components: [componente]
-        })
+        });
 
     },
 });

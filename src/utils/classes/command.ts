@@ -1,6 +1,6 @@
-import detritus from 'detritus-client'
+import detritus from 'detritus-client';
 
-const { Constants: { Permissions: Flags } } = detritus;
+const { Constants: { Permissions: Flags }} = detritus;
 const Arr = Object.entries(Flags);
 import getGuild from '../functions/getguild.js';
 import json from '../lang/langs.js';
@@ -34,7 +34,7 @@ class RegisterCommand {
             const langjson = json[lang];
             const permsStr = '`' + Arr.filter(item => perms.map(Number).includes(Number(item[1]))).map(x => x[0]).map(perm => langjson.permissions[perm as 'SPEAK']).join(', ') + '`';
             return ctx.reply(langjson.messages.permisos_bot(permsStr));
-        }
+        };
 
         return options;
     }

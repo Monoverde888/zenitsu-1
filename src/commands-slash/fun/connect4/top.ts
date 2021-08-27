@@ -1,11 +1,11 @@
-import detritus from "detritus-client";
-import { BaseCommandOption } from "../../../utils/classes/slash.js";
-import jsonOBJECT from "../../../utils/lang/langs.js";
-import getGuild from "../../../utils/functions/getguild.js";
-import { Embed as MessageEmbed } from "detritus-client/lib/utils/embed.js";
-import model, { USER } from "../../../database/models/user.js";
+import detritus from 'detritus-client';
+import { BaseCommandOption } from '../../../utils/classes/slash.js';
+import jsonOBJECT from '../../../utils/lang/langs.js';
+import getGuild from '../../../utils/functions/getguild.js';
+import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
+import model, { USER } from '../../../database/models/user.js';
 
-const { Constants: { ApplicationCommandOptionTypes } } = detritus;
+const { Constants: { ApplicationCommandOptionTypes }} = detritus;
 
 export function top() {
     class Top extends BaseCommandOption {
@@ -13,23 +13,23 @@ export function top() {
             super({
                 options: [
                     {
-                        name: "difficulty",
+                        name: 'difficulty',
                         type: ApplicationCommandOptionTypes.STRING,
                         required: true,
-                        description: "Difficulty to look for",
+                        description: 'Difficulty to look for',
                         choices: ['easy', 'medium', 'hard'].map(item => {
-                            return { name: item, value: item }
+                            return { name: item, value: item };
                         })
                     },
                 ],
             });
-            this.name = "top";
-            this.description = "List of best players";
+            this.name = 'top';
+            this.description = 'List of best players';
             this.metadata = {
                 usage(prefix: string) {
                     return [`${prefix}connect4 top easy/medium/hard`];
                 },
-                category: "fun",
+                category: 'fun',
             };
         }
 
@@ -45,19 +45,19 @@ export function top() {
             const data = await model.find().sort({ [`c4${args.difficulty}.ganadas`]: -1 }).limit(10);
             const embed = new MessageEmbed()
                 .setDescription(langjson.commands.connect4top.no_data(args.difficulty))
-                .setColor(0xff0000)
+                .setColor(0xff0000);
 
             if (!data.length)
-                return ctx.editOrRespond({ embed })
+                return ctx.editOrRespond({ embed });
 
-            const states: string[] = langjson.commands.connect4top.states
+            const states: string[] = langjson.commands.connect4top.states;
             const mini_data = data.map((item: USER) => {
 
                 const xd = `c4${args.difficulty}` as 'c4easy' | 'c4medium' | 'c4hard';
 
                 if (!item[xd]) return false;
 
-                return `${item.id == ctx.userId ? `➡️ ` : ''}${(item.cacheName || '<@' + item.id + '>')}\n${states[0]}: ${item[xd].ganadas || 0} ${states[1]}: ${item[xd].perdidas || 0} ${states[2]}: ${item[xd].empates || 0}`
+                return `${item.id == ctx.userId ? '➡️ ' : ''}${(item.cacheName || '<@' + item.id + '>')}\n${states[0]}: ${item[xd].ganadas || 0} ${states[1]}: ${item[xd].perdidas || 0} ${states[2]}: ${item[xd].empates || 0}`;
 
             }).filter(x => x);
 
@@ -72,7 +72,7 @@ export function top() {
                 .setDescription(description)
                 .setColor(0xff0000);
 
-            return ctx.editOrRespond({ embed: embed2 })
+            return ctx.editOrRespond({ embed: embed2 });
 
         }
     }

@@ -1,14 +1,14 @@
-import detritus from "detritus-client";
-import { BaseSlash } from "../../utils/classes/slash.js";
+import detritus from 'detritus-client';
+import { BaseSlash } from '../../utils/classes/slash.js';
 import json from '../../utils/lang/langs.js';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
 import getGuild from '../../utils/functions/getguild.js';
 import getHighest from '../../utils/functions/gethighest.js';
 import unmarkdown from '../../utils/functions/unmarkdown.js';
-import canMod from "../../utils/functions/canmod.js";
+import canMod from '../../utils/functions/canmod.js';
 
-const { Constants: { Permissions: Flags } } = detritus;
-const { Constants: { ApplicationCommandOptionTypes } } = detritus;
+const { Constants: { Permissions: Flags }} = detritus;
+const { Constants: { ApplicationCommandOptionTypes }} = detritus;
 
 export default function () {
     class Ban extends BaseSlash {
@@ -16,36 +16,36 @@ export default function () {
             super({
                 options: [
                     {
-                        name: "member",
+                        name: 'member',
                         type: ApplicationCommandOptionTypes.USER,
                         required: true,
-                        description: "Member to ban",
+                        description: 'Member to ban',
                     },
                     {
-                        name: "reason",
+                        name: 'reason',
                         type: ApplicationCommandOptionTypes.STRING,
                         required: false,
-                        description: "Reason",
+                        description: 'Reason',
                     },
                     {
-                        name: "deletedays",
+                        name: 'deletedays',
                         type: ApplicationCommandOptionTypes.STRING,
                         required: false,
-                        description: "Delete messages days ago",
+                        description: 'Delete messages days ago',
                         choices: [0, 1, 2, 3, 4, 5, 6, 7].map(x => {
-                            return { name: x.toString(), value: x.toString() }
+                            return { name: x.toString(), value: x.toString() };
                         })
                     },
                 ],
             });
             this.disableDm = true;
-            this.name = "ban";
-            this.description = "Ban a member";
+            this.name = 'ban';
+            this.description = 'Ban a member';
             this.metadata = {
                 usage(prefix: string) {
                     return [`${prefix}ban [Member]`];
                 },
-                category: "mod",
+                category: 'mod',
             };
             this.permissions = [Flags.BAN_MEMBERS].map(BigInt);
             this.permissionsClient = [Flags.BAN_MEMBERS].map(BigInt);
@@ -66,7 +66,7 @@ export default function () {
             const langjson = json[data.lang];
             const member = args.member as detritus.Structures.Member;
 
-            if (!canMod(member, ctx.client, 'ban')) return ctx.editOrRespond(langjson.commands.ban.cannt_ban(`**${unmarkdown(member.username)}**`))
+            if (!canMod(member, ctx.client, 'ban')) return ctx.editOrRespond(langjson.commands.ban.cannt_ban(`**${unmarkdown(member.username)}**`));
             if (ctx.user.id !== ctx.guild.ownerId) {
                 if (getHighest(ctx.member).position <= getHighest(member).position) return ctx.editOrRespond(langjson.commands.ban.user_cannt_ban(`**${unmarkdown(member.username)}**`));
             }
@@ -80,9 +80,9 @@ export default function () {
                     const embed = new MessageEmbed()
                         .setColor(0x2ecc71)
                         .setDescription(langjson.commands.ban.ban(`**${unmarkdown(member.username)}**`, args.reason))
-                        .setFooter(ctx.user.username, ctx.user.avatarUrl)
+                        .setFooter(ctx.user.username, ctx.user.avatarUrl);
 
-                    return ctx.editOrRespond({ embed })
+                    return ctx.editOrRespond({ embed });
 
                 })
                 .catch((error) => {
@@ -90,11 +90,11 @@ export default function () {
                     const embed = new MessageEmbed()
                         .setColor(0xff000)
                         .setDescription(`Error: ${error ? (error.message || error) : error}`)
-                        .setFooter(ctx.user.username, ctx.user.avatarUrl)
+                        .setFooter(ctx.user.username, ctx.user.avatarUrl);
 
-                    return ctx.editOrRespond({ embed })
+                    return ctx.editOrRespond({ embed });
 
-                })
+                });
         }
     }
 

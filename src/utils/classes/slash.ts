@@ -1,7 +1,7 @@
-import detritus from "detritus-client";
-import { PermissionsText } from "../const.js";
-import getGuild from "../../utils/functions/getguild.js";
-import json from "../../utils/lang/langs.js";
+import detritus from 'detritus-client';
+import { PermissionsText } from '../const.js';
+import getGuild from '../../utils/functions/getguild.js';
+import json from '../../utils/lang/langs.js';
 
 export class BaseSlash<ParsedArgsFinished = detritus.Interaction.ParsedArgs> extends detritus.Interaction.InteractionCommand<ParsedArgsFinished> {
 
@@ -22,25 +22,24 @@ export class BaseSlash<ParsedArgsFinished = detritus.Interaction.ParsedArgs> ext
     onRunError(ctx: detritus.Interaction.InteractionContext, args: Record<string, any>, error: any) {
         console.error(error);
         return ctx.editOrRespond(
-            "```" + (error ? error.message || error : "ERROR") + "```"
+            '```' + (error ? error.message || error : 'ERROR') + '```'
         );
     }
 
     onCancelRun(ctx: detritus.Interaction.InteractionContext, args: Record<string, any>) {
         return ctx.editOrRespond(
-            "```" + ctx.command.metadata.usage("/").join("\n") + "```"
+            '```' + ctx.command.metadata.usage('/').join('\n') + '```'
         );
     }
 
     async onPermissionsFail(ctx: detritus.Interaction.InteractionContext, failed: bigint[]) {
 
-        const permissions: Array<string> = [];
+        const permissions: string[] = [];
         for (const permission of failed) {
             const key = String(permission);
             if (key in PermissionsText) {
                 permissions.push(`\`${PermissionsText[key]}\``);
-            }
-            else {
+            } else {
                 permissions.push(`\`${permission}?¿\``);
             }
         }
@@ -53,13 +52,12 @@ export class BaseSlash<ParsedArgsFinished = detritus.Interaction.ParsedArgs> ext
 
     async onPermissionsFailClient(ctx: detritus.Interaction.InteractionContext, failed: bigint[]) {
 
-        const permissions: Array<string> = [];
+        const permissions: string[] = [];
         for (const permission of failed) {
             const key = String(permission);
             if (key in PermissionsText) {
                 permissions.push(`\`${PermissionsText[key]}\``);
-            }
-            else {
+            } else {
                 permissions.push(`\`${permission}?¿\``);
             }
         }
@@ -92,25 +90,24 @@ export class BaseCommandOption<ParsedArgsFinished = detritus.Interaction.ParsedA
     onRunError(ctx: detritus.Interaction.InteractionContext, args: Record<string, any>, error: any) {
         console.error(error);
         return ctx.editOrRespond(
-            "```" + (error ? error.message || error : "ERROR") + "```"
+            '```' + (error ? error.message || error : 'ERROR') + '```'
         );
     }
 
     onCancelRun(ctx: detritus.Interaction.InteractionContext, args: Record<string, any>) {
         return ctx.editOrRespond(
-            "```" + ctx.command.metadata.usage("/").join("\n") + "```"
+            '```' + ctx.command.metadata.usage('/').join('\n') + '```'
         );
     }
 
     async onPermissionsFail(ctx: detritus.Interaction.InteractionContext, failed: bigint[]) {
 
-        const permissions: Array<string> = [];
+        const permissions: string[] = [];
         for (const permission of failed) {
             const key = String(permission);
             if (key in PermissionsText) {
                 permissions.push(`\`${PermissionsText[key]}\``);
-            }
-            else {
+            } else {
                 permissions.push(`\`${permission}?¿\``);
             }
         }
@@ -123,13 +120,12 @@ export class BaseCommandOption<ParsedArgsFinished = detritus.Interaction.ParsedA
 
     async onPermissionsFailClient(ctx: detritus.Interaction.InteractionContext, failed: bigint[]) {
 
-        const permissions: Array<string> = [];
+        const permissions: string[] = [];
         for (const permission of failed) {
             const key = String(permission);
             if (key in PermissionsText) {
                 permissions.push(`\`${PermissionsText[key]}\``);
-            }
-            else {
+            } else {
                 permissions.push(`\`${permission}?¿\``);
             }
         }

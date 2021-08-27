@@ -1,24 +1,22 @@
 import detritus from 'detritus-client';
 import mongoose from 'mongoose';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
-import { Color } from '../../utils/const.js'
+import { Color } from '../../utils/const.js';
 import { BaseSlash } from '../../utils/classes/slash.js';
 import ButtonCollector from '../../utils/collectors/buttoncollector.js';
-import Button from '../../utils/buttons/normal.js';
-import Components from '../../utils/buttons/component.js';
 
 export default function () {
 
     class Ping extends BaseSlash {
         constructor() {
             super();
-            this.name = 'ping'
+            this.name = 'ping';
             this.description = 'Bot latency';
             this.metadata = {
                 usage(prefix: string) {
                     return [`${prefix}ping`];
                 },
-                category: "bot",
+                category: 'bot',
             };
         }
 
@@ -29,9 +27,9 @@ export default function () {
             const date = Date.now();
             const Promise_res = ctx.client.ping();
             const Promise_ping_db: Promise<number> = new Promise((r, j) => {
-                mongoose.connection.db.admin().ping((err, result) => (err || !result) ? j(err || result) : r(Date.now() - date))
+                mongoose.connection.db.admin().ping((err, result) => (err || !result) ? j(err || result) : r(Date.now() - date));
             });
-            const [res, ping_db] = await Promise.all([Promise_res, Promise_ping_db])
+            const [res, ping_db] = await Promise.all([Promise_res, Promise_ping_db]);
             const embed = new MessageEmbed()
 
                 .setDescription(`
@@ -39,9 +37,7 @@ export default function () {
         `)
                 .setTimestamp()
                 .setColor(Color);
-            await ctx.editOrRespond({
-                embed, components: [new Components(new Button('primary').setCustomID('xd').setLabel('???'))]
-            });
+            await ctx.editOrRespond({ embed });
 
             const message = await ctx.fetchResponse();
 
@@ -50,11 +46,11 @@ export default function () {
                     return interaction.user.id == ctx.userId;
                 },
                 max: 1
-            }, ctx.client)
+            }, ctx.client);
 
             col.on('collect', (interaction) => {
-                return interaction.respond({ data: { content: 'shh', flags: detritus.Constants.MessageFlags.EPHEMERAL }, type: detritus.Constants.InteractionCallbackTypes.CHANNEL_MESSAGE_WITH_SOURCE })
-            })
+                return interaction.respond({ data: { content: 'shh', flags: detritus.Constants.MessageFlags.EPHEMERAL }, type: detritus.Constants.InteractionCallbackTypes.CHANNEL_MESSAGE_WITH_SOURCE });
+            });
 
             return message;
 
@@ -68,11 +64,11 @@ export default function () {
 function getStatus(number: number) {
 
     let color = '';
-    if (number >= 400) color = `⚫`
-    else if (number >= 300) color = `🔴`
-    else if (number >= 200) color = `🟠`
-    else if (number >= 100) color = `🟡`
-    else color = `🟢`;
+    if (number >= 400) color = '⚫';
+    else if (number >= 300) color = '🔴';
+    else if (number >= 200) color = '🟠';
+    else if (number >= 100) color = '🟡';
+    else color = '🟢';
     return `\\${color}`;
 
 }

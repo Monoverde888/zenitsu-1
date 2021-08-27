@@ -1,14 +1,14 @@
-import detritus from "detritus-client";
-import { BaseSlash } from "../../utils/classes/slash.js";
+import detritus from 'detritus-client';
+import { BaseSlash } from '../../utils/classes/slash.js';
 import json from '../../utils/lang/langs.js';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
 import getGuild from '../../utils/functions/getguild.js';
 import getHighest from '../../utils/functions/gethighest.js';
 import unmarkdown from '../../utils/functions/unmarkdown.js';
-import canMod from "../../utils/functions/canmod.js";
+import canMod from '../../utils/functions/canmod.js';
 
-const { Constants: { Permissions: Flags } } = detritus;
-const { Constants: { ApplicationCommandOptionTypes } } = detritus;
+const { Constants: { Permissions: Flags }} = detritus;
+const { Constants: { ApplicationCommandOptionTypes }} = detritus;
 
 export default function () {
     class Kick extends BaseSlash {
@@ -16,27 +16,27 @@ export default function () {
             super({
                 options: [
                     {
-                        name: "member",
+                        name: 'member',
                         type: ApplicationCommandOptionTypes.USER,
                         required: true,
-                        description: "Member to kick",
+                        description: 'Member to kick',
                     },
                     {
-                        name: "reason",
+                        name: 'reason',
                         type: ApplicationCommandOptionTypes.STRING,
                         required: false,
-                        description: "Reason",
+                        description: 'Reason',
                     }
                 ],
             });
             this.disableDm = true;
-            this.name = "kick";
-            this.description = "Kick a member";
+            this.name = 'kick';
+            this.description = 'Kick a member';
             this.metadata = {
                 usage(prefix: string) {
                     return [`${prefix}kick [Member]`];
                 },
-                category: "mod",
+                category: 'mod',
             };
             this.permissions = [Flags.KICK_MEMBERS].map(BigInt);
             this.permissionsClient = [Flags.KICK_MEMBERS].map(BigInt);
@@ -57,9 +57,9 @@ export default function () {
             const langjson = json[data.lang];
             const member = args.member as detritus.Structures.Member;
 
-            if (!canMod(member, ctx.client, 'kick')) return ctx.editOrRespond(langjson.commands.kick.cannt_kick(`**${unmarkdown(member.username)}**`))
+            if (!canMod(member, ctx.client, 'kick')) return ctx.editOrRespond(langjson.commands.kick.cannt_kick(`**${unmarkdown(member.username)}**`));
             if (ctx.user.id !== ctx.guild.ownerId) {
-                if (getHighest(ctx.member).position <= getHighest(member).position) return ctx.editOrRespond(langjson.commands.kick.user_cannt_kick(`**${unmarkdown(member.username)}**`))
+                if (getHighest(ctx.member).position <= getHighest(member).position) return ctx.editOrRespond(langjson.commands.kick.user_cannt_kick(`**${unmarkdown(member.username)}**`));
             }
 
             return member.remove(args.reason ? { reason: args.reason } : {})
@@ -68,20 +68,20 @@ export default function () {
                     const embed = new MessageEmbed()
                         .setColor(0x2ecc71)
                         .setDescription(langjson.commands.kick.kick(`**${unmarkdown(member.username)}**`, args.reason))
-                        .setFooter(ctx.user.username, ctx.user.avatarUrl)
+                        .setFooter(ctx.user.username, ctx.user.avatarUrl);
 
-                    return ctx.editOrRespond({ embed })
+                    return ctx.editOrRespond({ embed });
 
                 }).catch((error) => {
 
                     const embed = new MessageEmbed()
                         .setColor(0xff0000)
                         .setDescription(`Error: ${error ? (error.message || error) : error}`)
-                        .setFooter(ctx.user.username, ctx.user.avatarUrl)
+                        .setFooter(ctx.user.username, ctx.user.avatarUrl);
 
-                    return ctx.editOrRespond({ embed })
+                    return ctx.editOrRespond({ embed });
 
-                })
+                });
         }
     }
 

@@ -3,20 +3,20 @@ import getPrivate from '../../utils/functions/getprivate.js';
 import replace from '../../utils/functions/replace.js';
 import parseArgs from '../../utils/functions/parseargs.js';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
-import { Color } from '../../utils/const.js'
+import { Color } from '../../utils/const.js';
 import util from 'util';
 import child_process from 'child_process';
 const { exec: execC } = child_process;
-const exec = util.promisify(execC)
+const exec = util.promisify(execC);
 
 export default new BaseCommand({
     label: 'code',
     onBefore(ctx) {
-        return (ctx.message.author.id == `507367752391196682`);
+        return (ctx.message.author.id == '507367752391196682');
     },
     metadata: {
         usage(prefix: string) {
-            return [`${prefix}eval <code> -type [async|normal|exec|shell]`]
+            return [`${prefix}eval <code> -type [async|normal|exec|shell]`];
         },
         category: 'dev'
     },
@@ -30,7 +30,7 @@ export default new BaseCommand({
     }],
     onBeforeRun(_, { code }) {
         const args = parseArgs(code);
-        return !!args[0]
+        return !!args[0];
     },
     async run(ctx, { code, type }: { code: string; type: string }) {
 
@@ -41,23 +41,21 @@ export default new BaseCommand({
                 try {
 
                     const res_evalued = await eval(`${type == 'async' ? '(async() => {' : ''}${code} ${type == 'async' ? '})()' : ''}`);
-                    const TYPE = typeof (res_evalued)
+                    const TYPE = typeof (res_evalued);
                     let evalued = typeof res_evalued == 'string' ? res_evalued : util.inspect(res_evalued, { depth: 0 });
-                    evalued = replace(evalued, getPrivate(), '☹️')
+                    evalued = replace(evalued, getPrivate(), '☹️');
                     const embed = new MessageEmbed()
                         .setColor(Color)
                         .setDescription('```js\n' + evalued.slice(0, 2000) + '\n```')
                         .setTimestamp()
                         .setFooter(ctx.message.author.username, ctx.message.author.avatarUrl)
                         .addField('typeof', TYPE, true)
-                        .addField('Class', (res_evalued && res_evalued.constructor && res_evalued.constructor.name) ? res_evalued.constructor.name || 'NO CLASS' : 'NO CLASS', true)
+                        .addField('Class', (res_evalued && res_evalued.constructor && res_evalued.constructor.name) ? res_evalued.constructor.name || 'NO CLASS' : 'NO CLASS', true);
 
-                    return await ctx.reply({ embed })
+                    return await ctx.reply({ embed });
 
-                }
-
-                catch (err) {
-                    return ctx.reply('```js\n' + err.toString().slice(0, 1500) + '```')
+                } catch (err) {
+                    return ctx.reply('```js\n' + err.toString().slice(0, 1500) + '```');
                 }
 
             }

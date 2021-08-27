@@ -1,14 +1,14 @@
-import detritus from "detritus-client";
-import { Edit, filter } from "../../../../utils/functions/edit.js";
-import json from "../../../../utils/lang/langs.js";
-import getGuild from "../../../../utils/functions/getguild.js";
-import { BaseCommandOption } from "../../../../utils/classes/slash.js";
-import guild from "../../../../database/models/guild.js";
-import redis from "../../../../utils/managers/redis.js";
+import detritus from 'detritus-client';
+import { Edit, filter } from '../../../../utils/functions/edit.js';
+import json from '../../../../utils/lang/langs.js';
+import getGuild from '../../../../utils/functions/getguild.js';
+import { BaseCommandOption } from '../../../../utils/classes/slash.js';
+import guild from '../../../../database/models/guild.js';
+import redis from '../../../../utils/managers/redis.js';
 import { cooldown } from '../../../../utils/maps.js';
 
-const { Constants: { Permissions: Flags } } = detritus;
-const { Constants: { ApplicationCommandOptionTypes } } = detritus;
+const { Constants: { Permissions: Flags }} = detritus;
+const { Constants: { ApplicationCommandOptionTypes }} = detritus;
 
 export function init() {
 
@@ -17,20 +17,20 @@ export function init() {
             super({
                 options: [
                     {
-                        name: "muterole",
+                        name: 'muterole',
                         required: true,
-                        description: "Role to configure",
+                        description: 'Role to configure',
                         type: ApplicationCommandOptionTypes.ROLE,
                     }
                 ],
             });
-            this.name = "init";
-            this.description = "Start Configuration";
+            this.name = 'init';
+            this.description = 'Start Configuration';
             this.metadata = {
                 usage(prefix: string) {
-                    return [prefix + "settings muterole init [role]"];
+                    return [prefix + 'settings muterole init [role]'];
                 },
-                category: "util",
+                category: 'util',
             };
             this.permissions = [Flags.MANAGE_GUILD].map(BigInt);
             this.permissionsClient = [Flags.MANAGE_GUILD, Flags.MANAGE_ROLES, Flags.MANAGE_CHANNELS].map(BigInt);
@@ -42,8 +42,8 @@ export function init() {
         ) {
             await ctx.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
 
-            const data = await getGuild(ctx.guildId)
-            const langjson = json[data.lang]
+            const data = await getGuild(ctx.guildId);
+            const langjson = json[data.lang];
 
             if (ctx.guild.roles.get(data.muterole)) return ctx.editOrRespond(
                 langjson.commands.settings.muterole.init.use_refresh('/')
@@ -70,7 +70,7 @@ export function init() {
                 return ctx.editOrRespond(langjson.commands.settings.muterole.init.cannt_edit(role.mention));
 
             cooldown.add(ctx.guildId);
-            const { success, error } = await Edit({ canales, id: role.id, guild: ctx.guild })
+            const { success, error } = await Edit({ canales, id: role.id, guild: ctx.guild });
 
             if (success) {
                 //Todo bien, todo correcto...
@@ -78,13 +78,11 @@ export function init() {
                 const temp = await guild.findOneAndUpdate({ id: ctx.guildId }, { muterole: role.id }, { new: true }).lean();
                 await redis.set(ctx.guildId, JSON.stringify(temp));
                 return ctx.editOrRespond(langjson.commands.settings.muterole.init.success);
-            }
-            else if (error) {
+            } else if (error) {
                 //Error al editar un canal...
                 cooldown.delete(ctx.guildId);
                 return ctx.editOrRespond(`Error: ${error.name || error}`);
-            }
-            else {
+            } else {
                 //El usuario le quito permisos al bot...
                 cooldown.delete(ctx.guildId);
                 return ctx.editOrRespond(langjson.commands.settings.muterole.init.else);

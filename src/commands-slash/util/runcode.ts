@@ -1,15 +1,13 @@
-import detritus from "detritus-client";
-import fetch from "node-fetch";
-import json from "../../utils/lang/langs.js";
-import getGuild from "../../utils/functions/getguild.js";
-import Component from "../../utils/buttons/component.js";
-import URLButton from "../../utils/buttons/url.js";
-import { BaseCommandOption } from "../../utils/classes/slash.js";
+import detritus from 'detritus-client';
+import fetch from 'node-fetch';
+import json from '../../utils/lang/langs.js';
+import getGuild from '../../utils/functions/getguild.js';
+import { BaseCommandOption } from '../../utils/classes/slash.js';
 
-const { Constants: { ApplicationCommandOptionTypes } } = detritus;
+const { Constants: { ApplicationCommandOptionTypes }} = detritus;
 
 export async function runcode() {
-    const arr = await fetch(`https://emkc.org/api/v2/piston/runtimes`).then((x) =>
+    const arr = await fetch('https://emkc.org/api/v2/piston/runtimes').then((x) =>
         x.json()
     );
     const res = arr.map((x: { language: string; aliases: string[] }) => [
@@ -27,21 +25,21 @@ export async function runcode() {
             super({
                 options: [
                     {
-                        name: "code",
+                        name: 'code',
                         required: true,
-                        description: "Code to run",
+                        description: 'Code to run',
                         type: ApplicationCommandOptionTypes.STRING,
                     },
                     {
-                        name: "language",
+                        name: 'language',
                         required: true,
-                        description: "Language to use",
+                        description: 'Language to use',
                         type: ApplicationCommandOptionTypes.STRING,
                     },
                 ],
             });
-            this.name = "runcode";
-            this.description = "Run code in a programming language";
+            this.name = 'runcode';
+            this.description = 'Run code in a programming language';
             this.metadata = {
                 usage(prefix: string) {
                     return [
@@ -49,7 +47,7 @@ export async function runcode() {
                         'runcode \\`\\`\\`javascript\nconsole.log("Hello world");\n\\`\\`\\`',
                     ];
                 },
-                category: "util",
+                category: 'util',
             };
         }
 
@@ -63,20 +61,22 @@ export async function runcode() {
 
             if (!avaliables.includes(args.language))
                 return ctx.editOrRespond({
-                    content: langjson.commands.runcode.invalid_lang, components: [new Component(
-                        new URLButton().setURL(`https://zenitsu.eastus.cloudapp.azure.com/runcode`).setLabel("Run code")
-                    ),]
+                    content: langjson.commands.runcode.invalid_lang, components: [
+                        new detritus.Utils.ComponentActionRow()
+                            .addButton(new detritus.Utils.ComponentButton().setUrl('https://github.com/engineer-man/piston').setLabel('Piston GitHub'))
+                            .addButton(new detritus.Utils.ComponentButton().setUrl('https://zenitsu.eastus.cloudapp.azure.com/runcode').setLabel('Run code'))
+                    ],
                 });
 
             await ctx.respond(
                 detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE
             );
 
-            const response = await fetch(`https://emkc.org/api/v2/piston/execute`, {
-                method: "POST",
+            const response = await fetch('https://emkc.org/api/v2/piston/execute', {
+                method: 'POST',
                 body: JSON.stringify({
                     language: args.language, //lenguaje
-                    version: "*", //ultima versión (?)
+                    version: '*', //ultima versión (?)
                     files: [{ content: args.code }], //código
                 }),
                 headers: {
@@ -93,27 +93,24 @@ export async function runcode() {
                             res.run.output as string
                         ).slice(0, 1800)}\`\`\``,
                         components: [
-                            new Component(
-                                new URLButton().setURL(`https://github.com/engineer-man/piston`).setLabel("Piston GitHub"),
-                                new URLButton().setURL(`https://zenitsu.eastus.cloudapp.azure.com/runcode`).setLabel("Run code")
-                            ),
+                            new detritus.Utils.ComponentActionRow()
+                                .addButton(new detritus.Utils.ComponentButton().setUrl('https://github.com/engineer-man/piston').setLabel('Piston GitHub'))
+                                .addButton(new detritus.Utils.ComponentButton().setUrl('https://zenitsu.eastus.cloudapp.azure.com/runcode').setLabel('Run code'))
                         ],
                     });
                 else return ctx.editOrRespond({
                     content: langjson.commands.runcode.no_output, components: [
-                        new Component(
-                            new URLButton().setURL(`https://github.com/engineer-man/piston`).setLabel("Piston GitHub"),
-                            new URLButton().setURL(`https://zenitsu.eastus.cloudapp.azure.com/runcode`).setLabel("Run code")
-                        ),
+                        new detritus.Utils.ComponentActionRow()
+                            .addButton(new detritus.Utils.ComponentButton().setUrl('https://github.com/engineer-man/piston').setLabel('Piston GitHub'))
+                            .addButton(new detritus.Utils.ComponentButton().setUrl('https://zenitsu.eastus.cloudapp.azure.com/runcode').setLabel('Run code'))
                     ],
                 });
             }
             return ctx.editOrRespond({
                 content: (res.message || langjson.commands.runcode.error), components: [
-                    new Component(
-                        new URLButton().setURL(`https://github.com/engineer-man/piston`).setLabel("Piston GitHub"),
-                        new URLButton().setURL(`https://zenitsu.eastus.cloudapp.azure.com/runcode`).setLabel("Run code")
-                    ),
+                    new detritus.Utils.ComponentActionRow()
+                        .addButton(new detritus.Utils.ComponentButton().setUrl('https://github.com/engineer-man/piston').setLabel('Piston GitHub'))
+                        .addButton(new detritus.Utils.ComponentButton().setUrl('https://zenitsu.eastus.cloudapp.azure.com/runcode').setLabel('Run code'))
                 ],
             });
         }

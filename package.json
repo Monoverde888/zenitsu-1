@@ -5,11 +5,12 @@
   "main": "./src/index.ts",
   "type": "module",
   "scripts": {
-    "destroyDist": "rmdir /S dist",
+    "destroyDist": "rmdir /Q/S dist",
     "build": "npx tsc",
     "start": "node --expose-gc --optimize_for_size --max_old_space_size=200 ./dist/index.js",
     "test": "npm run build && npm run start",
-    "test:destroy": "npm run destroyDist && npm run build && npm run start"
+    "test:destroy": "npm run destroyDist && npm run build && npm run start",
+    "lint": "eslint \"./src/**/*.ts\""
   },
   "author": "MARCROCK22",
   "license": "Apache-2.0",
@@ -25,6 +26,9 @@
     "tictactoe-complex-ai": "^1.0.1"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.29.3",
+    "@typescript-eslint/parser": "^4.29.3",
+    "eslint": "^7.32.0",
     "typescript": "^4.3.5"
   }
 }

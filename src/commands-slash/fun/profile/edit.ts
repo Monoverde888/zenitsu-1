@@ -1,5 +1,5 @@
-import detritus from "detritus-client";
-import { BaseCommandOption } from "../../../utils/classes/slash.js";
+import detritus from 'detritus-client';
+import { BaseCommandOption } from '../../../utils/classes/slash.js';
 import json from '../../../utils/lang/langs.js';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
 import getGuild from '../../../utils/functions/getguild.js';
@@ -8,7 +8,7 @@ import model from '../../../database/models/user.js';
 import pkgvalidURL from 'image-url-validator';
 
 const validURL = pkgvalidURL.default;
-const { Constants: { ApplicationCommandOptionTypes } } = detritus;
+const { Constants: { ApplicationCommandOptionTypes }} = detritus;
 
 export function edit() {
     class Edit extends BaseCommandOption {
@@ -16,24 +16,24 @@ export function edit() {
             super({
                 options: [
                     {
-                        name: "type",
+                        name: 'type',
                         type: ApplicationCommandOptionTypes.STRING,
                         required: true,
-                        description: "Value to edit",
+                        description: 'Value to edit',
                         choices: ['color', 'description', 'background'].map(x => {
-                            return { name: x, value: x }
+                            return { name: x, value: x };
                         })
                     },
                     {
-                        name: "data",
+                        name: 'data',
                         type: ApplicationCommandOptionTypes.STRING,
                         required: true,
-                        description: "Value",
+                        description: 'Value',
                     },
                 ],
             });
-            this.name = "edit";
-            this.description = "Edit your profile";
+            this.name = 'edit';
+            this.description = 'Edit your profile';
             this.metadata = {
                 usage(prefix: string) {
                     return [
@@ -41,9 +41,9 @@ export function edit() {
                         `${prefix}profile edit color #FF0000`,
                         `${prefix}profile edit description Hi :d.`,
                         `${prefix}profile edit background URL`
-                    ]
+                    ];
                 },
-                category: "fun",
+                category: 'fun',
             };
         }
 
@@ -74,7 +74,7 @@ export function edit() {
 
                     const embed = new MessageEmbed()
                         .setImage(args.data)
-                        .setDescription(langjson.commands.editprofile.new_background)
+                        .setDescription(langjson.commands.editprofile.new_background);
 
                     return ctx.editOrRespond({ embed });
 
@@ -87,7 +87,7 @@ export function edit() {
                     if (!newColor && newColor != 0) {
 
                         const embed = new MessageEmbed()
-                            .setImage(`https://cdn.discordapp.com/attachments/842090973311270914/843166076673327134/G64ZYWcv.gif`)
+                            .setImage('https://cdn.discordapp.com/attachments/842090973311270914/843166076673327134/G64ZYWcv.gif')
                             .setDescription(langjson.commands.editprofile.invalid)
                             .setColor(0xff0000);
                         return ctx.editOrRespond({ embed });
@@ -103,7 +103,7 @@ export function edit() {
 
                     const embed = new MessageEmbed()
                         .setColor(newColor)
-                        .setDescription(langjson.commands.editprofile.new_color)
+                        .setDescription(langjson.commands.editprofile.new_color);
                     return ctx.editOrRespond({ embed });
 
 

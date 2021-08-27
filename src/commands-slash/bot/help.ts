@@ -1,23 +1,22 @@
 import detritus from 'detritus-client';
-import { Color } from '../../utils/const.js'
+import { Color } from '../../utils/const.js';
 import { BaseSlash } from '../../utils/classes/slash.js';
 import json from '../../utils/lang/langs.js';
 import getGuild from '../../utils/functions/getguild.js';
-import URLButton from "../../utils/buttons/url.js";
-import Components from "../../utils/buttons/component.js";
+import Components from '../../utils/buttons/component.js';
 
 export default function () {
 
     class Help extends BaseSlash {
         constructor() {
             super();
-            this.name = 'help'
-            this.description = 'List of commands'
+            this.name = 'help';
+            this.description = 'List of commands';
             this.metadata = {
                 usage(prefix: string) {
                     return [`${prefix}help`];
                 },
-                category: "bot",
+                category: 'bot',
             };
         }
 
@@ -37,25 +36,28 @@ export default function () {
 
             const BUTTONS =
                 [
-                    new URLButton()
+                    new detritus.Utils.ComponentButton()
                         .setLabel(langjson.commands.help.support)
-                        .setURL('https://discord.gg/4Yzc7Hk')
+                        .setUrl('https://discord.gg/4Yzc7Hk')
                         .setEmoji({ name: '🤖', id: undefined }),
-                    new URLButton()
+                    new detritus.Utils.ComponentButton()
                         .setLabel(langjson.commands.help.invite)
-                        .setURL('https://discord.com/api/oauth2/authorize?client_id=721080193678311554&scope=bot+applications.commands&permissions=8')
+                        .setUrl('https://discord.com/api/oauth2/authorize?client_id=721080193678311554&scope=bot+applications.commands&permissions=8')
                         .setEmoji({ name: '🤖', id: undefined }),
-                    new URLButton()
+                    new detritus.Utils.ComponentButton()
                         .setLabel('GitHub')
-                        .setURL('https://github.com/marcrock22/zenitsu')
+                        .setUrl('https://github.com/marcrock22/zenitsu')
                         .setEmoji({ name: '🐙', id: undefined }),
-                    new URLButton()
-                        .setURL(`https://zenitsu.eastus.cloudapp.azure.com/runcode`)
-                        .setLabel("Run code")
+                    new detritus.Utils.ComponentButton()
+                        .setUrl('https://zenitsu.eastus.cloudapp.azure.com/runcode')
+                        .setLabel('Run code')
                         .setEmoji({ name: '💻', id: undefined }),
                 ];
 
-            const componente = new Components(...BUTTONS);
+            const componente = new detritus.Utils.ComponentActionRow();
+            for (const i of BUTTONS)
+                componente.addButton(i);
+
             return ctx.respond(detritus.Constants.InteractionCallbackTypes.CHANNEL_MESSAGE_WITH_SOURCE, {
                 embed: embedHelp, components: [componente],
                 flags: detritus.Constants.MessageFlags.EPHEMERAL

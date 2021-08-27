@@ -1,12 +1,12 @@
-import detritus from "detritus-client";
-import { BaseCommandOption } from "../../../utils/classes/slash.js";
-import json from "../../../utils/lang/langs.js";
-import getGuild from "../../../utils/functions/getguild.js";
-import getUser from "../../../utils/functions/getuser.js";
-import fetch from "node-fetch";
-import { Embed as MessageEmbed } from "detritus-client/lib/utils/embed.js";
+import detritus from 'detritus-client';
+import { BaseCommandOption } from '../../../utils/classes/slash.js';
+import json from '../../../utils/lang/langs.js';
+import getGuild from '../../../utils/functions/getguild.js';
+import getUser from '../../../utils/functions/getuser.js';
+import fetch from 'node-fetch';
+import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
 
-const { Constants: { ApplicationCommandOptionTypes } } = detritus;
+const { Constants: { ApplicationCommandOptionTypes }} = detritus;
 
 export function view() {
     class View extends BaseCommandOption {
@@ -14,20 +14,20 @@ export function view() {
             super({
                 options: [
                     {
-                        name: "user",
+                        name: 'user',
                         type: ApplicationCommandOptionTypes.USER,
                         required: false,
-                        description: "User",
+                        description: 'User',
                     },
                 ],
             });
-            this.name = "view";
-            this.description = "View your profile";
+            this.name = 'view';
+            this.description = 'View your profile';
             this.metadata = {
                 usage(prefix: string) {
                     return [`${prefix}profile view [Member]`];
                 },
-                category: "fun",
+                category: 'fun',
             };
         }
 
@@ -40,7 +40,7 @@ export function view() {
 
             const langjson = ctx.guildId ? json[(await getGuild(ctx.guildId)).lang] : json.en;
             const user = (args.user ? args.user.bot ? ctx.user : args.user : ctx.user) || ctx.user;
-            const data = await getUser(user.id)
+            const data = await getUser(user.id);
 
             try {
 
@@ -58,7 +58,7 @@ export function view() {
                 }))}`, {
                     headers:
                         { 'authorization': process.env.APIKEY }
-                })
+                });
                 const buf = await response.buffer();
 
                 const embed = new MessageEmbed()
@@ -68,9 +68,7 @@ export function view() {
 
                 return ctx.editOrRespond({ embed, files: [{ value: buf, filename: 'view.png' }] });
 
-            }
-
-            catch (e) {
+            } catch (e) {
 
                 console.error(e);
                 return ctx.editOrRespond('Error...');

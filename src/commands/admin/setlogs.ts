@@ -10,15 +10,15 @@ import json from '../../utils/lang/langs.js';
 import getGuild from '../../utils/functions/getguild.js';
 import nodefetch from 'node-fetch';
 import unmarkdown from '../../utils/functions/unmarkdown.js';
-import detritus from "detritus-client";
+import detritus from 'detritus-client';
 
-const { Constants: { Permissions: Flags } } = detritus;
+const { Constants: { Permissions: Flags }} = detritus;
 
 export default new BaseCommand({
     label: 'arg',
     metadata: {
         usage(prefix: string) {
-            return [`${prefix}setlogs webhookURL messageUpdate`, `${prefix}setlogs webhookURL messageDelete`]
+            return [`${prefix}setlogs webhookURL messageUpdate`, `${prefix}setlogs webhookURL messageDelete`];
         },
         category: 'admin'
     },
@@ -39,15 +39,15 @@ export default new BaseCommand({
             .setColor(Color)
             .setDescription(langjson.commands.setlogs.invalid)
             .setFooter(`${ctx.prefix}setlogs (WebhookURL) (messageUpdate|messageUpdate)`)
-            .setImage(`https://i.imgur.com/2WZ1ctQ.gif`)
-            .setThumbnail(`https://is.gd/G6VSKC`)
+            .setImage('https://i.imgur.com/2WZ1ctQ.gif')
+            .setThumbnail('https://is.gd/G6VSKC');
 
         const [url, type] = args;
 
         const events = ['messageDelete', 'messageUpdate'];
 
         if (!events.includes(type) || !url)
-            return ctx.reply({ embed: invalidUse })
+            return ctx.reply({ embed: invalidUse });
 
         const match = url.match(regex);
 
@@ -60,7 +60,7 @@ export default new BaseCommand({
         if (!webhook || (webhook.guild_id != ctx.guildId)) return ctx.reply({ embed: invalidUse });
 
         const fetch = await getGuild(ctx.guildId),
-            check = (fetch.logs.find(item => (item.TYPE == type)))
+            check = (fetch.logs.find(item => (item.TYPE == type)));
 
         let data: GUILD;
 
@@ -77,9 +77,7 @@ export default new BaseCommand({
                     },
                 }, { new: true }).lean();
 
-        }
-
-        else {
+        } else {
 
             await guild.findOneAndUpdate({ id: ctx.guildId }, {
                 $pull: {
@@ -106,12 +104,12 @@ export default new BaseCommand({
                 const embed = new MessageEmbed()
                     .setAuthor(webhook.name, webhook.avatar
                         ? `https://cdn.discordapp.com/avatars/${webhook.id}/${webhook.avatar}.png`
-                        : `https://cdn.discordapp.com/embed/avatars/0.png`)
+                        : 'https://cdn.discordapp.com/embed/avatars/0.png')
                     .setDescription(langjson.commands.setlogs.correct(unmarkdown(webhook.name), type))
                     .setColor(Color);
 
                 return ctx.reply({ embed });
 
-            })
+            });
     },
 });

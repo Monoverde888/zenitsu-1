@@ -1,4 +1,4 @@
-import BaseCollector, { CollectorOptions } from "./base.js";
+import BaseCollector, { CollectorOptions } from './base.js';
 import detritus from 'detritus-client';
 
 export interface INTERACTION extends detritus.Structures.Interaction {
@@ -35,9 +35,7 @@ class ButtonCollector extends BaseCollector {
         if (++this.usages == this.options.max) {
             this.emit('collect', payload.interaction as INTERACTION);
             this.stop('max');
-        }
-
-        else {
+        } else {
 
             if (this.options.timeIdle) {
                 clearTimeout(this._idleTimeout);
@@ -67,6 +65,6 @@ class ButtonCollector extends BaseCollector {
     }
 
 
-};
+}
 
 export default ButtonCollector;
