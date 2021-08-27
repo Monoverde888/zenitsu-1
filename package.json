@@ -8,7 +8,7 @@
     "destroyDist": "rmdir /Q/S dist",
     "build": "npx tsc",
     "start": "node --expose-gc --optimize_for_size --max_old_space_size=200 ./dist/index.js",
-    "test": "npm run lint && npm run build && npm run start",
+    "test": "npm run build && npm run start",
     "test:destroy": "npm run destroyDist && npm run build && npm run start",
     "lint": "eslint \"./src/**/*.ts\"",
     "lint:fix": "eslint \"./src/**/*.ts\" --fix"

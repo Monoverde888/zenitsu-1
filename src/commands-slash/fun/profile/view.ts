@@ -4,9 +4,6 @@ import json from '../../../utils/lang/langs.js';
 import getGuild from '../../../utils/functions/getguild.js';
 import getUser from '../../../utils/functions/getuser.js';
 import fetch from 'node-fetch';
-import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
-
-const { Constants: { ApplicationCommandOptionTypes }} = detritus;
 
 export function view() {
     class View extends BaseCommandOption {
@@ -15,7 +12,7 @@ export function view() {
                 options: [
                     {
                         name: 'user',
-                        type: ApplicationCommandOptionTypes.USER,
+                        type: detritus.Constants.ApplicationCommandOptionTypes.USER,
                         required: false,
                         description: 'User',
                     },
@@ -61,7 +58,7 @@ export function view() {
                 });
                 const buf = await response.buffer();
 
-                const embed = new MessageEmbed()
+                const embed = new detritus.Utils.Embed()
                     .setColor(parseInt(data.color, 16) || 0)
                     .setDescription(data.description)
                     .setImage('attachment://view.png');
