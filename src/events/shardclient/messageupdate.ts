@@ -11,16 +11,16 @@ async function messageUpdate(client: detritus.ShardClient, _interactionClient: d
     const guild = newMessage.guild;
 
     if (!guild
-    || !oldMessage.content
+        || !oldMessage.content
     ) return;
 
     if (!newMessage.author
-    || !newMessage.guildId
-    || !newMessage.author.username
-    || !newMessage.author.id
-    || newMessage.author.bot
-    || !newMessage.content
-    || !newMessage.channel
+        || !newMessage.guildId
+        || !newMessage.author.username
+        || !newMessage.author.id
+        || newMessage.author.bot
+        || !newMessage.content
+        || !newMessage.channel
     ) return;
 
     if (oldMessage.content == newMessage.content) return;

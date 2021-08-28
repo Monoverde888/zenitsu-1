@@ -10,13 +10,13 @@ async function messageDelete(client: detritus.ShardClient, _interactionClient: d
     if (!message || !message.id) return;
 
     if (!message.guild
-    || !message.guild.id
-    || !message.author
-    || !message.author.username
-    || !message.author.id
-    || message.author.bot
-    || !message.content
-    || !message.channel
+        || !message.guild.id
+        || !message.author
+        || !message.author.username
+        || !message.author.id
+        || message.author.bot
+        || !message.content
+        || !message.channel
     ) return;
 
     const data = await getguild(message.guildId),

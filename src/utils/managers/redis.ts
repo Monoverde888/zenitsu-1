@@ -1,11 +1,11 @@
 import redis from 'redis';
-import util  from 'util';
+import util from 'util';
 
-const client      = redis.createClient(),
+const client = redis.createClient(),
     { promisify } = util,
-    setPromise  = promisify(client.set).bind(client),
-    getPromise  = promisify(client.get).bind(client),
-    delPromise  = promisify(client.del).bind(client);
+    setPromise = promisify(client.set).bind(client),
+    getPromise = promisify(client.get).bind(client),
+    delPromise = promisify(client.del).bind(client);
 
 client.on('error', (...errors) => {
     console.error(...errors);
@@ -23,20 +23,20 @@ client.on('error', (...errors) => {
 
 class RedisManager {
 
-    set(key : string, value : string) : Promise<string> {
+    set(key: string, value: string): Promise<string> {
         //Expira en 120 segundos. (Dos minutos)
         //https://redis.io/commands/set
         return setPromise(key, value, 'EX', 60 * 2);
 
     }
 
-    get(key : string) : Promise<string> {
+    get(key: string): Promise<string> {
 
         return getPromise(key);
 
     }
 
-    del(key : string) : Promise<number> {
+    del(key: string): Promise<number> {
 
         return delPromise(key);
 

@@ -1,6 +1,6 @@
 import detritus from 'detritus-client';
 
-const { Constants: { Permissions: Flags }} = detritus;
+const { Constants: { Permissions: Flags } } = detritus;
 const Arr = Object.entries(Flags);
 import getGuild from '../functions/getguild.js';
 import json from '../lang/langs.js';
