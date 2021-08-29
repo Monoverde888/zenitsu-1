@@ -36,6 +36,7 @@ console = new kufa.KufaConsole({
 const cache: detritus.ShardClientCacheOptions = {
     messages: { expire: 60 * 60 * 1000 },
     channels: true,
+    roles: true,
     emojis: false,
     applications: false,
     connectedAccounts: false,
@@ -44,7 +45,6 @@ const cache: detritus.ShardClientCacheOptions = {
     notes: false,
     presences: false,
     relationships: false,
-    roles: true,
     sessions: false,
     stageInstances: false,
     typings: false,

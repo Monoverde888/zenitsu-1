@@ -33,30 +33,28 @@ export default function () {
                 .addField(categories[3], ctx.client.interactionCommandClient.commands.filter(a => a.metadata.category === 'bot').map(a => `\`${a.name}\``).join(', ') || 'weird')
                 .addField(categories[4], ctx.client.interactionCommandClient.commands.filter(a => a.metadata.category === 'admin').map(a => `\`${a.name}\``).join(', ') || 'weird');
 
-            const BUTTONS =
-                [
-                    new detritus.Utils.ComponentButton()
-                        .setLabel(langjson.commands.help.support)
-                        .setUrl('https://discord.gg/4Yzc7Hk')
-                        .setEmoji({ name: '🤖', id: undefined }),
-                    new detritus.Utils.ComponentButton()
-                        .setLabel(langjson.commands.help.invite)
-                        .setUrl('https://discord.com/api/oauth2/authorize?client_id=721080193678311554&scope=bot+applications.commands&permissions=8')
-                        .setEmoji({ name: '🤖', id: undefined }),
-                    new detritus.Utils.ComponentButton()
-                        .setLabel('GitHub')
-                        .setUrl('https://github.com/marcrock22/zenitsu')
-                        .setEmoji({ name: '🐙', id: undefined }),
-                    new detritus.Utils.ComponentButton()
-                        .setUrl('https://zenitsu.eastus.cloudapp.azure.com/runcode')
-                        .setLabel('Run code')
-                        .setEmoji({ name: '💻', id: undefined }),
-                ];
-
-            const componente = new detritus.Utils.ComponentActionRow({ components: BUTTONS });
+            const BUTTONS = [
+                new detritus.Utils.ComponentButton()
+                    .setLabel(langjson.commands.help.support)
+                    .setUrl('https://discord.gg/4Yzc7Hk')
+                    .setEmoji({ name: '🤖', id: undefined }),
+                new detritus.Utils.ComponentButton()
+                    .setLabel(langjson.commands.help.invite)
+                    .setUrl('https://discord.com/api/oauth2/authorize?client_id=721080193678311554&scope=bot+applications.commands&permissions=8')
+                    .setEmoji({ name: '🤖', id: undefined }),
+                new detritus.Utils.ComponentButton()
+                    .setLabel('GitHub')
+                    .setUrl('https://github.com/marcrock22/zenitsu')
+                    .setEmoji({ name: '🐙', id: undefined }),
+                new detritus.Utils.ComponentButton()
+                    .setUrl('https://zenitsu.eastus.cloudapp.azure.com/runcode')
+                    .setLabel('Run code')
+                    .setEmoji({ name: '💻', id: undefined }),
+            ];
 
             return ctx.respond(detritus.Constants.InteractionCallbackTypes.CHANNEL_MESSAGE_WITH_SOURCE, {
-                embed: embedHelp, components: [componente],
+                embed: embedHelp,
+                components: [new detritus.Utils.ComponentActionRow({ components: BUTTONS })],
                 flags: detritus.Constants.MessageFlags.EPHEMERAL
             });
 
