@@ -14,6 +14,7 @@ export const IDS = {
         SUGGEST: '7',
         STAFF: '8',
         HELPER: '9',
+        GITHUB: '10'
     }
 };
 
