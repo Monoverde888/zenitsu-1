@@ -35,6 +35,7 @@ console = new kufa.KufaConsole({
 
 const cache: detritus.ShardClientCacheOptions = {
     messages: { expire: 60 * 60 * 1000 },
+    channels: true,
     emojis: false,
     applications: false,
     connectedAccounts: false,
@@ -51,7 +52,6 @@ const cache: detritus.ShardClientCacheOptions = {
     voiceCalls: false,
     voiceConnections: false,
     voiceStates: false,
-    channels: true,
     stickers: false,
 };
 
@@ -66,6 +66,16 @@ export default async function Load(options: {
 
     const shardClient = new detritus.ShardClient(token, {
         cache,
+        gateway: {
+            intents: 4609,
+            presence: {
+                activity: {
+                    name: 'loading...',
+                    type: detritus.Constants.ActivityTypes.PLAYING,
+                },
+                status: detritus.Constants.PresenceStatuses.DND,
+            },
+        },
     });
 
     await shardClient.run();
@@ -100,6 +110,14 @@ export default async function Load(options: {
 
     await loadCommands(commandClient);
     await loadEvents(shardClient, commandClient, slashClient);
+
+    shardClient.gateway.setPresence({
+        activity: {
+            name: 'with Nezuko',
+            type: detritus.Constants.ActivityTypes.PLAYING,
+        },
+        status: detritus.Constants.PresenceStatuses.IDLE,
+    });
 
     return { commandClient, shardClient };
 }
