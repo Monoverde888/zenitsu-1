@@ -79,14 +79,8 @@ function generateButtons(partida: c4.Connect4AI<Player>, text: string, forceDisa
 
     }
 
-    const cp1 = new detritus.Utils.ComponentActionRow(),
-        cp2 = new detritus.Utils.ComponentActionRow();
-
-    for (const i of buttons.slice(0, 5))
-        cp1.addButton(i);
-
-    for (const i of buttons.slice(5))
-        cp2.addButton(i);
+    const cp1 = new detritus.Utils.ComponentActionRow({ components: buttons.slice(0, 5) }),
+        cp2 = new detritus.Utils.ComponentActionRow({ components: buttons.slice(5) });
 
     return [cp1, cp2];
 
@@ -492,7 +486,7 @@ export async function FUNCTION(
 
         const wait = await ctx.editOrRespond({
             content: langjson.commands.connect4.wait_user(usuario.mention),
-            components: [new detritus.Utils.ComponentActionRow().addButton(Buttons[0]).addButton(Buttons[1])]
+            components: [new detritus.Utils.ComponentActionRow({ components: Buttons })]
         });
 
         const respuesta: string | undefined = await new Promise(resolve => {
@@ -514,7 +508,7 @@ export async function FUNCTION(
             users.delete(usuario.id);
             return ctx.editOrRespond({
                 content: langjson.commands.connect4.dont_answer(usuario.username),
-                components: [new detritus.Utils.ComponentActionRow().addButton(Buttons[0]).addButton(Buttons[1])]
+                components: [new detritus.Utils.ComponentActionRow({ components: Buttons })]
             });
         }
 
@@ -526,7 +520,7 @@ export async function FUNCTION(
             users.delete(usuario.id);
             return ctx.editOrRespond({
                 content: langjson.commands.connect4.deny(usuario.username),
-                components: [new detritus.Utils.ComponentActionRow().addButton(Buttons[0]).addButton(Buttons[1])]
+                components: [new detritus.Utils.ComponentActionRow({ components: Buttons })]
             });
         }
 

@@ -53,9 +53,7 @@ export default function () {
                         .setEmoji({ name: '💻', id: undefined }),
                 ];
 
-            const componente = new detritus.Utils.ComponentActionRow();
-            for (const i of BUTTONS)
-                componente.addButton(i);
+            const componente = new detritus.Utils.ComponentActionRow({ components: BUTTONS });
 
             return ctx.respond(detritus.Constants.InteractionCallbackTypes.CHANNEL_MESSAGE_WITH_SOURCE, {
                 embed: embedHelp, components: [componente],

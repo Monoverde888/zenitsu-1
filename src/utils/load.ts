@@ -52,6 +52,7 @@ const cache: detritus.ShardClientCacheOptions = {
     voiceConnections: false,
     voiceStates: false,
     channels: true,
+    stickers: false,
 };
 
 export default async function Load(options: {

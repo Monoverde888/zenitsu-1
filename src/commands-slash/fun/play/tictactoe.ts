@@ -85,13 +85,9 @@ function generateButtons(partida: TheGame, forceDisable = false, empate = '') {
             .setLabel(empate)
     );
 
-    const cp1 = new detritus.Utils.ComponentActionRow(),
-        cp2 = new detritus.Utils.ComponentActionRow(),
-        cp3 = new detritus.Utils.ComponentActionRow();
-
-    for (const i of buttons1) cp1.addButton(i);
-    for (const i of buttons2) cp2.addButton(i);
-    for (const i of buttons3) cp3.addButton(i);
+    const cp1 = new detritus.Utils.ComponentActionRow({ components: buttons1 }),
+        cp2 = new detritus.Utils.ComponentActionRow({ components: buttons2 }),
+        cp3 = new detritus.Utils.ComponentActionRow({ components: buttons3 });
 
     return [cp1, cp2, cp3];
 
