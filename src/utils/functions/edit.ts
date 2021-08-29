@@ -1,6 +1,6 @@
 import detritus from 'detritus-client';
 
-const { Constants: { Permissions: Flags }} = detritus;
+const { Constants: { Permissions: Flags } } = detritus;
 import getHighest from './gethighest.js';
 
 export async function Edit(all: { canales: detritus.Structures.Channel[], id: string, guild: detritus.Structures.Guild }): Promise<{ error: Error, success: boolean }> {
