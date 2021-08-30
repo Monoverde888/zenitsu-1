@@ -95,13 +95,13 @@ async function displayConnectFourBoard(game: c4.Connect4AI<Player>) {
         }).then(x => x.buffer());
 }
 
-async function modificar(data: mongoose.LeanDocument<USER>, dif: string, tipo: 'ganadas' | 'empates' | 'perdidas', nombre: string) {
+async function modificar(data: USER, dif: string, tipo: 'ganadas' | 'empates' | 'perdidas', nombre: string) {
 
     const coso = `c4${dif}` as 'c4easy' | 'c4medium' | 'c4hard';
     data[coso] = data[coso] || { ganadas: 0, empates: 0, perdidas: 0 };
     data[coso][tipo] = data[coso][tipo] ? data[coso][tipo] + 1 : 1;
     data.cacheName = nombre;
-    return model.findOneAndUpdate({ id: data.id }, data, { new: true }).lean();
+    return data.save();
 
 }
 
@@ -182,7 +182,7 @@ function awaitAnswer(MESSAGE: detritus.Structures.Message,
 
         if (reason === 'surrender' && games.get(CHANNEL.id)) {
             if (usuario.id == ctx.client.user.id) {
-                const da = await model.findOne({ id: ctx.user.id }).lean();
+                const da = await model.findOne({ id: ctx.user.id });
                 const res = await modificar(da, args.difficulty, 'perdidas', ctx.user.username);
                 await redis.set(ctx.userId, JSON.stringify(res));
             }
@@ -198,7 +198,7 @@ function awaitAnswer(MESSAGE: detritus.Structures.Message,
             return users.delete(usuario.id);
         } else if (reason === 'idle' && games.get(CHANNEL.id)) {
             if (usuario.id == ctx.client.user.id) {
-                const da = await model.findOne({ id: ctx.user.id }).lean();
+                const da = await model.findOne({ id: ctx.user.id });
                 const res = await modificar(da, args.difficulty, 'perdidas', ctx.user.username);
                 await redis.set(ctx.userId, JSON.stringify(res));
             }
@@ -216,7 +216,7 @@ function awaitAnswer(MESSAGE: detritus.Structures.Message,
 
         } else if (reason == 'time' && games.get(CHANNEL.id)) {
             if (usuario.id == ctx.client.user.id) {
-                const da = await model.findOne({ id: ctx.user.id }).lean();
+                const da = await model.findOne({ id: ctx.user.id });
                 const res = await modificar(da, args.difficulty, 'perdidas', ctx.user.username);
                 await redis.set(ctx.userId, JSON.stringify(res));
             }
@@ -259,7 +259,7 @@ function awaitAnswer(MESSAGE: detritus.Structures.Message,
 
             if (usuario.id == ctx.client.user.id) {
 
-                const a = await model.findOne({ id: ctx.user.id }).lean();
+                const a = await model.findOne({ id: ctx.user.id });
                 const res = await modificar(a, args.difficulty, 'ganadas', ctx.user.username);
                 await redis.set(ctx.user.id, JSON.stringify(res));
 
@@ -306,7 +306,7 @@ function awaitAnswer(MESSAGE: detritus.Structures.Message,
             await sendCoso(embed, buf, interaction);
 
             if (usuario.id == ctx.client.user.id) {
-                const da = await model.findOne({ id: ctx.user.id }).lean();
+                const da = await model.findOne({ id: ctx.user.id });
                 const res = await modificar(da, args.difficulty, 'empates', ctx.user.username);
                 await redis.set(ctx.userId, JSON.stringify(res));
             }
@@ -332,7 +332,7 @@ function awaitAnswer(MESSAGE: detritus.Structures.Message,
                 const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
                 await sendCoso(embed, buf, interaction);
 
-                const da = await model.findOne({ id: ctx.user.id }).lean();
+                const da = await model.findOne({ id: ctx.user.id });
                 const res = await modificar(da, args.difficulty, 'perdidas', ctx.user.username);
                 await redis.set(ctx.userId, JSON.stringify(res));
                 games.delete(CHANNEL.id);
@@ -348,7 +348,7 @@ function awaitAnswer(MESSAGE: detritus.Structures.Message,
                 const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
                 await sendCoso(embed, buf, interaction);
 
-                const da = await model.findOne({ id: ctx.user.id }).lean();
+                const da = await model.findOne({ id: ctx.user.id });
                 const res = await modificar(da, args.difficulty, 'empates', ctx.user.username);
                 await redis.set(ctx.userId, JSON.stringify(res));
                 games.delete(CHANNEL.id);
