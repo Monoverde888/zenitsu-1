@@ -57,6 +57,7 @@ const obj = {
         'runcode': {
 
             invalid_lang: 'Invalid language, check https://github.com/engineer-man/piston#supported-languages',
+            no_code: 'Missing code block.\n\n**Example**:\n\n\\`\\`\\`javascript\nthis.team = "poto";\nconsole.log(\\`Testing things with the ${this.team} team\\`)\n\\`\\`\\`',
             no_output: 'Without output.',
             error: 'Unknow error...'
 

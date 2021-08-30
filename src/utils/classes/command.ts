@@ -14,7 +14,6 @@ class RegisterCommand {
         };
 
         options.onRunError = (ctx, _, error) => {
-            console.error(error);
             return ctx.reply('```' + (error ? (error.message || error) : 'ERROR') + '```');
         };
 

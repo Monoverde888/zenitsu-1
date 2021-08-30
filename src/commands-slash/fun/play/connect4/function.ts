@@ -420,7 +420,6 @@ export async function FUNCTION(
     args: { user: detritus.Structures.MemberOrUser; difficulty: 'easy' | 'medium' | 'hard', needtoconnect?: string }
 ) {
 
-    await ctx.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
     const ArrayOfArrayOfNumbers: [number, number, string][] = [];
     const DATAPROFILE = await getUser(ctx.user.id);
     const DATAGUILD: { lang: 'es' | 'en' } = ctx.guildId ? await getGuild(ctx.guildId) : {
@@ -483,10 +482,12 @@ export async function FUNCTION(
                 .setEmoji({ name: '❌', id: undefined })
         ];
 
-        const wait = await ctx.editOrRespond({
+        await ctx.editOrRespond({
             content: langjson.commands.connect4.wait_user(usuario.mention),
             components: [new detritus.Utils.ComponentActionRow({ components: Buttons })]
         });
+
+        const wait = await ctx.fetchResponse();
 
         const respuesta: string | undefined = await new Promise(resolve => {
 
@@ -505,10 +506,10 @@ export async function FUNCTION(
             games.delete(CHANNEL.id);
             users.delete(ctx.userId);
             users.delete(usuario.id);
-            return ctx.editOrRespond({
+            return !wait.deleted ? ctx.editOrRespond({
                 content: langjson.commands.connect4.dont_answer(usuario.username),
                 components: [new detritus.Utils.ComponentActionRow({ components: Buttons })]
-            });
+            }) : null;
         }
 
         if (respuesta == 'c4_no') {
@@ -517,13 +518,15 @@ export async function FUNCTION(
             games.delete(CHANNEL.id);
             users.delete(ctx.userId);
             users.delete(usuario.id);
-            return ctx.editOrRespond({
+            return !wait.deleted ? ctx.editOrRespond({
                 content: langjson.commands.connect4.deny(usuario.username),
                 components: [new detritus.Utils.ComponentActionRow({ components: Buttons })]
-            });
+            }) : null;
         }
 
-    } else await ctx.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
+    } else {
+        await ctx.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
+    }
 
     const embedStart = new MessageEmbed()
         .setDescription(langjson.commands.connect4.start(findTurn(ctx.user.id, CHANNEL.id).turn == 1 ? ctx.user.username : usuario.username))

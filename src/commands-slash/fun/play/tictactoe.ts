@@ -104,7 +104,7 @@ async function jugar(firstp: detritus.Structures.MemberOrUser, secondp: detritus
     const partida = new TheGame([firstp.id, secondp.id]);
 
     if (ctx.client.user.id != secondp.id) {
-        msgRepuesta = await ctx.editOrRespond({
+        await ctx.editOrRespond({
             embeds: [],
             content: langjson.commands.tictactoe.wait_user(secondp.mention),
             components: [{
@@ -121,6 +121,7 @@ async function jugar(firstp: detritus.Structures.MemberOrUser, secondp: detritus
                 ]
             }]
         });
+        msgRepuesta = await ctx.fetchResponse();
     } else await ctx.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
 
     partidas.add(ctx.channelId);
@@ -128,7 +129,6 @@ async function jugar(firstp: detritus.Structures.MemberOrUser, secondp: detritus
     if (ctx.client.user.id != secondp.id) {
 
         const respuesta: string | undefined = await new Promise(resolve => {
-
             const collector = new ButtonCollector(msgRepuesta, { timeLimit: 60 * 1000, filter: (m) => m.userId == secondp.id && ['tictactoe_no', 'tictactoe_yes'].some(item => item == m.data.customId) }, ctx.client);
 
             collector.on('collect', (interaction) => {
@@ -140,7 +140,7 @@ async function jugar(firstp: detritus.Structures.MemberOrUser, secondp: detritus
         });
 
         if (!respuesta) {
-            await ctx.editOrRespond({
+            if (!msgRepuesta.deleted) await ctx.editOrRespond({
                 embeds: [],
                 content: langjson.commands.tictactoe.dont_answer(secondp.username), components: [{
                     type: 1,
@@ -162,7 +162,7 @@ async function jugar(firstp: detritus.Structures.MemberOrUser, secondp: detritus
         }
 
         if (respuesta == 'tictactoe_no') {
-            await ctx.editOrRespond({ content: langjson.commands.tictactoe.deny(secondp.username), embeds: [], });
+            if (!msgRepuesta.deleted) await ctx.editOrRespond({ content: langjson.commands.tictactoe.deny(secondp.username), embeds: [], });
             return partidas.delete(ctx.channelId);
         }
     }
