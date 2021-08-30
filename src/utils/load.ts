@@ -5,6 +5,9 @@ import detritus from 'detritus-client';
 import CommandClient from './classes/commandclient.js';
 import connect from '../database/connect.js';
 import kufa from 'kufa';
+import getFiles from './functions/getfiles.js';
+
+const { __dirname } = commons(import.meta.url);
 
 console = new kufa.KufaConsole({
     format: '[§a%time%§r] [%prefix%§r] %message% %trace% %memory%',
@@ -101,7 +104,7 @@ export default async function Load(options: {
             { duration: 10000, limit: 5, type: 'channel' },
         ],
     });
-    await addMultipleIn(slashClient, './dist/commands-slash');
+    await addMultipleIn(slashClient, path.join(process.cwd(), './dist/commands-slash'));
     await slashClient.run();
 
     console.log(
@@ -127,7 +130,6 @@ async function loadEvents(
     commandClient: CommandClient,
     slashClient: detritus.InteractionCommandClient
 ) {
-    const { __dirname } = commons(import.meta.url);
 
     const ruta = (...str: string[]) => path.join(__dirname, '..', ...str);
     const load = async (
@@ -159,7 +161,6 @@ async function loadEvents(
 }
 
 async function loadCommands(commandClient: CommandClient) {
-    const { __dirname } = commons(import.meta.url);
 
     const ruta = (...str: string[]) => path.join(__dirname, '..', ...str);
     const load = async (dirs: string) => {
@@ -190,19 +191,14 @@ async function loadCommands(commandClient: CommandClient) {
 async function addMultipleIn(
     slashClient: detritus.InteractionCommandClient,
     directory: string,
-    options: { isAbsolute?: boolean; subdirectories?: boolean } = {}
 ) {
-    options = Object.assign({ subdirectories: true }, options);
-    if (!options.isAbsolute) {
-        directory = path.join(process.cwd(), directory);
-    }
-    slashClient.directories.set(directory, {
-        subdirectories: !!options.subdirectories,
-    });
+
+    //    slashClient.directories.set(directory, {
+    //        subdirectories: !!options.subdirectories,
+    //    });
 
     const files: string[] = await getFiles(
         directory,
-        options.subdirectories
     );
     const errors: Record<string, Error> = {};
 
@@ -248,29 +244,4 @@ async function addMultipleIn(
     }
 
     return slashClient;
-}
-
-async function getFiles(
-    directory: string,
-    subdirectories?: boolean
-): Promise<string[]> {
-    if (subdirectories) {
-        const dirents = await fs.readdir(directory, { withFileTypes: true });
-        const names: string[] = [];
-        for (const folder of dirents.filter((dirent) => dirent.isDirectory())) {
-            const files = await getFiles(
-                `${directory}/${folder.name}`,
-                subdirectories
-            );
-            for (const name of files) {
-                names.push(`${folder.name}/${name}`);
-            }
-        }
-        for (const file of dirents.filter((dirent) => dirent.isFile())) {
-            names.push(file.name);
-        }
-        return names;
-    } else {
-        return await fs.readdir(directory);
-    }
 }

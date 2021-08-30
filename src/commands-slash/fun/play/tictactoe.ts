@@ -215,7 +215,7 @@ async function jugar(firstp: detritus.Structures.MemberOrUser, secondp: detritus
 
         if (!partida.finished && partida.player == ctx.client.user.id) {
 
-            await m.respond({ data: { flags: 64 }, type: 5 });
+            await m.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_UPDATE_MESSAGE);
 
             partida.play(await AIplay(partida));
             if (!partida.finished) {
