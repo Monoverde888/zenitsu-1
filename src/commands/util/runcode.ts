@@ -1,8 +1,8 @@
 import detritus from 'detritus-client';
 import fetch from 'node-fetch';
 import BaseCommand from '../../utils/classes/command.js';
-import parseArgs from '../../Utils/Functions/parseArgs.js';
-import json from '../../Utils/Lang/langs.js';
+import parseArgs from '../../utils/functions/parseargs.js';
+import json from '../../utils/lang/langs.js';
 import getGuild from '../../utils/functions/getguild.js';
 const regex = /```.*```/gsi;
 let avaliables: string[];
