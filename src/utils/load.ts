@@ -107,9 +107,7 @@ export default async function Load(options: {
     await addMultipleIn(slashClient, path.join(process.cwd(), './dist/commands-slash'));
     await slashClient.run();
 
-    console.log(
-        `[DETRITUS] ${shardClient.user.username} dice hola al mundo :):):):)`
-    );
+    console.log(`[DETRITUS] ${shardClient.user.username} dice hola al mundo :):):):)`);
 
     await loadCommands(commandClient);
     await loadEvents(shardClient, commandClient, slashClient);

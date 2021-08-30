@@ -121,7 +121,7 @@ async function jugar(firstp: detritus.Structures.MemberOrUser, secondp: detritus
                 ]
             }]
         });
-    }
+    } else await ctx.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
 
     partidas.add(ctx.channelId);
 
@@ -195,7 +195,7 @@ async function jugar(firstp: detritus.Structures.MemberOrUser, secondp: detritus
     }, ctx.client);
 
     collector.on('end', r => {
-        if (['channelDelete', 'messageDelete', 'guildDelete', 'threadDelete'].includes(r)) return partidas.delete(ctx.id);
+        if (['channelDelete', 'messageDelete', 'guildDelete', 'threadDelete'].includes(r)) return partidas.delete(ctx.channelId);
         if ((r != 'NO')) {
             return !partida || partida.finished ? null : partida.emit('end');
         }
@@ -219,6 +219,8 @@ async function jugar(firstp: detritus.Structures.MemberOrUser, secondp: detritus
 
             partida.play(await AIplay(partida));
             if (!partida.finished) {
+
+                if (!m.deleted) return collector.stop('messageDelete');
 
                 await msg.edit({
                     content: `${resolveMarkdown(firstp, partida)} vs ${resolveMarkdown(secondp, partida)}`,
@@ -342,8 +344,6 @@ export function tictactoe() {
             ctx: detritus.Interaction.InteractionContext,
             args: { user: detritus.Structures.MemberOrUser }
         ) {
-
-            await ctx.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
 
             const langjson = ctx.guildId ? await getGuild(ctx.guildId).then(x => json[x.lang]) : json.en;
 

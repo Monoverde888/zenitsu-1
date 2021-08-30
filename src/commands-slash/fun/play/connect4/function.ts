@@ -149,10 +149,9 @@ function awaitAnswer(MESSAGE: detritus.Structures.Message,
     const partyCollector = new ButtonCollector(MESSAGE, {
         filter: (interaction) => {
 
-            if (!games.get(CHANNEL.id).players.some(item => item.id == interaction.userId)) {
-                void interaction.respond({ data: { content: langjson.commands.connect4.wait, flags: 64 }, type: 4 });
+            if (!games.get(CHANNEL.id).players.some(item => item.id == interaction.userId))
                 return false;
-            }
+
             if (!findTurn(interaction.userId, CHANNEL.id)) return;
             if (usuario.id != ctx.client.user.id) {
 
@@ -524,7 +523,7 @@ export async function FUNCTION(
             });
         }
 
-    }
+    } else await ctx.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
 
     const embedStart = new MessageEmbed()
         .setDescription(langjson.commands.connect4.start(findTurn(ctx.user.id, CHANNEL.id).turn == 1 ? ctx.user.username : usuario.username))
