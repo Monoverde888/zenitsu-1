@@ -60,7 +60,8 @@ export async function runcode() {
                 : json.en;
 
             const buttons = [
-                new detritus.Utils.ComponentButton().setUrl('https://github.com/engineer-man/piston').setLabel('Piston GitHub'), new detritus.Utils.ComponentButton().setUrl('https://zenitsu.eastus.cloudapp.azure.com/runcode')
+                new detritus.Utils.ComponentButton().setUrl('https://github.com/engineer-man/piston').setLabel('Piston GitHub'),
+                new detritus.Utils.ComponentButton().setUrl('https://zenitsu.eastus.cloudapp.azure.com/runcode').setLabel('Run code')
             ];
 
             if (!avaliables.includes(args.language))
@@ -95,7 +96,8 @@ export async function runcode() {
                         components: [new detritus.Utils.ComponentActionRow({ components: buttons })]
                     });
                 else return ctx.editOrRespond({
-                    content: langjson.commands.runcode.no_output, components: [new detritus.Utils.ComponentActionRow({ components: buttons })]
+                    content: langjson.commands.runcode.no_output,
+                    components: [new detritus.Utils.ComponentActionRow({ components: buttons })]
                 });
             }
             return ctx.editOrRespond({
