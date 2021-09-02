@@ -30,8 +30,7 @@ export function bot() {
             };
         }
 
-        run
-        (ctx: detritus.Interaction.InteractionContext,
+        run(ctx: detritus.Interaction.InteractionContext,
             args: { difficulty: 'easy' | 'medium' | 'hard'; user: null }) {
             return FUNCTION(ctx, args);
         }

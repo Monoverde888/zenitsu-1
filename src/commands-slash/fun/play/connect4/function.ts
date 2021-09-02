@@ -8,7 +8,6 @@ import json from '../../../../utils/lang/langs.js';
 import getGuild from '../../../../utils/functions/getguild.js';
 import model, { USER } from '../../../../database/models/user.js';
 import fetch from 'node-fetch';
-import mongoose from 'mongoose';
 import ButtonCollector, { INTERACTION } from '../../../../utils/collectors/buttoncollector.js';
 import { users } from '../../../../utils/maps.js';
 
@@ -106,313 +105,12 @@ async function modificar(data: USER, dif: string, tipo: 'ganadas' | 'empates' | 
 }
 
 function getTURNS(author: string, mention: string, clientID: string): [Player, Player] {
-
     if (mention != clientID) {
         const user1 = Math.floor(Math.random() * 2) + 1 == 2 ? 2 : 1;
         const user2 = user1 == 2 ? 1 : 2;
-        return [{
-            id: mention,
-            turn: user1
-        },
-        {
-            id: author,
-            turn: user2
-        }];
+        return [{ id: mention, turn: user1 }, { id: author, turn: user2 }];
     }
-
-    return [{
-        id: mention,
-        turn: 2
-    },
-    {
-        id: author,
-        turn: 1
-    }];
-
-}
-
-function awaitAnswer(MESSAGE: detritus.Structures.Message,
-    sendCoso: (embed: MessageEmbed, value: Buffer, interaction?: INTERACTION) => Promise<detritus.Structures.Message>,
-    ctx: detritus.Interaction.InteractionContext,
-    findTurn: (user: string, CHANNEL: string) => Player,
-    ArrayOfArrayOfNumbers: [number, number, string][],
-    args: { user: detritus.Structures.MemberOrUser; difficulty: 'easy' | 'medium' | 'hard' },
-    DATAPROFILE: mongoose.LeanDocument<USER>,
-    usuario: detritus.Structures.Member | detritus.Structures.User,
-    langjson: typeof json.es | typeof json.en,
-    difficulty: 'easy' | 'medium' | 'hard',
-    easyAnswer: (id: detritus.Structures.Message, lastMessage?: detritus.Structures.Message) => void,
-    CHANNEL: { id: string; type: number },
-    lastMessage?: detritus.Structures.Message
-) {
-
-    const partyCollector = new ButtonCollector(MESSAGE, {
-        filter: (interaction) => {
-
-            if (!games.get(CHANNEL.id).players.some(item => item.id == interaction.userId))
-                return false;
-
-            if (!findTurn(interaction.userId, CHANNEL.id)) return;
-            if (usuario.id != ctx.client.user.id) {
-
-                if (!games.get(CHANNEL.id)) return false;
-
-                return ['c4_1', 'c4_2', 'c4_3', 'c4_4', 'c4_5', 'c4_6', 'c4_0', 'c4_surrender'].includes(interaction.data.customId)
-                    && findTurn(interaction.userId, CHANNEL.id).turn === games.get(CHANNEL.id).turn
-                    && !games.get(CHANNEL.id).finished
-                    || ((games.get(CHANNEL.id).players.some(item => item.id == interaction.userId) && interaction.data.customId == 'c4_surrender'));
-
-            } else {
-                return interaction.userId == ctx.user.id
-                    && findTurn(interaction.userId, CHANNEL.id).turn === games.get(CHANNEL.id).turn
-                    && ['c4_1', 'c4_2', 'c4_3', 'c4_4', 'c4_5', 'c4_6', 'c4_0', 'c4_surrender'].includes(interaction.data.customId)
-                    && !games.get(CHANNEL.id).finished
-                    || ((games.get(CHANNEL.id).players.some(item => item.id == interaction.userId) && interaction.data.customId == 'c4_surrender'));
-            }
-        },
-        timeIdle: ((3 * 60) * 1000), max: 1,
-    }, ctx.client);
-
-    partyCollector.on('end', async (reason) => {
-
-        if (reason != 'surrender') {
-            if (partyCollector.running) partyCollector.stop('max');
-            if (reason == 'max') return;
-        }
-
-        if (reason === 'surrender' && games.get(CHANNEL.id)) {
-            if (usuario.id == ctx.client.user.id) {
-                const da = await model.findOne({ id: ctx.user.id });
-                const res = await modificar(da, args.difficulty, 'perdidas', ctx.user.username);
-                await redis.set(ctx.userId, JSON.stringify(res));
-            }
-            const embed = new MessageEmbed()
-                .setDescription(langjson.commands.connect4.game_over)
-                .setColor(14720566)
-                .setImage('attachment://party.gif');
-            const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
-            await sendCoso(embed, buf);
-
-            games.delete(CHANNEL.id);
-            users.delete(ctx.userId);
-            return users.delete(usuario.id);
-        } else if (reason === 'idle' && games.get(CHANNEL.id)) {
-            if (usuario.id == ctx.client.user.id) {
-                const da = await model.findOne({ id: ctx.user.id });
-                const res = await modificar(da, args.difficulty, 'perdidas', ctx.user.username);
-                await redis.set(ctx.userId, JSON.stringify(res));
-            }
-            const embed = new MessageEmbed()
-                .setDescription(langjson.commands.connect4.time_over)
-                .setColor(14720566)
-                .setImage('attachment://4enraya.gif')
-                .setImage('attachment://party.gif');
-            const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
-            await sendCoso(embed, buf);
-
-            games.delete(CHANNEL.id);
-            users.delete(ctx.userId);
-            return users.delete(usuario.id);
-
-        } else if (reason == 'time' && games.get(CHANNEL.id)) {
-            if (usuario.id == ctx.client.user.id) {
-                const da = await model.findOne({ id: ctx.user.id });
-                const res = await modificar(da, args.difficulty, 'perdidas', ctx.user.username);
-                await redis.set(ctx.userId, JSON.stringify(res));
-            }
-            const embed = new MessageEmbed()
-                .setDescription(langjson.commands.connect4.game_over2)
-                .setColor(14720566)
-                .setImage('attachment://party.gif');
-            const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
-            await sendCoso(embed, buf);
-
-            games.delete(CHANNEL.id);
-            users.delete(ctx.userId);
-            return users.delete(usuario.id);
-        } else {
-            games.delete(CHANNEL.id);
-            users.delete(ctx.userId);
-            return users.delete(usuario.id);
-        }
-
-    }).on('collect', async (interaction) => {
-
-        if (interaction.data.customId === 'c4_surrender')
-            return partyCollector.emit('end', 'surrender');
-
-        games.get(CHANNEL.id).play(parseInt(interaction.data.customId.split('c4_')[1]));
-
-        const game = games.get(CHANNEL.id);
-        const board = game.map[(parseInt(interaction.data.customId.split('c4_')[1]))];
-        let temp = findTurn(interaction.userId, CHANNEL.id).turn == 1 ? 'red' : 'yellow';
-        ArrayOfArrayOfNumbers.push([board.filter(x => x.key).length - 1, parseInt(interaction.data.customId.split('c4_')[1]), temp]);
-
-        if (games.get(CHANNEL.id).solution) {
-            const embed = new MessageEmbed()
-                .setDescription(langjson.commands.connect4.win(interaction.user.username))
-                .setColor(14720566)
-                .setImage('attachment://party.gif');
-            await interaction.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
-            const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
-            await sendCoso(embed, buf, interaction);
-
-            if (usuario.id == ctx.client.user.id) {
-
-                const a = await model.findOne({ id: ctx.user.id });
-                const res = await modificar(a, args.difficulty, 'ganadas', ctx.user.username);
-                await redis.set(ctx.user.id, JSON.stringify(res));
-
-                if (args.difficulty == 'hard' && a.c4hard) {
-
-                    if ((a.c4hard.ganadas >= 10) && !(DATAPROFILE.achievements.includes(IDS.ACHIEVEMENTS.C4LEVEL1))) {
-
-                        const data = await model.findOneAndUpdate({ id: ctx.user.id }, { $addToSet: { achievements: IDS.ACHIEVEMENTS.C4LEVEL1 } }, { new: true }).lean();
-                        await redis.set(ctx.user.id, JSON.stringify(data));
-
-                    } else if ((a.c4hard.ganadas >= 15) && !(DATAPROFILE.achievements.includes(IDS.ACHIEVEMENTS.C4LEVEL2))) {
-
-                        const data = await model.findOneAndUpdate({ id: ctx.user.id }, { $addToSet: { achievements: IDS.ACHIEVEMENTS.C4LEVEL2 } }, { new: true }).lean();
-                        await redis.set(ctx.user.id, JSON.stringify(data));
-
-                    } else if ((a.c4hard.ganadas >= 25) && !(DATAPROFILE.achievements.includes(IDS.ACHIEVEMENTS.C4LEVEL3))) {
-
-                        const data = await model.findOneAndUpdate({ id: ctx.user.id }, { $addToSet: { achievements: IDS.ACHIEVEMENTS.C4LEVEL3 } }, { new: true }).lean();
-                        await redis.set(ctx.user.id, JSON.stringify(data));
-
-                    } else if ((a.c4hard.ganadas >= 50) && !(DATAPROFILE.achievements.includes(IDS.ACHIEVEMENTS.C4LEVEL4))) {
-
-                        const data = await model.findOneAndUpdate({ id: ctx.user.id }, { $addToSet: { achievements: IDS.ACHIEVEMENTS.C4LEVEL4 } }, { new: true }).lean();
-                        await redis.set(ctx.user.id, JSON.stringify(data));
-
-                    }
-
-                }
-
-            }
-
-            games.delete(CHANNEL.id);
-            users.delete(ctx.userId);
-            users.delete(usuario.id);
-            return partyCollector.stop('win');
-
-        } else if (games.get(CHANNEL.id).tie) {
-            const embed = new MessageEmbed()
-                .setDescription(langjson.commands.connect4.draw(usuario.username, ctx.user.username))
-                .setColor(14720566)
-                .setImage('attachment://party.gif');
-            const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
-            await interaction.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
-            await sendCoso(embed, buf, interaction);
-
-            if (usuario.id == ctx.client.user.id) {
-                const da = await model.findOne({ id: ctx.user.id });
-                const res = await modificar(da, args.difficulty, 'empates', ctx.user.username);
-                await redis.set(ctx.userId, JSON.stringify(res));
-            }
-            games.delete(CHANNEL.id);
-            users.delete(ctx.userId);
-            users.delete(usuario.id);
-            return partyCollector.stop('win');
-        }
-
-        if (usuario.id == ctx.client.user.id) {
-            const old = games.get(CHANNEL.id);
-            const played = old.playAI(difficulty);
-            const board = games.get(CHANNEL.id).map;
-            temp = findTurn(ctx.client.user.id, CHANNEL.id).turn == 1 ? 'red' : 'yellow';
-            ArrayOfArrayOfNumbers.push([board[played].filter(x => x.key).length - 1, played, temp]);
-
-            if (games.get(CHANNEL.id).solution) {
-                const embed = new MessageEmbed()
-                    .setDescription(langjson.commands.connect4.win(usuario.username))
-                    .setColor(14720566)
-                    .setImage('attachment://party.gif');
-                await interaction.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
-                const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
-                await sendCoso(embed, buf, interaction);
-
-                const da = await model.findOne({ id: ctx.user.id });
-                const res = await modificar(da, args.difficulty, 'perdidas', ctx.user.username);
-                await redis.set(ctx.userId, JSON.stringify(res));
-                games.delete(CHANNEL.id);
-                users.delete(ctx.userId);
-                users.delete(usuario.id);
-                return partyCollector.stop('win');
-            } else if (games.get(CHANNEL.id).tie) {
-                const embed = new MessageEmbed()
-                    .setDescription(langjson.commands.connect4.draw(usuario.username, ctx.user.username))
-                    .setColor(14720566)
-                    .setImage('attachment://party.gif');
-                await interaction.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
-                const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
-                await sendCoso(embed, buf, interaction);
-
-                const da = await model.findOne({ id: ctx.user.id });
-                const res = await modificar(da, args.difficulty, 'empates', ctx.user.username);
-                await redis.set(ctx.userId, JSON.stringify(res));
-                games.delete(CHANNEL.id);
-                users.delete(ctx.userId);
-                users.delete(usuario.id);
-                return partyCollector.stop('win');
-            }
-
-            const embed = new MessageEmbed()
-                .setDescription(langjson.commands.connect4.turn(ctx.user.username, '🔴'))
-                .setFooter(args.difficulty)
-                .setColor(14720566)
-                .setImage('attachment://party.gif');
-            await interaction.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
-            const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
-            try {
-                if (!lastMessage?.deleted && !([10, 11, 12].includes(CHANNEL.type))) await lastMessage.delete();
-            } catch {
-                //do something
-            }
-            lastMessage = await interaction.editOrRespond({
-                file: {
-                    value: buf,
-                    filename: 'party.gif'
-                },
-                embed,
-                components: generateButtons(games.get(CHANNEL.id), langjson.commands.connect4.surrender, false)
-            });
-
-            return easyAnswer(lastMessage, lastMessage);
-
-        }
-
-        if ((usuario.id != ctx.client.user.id) && (games.get(CHANNEL.id))) {
-            const embed = new MessageEmbed()
-                .setDescription(langjson.commands.connect4.turn(
-                    findTurn(ctx.user.id, CHANNEL.id).turn == findTurn(interaction.userId, CHANNEL.id).turn ? usuario.username : ctx.user.username,
-                    findTurn(interaction.userId, CHANNEL.id).turn == 2 ? '🔴' : '🟡'
-                ))
-                .setFooter(args.difficulty)
-                .setColor(14720566)
-                .setImage('attachment://party.gif');
-            await interaction.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
-            const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
-
-            try {
-                if (!lastMessage?.deleted && !([10, 11, 12].includes(CHANNEL.type))) await lastMessage.delete();
-            } catch {
-                //do something
-            }
-            lastMessage = await interaction.editOrRespond({
-                file: {
-                    value: buf,
-                    filename: 'party.gif'
-                },
-                embed,
-                components: generateButtons(games.get(CHANNEL.id), langjson.commands.connect4.surrender, false)
-            });
-
-            return easyAnswer(lastMessage, lastMessage);
-
-        }
-    });
-
+    return [{ id: mention, turn: 2 }, { id: author, turn: 1 }];
 }
 
 export async function FUNCTION(
@@ -451,12 +149,12 @@ export async function FUNCTION(
 
     const findTurn = (user: string, CHANNEL: string) => games.get(CHANNEL) && games.get(CHANNEL).players ? games.get(CHANNEL).players.find(item => item.id == user) : null;
 
-    const poto = new Connect4AI<Player>({
+    const partida = new Connect4AI<Player>({
         lengthArr: 6,
         columns: 7,
         necessaryToWin: parseInt(args.needtoconnect) || 4
     }, getTURNS(ctx.userId, usuario.id, ctx.client.userId), 10);
-    poto.createBoard();
+    partida.createBoard();
 
     const CHANNEL: { id: string; type: number } = ctx.channel && ctx.guild && !ctx.channel.isGuildThread && ctx.guild.features.has('THREADS_ENABLED') && ctx.channel.can(Flags.MANAGE_THREADS) ? await ctx.channel.createThread({
         name: `Game of ${ctx.user.tag} vs ${usuario.tag}`,
@@ -467,7 +165,7 @@ export async function FUNCTION(
 
     users.add(usuario.id);
     users.add(ctx.userId);
-    games.set(CHANNEL.id, poto);
+    games.set(CHANNEL.id, partida);
 
     if (usuario.id != ctx.client.user.id) {
 
@@ -532,16 +230,16 @@ export async function FUNCTION(
         .setDescription(langjson.commands.connect4.start(findTurn(ctx.user.id, CHANNEL.id).turn == 1 ? ctx.user.username : usuario.username))
         .setColor(14720566)
         .setImage('attachment://party.gif');
-    const bufParty = await displayConnectFourBoard(games.get(CHANNEL.id));
+    const bufParty = await displayConnectFourBoard(partida);
 
-    const messageParty = CHANNEL.id !== ctx.channelId ? await ctx.client.rest.createMessage(CHANNEL.id, {
+    const messageParty: detritus.Structures.Message = (CHANNEL.id !== ctx.channelId ? await ctx.client.rest.createMessage(CHANNEL.id, {
         file: {
             value: bufParty,
             filename: 'party.gif'
         },
         embed: embedStart,
         content: '\u200b',
-        components: generateButtons(games.get(CHANNEL.id), langjson.commands.connect4.surrender, false)
+        components: generateButtons(partida, langjson.commands.connect4.surrender, false)
     }) : await ctx.editOrRespond({
         file: {
             value: bufParty,
@@ -549,8 +247,8 @@ export async function FUNCTION(
         },
         embed: embedStart,
         content: '\u200b',
-        components: generateButtons(games.get(CHANNEL.id), langjson.commands.connect4.surrender, false)
-    });
+        components: generateButtons(partida, langjson.commands.connect4.surrender, false)
+    })) || await ctx.fetchResponse();
 
     async function sendCoso(embed: MessageEmbed, value: Buffer, interaction?: INTERACTION) {
 
@@ -571,22 +269,286 @@ export async function FUNCTION(
 
         }
 
-        return interaction ? interaction.editOrRespond({
+        if (interaction)
+            return interaction.editOrRespond({
+                embed,
+                file: { filename: 'party.gif', value },
+                components: generateButtons(partida, langjson.commands.connect4.surrender, true)
+            });
+        return ctx.client.rest.createMessage(CHANNEL.id, {
             embed,
             file: { filename: 'party.gif', value },
-            components: generateButtons(games.get(CHANNEL.id), langjson.commands.connect4.surrender, true)
-        }) : ctx.client.rest.createMessage(CHANNEL.id, {
-            embed,
-            file: { filename: 'party.gif', value },
-            components: generateButtons(games.get(CHANNEL.id), langjson.commands.connect4.surrender, true)
+            components: generateButtons(partida, langjson.commands.connect4.surrender, true)
         });
 
     }
 
-    function easyAwaitAnswer(MESSAGE: detritus.Structures.Message, lastMessage?: detritus.Structures.Message) {
-        awaitAnswer(MESSAGE, sendCoso, ctx, findTurn, ArrayOfArrayOfNumbers, args, DATAPROFILE, usuario, langjson, difficulty, easyAwaitAnswer, CHANNEL, lastMessage);
-    }
+    const COLLECTOR = new ButtonCollector(messageParty, {
+        timeIdle: ((3 * 60) * 1000),
+        filter(interaction) {
 
-    return easyAwaitAnswer(messageParty, messageParty);
+            if (!partida.players.some(item => item.id == interaction.userId) || !findTurn(interaction.userId, CHANNEL.id))
+                return false;
+
+            return ['c4_1', 'c4_2', 'c4_3', 'c4_4', 'c4_5', 'c4_6', 'c4_0', 'c4_surrender'].includes(interaction.data.customId)
+                && findTurn(interaction.userId, CHANNEL.id).turn === partida.turn
+                && !partida.finished
+                || ((partida.players.some(item => item.id == interaction.userId) && interaction.data.customId == 'c4_surrender'));
+
+        }
+    }, ctx.client);
+
+    let lastMessage: detritus.Structures.Message;
+
+    COLLECTOR.on('collect', async (interaction) => {
+
+        const checkPaSeguirONo = await interaction.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE).then(() => true).catch(() => false);
+
+        if (!checkPaSeguirONo) return;
+
+        COLLECTOR.message = null;
+
+        if (interaction.data.customId == 'c4_surrender')
+            return COLLECTOR.stop('surrender');
+
+        games.get(CHANNEL.id).play(parseInt(interaction.data.customId.split('c4_')[1]));
+
+        const game = games.get(CHANNEL.id);
+        const board = game.map[(parseInt(interaction.data.customId.split('c4_')[1]))];
+        let temp = findTurn(interaction.userId, CHANNEL.id).turn == 1 ? 'red' : 'yellow';
+        ArrayOfArrayOfNumbers.push([board.filter(x => x.key).length - 1, parseInt(interaction.data.customId.split('c4_')[1]), temp]);
+
+        if (games.get(CHANNEL.id).solution) {
+            const embed = new MessageEmbed()
+                .setDescription(langjson.commands.connect4.win(interaction.user.username))
+                .setColor(14720566)
+                .setImage('attachment://party.gif');
+
+            const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
+            await sendCoso(embed, buf, interaction);
+
+            if (usuario.id == ctx.client.user.id) {
+
+                const a = await model.findOne({ id: ctx.user.id });
+                const res = await modificar(a, args.difficulty, 'ganadas', ctx.user.username);
+                await redis.set(ctx.user.id, JSON.stringify(res));
+
+                if (args.difficulty == 'hard' && a.c4hard) {
+
+                    if ((a.c4hard.ganadas >= 10) && !(DATAPROFILE.achievements.includes(IDS.ACHIEVEMENTS.C4LEVEL1))) {
+
+                        const data = await model.findOneAndUpdate({ id: ctx.user.id }, { $addToSet: { achievements: IDS.ACHIEVEMENTS.C4LEVEL1 } }, { new: true }).lean();
+                        await redis.set(ctx.user.id, JSON.stringify(data));
+
+                    } else if ((a.c4hard.ganadas >= 15) && !(DATAPROFILE.achievements.includes(IDS.ACHIEVEMENTS.C4LEVEL2))) {
+
+                        const data = await model.findOneAndUpdate({ id: ctx.user.id }, { $addToSet: { achievements: IDS.ACHIEVEMENTS.C4LEVEL2 } }, { new: true }).lean();
+                        await redis.set(ctx.user.id, JSON.stringify(data));
+
+                    } else if ((a.c4hard.ganadas >= 25) && !(DATAPROFILE.achievements.includes(IDS.ACHIEVEMENTS.C4LEVEL3))) {
+
+                        const data = await model.findOneAndUpdate({ id: ctx.user.id }, { $addToSet: { achievements: IDS.ACHIEVEMENTS.C4LEVEL3 } }, { new: true }).lean();
+                        await redis.set(ctx.user.id, JSON.stringify(data));
+
+                    } else if ((a.c4hard.ganadas >= 50) && !(DATAPROFILE.achievements.includes(IDS.ACHIEVEMENTS.C4LEVEL4))) {
+
+                        const data = await model.findOneAndUpdate({ id: ctx.user.id }, { $addToSet: { achievements: IDS.ACHIEVEMENTS.C4LEVEL4 } }, { new: true }).lean();
+                        await redis.set(ctx.user.id, JSON.stringify(data));
+
+                    }
+
+                }
+
+            }
+
+            games.delete(CHANNEL.id);
+            users.delete(ctx.userId);
+            users.delete(usuario.id);
+            return COLLECTOR.stop('win');
+
+        } else if (games.get(CHANNEL.id).tie) {
+            const embed = new MessageEmbed()
+                .setDescription(langjson.commands.connect4.draw(usuario.username, ctx.user.username))
+                .setColor(14720566)
+                .setImage('attachment://party.gif');
+            const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
+
+            await sendCoso(embed, buf, interaction);
+
+            if (usuario.id == ctx.client.user.id) {
+                const da = await model.findOne({ id: ctx.user.id });
+                const res = await modificar(da, args.difficulty, 'empates', ctx.user.username);
+                await redis.set(ctx.userId, JSON.stringify(res));
+            }
+            games.delete(CHANNEL.id);
+            users.delete(ctx.userId);
+            users.delete(usuario.id);
+            return COLLECTOR.stop('win');
+        }
+
+        if (usuario.id == ctx.client.user.id) {
+            const old = games.get(CHANNEL.id);
+            const played = old.playAI(difficulty);
+            const board = games.get(CHANNEL.id).map;
+            temp = findTurn(ctx.client.user.id, CHANNEL.id).turn == 1 ? 'red' : 'yellow';
+            ArrayOfArrayOfNumbers.push([board[played].filter(x => x.key).length - 1, played, temp]);
+
+            if (games.get(CHANNEL.id).solution) {
+                const embed = new MessageEmbed()
+                    .setDescription(langjson.commands.connect4.win(usuario.username))
+                    .setColor(14720566)
+                    .setImage('attachment://party.gif');
+
+                const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
+                await sendCoso(embed, buf, interaction);
+
+                const da = await model.findOne({ id: ctx.user.id });
+                const res = await modificar(da, args.difficulty, 'perdidas', ctx.user.username);
+                await redis.set(ctx.userId, JSON.stringify(res));
+                games.delete(CHANNEL.id);
+                users.delete(ctx.userId);
+                users.delete(usuario.id);
+                return COLLECTOR.stop('win');
+            } else if (games.get(CHANNEL.id).tie) {
+                const embed = new MessageEmbed()
+                    .setDescription(langjson.commands.connect4.draw(usuario.username, ctx.user.username))
+                    .setColor(14720566)
+                    .setImage('attachment://party.gif');
+
+                const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
+                await sendCoso(embed, buf, interaction);
+
+                const da = await model.findOne({ id: ctx.user.id });
+                const res = await modificar(da, args.difficulty, 'empates', ctx.user.username);
+                await redis.set(ctx.userId, JSON.stringify(res));
+                games.delete(CHANNEL.id);
+                users.delete(ctx.userId);
+                users.delete(usuario.id);
+                return COLLECTOR.stop('win');
+            }
+
+            const embed = new MessageEmbed()
+                .setDescription(langjson.commands.connect4.turn(ctx.user.username, '🔴'))
+                .setFooter(args.difficulty)
+                .setColor(14720566)
+                .setImage('attachment://party.gif');
+
+            const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
+            try {
+                if (!lastMessage?.deleted && !([10, 11, 12].includes(CHANNEL.type))) await lastMessage.delete();
+            } catch {
+                //do something
+            }
+            lastMessage = await interaction.editOrRespond({
+                file: {
+                    value: buf,
+                    filename: 'party.gif'
+                },
+                embed,
+                components: generateButtons(games.get(CHANNEL.id), langjson.commands.connect4.surrender, false)
+            }) || await interaction.fetchResponse();
+
+            COLLECTOR.message = lastMessage;
+
+        }
+
+        if ((usuario.id != ctx.client.user.id) && (games.get(CHANNEL.id))) {
+            const embed = new MessageEmbed()
+                .setDescription(langjson.commands.connect4.turn(
+                    findTurn(ctx.user.id, CHANNEL.id).turn == findTurn(interaction.userId, CHANNEL.id).turn ? usuario.username : ctx.user.username,
+                    findTurn(interaction.userId, CHANNEL.id).turn == 2 ? '🔴' : '🟡'
+                ))
+                .setFooter(args.difficulty)
+                .setColor(14720566)
+                .setImage('attachment://party.gif');
+
+            const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
+
+            try {
+                if (!lastMessage?.deleted && !([10, 11, 12].includes(CHANNEL.type))) await lastMessage.delete();
+            } catch {
+                //do something
+            }
+            lastMessage = await interaction.editOrRespond({
+                file: {
+                    value: buf,
+                    filename: 'party.gif'
+                },
+                embed,
+                components: generateButtons(games.get(CHANNEL.id), langjson.commands.connect4.surrender, false)
+            }) || await interaction.fetchResponse();
+
+            COLLECTOR.message = lastMessage;
+
+        }
+
+    });
+
+    COLLECTOR.on('end', async (reason) => {
+
+        try {
+            if (!lastMessage?.deleted && !([10, 11, 12].includes(CHANNEL.type))) await lastMessage.delete();
+        } catch {
+            //do something
+        }
+
+        if (reason === 'surrender' && games.get(CHANNEL.id)) {
+            if (usuario.id == ctx.client.user.id) {
+                const da = await model.findOne({ id: ctx.user.id });
+                const res = await modificar(da, args.difficulty, 'perdidas', ctx.user.username);
+                await redis.set(ctx.userId, JSON.stringify(res));
+            }
+            const embed = new MessageEmbed()
+                .setDescription(langjson.commands.connect4.game_over)
+                .setColor(14720566)
+                .setImage('attachment://party.gif');
+            const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
+            await sendCoso(embed, buf);
+
+            games.delete(CHANNEL.id);
+            users.delete(ctx.userId);
+            return users.delete(usuario.id);
+
+        } else if (reason === 'idle' && games.get(CHANNEL.id)) {
+            if (usuario.id == ctx.client.user.id) {
+                const da = await model.findOne({ id: ctx.user.id });
+                const res = await modificar(da, args.difficulty, 'perdidas', ctx.user.username);
+                await redis.set(ctx.userId, JSON.stringify(res));
+            }
+            const embed = new MessageEmbed()
+                .setDescription(langjson.commands.connect4.time_over)
+                .setColor(14720566)
+                .setImage('attachment://4enraya.gif')
+                .setImage('attachment://party.gif');
+            const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
+            await sendCoso(embed, buf);
+
+            games.delete(CHANNEL.id);
+            users.delete(ctx.userId);
+            return users.delete(usuario.id);
+
+        } else if (reason == 'time' && games.get(CHANNEL.id)) {
+            if (usuario.id == ctx.client.user.id) {
+                const da = await model.findOne({ id: ctx.user.id });
+                const res = await modificar(da, args.difficulty, 'perdidas', ctx.user.username);
+                await redis.set(ctx.userId, JSON.stringify(res));
+            }
+            const embed = new MessageEmbed()
+                .setDescription(langjson.commands.connect4.game_over2)
+                .setColor(14720566)
+                .setImage('attachment://party.gif');
+            const buf = await displayConnectFourBoard(games.get(CHANNEL.id));
+            await sendCoso(embed, buf);
+
+            games.delete(CHANNEL.id);
+            users.delete(ctx.userId);
+            return users.delete(usuario.id);
+        } else {
+            games.delete(CHANNEL.id);
+            users.delete(ctx.userId);
+            return users.delete(usuario.id);
+        }
+
+    });
 
 }
