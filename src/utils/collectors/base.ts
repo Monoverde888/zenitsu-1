@@ -26,7 +26,7 @@ class BaseCollector extends events.EventEmitter {
         if (options.timeLimit) this._timeTimeout = setTimeout(() => {
             this.stop('time');
         }, options.timeLimit);
-        if (options.timeIdle) this._timeTimeout = setTimeout(() => {
+        if (options.timeIdle) this._idleTimeout = setTimeout(() => {
             this.stop('idle');
         }, options.timeIdle);
         const subscriptions = {
