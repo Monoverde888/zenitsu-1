@@ -59,7 +59,7 @@ export default function () {
             if (!role)
                 return ctx.editOrRespond(langjson.commands.mute.no_role('/'));
 
-            if (!ctx.guild.me.canEditRole(role) || !role.managed)
+            if (!ctx.guild.me.canEditRole(role) || role.managed)
                 return ctx.editOrRespond(langjson.commands.mute.cant_role(role.mentionable ? role.name : role.mention));
 
             const member = args.member as detritus.Structures.Member;
