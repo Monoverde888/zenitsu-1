@@ -61,9 +61,9 @@ export function view() {
                 const embed = new detritus.Utils.Embed()
                     .setColor(parseInt(data.color, 16) || 0)
                     .setDescription(data.description)
-                    .setImage('attachment://view.png');
+                    .setImage('attachment://view.gif');
 
-                return ctx.editOrRespond({ embed, files: [{ value: buf, filename: 'view.png' }] });
+                return ctx.editOrRespond({ embed, files: [{ value: buf, filename: 'view.gif' }] });
 
             } catch (e) {
 
