@@ -7,6 +7,7 @@ export const IDS = {
         C4LEVEL2: '2',
         C4LEVEL3: '3',
         C4LEVEL4: '4',
+        C4LEVEL5: '11'
     },
     FLAGS: {
         BUG_HUNTER: '5',
@@ -14,7 +15,7 @@ export const IDS = {
         SUGGEST: '7',
         STAFF: '8',
         HELPER: '9',
-        GITHUB: '10'
+        GITHUB: '10',
     }
 };
 

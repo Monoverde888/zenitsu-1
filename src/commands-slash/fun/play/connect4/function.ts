@@ -355,6 +355,12 @@ export async function FUNCTION(
                         const data = await model.findOneAndUpdate({ id: ctx.user.id }, { $addToSet: { achievements: IDS.ACHIEVEMENTS.C4LEVEL4 } }, { new: true }).lean();
                         await redis.set(ctx.user.id, JSON.stringify(data));
 
+
+                    } else if ((a.c4hard.ganadas >= 100) && !(DATAPROFILE.achievements.includes(IDS.ACHIEVEMENTS.C4LEVEL5))) {
+
+                        const data = await model.findOneAndUpdate({ id: ctx.user.id }, { $addToSet: { achievements: IDS.ACHIEVEMENTS.C4LEVEL5 } }, { new: true }).lean();
+                        await redis.set(ctx.user.id, JSON.stringify(data));
+
                     }
 
                 }
