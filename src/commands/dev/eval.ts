@@ -50,7 +50,7 @@ export default new BaseCommand({
                         .setTimestamp()
                         .setFooter(ctx.message.author.username, ctx.message.author.avatarUrl)
                         .addField('typeof', TYPE, true)
-                        .addField('Class', (res_evalued && res_evalued.constructor && res_evalued.constructor.name) ? res_evalued.constructor.name || 'NO CLASS' : 'NO CLASS', true);
+                        .addField('Class', (res_evalued?.constructor?.name || 'NO CLASS'), true);
 
                     return await ctx.reply({ embed });
 
