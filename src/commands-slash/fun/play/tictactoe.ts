@@ -220,7 +220,7 @@ async function jugar(firstp: detritus.Structures.MemberOrUser, secondp: detritus
             partida.play(await AIplay(partida));
             if (!partida.finished) {
 
-                if (!m.deleted) return collector.stop('messageDelete');
+                if (m.deleted) return collector.stop('messageDelete');
 
                 await msg.edit({
                     content: `${resolveMarkdown(firstp, partida)} vs ${resolveMarkdown(secondp, partida)}`,
