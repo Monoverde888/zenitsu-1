@@ -30,7 +30,6 @@ export function reset() {
                 usage(prefix: string) {
                     return [
                         prefix + 'settings reset ignorechannels',
-                        prefix + 'settings reset onlythreads',
                         prefix + 'settings reset muterole',
                         prefix + 'settings reset all'
                     ];
@@ -43,7 +42,7 @@ export function reset() {
 
         async run(
             ctx: detritus.Interaction.InteractionContext,
-            args: { field: 'ignorechannels' | 'onlythreads' | 'muterole' | 'all' }
+            args: { field: 'ignorechannels' | 'muterole' | 'all' }
         ) {
 
             await ctx.respond(detritus.Constants.InteractionCallbackTypes.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE);
@@ -53,7 +52,6 @@ export function reset() {
                     const data = await guild.findOneAndUpdate({ id: ctx.guildId }, {
                         muterole: '1',
                         ignorechannels: [],
-                        onlythreads: true
                     }, { new: true }).lean();
                     await redis.set(ctx.guildId, JSON.stringify(data));
                     const langjson = json[data.lang];

@@ -90,7 +90,7 @@ export default async function Load(options: {
             { duration: 10000, limit: 5, type: 'channel' },
         ],
         mentionsEnabled: true,
-        activateOnEdits: false,
+        activateOnEdits: true,
         prefixes: ['z!'],
     });
 

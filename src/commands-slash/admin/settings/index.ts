@@ -5,7 +5,7 @@ import { reset } from './reset.js';
 import { ignorechannels } from './ignorechannels.js';
 import detritus from 'detritus-client';
 
-const { Constants: { Permissions: Flags }} = detritus;
+const { Constants: { Permissions: Flags } } = detritus;
 export default function () {
     class Settings extends BaseSlash {
         constructor() {
@@ -18,7 +18,6 @@ export default function () {
                         prefix + 'settings (view|muterole|reset)',
                         prefix + 'settings view',
                         prefix + 'settings ignorechannels #ChannelMention',
-                        prefix + 'settings onlythreads',
                         prefix + 'settings muterole init [role]',
                         prefix + 'settings muterole refresh',
                         prefix + 'settings reset'
