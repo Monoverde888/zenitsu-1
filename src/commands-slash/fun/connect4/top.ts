@@ -4,6 +4,7 @@ import jsonOBJECT from '../../../utils/lang/langs.js';
 import getGuild from '../../../utils/functions/getguild.js';
 import { Embed as MessageEmbed } from 'detritus-client/lib/utils/embed.js';
 import model, { USER } from '../../../database/models/user.js';
+import { LeanDocument } from 'mongoose';
 
 const { Constants: { ApplicationCommandOptionTypes } } = detritus;
 
@@ -42,7 +43,7 @@ export function top() {
 
             const langjson = ctx.guildId ? jsonOBJECT[(await getGuild(ctx.guildId)).lang] : jsonOBJECT.en;
 
-            const data = await model.find().sort({ [`c4${args.difficulty}.ganadas`]: -1 }).limit(10);
+            const data = await model.find().sort({ [`c4${args.difficulty}.ganadas`]: -1 }).limit(10).lean();
             const embed = new MessageEmbed()
                 .setDescription(langjson.commands.connect4top.no_data(args.difficulty))
                 .setColor(14720566);
@@ -51,7 +52,7 @@ export function top() {
                 return ctx.editOrRespond({ embed });
 
             const states: string[] = langjson.commands.connect4top.states;
-            const mini_data = data.map((item: USER) => {
+            const mini_data = data.map((item: LeanDocument<USER>) => {
 
                 const xd = `c4${args.difficulty}` as 'c4easy' | 'c4medium' | 'c4hard';
 

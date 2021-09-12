@@ -21,7 +21,7 @@ export function view() {
                     },
                 ],
                 ratelimits: [{
-                    duration: 10000, limit: 1, type: 'guild',
+                    duration: 10000, limit: 1, type: 'channel',
                 }]
             });
             this.name = 'view';
