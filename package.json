@@ -19,7 +19,7 @@
     "@lil_marcrock22/connect4-ai": "0.0.16",
     "@types/redis": "^2.8.31",
     "detritus-client": "^0.16.2",
-    "dotenv": "^10.0.0",
+    "dotenv": "^16.0.2",
     "image-url-validator": "^1.0.4",
     "kufa": "^1.5.8",
     "mongoose": "^6.0.4",
